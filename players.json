@@ -1,0 +1,147 @@
+[
+  {
+    "slug": "clark-chase",
+    "sample": true,
+    "sampleNote": "Example profile built from a Peach State Recruits feature.",
+    "active": true,
+    "name": "Clark Chase",
+    "sport": "Baseball",
+    "position": "1B / LHP",
+    "gradYear": 2029,
+    "school": "Centreville High School",
+    "team": "",
+    "location": "",
+    "coverImage": "images/clark-chase.jpg",
+    "measurables": [
+      {
+        "label": "Height",
+        "value": "6'4\""
+      },
+      {
+        "label": "Weight",
+        "value": "220 lb"
+      },
+      {
+        "label": "Throws",
+        "value": "Left"
+      },
+      {
+        "label": "Role",
+        "value": "Two-way"
+      }
+    ],
+    "video": {
+      "youtube": "",
+      "file": ""
+    },
+    "highlights": [
+      {
+        "title": "Watch the feature on Instagram",
+        "url": "https://www.instagram.com/p/DfkLeciFqUz/"
+      }
+    ],
+    "report": "",
+    "stats": null,
+    "academics": [],
+    "links": [],
+    "contactEmail": "",
+    "contactInstagram": "peachstaterecruits",
+    "contactName": "Peach State Recruits"
+  },
+  {
+    "slug": "armani-strong",
+    "sample": true,
+    "sampleNote": "Example profile built from a Peach State Recruits feature.",
+    "active": true,
+    "name": "Armani Strong",
+    "sport": "Football",
+    "position": "WR",
+    "gradYear": 2028,
+    "school": "Chaminade-Madonna",
+    "team": "",
+    "location": "",
+    "coverImage": "images/armani-strong.jpg",
+    "measurables": [
+      {
+        "label": "Height",
+        "value": "6'1\""
+      },
+      {
+        "label": "Weight",
+        "value": "180 lb"
+      },
+      {
+        "label": "Status",
+        "value": "Florida commit"
+      }
+    ],
+    "video": {
+      "youtube": "",
+      "file": ""
+    },
+    "highlights": [
+      {
+        "title": "Watch the feature on Instagram",
+        "url": "https://www.instagram.com/p/Df0chVlmffK/"
+      }
+    ],
+    "report": "",
+    "stats": null,
+    "academics": [],
+    "links": [],
+    "contactEmail": "",
+    "contactInstagram": "peachstaterecruitsfb",
+    "contactName": "Peach State Recruits"
+  },
+  {
+    "slug": "luca-bocchini",
+    "sample": true,
+    "sampleNote": "Example profile built from a Peach State Recruits feature.",
+    "active": true,
+    "name": "Luca Bocchini",
+    "sport": "Soccer",
+    "position": "CAM / W",
+    "gradYear": 2031,
+    "school": "",
+    "team": "Roswell Santos MLS NEXT",
+    "location": "",
+    "coverImage": "images/luca-bocchini.jpg",
+    "measurables": [
+      {
+        "label": "Height",
+        "value": "5'8\""
+      },
+      {
+        "label": "Weight",
+        "value": "138 lb"
+      },
+      {
+        "label": "Club",
+        "value": "MLS NEXT"
+      }
+    ],
+    "video": {
+      "youtube": "",
+      "file": "images/luca-bocchini-highlights.mp4",
+      "poster": "images/luca-bocchini-poster.jpg"
+    },
+    "highlights": [
+      {
+        "title": "Watch the feature on Instagram",
+        "url": "https://www.instagram.com/p/De_5CE4ETxf/"
+      }
+    ],
+    "report": "",
+    "stats": null,
+    "academics": [],
+    "links": [
+      {
+        "label": "Instagram: @luca_bo10",
+        "url": "https://instagram.com/luca_bo10"
+      }
+    ],
+    "contactEmail": "",
+    "contactInstagram": "peachstaterecruitshq",
+    "contactName": "Peach State Recruits"
+  }
+]

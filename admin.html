@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin | Peach State Recruits</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0a1120">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;1,800&family=Inter:wght@400;500;600;700;800&family=Kaushan+Script&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css?v=2">
+</head>
+<body>
+<header class="nav">
+  <div class="wrap">
+    <a class="logo" href="index.html" id="logo"><span class="logo-text">Peach State Recruits</span></a>
+    <button class="btn btn-line btn-sm" id="signOut" hidden>Sign out</button>
+  </div>
+</header>
+
+<main class="portal wrap">
+  <div id="notReady" class="panel-box" hidden>
+    <h2>Database not connected</h2>
+    <p class="muted">Add <code>supabaseUrl</code> and <code>supabaseAnonKey</code> to <code>config.js</code>, following SETUP.md.</p>
+  </div>
+
+  <section id="signIn" class="panel-box narrow" hidden>
+    <h1 class="edge">Admin</h1>
+    <form id="loginForm" class="form">
+      <label>Email<input type="email" id="email" autocomplete="email" required></label>
+      <label>Password<input type="password" id="password" autocomplete="current-password" required minlength="8"></label>
+      <button class="btn btn-peach btn-block" type="submit">Sign in</button>
+      <button class="btn btn-line btn-block" type="button" id="signUp">First time? Create the admin account</button>
+      <p class="form-msg" id="loginMsg" hidden></p>
+    </form>
+  </section>
+
+  <section id="notAdmin" class="panel-box narrow" hidden>
+    <h2>Almost there</h2>
+    <p class="muted">You're signed in, but this account isn't an admin yet. In Supabase, open the SQL Editor and run:</p>
+    <pre class="code" id="adminSql"></pre>
+    <p class="muted">Then refresh this page.</p>
+  </section>
+
+  <section id="dash" hidden>
+    <div class="portal-head"><h1 class="edge">Admin</h1></div>
+
+    <div class="panel-box">
+      <div class="row-between">
+        <h2>Instagram sync</h2>
+        <div class="portal-actions">
+          <button class="btn btn-peach btn-sm" id="syncNow">Sync now</button>
+          <button class="btn btn-line btn-sm" id="syncFull" title="Checks your last ~100 posts">Sync older posts</button>
+        </div>
+      </div>
+      <p class="muted small">New feature posts are added automatically once a day. Posts whose caption doesn't start with "Name | Position | Class | ..." are ignored.</p>
+      <div id="accounts" class="acct-list"></div>
+      <form id="tokenForm" class="form inline-form">
+        <label>Account<select id="tokHandle"></select></label>
+        <label class="grow">Access token<input id="tokValue" placeholder="Paste the token from the Meta developer dashboard" autocomplete="off"></label>
+        <button class="btn btn-line btn-sm" type="submit">Connect</button>
+      </form>
+      <p class="form-msg" id="syncMsg" hidden></p>
+    </div>
+
+    <div class="panel-box">
+      <div class="row-between">
+        <h2>Players</h2>
+        <button class="btn btn-line btn-sm" id="addPlayer">Add a player by hand</button>
+      </div>
+      <input id="search" class="search" placeholder="Search by name, sport or school">
+      <div id="players" class="player-list"></div>
+    </div>
+  </section>
+</main>
+
+<!-- Edit dialog -->
+<dialog id="editDlg" class="dlg">
+  <form id="editForm" class="form grid-form" method="dialog">
+    <div class="row-between wide"><h2 id="editTitle">Edit player</h2><button class="btn btn-line btn-sm" type="button" id="closeEdit">Close</button></div>
+    <label>Name<input id="e_name" required></label>
+    <label>Sport<input id="e_sport" list="sports"></label>
+    <datalist id="sports"><option>Baseball</option><option>Football</option><option>Soccer</option><option>Basketball</option><option>Softball</option><option>Volleyball</option><option>Lacrosse</option><option>Track</option></datalist>
+    <label>Position<input id="e_position"></label>
+    <label>Class (grad year)<input id="e_grad_year" type="number" min="2020" max="2040"></label>
+    <label>High school<input id="e_school"></label>
+    <label>Club or travel team<input id="e_team"></label>
+    <label>City, state<input id="e_location"></label>
+    <label>Profile link name<input id="e_slug" pattern="[a-z0-9-]+" title="lowercase letters, numbers and dashes"></label>
+    <label>Height<input id="e_height"></label>
+    <label>Weight<input id="e_weight"></label>
+    <label class="wide">More measurables (one per line, "Label: value")<textarea id="e_measurables" rows="3"></textarea></label>
+    <label class="wide">Scouting report<textarea id="e_report" rows="6"></textarea></label>
+    <label>Stats season<input id="e_stats_title"></label>
+    <label>Stat names (commas)<input id="e_stats_cols"></label>
+    <label class="wide">Stat values (same order)<input id="e_stats_row"></label>
+    <label class="wide">Academics (one per line, "Label: value")<textarea id="e_academics" rows="2"></textarea></label>
+    <label class="wide">Links (one per line, "Label | https://...")<textarea id="e_links" rows="2"></textarea></label>
+    <label>Contact email<input id="e_contact_email" type="email"></label>
+    <label>Contact name<input id="e_contact_name"></label>
+    <label>Instagram post link<input id="e_post_url"></label>
+    <label>Views (e.g. 22.9K)<input id="e_views"></label>
+    <label>Views as of<input id="e_views_as_of" placeholder="Nov 17, 2026"></label>
+    <label>Instagram account (for "Message" button)<input id="e_ig_account"></label>
+    <label>New cover image<input type="file" id="e_cover" accept="image/*"></label>
+    <label>New highlight video<input type="file" id="e_video" accept="video/*"></label>
+    <div class="wide checks">
+      <label class="check"><input type="checkbox" id="e_published"> Profile is public</label>
+      <label class="check"><input type="checkbox" id="e_show_on_home"> Show on homepage (family approved website use)</label>
+    </div>
+    <div class="form-foot wide">
+      <button class="btn btn-peach" type="submit">Save</button>
+      <button class="btn btn-line" type="button" id="deletePlayer">Delete player</button>
+      <p class="form-msg" id="editMsg" hidden></p>
+    </div>
+  </form>
+</dialog>
+
+<!-- Login dialog -->
+<dialog id="loginDlg" class="dlg narrow-dlg">
+  <form id="giveLogin" class="form">
+    <div class="row-between"><h2>Give a login</h2><button class="btn btn-line btn-sm" type="button" id="closeLogin">Close</button></div>
+    <p class="muted" id="loginFor"></p>
+    <label>Their email (a parent's, for athletes under 18)<input type="email" id="loginEmail" required></label>
+    <button class="btn btn-peach btn-block" type="submit">Create login link</button>
+    <p class="form-msg" id="giveMsg" hidden></p>
+    <div id="linkBox" hidden>
+      <p class="small muted">Send this link by DM or text. It signs them in once, then they create a password.</p>
+      <textarea id="linkOut" rows="3" readonly></textarea>
+      <button class="btn btn-line btn-block" type="button" id="copyLink">Copy link</button>
+    </div>
+  </form>
+</dialog>
+
+<div class="toast"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js?v=2"></script>
+<script src="shared.js?v=2"></script>
+<script src="portal.js?v=2"></script>
+<script>
+(async function () {
+  const P = window.PORTAL, C = window.PSR_CONFIG, esc = P.esc, $ = (id) => document.getElementById(id);
+  document.getElementById("logo").insertAdjacentHTML("afterbegin", window.PSR.logoMark(C));
+  const show = (id) => ["signIn", "notAdmin", "dash", "notReady"].forEach(s => $(s).hidden = s !== id);
+  if (!P.ready) return show("notReady");
+  const sb = P.sb;
+  let players = [], editing = null, loginTarget = null;
+
+  async function token() { return (await sb.auth.getSession()).data.session?.access_token; }
+  async function api(path, opts = {}) {
+    const r = await fetch(path, { ...opts, headers: { "Content-Type": "application/json", Authorization: `Bearer ${await token()}` } });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(j.error || `Request failed (${r.status})`);
+    return j;
+  }
+
+  $("loginForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const { error } = await sb.auth.signInWithPassword({ email: $("email").value.trim(), password: $("password").value });
+    if (error) return P.msg($("loginMsg"), error.message, "err");
+    start();
+  });
+  $("signUp").addEventListener("click", async () => {
+    const email = $("email").value.trim(), password = $("password").value;
+    if (!email || password.length < 8) return P.msg($("loginMsg"), "Enter your email and a password of at least 8 characters.", "err");
+    const { error } = await sb.auth.signUp({ email, password, options: { emailRedirectTo: location.origin + "/admin.html" } });
+    P.msg($("loginMsg"), error ? error.message : "Account created. If Supabase sent a confirmation email, confirm it, then sign in.", error ? "err" : "ok");
+  });
+  $("signOut").addEventListener("click", async () => { await sb.auth.signOut(); location.reload(); });
+
+  async function start() {
+    const { data } = await sb.auth.getSession();
+    if (!data.session) return show("signIn");
+    $("signOut").hidden = false;
+    const uid = data.session.user.id;
+    const { data: adm } = await sb.from("admins").select("user_id").eq("user_id", uid);
+    if (!adm || !adm.length) {
+      $("adminSql").textContent = `insert into public.admins (user_id) values ('${uid}');`;
+      return show("notAdmin");
+    }
+    show("dash");
+    loadAccounts(); loadPlayers();
+  }
+
+  // ----- Instagram -----
+  async function loadAccounts() {
+    try {
+      const rows = await api("/api/instagram-accounts");
+      $("accounts").innerHTML = rows.map(a => `
+        <div class="acct">
+          <div><b>@${esc(a.handle)}</b> <span class="muted small">${esc(a.sport)}</span></div>
+          <div class="small">${a.connected ? `<span class="ok-dot"></span>Connected${a.expires_at ? `, token renews automatically (expires ${new Date(a.expires_at).toLocaleDateString()})` : ""}` : `<span class="no-dot"></span>Not connected`}</div>
+          <div class="small muted">${a.last_synced ? `Last sync ${new Date(a.last_synced).toLocaleString()}: ${esc(a.last_result || "")}` : "Never synced"}</div>
+        </div>`).join("");
+      $("tokHandle").innerHTML = rows.map(a => `<option value="${esc(a.handle)}">@${esc(a.handle)}</option>`).join("");
+    } catch (e) {
+      $("accounts").innerHTML = `<p class="form-msg err">Couldn't load accounts: ${esc(e.message)}. Check the Vercel settings in SETUP.md.</p>`;
+    }
+  }
+  $("tokenForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    P.msg($("syncMsg"), "Connecting...", "");
+    try {
+      const j = await api("/api/instagram-accounts", { method: "POST", body: JSON.stringify({ handle: $("tokHandle").value, token: $("tokValue").value }) });
+      $("tokValue").value = "";
+      P.msg($("syncMsg"), `Connected @${j.username}.`, "ok"); loadAccounts();
+    } catch (err) { P.msg($("syncMsg"), err.message, "err"); }
+  });
+  async function runSync(full) {
+    P.msg($("syncMsg"), "Checking Instagram for new features... this can take up to a minute.", "");
+    try {
+      const j = await api("/api/sync-instagram" + (full ? "?full=1" : ""), { method: "POST" });
+      const lines = (j.results || []).map(r => r.error ? `@${r.handle}: ${r.error}`
+        : `@${r.handle}: ${r.created.length ? "added " + r.created.join(", ") : "nothing new"}${r.errors && r.errors.length ? " (" + r.errors.join("; ") + ")" : ""}`);
+      P.msg($("syncMsg"), lines.join("  •  ") || j.message || "Done.", "ok");
+      loadAccounts(); loadPlayers();
+    } catch (e) { P.msg($("syncMsg"), e.message, "err"); }
+  }
+  $("syncNow").addEventListener("click", () => runSync(false));
+  $("syncFull").addEventListener("click", () => runSync(true));
+
+  // ----- Players -----
+  async function loadPlayers() {
+    const { data, error } = await sb.from("players").select("*").order("posted_at", { ascending: false, nullsFirst: false }).order("created_at", { ascending: false });
+    if (error) { $("players").innerHTML = `<p class="form-msg err">${esc(error.message)}</p>`; return; }
+    players = data; renderPlayers();
+  }
+  function renderPlayers() {
+    const q = $("search").value.trim().toLowerCase();
+    const list = players.filter(p => !q || [p.name, p.sport, p.school, p.team].join(" ").toLowerCase().includes(q));
+    $("players").innerHTML = list.length ? list.map(p => `
+      <div class="prow">
+        <div class="pthumb">${p.cover_url ? `<img src="${esc(p.cover_url)}" alt="">` : ""}</div>
+        <div class="pinfo">
+          <b>${esc(p.name)}</b>
+          <span class="small muted">${esc([p.sport, p.position, p.grad_year ? "Class of " + p.grad_year : "", p.school || p.team].filter(Boolean).join(", "))}</span>
+          <span class="small">${p.owner_email ? `Login: ${esc(p.owner_email)}` : `<span class="muted">No login yet</span>`}
+            ${p.published ? "" : ` · <span class="warn">Hidden</span>`}${p.show_on_home ? ` · On homepage` : ""}${p.video_url ? " · Has video" : ""}</span>
+        </div>
+        <div class="pbtns">
+          <a class="btn btn-line btn-sm" href="player.html#${encodeURIComponent(p.slug)}" target="_blank" rel="noopener">View</a>
+          <button class="btn btn-line btn-sm" data-edit="${p.id}">Edit</button>
+          <button class="btn btn-peach btn-sm" data-login="${p.id}">${p.owner_email ? "New login link" : "Give login"}</button>
+        </div>
+      </div>`).join("") : `<p class="muted">No players yet. Connect Instagram and press Sync now, or add one by hand.</p>`;
+  }
+  $("search").addEventListener("input", renderPlayers);
+  $("players").addEventListener("click", (e) => {
+    const ed = e.target.closest("[data-edit]"), lg = e.target.closest("[data-login]");
+    if (ed) openEdit(players.find(p => p.id === ed.dataset.edit));
+    if (lg) openLogin(players.find(p => p.id === lg.dataset.login));
+  });
+
+  const F = ["name", "sport", "position", "grad_year", "school", "team", "location", "slug", "height", "weight", "report", "contact_email", "contact_name", "post_url", "views", "views_as_of", "ig_account"];
+  function openEdit(p) {
+    editing = p || null;
+    $("editTitle").textContent = p ? `Edit ${p.name}` : "Add a player";
+    F.forEach(k => $("e_" + k).value = p && p[k] != null ? p[k] : "");
+    const base = new Set(["Height", "Weight"]);
+    $("e_measurables").value = P.pairsToText(((p && p.measurables) || []).filter(m => !base.has(m.label)));
+    const s = P.statsToFields(p && p.stats);
+    $("e_stats_title").value = s.title; $("e_stats_cols").value = s.cols; $("e_stats_row").value = s.row;
+    $("e_academics").value = P.pairsToText(p && p.academics);
+    $("e_links").value = P.linksToText(p && p.links);
+    $("e_published").checked = p ? p.published : true;
+    $("e_show_on_home").checked = p ? p.show_on_home : false;
+    $("e_cover").value = ""; $("e_video").value = "";
+    $("deletePlayer").hidden = !p;
+    P.msg($("editMsg"), "", "");
+    $("editDlg").showModal();
+  }
+  $("closeEdit").addEventListener("click", () => $("editDlg").close());
+  $("addPlayer").addEventListener("click", () => openEdit(null));
+
+  $("editForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    P.msg($("editMsg"), "Saving...", "");
+    try {
+      const v = (k) => $("e_" + k).value.trim() || null;
+      const height = v("height"), weight = v("weight");
+      const row = {};
+      F.forEach(k => row[k] = v(k));
+      row.grad_year = row.grad_year ? parseInt(row.grad_year, 10) : null;
+      row.slug = (row.slug || window.PSR.esc(row.name || "")).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      row.measurables = [height && { label: "Height", value: height }, weight && { label: "Weight", value: weight }].filter(Boolean).concat(P.textToPairs($("e_measurables").value));
+      row.stats = P.fieldsToStats($("e_stats_title").value, $("e_stats_cols").value, $("e_stats_row").value);
+      row.academics = P.textToPairs($("e_academics").value);
+      row.links = P.textToLinks($("e_links").value);
+      row.published = $("e_published").checked;
+      row.show_on_home = $("e_show_on_home").checked;
+
+      let saved;
+      if (editing) {
+        ({ data: saved } = await sb.from("players").update(row).eq("id", editing.id).select().single().throwOnError());
+      } else {
+        row.posted_at = new Date().toISOString();
+        ({ data: saved } = await sb.from("players").insert(row).select().single().throwOnError());
+      }
+      const cover = $("e_cover").files[0], video = $("e_video").files[0];
+      const files = {};
+      if (cover) { P.msg($("editMsg"), "Uploading cover...", ""); files.cover_url = await P.upload(saved.id, cover, "cover"); }
+      if (video) { P.msg($("editMsg"), "Uploading video...", ""); files.video_url = await P.upload(saved.id, video, "highlights"); files.video_poster = null; }
+      if (Object.keys(files).length) await sb.from("players").update(files).eq("id", saved.id).throwOnError();
+      $("editDlg").close(); loadPlayers(); window.PSR.toast("Saved");
+    } catch (err) {
+      P.msg($("editMsg"), "Couldn't save: " + (err.message || err), "err");
+    }
+  });
+  $("deletePlayer").addEventListener("click", async () => {
+    if (!editing) return;
+    if ($("deletePlayer").dataset.confirm !== "1") { $("deletePlayer").dataset.confirm = "1"; $("deletePlayer").textContent = "Tap again to delete"; return; }
+    $("deletePlayer").dataset.confirm = ""; $("deletePlayer").textContent = "Delete player";
+    const { error } = await sb.from("players").delete().eq("id", editing.id);
+    if (error) return P.msg($("editMsg"), error.message, "err");
+    $("editDlg").close(); loadPlayers();
+  });
+
+  // ----- Logins -----
+  function openLogin(p) {
+    loginTarget = p;
+    $("loginFor").textContent = `For ${p.name}. They'll be able to edit their contact email, stats, academics, links and video, but not their name, class or scouting report.`;
+    $("loginEmail").value = p.owner_email || p.contact_email || "";
+    $("linkBox").hidden = true; P.msg($("giveMsg"), "", "");
+    $("loginDlg").showModal();
+  }
+  $("closeLogin").addEventListener("click", () => $("loginDlg").close());
+  $("giveLogin").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    P.msg($("giveMsg"), "Creating...", "");
+    try {
+      const j = await api("/api/player-login", { method: "POST", body: JSON.stringify({ playerId: loginTarget.id, email: $("loginEmail").value }) });
+      P.msg($("giveMsg"), `Login ready for ${j.email}.`, "ok");
+      $("linkOut").value = j.link || ""; $("linkBox").hidden = !j.link;
+      loadPlayers();
+    } catch (err) { P.msg($("giveMsg"), err.message, "err"); }
+  });
+  $("copyLink").addEventListener("click", async () => {
+    try { await navigator.clipboard.writeText($("linkOut").value); window.PSR.toast("Link copied"); } catch (e) { $("linkOut").select(); }
+  });
+
+  start();
+})();
+</script>
+</body>
+</html>

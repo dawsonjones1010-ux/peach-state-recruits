@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My Profile | Peach State Recruits</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0a1120">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;1,800&family=Inter:wght@400;500;600;700;800&family=Kaushan+Script&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css?v=2">
+</head>
+<body>
+<header class="nav">
+  <div class="wrap">
+    <a class="logo" href="index.html" id="logo"><span class="logo-text">Peach State Recruits</span></a>
+    <button class="btn btn-line btn-sm" id="signOut" hidden>Sign out</button>
+  </div>
+</header>
+
+<main class="portal wrap">
+  <div id="notReady" class="panel-box" hidden>
+    <h2>Logins aren't turned on yet</h2>
+    <p class="muted">The site's database settings haven't been added. If you're a player, message us on Instagram.</p>
+  </div>
+
+  <!-- Sign in -->
+  <section id="signIn" class="panel-box narrow" hidden>
+    <h1 class="edge">Player login</h1>
+    <p class="muted">Sign in to update your profile, stats, contact email and highlight video.</p>
+    <form id="loginForm" class="form">
+      <label>Email<input type="email" id="email" autocomplete="email" required></label>
+      <label>Password<input type="password" id="password" autocomplete="current-password"></label>
+      <button class="btn btn-peach btn-block" type="submit">Sign in</button>
+      <button class="btn btn-line btn-block" type="button" id="magic">Email me a sign-in link instead</button>
+      <p class="form-msg" id="loginMsg" hidden></p>
+    </form>
+    <p class="small muted">Don't have a login? Peach State Recruits creates one for you with your Elite package or profile page.</p>
+  </section>
+
+  <!-- First visit: set a password -->
+  <section id="setPw" class="panel-box narrow" hidden>
+    <h2>Create your password</h2>
+    <p class="muted">So you can sign in any time with your email and password.</p>
+    <form id="pwForm" class="form">
+      <label>New password<input type="password" id="newPw" minlength="8" autocomplete="new-password" required></label>
+      <button class="btn btn-peach btn-block" type="submit">Save password</button>
+      <button class="btn btn-line btn-block" type="button" id="skipPw">Skip for now</button>
+      <p class="form-msg" id="pwMsg" hidden></p>
+    </form>
+  </section>
+
+  <!-- Edit profile -->
+  <section id="editor" hidden>
+    <div class="portal-head">
+      <div>
+        <p class="script" style="font-size:24px">Your profile</p>
+        <h1 class="edge" id="pName"></h1>
+        <p class="p-class" id="pClass"></p>
+      </div>
+      <div class="portal-actions">
+        <a class="btn btn-peach" id="viewBtn" href="#" target="_blank" rel="noopener">View my profile</a>
+        <button class="btn btn-line" id="copyBtn" type="button">Copy my link</button>
+      </div>
+    </div>
+
+    <form id="profileForm" class="form grid-form">
+      <fieldset>
+        <legend>Contact</legend>
+        <label>Contact email shown to coaches<input type="email" id="f_contact_email" placeholder="parent@email.com"><span class="hint">For athletes under 18, use a parent's email.</span></label>
+        <label>Contact name<input id="f_contact_name" placeholder="e.g. The Chase family"></label>
+      </fieldset>
+      <fieldset>
+        <legend>School and team</legend>
+        <label>High school<input id="f_school"></label>
+        <label>Club or travel team<input id="f_team"></label>
+        <label>City, state<input id="f_location" placeholder="Atlanta, GA"></label>
+      </fieldset>
+      <fieldset>
+        <legend>Measurables</legend>
+        <label>Height<input id="f_height" placeholder="6'2&quot;"></label>
+        <label>Weight<input id="f_weight" placeholder="185 lb"></label>
+        <label class="wide">More (one per line, "Label: value")<textarea id="f_measurables" rows="4" placeholder="FB Velo: 86 mph&#10;60 time: 6.9"></textarea></label>
+      </fieldset>
+      <fieldset>
+        <legend>Stats</legend>
+        <label>Season<input id="f_stats_title" placeholder="2026 Season"></label>
+        <label>Stat names, separated by commas<input id="f_stats_cols" placeholder="IP, ERA, K, AVG"></label>
+        <label class="wide">Your numbers, in the same order<input id="f_stats_row" placeholder="48.1, 2.17, 61, .331"></label>
+      </fieldset>
+      <fieldset>
+        <legend>Academics and links</legend>
+        <label class="wide">Academics (one per line, "Label: value")<textarea id="f_academics" rows="3" placeholder="GPA: 3.6&#10;Intended major: Business"></textarea></label>
+        <label class="wide">Links (one per line, "Label | https://...")<textarea id="f_links" rows="3" placeholder="Hudl | https://www.hudl.com/...&#10;MaxPreps | https://..."></textarea></label>
+      </fieldset>
+      <fieldset>
+        <legend>Highlight video</legend>
+        <div class="wide" id="videoNow"></div>
+        <label class="wide">Upload a new video (MP4 or MOV, up to 50 MB)<input type="file" id="f_video" accept="video/*"></label>
+      </fieldset>
+      <div class="form-foot">
+        <button class="btn btn-peach" type="submit">Save changes</button>
+        <p class="form-msg" id="saveMsg" hidden></p>
+      </div>
+      <p class="small muted">Your name, position, class and scouting report come from your Peach State feature. Message us on Instagram to change them.</p>
+    </form>
+  </section>
+
+  <section id="noProfile" class="panel-box narrow" hidden>
+    <h2>No profile linked yet</h2>
+    <p class="muted">This login isn't connected to a profile. Message us on Instagram and we'll link it.</p>
+  </section>
+</main>
+
+<div class="toast"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js?v=2"></script>
+<script src="shared.js?v=2"></script>
+<script src="portal.js?v=2"></script>
+<script>
+(async function () {
+  const P = window.PORTAL, C = window.PSR_CONFIG, $ = (id) => document.getElementById(id);
+  document.getElementById("logo").insertAdjacentHTML("afterbegin", window.PSR.logoMark(C));
+  const show = (id) => ["signIn", "setPw", "editor", "noProfile", "notReady"].forEach(s => $(s).hidden = s !== id);
+  if (!P.ready) return show("notReady");
+  const sb = P.sb;
+  let player = null;
+
+  $("loginForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!$("password").value) return P.msg($("loginMsg"), "Enter your password, or use the sign-in link button.", "err");
+    const { error } = await sb.auth.signInWithPassword({ email: $("email").value.trim(), password: $("password").value });
+    if (error) P.msg($("loginMsg"), "That email and password don't match. Try the sign-in link instead.", "err");
+    else start(false);
+  });
+  $("magic").addEventListener("click", async () => {
+    const email = $("email").value.trim();
+    if (!email) return P.msg($("loginMsg"), "Enter your email first.", "err");
+    const { error } = await sb.auth.signInWithOtp({ email, options: { shouldCreateUser: false, emailRedirectTo: location.origin + "/account.html" } });
+    P.msg($("loginMsg"), error ? "We couldn't find a login for that email. Message us on Instagram." : "Check your email for a sign-in link.", error ? "err" : "ok");
+  });
+  $("signOut").addEventListener("click", async () => { await sb.auth.signOut(); location.reload(); });
+
+  $("pwForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const { error } = await sb.auth.updateUser({ password: $("newPw").value });
+    if (error) return P.msg($("pwMsg"), error.message, "err");
+    try { localStorage.setItem("psr_pw_set", "1"); } catch (e) {}
+    loadProfile();
+  });
+  $("skipPw").addEventListener("click", loadProfile);
+
+  async function start(fromLink) {
+    const { data } = await sb.auth.getSession();
+    if (!data.session) return show("signIn");
+    $("signOut").hidden = false;
+    let pwSet = false; try { pwSet = localStorage.getItem("psr_pw_set") === "1"; } catch (e) {}
+    if (fromLink && !pwSet) return show("setPw");
+    loadProfile();
+  }
+
+  async function loadProfile() {
+    const { data: { user } } = await sb.auth.getUser();
+    const { data, error } = await sb.from("players").select("*").eq("owner_id", user.id).limit(1);
+    if (error || !data || !data.length) return show("noProfile");
+    player = data[0];
+    fill(player);
+    show("editor");
+  }
+
+  function fill(p) {
+    $("pName").textContent = p.name;
+    $("pClass").textContent = [p.grad_year ? "Class of " + p.grad_year : "", p.school || p.team].filter(Boolean).join(" | ");
+    $("viewBtn").href = "player.html#" + encodeURIComponent(p.slug);
+    ["contact_email", "contact_name", "school", "team", "location", "height", "weight"].forEach(k => $("f_" + k).value = p[k] || "");
+    const base = new Set(["Height", "Weight"]);
+    $("f_measurables").value = P.pairsToText((p.measurables || []).filter(m => !base.has(m.label)));
+    const s = P.statsToFields(p.stats);
+    $("f_stats_title").value = s.title; $("f_stats_cols").value = s.cols; $("f_stats_row").value = s.row;
+    $("f_academics").value = P.pairsToText(p.academics);
+    $("f_links").value = P.linksToText(p.links);
+    $("videoNow").innerHTML = p.video_url
+      ? `<video src="${P.esc(p.video_url)}" controls playsinline preload="metadata" style="width:100%;border-radius:12px"></video>`
+      : `<p class="muted">No highlight video yet.</p>`;
+  }
+
+  $("copyBtn").addEventListener("click", async () => {
+    const link = P.profileLink(player.slug);
+    try { await navigator.clipboard.writeText(link); window.PSR.toast("Profile link copied"); } catch (e) { window.PSR.toast(link); }
+  });
+
+  $("profileForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    P.msg($("saveMsg"), "Saving...", "");
+    try {
+      const height = $("f_height").value.trim(), weight = $("f_weight").value.trim();
+      const measurables = [height && { label: "Height", value: height }, weight && { label: "Weight", value: weight }]
+        .filter(Boolean).concat(P.textToPairs($("f_measurables").value));
+      const update = {
+        contact_email: $("f_contact_email").value.trim() || null,
+        contact_name: $("f_contact_name").value.trim() || null,
+        school: $("f_school").value.trim() || null, team: $("f_team").value.trim() || null,
+        location: $("f_location").value.trim() || null, height: height || null, weight: weight || null,
+        measurables,
+        stats: P.fieldsToStats($("f_stats_title").value, $("f_stats_cols").value, $("f_stats_row").value),
+        academics: P.textToPairs($("f_academics").value),
+        links: P.textToLinks($("f_links").value)
+      };
+      const file = $("f_video").files[0];
+      if (file) {
+        if (file.size > 50 * 1024 * 1024) throw new Error("That video is over 50 MB. Trim it or export at a smaller size.");
+        P.msg($("saveMsg"), "Uploading video...", "");
+        update.video_url = await P.upload(player.id, file, "highlights");
+        update.video_poster = null;
+      }
+      const { data, error } = await sb.from("players").update(update).eq("id", player.id).select().single();
+      if (error) throw error;
+      player = data; fill(player); $("f_video").value = "";
+      P.msg($("saveMsg"), "Saved. Your profile is updated.", "ok");
+    } catch (err) {
+      P.msg($("saveMsg"), "Couldn't save: " + (err.message || err), "err");
+    }
+  });
+
+  // Arriving from an invite or sign-in link
+  const fromLink = /access_token|type=(invite|magiclink|recovery)|code=/.test(location.hash + location.search);
+  sb.auth.onAuthStateChange((evt) => { if (evt === "SIGNED_IN" && fromLink) start(true); });
+  start(fromLink);
+})();
+</script>
+</body>
+</html>

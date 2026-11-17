@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    { "source": "/player/:slug", "destination": "/player.html" }
+  ],
+  "functions": {
+    "api/sync-instagram.js": { "maxDuration": 60 }
+  },
+  "crons": [
+    { "path": "/api/sync-instagram", "schedule": "0 13 * * *" },
+    { "path": "/api/refresh-tokens", "schedule": "0 14 * * 1" }
+  ]
+}

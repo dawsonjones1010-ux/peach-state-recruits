@@ -1,0 +1,3 @@
+# For Apache/Plesk hosting: makes /player/jordan-hayes open the profile page
+RewriteEngine On
+RewriteRule ^player/([^/]+)/?$ player.html [L]
