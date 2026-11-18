@@ -10,6 +10,9 @@ window.PSR_CONFIG = {
   // The anon key is meant to be public; never put the service_role key here.
   supabaseUrl: "",
   supabaseAnonKey: "",
+  // Your site address, e.g. "https://peachstaterecruits.com". Leave empty to use wherever the site is
+  // currently opened (GitHub Pages today). Profile links, QR codes and the URLs shown on the site use this.
+  siteUrl: "",
   logoImage: "",                                    // e.g. "images/logo.png" once you add your logo file
   email: "peachstaterecruitshq@gmail.com",                                      // <-- add your business email (shown in the footer if filled)
   instagram: "peachstaterecruits",                  // main account handle (no @)

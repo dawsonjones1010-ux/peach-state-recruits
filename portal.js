@@ -40,7 +40,7 @@
   }
 
   function profileLink(slug) {
-    return `${location.origin}/player/${encodeURIComponent(slug)}`;
+    return window.PSR.shareProfileUrl ? window.PSR.shareProfileUrl(slug) : `${location.origin}/player/${encodeURIComponent(slug)}`;
   }
 
   window.PORTAL = { sb, ready, esc, pairsToText, textToPairs, linksToText, textToLinks, statsToFields, fieldsToStats, upload, msg, profileLink };

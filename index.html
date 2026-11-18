@@ -9,15 +9,15 @@
 <meta property="og:description" content="Player features, coach-ready highlight videos and recruiting profiles for every sport. 4M+ views, 10K+ followers.">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
-<meta property="og:image" content="images/share.jpg">
+<meta property="og:image" content="https://dawsonjones1010-ux.github.io/peach-state-recruits/images/share.jpg">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="images/share.jpg">
+<meta name="twitter:image" content="https://dawsonjones1010-ux.github.io/peach-state-recruits/images/share.jpg">
 <meta name="theme-color" content="#0a1120">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;1,800&family=Inter:wght@400;500;600;700;800&family=Kaushan+Script&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=2">
+<link rel="stylesheet" href="styles.css?v=3">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"Organization","name":"Peach State Recruits","description":"Sports media company creating player features, highlight videos and recruiting profiles.","sameAs":["https://instagram.com/peachstaterecruits","https://instagram.com/peachstaterecruitsfb","https://instagram.com/peachstaterecruitshq"]}
 </script>
@@ -56,21 +56,23 @@
 <section class="hero dark" id="top" aria-labelledby="heroTitle">
   <div class="wrap hero-grid">
     <div>
-      <span class="badge"><i></i>Player features · Highlight videos · Recruiting profiles</span>
+      <span class="badge"><i></i>Baseball first · Every sport welcome</span>
       <h1 id="heroTitle">Your film.<span class="accent">Featured.</span></h1>
-      <p class="lead">Turn your highlights into a professional player feature. Choose an Instagram feature, a recruiting video or a complete player profile, in any sport.</p>
+      <a class="spot" id="spot" hidden></a>
+      <p class="lead">Professional Instagram features, coach-ready highlight videos and recruiting profiles for baseball players, built from your clips. Football, soccer and every other sport are welcome too.</p>
+      <div class="quick" id="quick" role="group" aria-label="Packages"></div>
+      <p class="quick-note" id="quickNote"></p>
       <div class="hero-cta">
-        <a class="btn btn-peach btn-lg" href="#packages" id="heroBuy">Get featured</a>
-        <a class="btn btn-line btn-lg" href="#picker">Help me choose</a>
+        <a class="btn btn-line" href="#packages" id="heroBuy">Compare packages</a>
+        <a class="btn btn-ghost" href="#picker">Help me choose →</a>
       </div>
-      <p class="hero-note">One-time prices. No contracts and no sales calls. Every sport.</p>
       <div class="stats" id="stats">
         <div><b>4M+</b><span>views on our features</span></div>
         <div><b>10K+</b><span>followers</span></div>
         <div id="statTop"><b>Every</b><span>sport, nationwide</span></div>
       </div>
     </div>
-    <div class="stage" id="stage" aria-label="Recent Peach State Recruits feature covers"></div>
+    <div class="stage" id="stage" aria-label="Recent Peach State Recruits feature covers, baseball first"></div>
   </div>
   <div class="wrap">
     <div class="handles" id="handles"><span>Posted as a collab on</span></div>
@@ -184,7 +186,7 @@
       <p class="small" style="margin-top:16px;color:var(--on-ink-3)">Included for one year with the Elite Recruiting Kit.</p>
     </div>
     <div class="browser reveal" aria-hidden="true">
-      <div class="browser-bar"><i></i><i></i><i></i><div class="url" id="mockUrl">peachstaterecruits.com/player/</div></div>
+      <div class="browser-bar"><i></i><i></i><i></i><div class="url" id="mockUrl"></div></div>
       <div class="mini" id="mini"></div>
       <div class="mini-video"><i><svg width="20" height="20" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="#0a1120"/></svg></i></div>
     </div>
@@ -292,8 +294,8 @@
   <a class="btn btn-peach btn-sm" href="#packages" tabindex="-1">See packages</a>
 </div>
 
-<script src="config.js?v=2"></script>
-<script src="shared.js?v=2"></script>
+<script src="config.js?v=3"></script>
+<script src="shared.js?v=3"></script>
 <script>
 (async function () {
   const C = window.PSR_CONFIG, PSR = window.PSR, { esc, coverOrImage, payLink, loadPlayers, profileUrl, ICON } = PSR;
@@ -309,7 +311,6 @@
   const P = C.packages;
   const minPrice = Math.min(...P.map(p => p.price));
 
-  document.getElementById("heroBuy").textContent = `Get featured from $${minPrice}`;
   document.getElementById("stickyFrom").textContent = `Packages from $${minPrice}, one time`;
 
   // ---- Packages ----
@@ -323,6 +324,18 @@
       <ul class="ticks">${p.features.map(f => `<li>${esc(f)}</li>`).join("")}</ul>
       <p class="plan-terms">${esc(p.clips)}, ${esc(C.terms.revisions)}</p>
     </article>`).join("");
+
+  // Hero quick-pick: every package one tap from the top of the page
+  const bf = (C.compare || []).find(r => /best for/i.test(r.label)) || {};
+  document.getElementById("quick").innerHTML = P.map(p => `
+    <a class="qp ${p.highlight ? "hl" : ""}" href="${esc(payLink(C, p.id))}" ${ext$} aria-label="${esc(orderLabel(p.id, p.name))}: ${esc(p.name)}, $${p.price} ${esc(p.unit)}">
+      <span class="qp-n">${esc(short(p))}</span><span class="qp-p">$${p.price}</span>
+      ${bf[p.id] ? `<span class="qp-b">${esc(bf[p.id])}</span>` : ""}
+      <span class="qp-o">${hasLink(p.id) ? "Order" : "Order on IG"} ${ICON.arrow}</span>
+    </a>`).join("");
+  document.getElementById("quickNote").textContent = Object.values(C.paymentLinks || {}).some(Boolean)
+    ? "One-time prices. Secure card checkout. No contracts."
+    : "One-time prices, no contracts. Tap a package to order by Instagram DM and we'll send you a payment link.";
 
   document.getElementById("addons").innerHTML = `
     <div class="addon reveal"><div><b>Player profile page</b><span>Add a coach-ready profile to any feature</span></div>
@@ -425,18 +438,26 @@
   if (RF[1]) document.getElementById("teamsBox").style.backgroundImage = `url("${RF[1].image}")`;
   if (RF[2]) document.getElementById("closing").style.backgroundImage = `url("${RF[2].image}")`;
 
+  const isBB = (x) => /baseball/i.test(x.sport || "");
+  const heroRF = [...RF.filter(isBB), ...RF.filter(f => !isBB(f))];
   const stage = document.getElementById("stage");
-  const SR = RF.slice(0, 4);
+  const SR = heroRF.slice(0, 3);
   stage.innerHTML = SR.map((f, i) => `<div class="card" data-pos="${i}"><img src="${esc(f.image)}" alt="${esc(f.name)} feature cover" width="1080" height="1432" ${i === 0 ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async"><span class="views">${views(f)}</span></div>`).join("");
+  // Tap/hover a back card to bring it forward; the baseball feature returns to the front afterwards
   const cards = [...stage.querySelectorAll(".card")];
-  if (cards.length > 1 && !PSR.reducedMotion()) {
-    let i = 0, timer;
-    const spin = () => { i = (i + 1) % cards.length; cards.forEach((c, k) => c.dataset.pos = (k - i + cards.length) % cards.length); };
-    const start = () => { clearInterval(timer); timer = setInterval(spin, 4000); };
-    stage.addEventListener("mouseenter", () => clearInterval(timer));
-    stage.addEventListener("mouseleave", start);
-    document.addEventListener("visibilitychange", () => document.hidden ? clearInterval(timer) : start());
-    start();
+  const front = (k) => cards.forEach((c, j) => c.dataset.pos = (j - k + cards.length) % cards.length);
+  cards.forEach((c, k) => { c.addEventListener("mouseenter", () => front(k)); });
+  stage.addEventListener("mouseleave", () => front(0));
+
+  // Mobile spotlight: the lead baseball feature right under the headline
+  const sp = heroRF[0];
+  if (sp) {
+    const spot = document.getElementById("spot");
+    spot.href = sp.profile ? profileUrl(sp.profile) : (sp.postUrl || "https://instagram.com/" + sp.account);
+    if (!sp.profile) { spot.target = "_blank"; spot.rel = "noopener"; }
+    spot.innerHTML = `<img src="${esc(sp.image)}" alt="${esc(sp.name)} feature cover" width="1080" height="1432" fetchpriority="high" decoding="async">
+      <span class="spot-t"><span class="spot-k">${isBB(sp) ? "Latest baseball feature" : "Latest feature"}</span><b>${esc(sp.name)}</b><span>${esc(sp.detail || "")}</span>${sp.views ? `<span class="chip-views">${ICON.eye}${esc(sp.views)} views</span>` : ""}</span>`;
+    spot.hidden = false;
   }
 
   document.getElementById("work-grid").innerHTML = RF.map(f => {
@@ -458,7 +479,7 @@
   const first = players.find(p => p.slug === C.featuredProfile) || players[0];
   if (first) {
     document.getElementById("sampleBtn").href = profileUrl(first.slug);
-    document.getElementById("mockUrl").textContent = `peachstaterecruits.com/player/${first.slug}`;
+    document.getElementById("mockUrl").textContent = PSR.displayUrl(PSR.shareProfileUrl(first.slug));
     const m = (first.measurables || []).slice(0, 3);
     document.getElementById("mini").innerHTML = `
       <div class="c">${coverOrImage(first)}</div>
@@ -473,7 +494,9 @@
 
   // ---- Player finder: search + sport + class year ----
   const qEl = document.getElementById("q"), yEl = document.getElementById("year"), sEl = document.getElementById("sports");
-  const sports = [...new Set(players.map(p => p.sport).filter(Boolean))].sort();
+  const sportRank = (x) => /baseball/i.test(x || "") ? 0 : 1;
+  const sports = [...new Set(players.map(p => p.sport).filter(Boolean))].sort((a, b) => sportRank(a) - sportRank(b) || a.localeCompare(b));
+  players.sort((a, b) => sportRank(a.sport) - sportRank(b.sport));
   const years = [...new Set(players.map(p => p.gradYear).filter(Boolean))].sort();
   yEl.insertAdjacentHTML("beforeend", years.map(y => `<option value="${esc(y)}">Class of ${esc(y)}</option>`).join(""));
   sEl.innerHTML = ["All sports", ...sports].map((s, i) => `<button type="button" class="pill" aria-pressed="${i === 0}" data-sport="${i === 0 ? "" : esc(s)}">${esc(s)}</button>`).join("");

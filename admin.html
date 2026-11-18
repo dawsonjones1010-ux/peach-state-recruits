@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;1,800&family=Inter:wght@400;500;600;700;800&family=Kaushan+Script&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=2">
+<link rel="stylesheet" href="styles.css?v=3">
 </head>
 <body>
 <header class="nav">
@@ -136,9 +136,9 @@
 
 <div class="toast"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="config.js?v=2"></script>
-<script src="shared.js?v=2"></script>
-<script src="portal.js?v=2"></script>
+<script src="config.js?v=3"></script>
+<script src="shared.js?v=3"></script>
+<script src="portal.js?v=3"></script>
 <script>
 (async function () {
   const P = window.PORTAL, C = window.PSR_CONFIG, esc = P.esc, $ = (id) => document.getElementById(id);
@@ -165,7 +165,7 @@
   $("signUp").addEventListener("click", async () => {
     const email = $("email").value.trim(), password = $("password").value;
     if (!email || password.length < 8) return P.msg($("loginMsg"), "Enter your email and a password of at least 8 characters.", "err");
-    const { error } = await sb.auth.signUp({ email, password, options: { emailRedirectTo: location.origin + "/admin.html" } });
+    const { error } = await sb.auth.signUp({ email, password, options: { emailRedirectTo: window.PSR.siteBase() + "/admin.html" } });
     P.msg($("loginMsg"), error ? error.message : "Account created. If Supabase sent a confirmation email, confirm it, then sign in.", error ? "err" : "ok");
   });
   $("signOut").addEventListener("click", async () => { await sb.auth.signOut(); location.reload(); });

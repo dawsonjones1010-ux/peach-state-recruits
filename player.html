@@ -8,15 +8,15 @@
 <meta name="description" content="Recruiting profile by Peach State Recruits.">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
-<meta property="og:image" content="images/share.jpg">
+<meta property="og:image" content="https://dawsonjones1010-ux.github.io/peach-state-recruits/images/share.jpg">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="images/share.jpg">
+<meta name="twitter:image" content="https://dawsonjones1010-ux.github.io/peach-state-recruits/images/share.jpg">
 <meta name="theme-color" content="#0a1120">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;1,800&family=Inter:wght@400;500;600;700;800&family=Kaushan+Script&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=2">
+<link rel="stylesheet" href="styles.css?v=3">
 </head>
 <body>
 <a class="skip" href="#app">Skip to profile</a>
@@ -64,8 +64,8 @@
   </div>
 </dialog>
 
-<script src="config.js?v=2"></script>
-<script src="shared.js?v=2"></script>
+<script src="config.js?v=3"></script>
+<script src="shared.js?v=3"></script>
 <script>
 (async function () {
   const C = window.PSR_CONFIG, PSR = window.PSR, { esc, coverOrImage, toast, ICON } = PSR;
@@ -103,8 +103,8 @@
     document.title = `${p.name} | ${[p.sport, p.position, cls].filter(Boolean).join(" · ")} | Peach State Recruits`;
     const md = document.querySelector('meta[name="description"]');
     if (md) md.content = `${p.name}: ${[p.sport, p.position, cls, p.school || p.team].filter(Boolean).join(", ")}. Highlights, measurables and contact. Recruiting profile by Peach State Recruits.`;
-    const liveUrl = location.origin + location.pathname.replace(/\/player(\.html)?(\/.*)?$/, "") + "/player/" + p.slug;
-    const shareUrl = location.pathname.includes("/player/") ? location.href.split("#")[0] : liveUrl;
+    const liveUrl = PSR.shareProfileUrl(p.slug);
+    const shareUrl = liveUrl;
 
     const classSchool = [cls, p.school, p.team].filter(Boolean).join(" · ");
     const subject = encodeURIComponent(`Recruiting inquiry: ${p.name} (${p.sport}, Class of ${p.gradYear || ""})`);

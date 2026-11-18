@@ -112,6 +112,19 @@
   // Works for /player/slug (live site), player.html?p=slug and player.html#slug (preview)
   function profileUrl(slug) { return `player.html#${encodeURIComponent(slug)}`; }
 
+  // The site's address: config.siteUrl if set, otherwise the current origin + folder
+  // (e.g. https://user.github.io/peach-state-recruits). No trailing slash.
+  function siteBase() {
+    const set = String(C().siteUrl || "").trim();
+    if (set) return set.replace(/\/+$/, "");
+    const path = location.pathname.replace(/\/player\/[^/]*\/?$/, "/").replace(/[^/]*$/, "");
+    return (location.origin + path).replace(/\/+$/, "");
+  }
+  // Shareable profile link (/player/slug works on Vercel, Apache and GitHub Pages via 404.html)
+  function shareProfileUrl(slug) { return `${siteBase()}/player/${encodeURIComponent(slug)}`; }
+  // The same address without https:// or www., for showing on the page
+  function displayUrl(url) { return String(url).replace(/^https?:\/\//, "").replace(/^www\./, ""); }
+
   // ---- v2 helpers: icons, nav, motion, sharing, QR ----
   const ICON = {
     eye: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>',
@@ -174,7 +187,7 @@
   function loadQr() {
     if (window.qrcode) return Promise.resolve(window.qrcode);
     if (!qrLoading) qrLoading = new Promise((res, rej) => {
-      const s = document.createElement("script"); s.src = "vendor/qrcode.min.js?v=2"; s.async = true;
+      const s = document.createElement("script"); s.src = "vendor/qrcode.min.js?v=3"; s.async = true;
       s.onload = () => res(window.qrcode); s.onerror = rej; document.head.appendChild(s);
     });
     return qrLoading;
@@ -188,6 +201,6 @@
     return `<svg viewBox="0 0 ${size} ${size}" role="img" aria-label="${esc(label || "QR code")}" shape-rendering="crispEdges"><rect width="${size}" height="${size}" fill="#fff"/><path d="${d}" fill="#0a1120"/></svg>`;
   }
 
-  window.PSR = { esc, LOGO, logoMark, cover, coverOrImage, payLink, toast, loadPlayers, recentFromPlayers, fromRow, hasDb, profileUrl,
+  window.PSR = { esc, LOGO, logoMark, cover, coverOrImage, payLink, toast, loadPlayers, recentFromPlayers, fromRow, hasDb, profileUrl, siteBase, shareProfileUrl, displayUrl,
     ICON, initNav, reveal, copyText, shareLink, qrSvg, reducedMotion };
 })();
