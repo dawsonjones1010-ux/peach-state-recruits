@@ -8,8 +8,8 @@ window.PSR_CONFIG = {
 
   // Live database (Supabase > Project Settings > API). Leave empty to use players.json.
   // The anon key is meant to be public; never put the service_role key here.
-  supabaseUrl: "",
-  supabaseAnonKey: "",
+  supabaseUrl: "https://eqghenbqsbvifzkzkdwf.supabase.co",
+  supabaseAnonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxZ2hlbmJxc2J2aWZ6a3prZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ5NTY5MjEsImV4cCI6MjExMDUzMjkyMX0.pwif5mJfKb1Lxmz7ydJ2BizPl-jiOHb1mnQzoxCgTig",
   // Your site address, e.g. "https://peachstaterecruits.com". Leave empty to use wherever the site is
   // currently opened (GitHub Pages today). Profile links, QR codes and the URLs shown on the site use this.
   siteUrl: "",

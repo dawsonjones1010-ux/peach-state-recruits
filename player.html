@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;1,800&family=Inter:wght@400;500;600;700;800&family=Kaushan+Script&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=3">
+<link rel="stylesheet" href="styles.css?v=4">
 </head>
 <body>
 <a class="skip" href="#app">Skip to profile</a>
@@ -64,8 +64,8 @@
   </div>
 </dialog>
 
-<script src="config.js?v=3"></script>
-<script src="shared.js?v=3"></script>
+<script src="config.js?v=4"></script>
+<script src="shared.js?v=4"></script>
 <script>
 (async function () {
   const C = window.PSR_CONFIG, PSR = window.PSR, { esc, coverOrImage, toast, ICON } = PSR;
@@ -99,6 +99,7 @@
         <a class="btn btn-peach" href="${base}index.html#players">Browse player profiles</a></div>`;
       return;
     }
+    PSR.countView(p.slug);
     const cls = p.gradYear ? "Class of " + p.gradYear : "";
     document.title = `${p.name} | ${[p.sport, p.position, cls].filter(Boolean).join(" · ")} | Peach State Recruits`;
     const md = document.querySelector('meta[name="description"]');

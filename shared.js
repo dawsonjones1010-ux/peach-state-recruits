@@ -75,7 +75,8 @@
       postUrl: r.post_url, views: r.views, viewsAsOf: r.views_as_of,
       contactEmail: r.contact_email, contactName: r.contact_name || "Peach State Recruits",
       contactInstagram: r.contact_email ? "" : r.ig_account,
-      showOnHome: r.show_on_home, active: r.published, account: r.ig_account
+      showOnHome: r.show_on_home, active: r.published, account: r.ig_account,
+      sample: !!r.sample, sampleNote: r.sample_note || ""
     };
   }
 
@@ -95,6 +96,22 @@
     } catch (e) {
       return window.PSR_PLAYERS || [];
     }
+  }
+
+  // Counts a profile view for the owner dashboard (database mode only; no personal data stored).
+  function countView(slug) {
+    if (!hasDb() || !slug) return;
+    try {
+      const key = "psr_v_" + slug;
+      if (sessionStorage.getItem(key)) return;
+      sessionStorage.setItem(key, "1");
+      const ref = document.referrer ? new URL(document.referrer).hostname.replace(/^www\./, "").slice(0, 38) : "direct";
+      fetch(`${C().supabaseUrl}/rest/v1/profile_views`, {
+        method: "POST", keepalive: true,
+        headers: { apikey: C().supabaseAnonKey, Authorization: `Bearer ${C().supabaseAnonKey}`, "Content-Type": "application/json", Prefer: "return=minimal" },
+        body: JSON.stringify({ slug, source: ref })
+      }).catch(() => {});
+    } catch (e) {}
   }
 
   // Homepage "Recent features": newest synced posts, or the hand-entered list in config.js
@@ -187,7 +204,7 @@
   function loadQr() {
     if (window.qrcode) return Promise.resolve(window.qrcode);
     if (!qrLoading) qrLoading = new Promise((res, rej) => {
-      const s = document.createElement("script"); s.src = "vendor/qrcode.min.js?v=3"; s.async = true;
+      const s = document.createElement("script"); s.src = "vendor/qrcode.min.js?v=4"; s.async = true;
       s.onload = () => res(window.qrcode); s.onerror = rej; document.head.appendChild(s);
     });
     return qrLoading;
@@ -201,6 +218,6 @@
     return `<svg viewBox="0 0 ${size} ${size}" role="img" aria-label="${esc(label || "QR code")}" shape-rendering="crispEdges"><rect width="${size}" height="${size}" fill="#fff"/><path d="${d}" fill="#0a1120"/></svg>`;
   }
 
-  window.PSR = { esc, LOGO, logoMark, cover, coverOrImage, payLink, toast, loadPlayers, recentFromPlayers, fromRow, hasDb, profileUrl, siteBase, shareProfileUrl, displayUrl,
+  window.PSR = { esc, LOGO, logoMark, cover, coverOrImage, payLink, toast, loadPlayers, countView, recentFromPlayers, fromRow, hasDb, profileUrl, siteBase, shareProfileUrl, displayUrl,
     ICON, initNav, reveal, copyText, shareLink, qrSvg, reducedMotion };
 })();

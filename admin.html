@@ -3,20 +3,23 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Admin | Peach State Recruits</title>
+<title>Owner dashboard | Peach State Recruits</title>
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#0a1120">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;1,800&family=Inter:wght@400;500;600;700;800&family=Kaushan+Script&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=3">
+<link rel="stylesheet" href="styles.css?v=4">
 </head>
-<body>
+<body class="admin-body">
 <header class="nav">
   <div class="wrap">
     <a class="logo" href="index.html" id="logo"><span class="logo-text">Peach State Recruits</span></a>
-    <button class="btn btn-line btn-sm" id="signOut" hidden>Sign out</button>
+    <div class="nav-right">
+      <span class="owner-chip" id="whoami" hidden></span>
+      <button class="btn btn-line btn-sm" id="signOut" hidden>Sign out</button>
+    </div>
   </div>
 </header>
 
@@ -26,28 +29,114 @@
     <p class="muted">Add <code>supabaseUrl</code> and <code>supabaseAnonKey</code> to <code>config.js</code>, following SETUP.md.</p>
   </div>
 
-  <section id="signIn" class="panel-box narrow" hidden>
-    <h1 class="edge">Admin</h1>
-    <form id="loginForm" class="form">
-      <label>Email<input type="email" id="email" autocomplete="email" required></label>
-      <label>Password<input type="password" id="password" autocomplete="current-password" required minlength="8"></label>
-      <button class="btn btn-peach btn-block" type="submit">Sign in</button>
-      <button class="btn btn-line btn-block" type="button" id="signUp">First time? Create the admin account</button>
-      <p class="form-msg" id="loginMsg" hidden></p>
-    </form>
+  <!-- Sign in -->
+  <section id="signIn" class="auth-card" hidden>
+    <div class="auth-side">
+      <p class="script">Owner</p>
+      <h1>Dashboard</h1>
+      <ul class="auth-points">
+        <li>Every player, live and hidden, in one list</li>
+        <li>Give families a login in two taps</li>
+        <li>Track orders and your daily feature goal</li>
+        <li>Profile views and Instagram sync at a glance</li>
+      </ul>
+    </div>
+    <div class="auth-form">
+      <h2 id="authTitle">Sign in</h2>
+      <p class="muted small" id="authLead">For the Peach State Recruits owner account.</p>
+      <form id="loginForm" class="form">
+        <label>Email<input type="email" id="email" autocomplete="email" required placeholder="you@email.com"></label>
+        <label>Password<input type="password" id="password" autocomplete="current-password" required minlength="8"></label>
+        <label id="codeWrap" hidden>One-time setup code<input id="setupCode" autocomplete="off" autocapitalize="characters" placeholder="PSR-XXXX-XXXX"><span class="hint">From your web setup message. Only needed once.</span></label>
+        <button class="btn btn-peach btn-block" type="submit" id="authSubmit">Sign in</button>
+        <button class="btn btn-line btn-block" type="button" id="toggleMode">First time here? Create your owner account</button>
+        <button class="link-btn" type="button" id="forgot">Forgot password?</button>
+        <p class="form-msg" id="loginMsg" hidden></p>
+      </form>
+    </div>
   </section>
 
   <section id="notAdmin" class="panel-box narrow" hidden>
-    <h2>Almost there</h2>
-    <p class="muted">You're signed in, but this account isn't an admin yet. In Supabase, open the SQL Editor and run:</p>
-    <pre class="code" id="adminSql"></pre>
-    <p class="muted">Then refresh this page.</p>
+    <h2>This account isn't the owner</h2>
+    <p class="muted" id="notAdminText">You're signed in, but only the Peach State Recruits owner account can open the dashboard. Players can edit their profile on the <a href="account.html">player login</a> page.</p>
+    <p class="muted small">Signed in as <b id="notAdminEmail"></b>. If this should be an owner account, ask your web person to add it.</p>
   </section>
 
+  <!-- Dashboard -->
   <section id="dash" hidden>
-    <div class="portal-head"><h1 class="edge">Admin</h1></div>
+    <div class="dash-head">
+      <div>
+        <p class="script" id="greet">Welcome back</p>
+        <h1 class="edge">Owner dashboard</h1>
+        <p class="muted" id="todayLine"></p>
+      </div>
+      <div class="portal-actions">
+        <button class="btn btn-peach" id="addOrderTop">+ New order</button>
+        <button class="btn btn-line" id="addPlayer">+ Add player</button>
+        <a class="btn btn-line" href="index.html" target="_blank" rel="noopener">View site</a>
+      </div>
+    </div>
 
-    <div class="panel-box">
+    <nav class="dash-tabs" aria-label="Dashboard sections">
+      <a href="#overview" class="on">Overview</a><a href="#orders">Orders</a><a href="#playersSec">Players</a><a href="#instagram">Instagram</a>
+    </nav>
+
+    <!-- Overview -->
+    <div id="overview" class="dash-sec">
+      <div class="kpis" id="kpis"></div>
+      <div class="dash-grid">
+        <div class="panel-box">
+          <div class="row-between"><h3>Today's goal</h3><span class="muted small" id="goalNote"></span></div>
+          <div class="goal"><div class="goal-bar"><span id="goalFill"></span></div><b id="goalText"></b></div>
+          <p class="muted small">Features ordered today against your 7-a-day target. Log each sale under Orders.</p>
+          <div class="mini-stats" id="moneyStats"></div>
+        </div>
+        <div class="panel-box">
+          <h3>Players by sport</h3>
+          <div class="bars" id="sportBars"></div>
+        </div>
+        <div class="panel-box">
+          <h3>Most viewed profiles</h3>
+          <p class="muted small">Last 30 days</p>
+          <ol class="toplist" id="topViews"></ol>
+        </div>
+        <div class="panel-box">
+          <h3>Recently added</h3>
+          <ol class="toplist" id="recentList"></ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- Orders -->
+    <div id="orders" class="panel-box dash-sec">
+      <div class="row-between">
+        <h2>Orders</h2>
+        <div class="portal-actions">
+          <select id="orderFilter" class="mini-select" aria-label="Filter orders">
+            <option value="open">Open orders</option><option value="all">All orders</option><option value="unpaid">Unpaid</option><option value="Delivered">Delivered</option>
+          </select>
+          <button class="btn btn-peach btn-sm" id="addOrder">+ New order</button>
+        </div>
+      </div>
+      <div class="pipeline" id="pipeline"></div>
+      <div id="orderList" class="order-list"></div>
+    </div>
+
+    <!-- Players -->
+    <div id="playersSec" class="panel-box dash-sec">
+      <div class="row-between">
+        <h2>Players</h2>
+        <button class="btn btn-line btn-sm" id="addPlayer2">+ Add a player by hand</button>
+      </div>
+      <div class="filter-row">
+        <input id="search" class="search" placeholder="Search by name, sport, school or email" aria-label="Search players">
+        <div class="chips" id="playerChips"></div>
+      </div>
+      <div id="players" class="player-list"></div>
+    </div>
+
+    <!-- Instagram -->
+    <div id="instagram" class="panel-box dash-sec">
       <div class="row-between">
         <h2>Instagram sync</h2>
         <div class="portal-actions">
@@ -55,7 +144,11 @@
           <button class="btn btn-line btn-sm" id="syncFull" title="Checks your last ~100 posts">Sync older posts</button>
         </div>
       </div>
-      <p class="muted small">New feature posts are added automatically once a day. Posts whose caption doesn't start with "Name | Position | Class | ..." are ignored.</p>
+      <p class="muted small">Once an account is connected, new feature posts become player profiles automatically every 3 hours. Posts whose caption doesn't start with "Name | Position | Class | ..." are skipped.</p>
+      <div id="igSetup" class="setup-note" hidden>
+        <b>Instagram sync isn't set up yet.</b>
+        <span>Everything else on this page works without it. To turn it on, create a Meta developer app ("Manage messaging &amp; content on Instagram"), generate a token for each account, and paste it below. Full steps are in SETUP.md, step 4.</span>
+      </div>
       <div id="accounts" class="acct-list"></div>
       <form id="tokenForm" class="form inline-form">
         <label>Account<select id="tokHandle"></select></label>
@@ -63,15 +156,6 @@
         <button class="btn btn-line btn-sm" type="submit">Connect</button>
       </form>
       <p class="form-msg" id="syncMsg" hidden></p>
-    </div>
-
-    <div class="panel-box">
-      <div class="row-between">
-        <h2>Players</h2>
-        <button class="btn btn-line btn-sm" id="addPlayer">Add a player by hand</button>
-      </div>
-      <input id="search" class="search" placeholder="Search by name, sport or school">
-      <div id="players" class="player-list"></div>
     </div>
   </section>
 </main>
@@ -127,18 +211,42 @@
     <button class="btn btn-peach btn-block" type="submit">Create login link</button>
     <p class="form-msg" id="giveMsg" hidden></p>
     <div id="linkBox" hidden>
-      <p class="small muted">Send this link by DM or text. It signs them in once, then they create a password.</p>
+      <p class="small muted">Send this link by DM or text. It signs them in once, then they create a password. It expires after about an hour, so send it right away. You can make a new one any time.</p>
       <textarea id="linkOut" rows="3" readonly></textarea>
       <button class="btn btn-line btn-block" type="button" id="copyLink">Copy link</button>
     </div>
   </form>
 </dialog>
 
+<!-- Order dialog -->
+<dialog id="orderDlg" class="dlg">
+  <form id="orderForm" class="form grid-form" method="dialog">
+    <div class="row-between wide"><h2 id="orderTitle">New order</h2><button class="btn btn-line btn-sm" type="button" id="closeOrder">Close</button></div>
+    <label>Player name<input id="o_player_name" required placeholder="e.g. Clark Chase"></label>
+    <label>Parent or buyer name<input id="o_customer_name"></label>
+    <label>Contact (IG handle, phone or email)<input id="o_contact" placeholder="@handle"></label>
+    <label>Sport<input id="o_sport" list="sports" value="Baseball"></label>
+    <label>Package<select id="o_package"></select></label>
+    <label>Amount ($)<input id="o_amount" type="number" min="0" step="1" inputmode="numeric"></label>
+    <label>Stage<select id="o_stage"></select></label>
+    <label>Instagram account<select id="o_account"><option value="peachstaterecruits">@peachstaterecruits</option><option value="peachstaterecruitsfb">@peachstaterecruitsfb</option><option value="peachstaterecruitshq">@peachstaterecruitshq</option></select></label>
+    <label>Paid with<select id="o_payment_method"><option value="">Not paid yet</option><option>Cash App</option><option>Zelle</option><option>Venmo</option><option>PayPal</option><option>Apple Pay</option><option>Card</option><option>Other</option></select></label>
+    <label>Linked profile<select id="o_player_id"><option value="">None</option></select></label>
+    <label class="wide">Notes<textarea id="o_notes" rows="2" placeholder="Clips received? Special requests?"></textarea></label>
+    <div class="wide checks"><label class="check"><input type="checkbox" id="o_paid"> Paid</label></div>
+    <div class="form-foot wide">
+      <button class="btn btn-peach" type="submit">Save order</button>
+      <button class="btn btn-line" type="button" id="deleteOrder">Delete order</button>
+      <p class="form-msg" id="orderMsg" hidden></p>
+    </div>
+  </form>
+</dialog>
+
 <div class="toast"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="config.js?v=3"></script>
-<script src="shared.js?v=3"></script>
-<script src="portal.js?v=3"></script>
+<script src="config.js?v=4"></script>
+<script src="shared.js?v=4"></script>
+<script src="portal.js?v=4"></script>
 <script>
 (async function () {
   const P = window.PORTAL, C = window.PSR_CONFIG, esc = P.esc, $ = (id) => document.getElementById(id);
@@ -146,111 +254,324 @@
   const show = (id) => ["signIn", "notAdmin", "dash", "notReady"].forEach(s => $(s).hidden = s !== id);
   if (!P.ready) return show("notReady");
   const sb = P.sb;
-  let players = [], editing = null, loginTarget = null;
+  const FN = (name) => `${C.supabaseUrl.replace(/\/+$/, "")}/functions/v1/${name}`;
+  const STAGES = ["New", "Clips Pending", "Editing", "Ready to Post", "Posted", "Delivered"];
+  const PKGS = [...(C.packages || []).map(p => ({ id: p.name.replace(/ Feature| Recruiting Kit/, ""), price: p.price })),
+    { id: "Profile", price: (C.profileAddon || {}).price || 49 }, { id: "Team", price: (C.team || {}).price || 349 }];
+  const money = (n) => "$" + Number(n || 0).toLocaleString(undefined, { maximumFractionDigits: 0 });
+  let players = [], orders = [], views = [], editing = null, loginTarget = null, editingOrder = null, chip = "all", signUpMode = false;
 
+  // ---------- Auth ----------
   async function token() { return (await sb.auth.getSession()).data.session?.access_token; }
-  async function api(path, opts = {}) {
-    const r = await fetch(path, { ...opts, headers: { "Content-Type": "application/json", Authorization: `Bearer ${await token()}` } });
+  async function api(name, opts = {}) {
+    const r = await fetch(FN(name), { ...opts, headers: { "Content-Type": "application/json", apikey: C.supabaseAnonKey, Authorization: `Bearer ${await token()}` } });
     const j = await r.json().catch(() => ({}));
-    if (!r.ok) throw new Error(j.error || `Request failed (${r.status})`);
+    if (!r.ok) throw new Error(j.error || j.message || `Request failed (${r.status})`);
     return j;
   }
-
+  function setMode(up) {
+    signUpMode = up;
+    $("authTitle").textContent = up ? "Create your owner account" : "Sign in";
+    $("authLead").textContent = up ? "One time only: use the owner email, choose a password, and enter your setup code." : "For the Peach State Recruits owner account.";
+    $("authSubmit").textContent = up ? "Create account and sign in" : "Sign in";
+    $("toggleMode").textContent = up ? "Already have an account? Sign in" : "First time here? Create your owner account";
+    $("password").autocomplete = up ? "new-password" : "current-password";
+    $("codeWrap").hidden = !up; $("setupCode").required = up; $("forgot").hidden = up;
+    if (up && !$("email").value) $("email").value = C.email || "";
+    P.msg($("loginMsg"), "", "");
+  }
+  $("toggleMode").addEventListener("click", () => setMode(!signUpMode));
   $("loginForm").addEventListener("submit", async (e) => {
     e.preventDefault();
-    const { error } = await sb.auth.signInWithPassword({ email: $("email").value.trim(), password: $("password").value });
-    if (error) return P.msg($("loginMsg"), error.message, "err");
-    start();
-  });
-  $("signUp").addEventListener("click", async () => {
     const email = $("email").value.trim(), password = $("password").value;
-    if (!email || password.length < 8) return P.msg($("loginMsg"), "Enter your email and a password of at least 8 characters.", "err");
-    const { error } = await sb.auth.signUp({ email, password, options: { emailRedirectTo: window.PSR.siteBase() + "/admin.html" } });
-    P.msg($("loginMsg"), error ? error.message : "Account created. If Supabase sent a confirmation email, confirm it, then sign in.", error ? "err" : "ok");
+    if (signUpMode) {
+      if (password.length < 8) return P.msg($("loginMsg"), "Use a password of at least 8 characters.", "err");
+      P.msg($("loginMsg"), "Creating your account...", "");
+      try {
+        const r = await fetch(FN("owner-setup"), { method: "POST", headers: { "Content-Type": "application/json", apikey: C.supabaseAnonKey }, body: JSON.stringify({ email, password, code: $("setupCode").value }) });
+        const j = await r.json().catch(() => ({}));
+        if (!r.ok) return P.msg($("loginMsg"), j.error || `Couldn't create the account (${r.status}).`, "err");
+      } catch (err) { return P.msg($("loginMsg"), "Couldn't reach the server. Check your connection and try again.", "err"); }
+      setMode(false); $("email").value = email; $("password").value = password;
+    }
+    P.msg($("loginMsg"), "Signing in...", "");
+    const { error } = await sb.auth.signInWithPassword({ email, password });
+    if (error) {
+      const m = /confirm/i.test(error.message) ? "Confirm your email first: open the link we emailed you, then sign in here." : (/invalid/i.test(error.message) ? "That email and password don't match." : error.message);
+      return P.msg($("loginMsg"), m, "err");
+    }
+    P.msg($("loginMsg"), "", ""); start();
   });
-  $("signOut").addEventListener("click", async () => { await sb.auth.signOut(); location.reload(); });
+  $("forgot").addEventListener("click", async () => {
+    const email = $("email").value.trim();
+    if (!email) return P.msg($("loginMsg"), "Enter your email above first.", "err");
+    const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: window.PSR.siteBase() + "/admin.html" });
+    P.msg($("loginMsg"), error ? error.message : "If that email has an account, a reset link is on its way.", error ? "err" : "ok");
+  });
+  $("signOut").addEventListener("click", async () => { await sb.auth.signOut(); location.replace(location.pathname); });
+
+  // Password reset link lands here: let them choose a new password
+  sb.auth.onAuthStateChange(async (evt) => {
+    if (evt === "PASSWORD_RECOVERY") {
+      const pw = prompt("Choose a new password (at least 8 characters):");
+      if (pw && pw.length >= 8) { const { error } = await sb.auth.updateUser({ password: pw }); window.PSR.toast(error ? error.message : "Password updated"); }
+      start();
+    }
+  });
 
   async function start() {
     const { data } = await sb.auth.getSession();
     if (!data.session) return show("signIn");
     $("signOut").hidden = false;
-    const uid = data.session.user.id;
-    const { data: adm } = await sb.from("admins").select("user_id").eq("user_id", uid);
-    if (!adm || !adm.length) {
-      $("adminSql").textContent = `insert into public.admins (user_id) values ('${uid}');`;
-      return show("notAdmin");
-    }
+    const user = data.session.user;
+    $("whoami").textContent = user.email; $("whoami").hidden = false;
+    const { data: adm } = await sb.from("admins").select("user_id").eq("user_id", user.id);
+    if (!adm || !adm.length) { $("notAdminEmail").textContent = user.email; return show("notAdmin"); }
     show("dash");
-    loadAccounts(); loadPlayers();
+    const h = new Date().getHours();
+    $("greet").textContent = h < 12 ? "Good morning" : h < 18 ? "Good afternoon" : "Good evening";
+    $("todayLine").textContent = new Date().toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" });
+    await Promise.all([loadPlayers(), loadOrders(), loadViews()]);
+    renderOverview();
+    loadAccounts();
   }
 
-  // ----- Instagram -----
+  // ---------- Data ----------
+  async function loadPlayers() {
+    const { data, error } = await sb.from("players").select("*").order("posted_at", { ascending: false, nullsFirst: false }).order("created_at", { ascending: false });
+    if (error) { $("players").innerHTML = `<p class="form-msg err">${esc(error.message)}</p>`; return; }
+    players = data || []; renderPlayers(); fillPlayerSelect();
+  }
+  async function loadOrders() {
+    const { data, error } = await sb.from("orders").select("*").order("created_at", { ascending: false }).limit(500);
+    orders = error ? [] : (data || []);
+    if (error) $("orderList").innerHTML = `<p class="form-msg err">${esc(error.message)}</p>`; else renderOrders();
+  }
+  async function loadViews() {
+    const since = new Date(Date.now() - 30 * 864e5).toISOString();
+    const { data } = await sb.from("profile_views").select("slug,viewed_at").gte("viewed_at", since).limit(10000);
+    views = data || [];
+  }
+  const refreshAll = async () => { await Promise.all([loadPlayers(), loadOrders()]); renderOverview(); };
+
+  // ---------- Overview ----------
+  function renderOverview() {
+    const startOf = (d) => { const x = new Date(); x.setHours(0, 0, 0, 0); x.setDate(x.getDate() - d); return x; };
+    const today = startOf(0), week = startOf(6), month = startOf(29);
+    const inRange = (o, from) => new Date(o.created_at) >= from;
+    const paidSum = (from) => orders.filter(o => o.paid && new Date(o.paid_at || o.created_at) >= from).reduce((s, o) => s + Number(o.amount || 0), 0);
+    const pub = players.filter(p => p.published).length;
+    const logins = players.filter(p => p.owner_email).length;
+    const open = orders.filter(o => o.stage !== "Delivered").length;
+    const v7 = views.filter(v => new Date(v.viewed_at) >= week).length;
+    const kpi = (label, val, sub, accent) => `<div class="kpi${accent ? " kpi-accent" : ""}"><span>${esc(label)}</span><b>${val}</b><small>${sub}</small></div>`;
+    $("kpis").innerHTML = [
+      kpi("Revenue this week", money(paidSum(week)), `${money(paidSum(month))} last 30 days`, true),
+      kpi("Open orders", open, `${orders.filter(o => !o.paid).length} unpaid`),
+      kpi("Players", players.length, `${pub} public, ${players.length - pub} hidden`),
+      kpi("Logins given", logins, `${players.length ? Math.round(logins / players.length * 100) : 0}% of players`),
+      kpi("Profile views", v7, `${views.length} in 30 days`)
+    ].join("");
+
+    const todayCount = orders.filter(o => inRange(o, today)).length, goal = 7;
+    $("goalFill").style.width = Math.min(100, todayCount / goal * 100) + "%";
+    $("goalText").textContent = `${todayCount} / ${goal}`;
+    $("goalNote").textContent = todayCount >= goal ? "Goal hit" : `${goal - todayCount} to go`;
+    const ms = (l, v) => `<div><span>${l}</span><b>${v}</b></div>`;
+    $("moneyStats").innerHTML = ms("Today", money(paidSum(today))) + ms("Orders this week", orders.filter(o => inRange(o, week)).length) + ms("Avg order", money(orders.length ? orders.reduce((s, o) => s + Number(o.amount || 0), 0) / orders.length : 0));
+
+    const bySport = {}; players.forEach(p => { const k = p.sport || "Other"; bySport[k] = (bySport[k] || 0) + 1; });
+    const max = Math.max(1, ...Object.values(bySport));
+    $("sportBars").innerHTML = Object.entries(bySport).sort((a, b) => b[1] - a[1]).map(([s, n]) =>
+      `<div class="bar"><span>${esc(s)}</span><div><i style="width:${n / max * 100}%"></i></div><b>${n}</b></div>`).join("") || `<p class="muted small">No players yet.</p>`;
+
+    const vc = {}; views.forEach(v => vc[v.slug] = (vc[v.slug] || 0) + 1);
+    const top = Object.entries(vc).sort((a, b) => b[1] - a[1]).slice(0, 5);
+    $("topViews").innerHTML = top.length ? top.map(([slug, n]) => {
+      const p = players.find(x => x.slug === slug);
+      return `<li><a href="player.html#${encodeURIComponent(slug)}" target="_blank" rel="noopener">${esc(p ? p.name : slug)}</a><b>${n}</b></li>`;
+    }).join("") : `<li class="muted small">No views yet. Views are counted when someone opens a profile page.</li>`;
+
+    const recent = [...players].sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 5);
+    $("recentList").innerHTML = recent.map(p => `<li><span>${esc(p.name)} <small class="muted">${esc(p.sport || "")}</small></span><small class="muted">${new Date(p.created_at).toLocaleDateString(undefined, { month: "short", day: "numeric" })}</small></li>`).join("") || `<li class="muted small">No players yet.</li>`;
+  }
+
+  // ---------- Orders ----------
+  function renderOrders() {
+    const counts = {}; STAGES.forEach(s => counts[s] = 0);
+    orders.forEach(o => counts[o.stage] = (counts[o.stage] || 0) + 1);
+    $("pipeline").innerHTML = Object.keys(counts).map(s => `<button type="button" class="ostage" data-stage="${esc(s)}"><b>${counts[s]}</b><span>${esc(s)}</span></button>`).join("");
+    const f = $("orderFilter").value;
+    const list = orders.filter(o => f === "all" ? true : f === "open" ? o.stage !== "Delivered" : f === "unpaid" ? !o.paid : o.stage === f);
+    $("orderList").innerHTML = list.length ? list.map(o => `
+      <div class="orow">
+        <div class="oinfo">
+          <b>${esc(o.player_name || "Unnamed")}</b>
+          <span class="small muted">${esc([o.package, o.sport, o.contact, o.account ? "@" + o.account : ""].filter(Boolean).join(" · "))}</span>
+          ${o.notes ? `<span class="small">${esc(o.notes)}</span>` : ""}
+        </div>
+        <div class="ometa">
+          <b>${money(o.amount)}</b>
+          <button type="button" class="opill ${o.paid ? "opill-ok" : "opill-warn"}" data-paid="${o.id}">${o.paid ? "Paid" + (o.payment_method ? " · " + esc(o.payment_method) : "") : "Unpaid"}</button>
+          <small class="muted">${new Date(o.created_at).toLocaleDateString(undefined, { month: "short", day: "numeric" })}</small>
+        </div>
+        <div class="obtns">
+          <select class="mini-select" data-stage-of="${o.id}" aria-label="Stage">${[...new Set([...STAGES, o.stage])].map(s => `<option${s === o.stage ? " selected" : ""}>${esc(s)}</option>`).join("")}</select>
+          <button class="btn btn-line btn-sm" data-edit-order="${o.id}">Edit</button>
+        </div>
+      </div>`).join("") : `<p class="muted empty-note">${orders.length ? "No orders match this filter." : "No orders logged yet. Tap \"New order\" each time a family pays, and this page tracks your pipeline, revenue and daily goal."}</p>`;
+  }
+  $("orderFilter").addEventListener("change", renderOrders);
+  $("pipeline").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-stage]"); if (!b) return;
+    const sel = $("orderFilter");
+    if (![...sel.options].some(o => o.value === b.dataset.stage)) sel.add(new Option(b.dataset.stage, b.dataset.stage));
+    sel.value = b.dataset.stage; renderOrders();
+  });
+  $("orderList").addEventListener("click", async (e) => {
+    const ed = e.target.closest("[data-edit-order]"), pd = e.target.closest("[data-paid]");
+    if (ed) openOrder(orders.find(o => o.id === ed.dataset.editOrder));
+    if (pd) {
+      const o = orders.find(x => x.id === pd.dataset.paid);
+      const { error } = await sb.from("orders").update({ paid: !o.paid, paid_at: !o.paid ? new Date().toISOString() : null }).eq("id", o.id);
+      if (error) return window.PSR.toast(error.message);
+      await loadOrders(); renderOverview();
+    }
+  });
+  $("orderList").addEventListener("change", async (e) => {
+    const s = e.target.closest("[data-stage-of]"); if (!s) return;
+    const upd = { stage: s.value }; if (s.value === "Delivered") upd.delivered_at = new Date().toISOString();
+    const { error } = await sb.from("orders").update(upd).eq("id", s.dataset.stageOf);
+    window.PSR.toast(error ? error.message : `Moved to ${s.value}`);
+    await loadOrders(); renderOverview();
+  });
+  $("o_package").innerHTML = PKGS.map(p => `<option value="${esc(p.id)}" data-price="${p.price}">${esc(p.id)} · ${money(p.price)}</option>`).join("");
+  $("o_stage").innerHTML = STAGES.map(s => `<option>${esc(s)}</option>`).join("");
+  $("o_package").addEventListener("change", () => { const o = $("o_package").selectedOptions[0]; if (o) $("o_amount").value = o.dataset.price; });
+  $("o_payment_method").addEventListener("change", () => { if ($("o_payment_method").value) $("o_paid").checked = true; });
+  function fillPlayerSelect() {
+    $("o_player_id").innerHTML = `<option value="">None</option>` + players.map(p => `<option value="${p.id}">${esc(p.name)}</option>`).join("");
+  }
+  const OF = ["player_name", "customer_name", "contact", "sport", "package", "amount", "stage", "account", "payment_method", "player_id", "notes"];
+  function openOrder(o) {
+    editingOrder = o || null;
+    $("orderTitle").textContent = o ? `Order: ${o.player_name || ""}` : "New order";
+    OF.forEach(k => $("o_" + k).value = o && o[k] != null ? o[k] : "");
+    if (!o) { $("o_sport").value = "Baseball"; $("o_package").value = "Basic"; $("o_amount").value = 25; $("o_stage").value = "New"; $("o_account").value = "peachstaterecruits"; }
+    $("o_paid").checked = o ? o.paid : false;
+    $("deleteOrder").hidden = !o; $("deleteOrder").dataset.confirm = ""; $("deleteOrder").textContent = "Delete order";
+    P.msg($("orderMsg"), "", "");
+    $("orderDlg").showModal();
+  }
+  $("addOrder").addEventListener("click", () => openOrder(null));
+  $("addOrderTop").addEventListener("click", () => openOrder(null));
+  $("closeOrder").addEventListener("click", () => $("orderDlg").close());
+  $("orderForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const row = {}; OF.forEach(k => row[k] = $("o_" + k).value.trim() || null);
+    row.amount = Number(row.amount || 0); row.package = row.package || "Basic"; row.stage = row.stage || "New";
+    row.paid = $("o_paid").checked;
+    if (row.paid && !(editingOrder && editingOrder.paid)) row.paid_at = new Date().toISOString();
+    if (!row.paid) row.paid_at = null;
+    if (row.stage === "Delivered" && !(editingOrder && editingOrder.delivered_at)) row.delivered_at = new Date().toISOString();
+    const q = editingOrder ? sb.from("orders").update(row).eq("id", editingOrder.id) : sb.from("orders").insert(row);
+    const { error } = await q;
+    if (error) return P.msg($("orderMsg"), "Couldn't save: " + error.message, "err");
+    $("orderDlg").close(); window.PSR.toast("Order saved"); await loadOrders(); renderOverview();
+  });
+  $("deleteOrder").addEventListener("click", async () => {
+    const b = $("deleteOrder");
+    if (b.dataset.confirm !== "1") { b.dataset.confirm = "1"; b.textContent = "Tap again to delete"; return; }
+    const { error } = await sb.from("orders").delete().eq("id", editingOrder.id);
+    if (error) return P.msg($("orderMsg"), error.message, "err");
+    $("orderDlg").close(); await loadOrders(); renderOverview();
+  });
+
+  // ---------- Instagram ----------
   async function loadAccounts() {
     try {
-      const rows = await api("/api/instagram-accounts");
+      const rows = await api("instagram-accounts", { method: "GET" });
+      $("igSetup").hidden = rows.some(a => a.connected);
       $("accounts").innerHTML = rows.map(a => `
         <div class="acct">
           <div><b>@${esc(a.handle)}</b> <span class="muted small">${esc(a.sport)}</span></div>
-          <div class="small">${a.connected ? `<span class="ok-dot"></span>Connected${a.expires_at ? `, token renews automatically (expires ${new Date(a.expires_at).toLocaleDateString()})` : ""}` : `<span class="no-dot"></span>Not connected`}</div>
+          <div class="small">${a.connected ? `<span class="ok-dot"></span>Connected${a.expires_at ? `, token renews automatically (expires ${new Date(a.expires_at).toLocaleDateString()})` : ""}` : `<span class="no-dot"></span>Not connected yet`}</div>
           <div class="small muted">${a.last_synced ? `Last sync ${new Date(a.last_synced).toLocaleString()}: ${esc(a.last_result || "")}` : "Never synced"}</div>
         </div>`).join("");
       $("tokHandle").innerHTML = rows.map(a => `<option value="${esc(a.handle)}">@${esc(a.handle)}</option>`).join("");
     } catch (e) {
-      $("accounts").innerHTML = `<p class="form-msg err">Couldn't load accounts: ${esc(e.message)}. Check the Vercel settings in SETUP.md.</p>`;
+      $("igSetup").hidden = false;
+      $("accounts").innerHTML = `<p class="form-msg err">Couldn't load Instagram accounts: ${esc(e.message)}</p>`;
     }
   }
   $("tokenForm").addEventListener("submit", async (e) => {
     e.preventDefault();
+    if (!$("tokValue").value.trim()) return P.msg($("syncMsg"), "Paste a token first.", "err");
     P.msg($("syncMsg"), "Connecting...", "");
     try {
-      const j = await api("/api/instagram-accounts", { method: "POST", body: JSON.stringify({ handle: $("tokHandle").value, token: $("tokValue").value }) });
+      const j = await api("instagram-accounts", { method: "POST", body: JSON.stringify({ handle: $("tokHandle").value, token: $("tokValue").value }) });
       $("tokValue").value = "";
       P.msg($("syncMsg"), `Connected @${j.username}.`, "ok"); loadAccounts();
     } catch (err) { P.msg($("syncMsg"), err.message, "err"); }
   });
   async function runSync(full) {
+    if (!$("igSetup").hidden) return P.msg($("syncMsg"), "Instagram sync isn't set up yet. Connect an account with a token first (see the note above).", "err");
     P.msg($("syncMsg"), "Checking Instagram for new features... this can take up to a minute.", "");
     try {
-      const j = await api("/api/sync-instagram" + (full ? "?full=1" : ""), { method: "POST" });
+      const j = await api("sync-instagram", { method: "POST", body: JSON.stringify({ full }) });
       const lines = (j.results || []).map(r => r.error ? `@${r.handle}: ${r.error}`
         : `@${r.handle}: ${r.created.length ? "added " + r.created.join(", ") : "nothing new"}${r.errors && r.errors.length ? " (" + r.errors.join("; ") + ")" : ""}`);
       P.msg($("syncMsg"), lines.join("  •  ") || j.message || "Done.", "ok");
-      loadAccounts(); loadPlayers();
+      loadAccounts(); await loadPlayers(); renderOverview();
     } catch (e) { P.msg($("syncMsg"), e.message, "err"); }
   }
   $("syncNow").addEventListener("click", () => runSync(false));
   $("syncFull").addEventListener("click", () => runSync(true));
 
-  // ----- Players -----
-  async function loadPlayers() {
-    const { data, error } = await sb.from("players").select("*").order("posted_at", { ascending: false, nullsFirst: false }).order("created_at", { ascending: false });
-    if (error) { $("players").innerHTML = `<p class="form-msg err">${esc(error.message)}</p>`; return; }
-    players = data; renderPlayers();
+  // ---------- Players ----------
+  function renderChips() {
+    const sports = [...new Set(players.map(p => p.sport).filter(Boolean))];
+    const opts = [["all", "All"], ["public", "Public"], ["hidden", "Hidden"], ["login", "Has login"], ["nologin", "No login"], ...sports.map(s => ["s:" + s, s])];
+    $("playerChips").innerHTML = opts.map(([k, l]) => `<button type="button" class="chip${chip === k ? " on" : ""}" data-chip="${esc(k)}">${esc(l)}</button>`).join("");
   }
   function renderPlayers() {
+    renderChips();
     const q = $("search").value.trim().toLowerCase();
-    const list = players.filter(p => !q || [p.name, p.sport, p.school, p.team].join(" ").toLowerCase().includes(q));
+    const list = players.filter(p => {
+      if (q && ![p.name, p.sport, p.school, p.team, p.position, p.owner_email].join(" ").toLowerCase().includes(q)) return false;
+      if (chip === "public") return p.published; if (chip === "hidden") return !p.published;
+      if (chip === "login") return !!p.owner_email; if (chip === "nologin") return !p.owner_email;
+      if (chip.startsWith("s:")) return p.sport === chip.slice(2);
+      return true;
+    });
     $("players").innerHTML = list.length ? list.map(p => `
-      <div class="prow">
-        <div class="pthumb">${p.cover_url ? `<img src="${esc(p.cover_url)}" alt="">` : ""}</div>
+      <div class="prow${p.published ? "" : " is-hidden"}">
+        <div class="pthumb">${p.cover_url ? `<img src="${esc(p.cover_url)}" alt="" loading="lazy">` : ""}</div>
         <div class="pinfo">
-          <b>${esc(p.name)}</b>
+          <b>${esc(p.name)} ${p.sample ? `<span class="tag">Example</span>` : ""}${p.published ? "" : `<span class="tag tag-warn">Hidden</span>`}</b>
           <span class="small muted">${esc([p.sport, p.position, p.grad_year ? "Class of " + p.grad_year : "", p.school || p.team].filter(Boolean).join(", "))}</span>
-          <span class="small">${p.owner_email ? `Login: ${esc(p.owner_email)}` : `<span class="muted">No login yet</span>`}
-            ${p.published ? "" : ` · <span class="warn">Hidden</span>`}${p.show_on_home ? ` · On homepage` : ""}${p.video_url ? " · Has video" : ""}</span>
+          <span class="small">${p.owner_email ? `<span class="ok-dot"></span>Login: ${esc(p.owner_email)}` : `<span class="muted">No login yet</span>`}${p.show_on_home ? ` · On homepage` : ""}${p.video_url ? " · Has video" : ""}${p.views ? ` · ${esc(p.views)} IG views` : ""}</span>
         </div>
         <div class="pbtns">
           <a class="btn btn-line btn-sm" href="player.html#${encodeURIComponent(p.slug)}" target="_blank" rel="noopener">View</a>
           <button class="btn btn-line btn-sm" data-edit="${p.id}">Edit</button>
+          <button class="btn btn-line btn-sm" data-toggle="${p.id}">${p.published ? "Hide" : "Show"}</button>
           <button class="btn btn-peach btn-sm" data-login="${p.id}">${p.owner_email ? "New login link" : "Give login"}</button>
         </div>
-      </div>`).join("") : `<p class="muted">No players yet. Connect Instagram and press Sync now, or add one by hand.</p>`;
+      </div>`).join("") : `<p class="muted empty-note">${players.length ? "No players match." : "No players yet. Add one by hand, or connect Instagram and press Sync now."}</p>`;
   }
   $("search").addEventListener("input", renderPlayers);
-  $("players").addEventListener("click", (e) => {
-    const ed = e.target.closest("[data-edit]"), lg = e.target.closest("[data-login]");
+  $("playerChips").addEventListener("click", (e) => { const c = e.target.closest("[data-chip]"); if (c) { chip = c.dataset.chip; renderPlayers(); } });
+  $("players").addEventListener("click", async (e) => {
+    const ed = e.target.closest("[data-edit]"), lg = e.target.closest("[data-login]"), tg = e.target.closest("[data-toggle]");
     if (ed) openEdit(players.find(p => p.id === ed.dataset.edit));
     if (lg) openLogin(players.find(p => p.id === lg.dataset.login));
+    if (tg) {
+      const p = players.find(x => x.id === tg.dataset.toggle);
+      const { error } = await sb.from("players").update({ published: !p.published }).eq("id", p.id);
+      window.PSR.toast(error ? error.message : (p.published ? `${p.name} is hidden from the site` : `${p.name} is public again`));
+      await loadPlayers(); renderOverview();
+    }
   });
 
   const F = ["name", "sport", "position", "grad_year", "school", "team", "location", "slug", "height", "weight", "report", "contact_email", "contact_name", "post_url", "views", "views_as_of", "ig_account"];
@@ -267,12 +588,13 @@
     $("e_published").checked = p ? p.published : true;
     $("e_show_on_home").checked = p ? p.show_on_home : false;
     $("e_cover").value = ""; $("e_video").value = "";
-    $("deletePlayer").hidden = !p;
+    $("deletePlayer").hidden = !p; $("deletePlayer").dataset.confirm = ""; $("deletePlayer").textContent = "Delete player";
     P.msg($("editMsg"), "", "");
     $("editDlg").showModal();
   }
   $("closeEdit").addEventListener("click", () => $("editDlg").close());
   $("addPlayer").addEventListener("click", () => openEdit(null));
+  $("addPlayer2").addEventListener("click", () => openEdit(null));
 
   $("editForm").addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -283,13 +605,14 @@
       const row = {};
       F.forEach(k => row[k] = v(k));
       row.grad_year = row.grad_year ? parseInt(row.grad_year, 10) : null;
-      row.slug = (row.slug || window.PSR.esc(row.name || "")).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      row.slug = (row.slug || row.name || "").toLowerCase().normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
       row.measurables = [height && { label: "Height", value: height }, weight && { label: "Weight", value: weight }].filter(Boolean).concat(P.textToPairs($("e_measurables").value));
       row.stats = P.fieldsToStats($("e_stats_title").value, $("e_stats_cols").value, $("e_stats_row").value);
       row.academics = P.textToPairs($("e_academics").value);
       row.links = P.textToLinks($("e_links").value);
       row.published = $("e_published").checked;
       row.show_on_home = $("e_show_on_home").checked;
+      if (!row.contact_name) row.contact_name = "Peach State Recruits";
 
       let saved;
       if (editing) {
@@ -303,21 +626,22 @@
       if (cover) { P.msg($("editMsg"), "Uploading cover...", ""); files.cover_url = await P.upload(saved.id, cover, "cover"); }
       if (video) { P.msg($("editMsg"), "Uploading video...", ""); files.video_url = await P.upload(saved.id, video, "highlights"); files.video_poster = null; }
       if (Object.keys(files).length) await sb.from("players").update(files).eq("id", saved.id).throwOnError();
-      $("editDlg").close(); loadPlayers(); window.PSR.toast("Saved");
+      $("editDlg").close(); await loadPlayers(); renderOverview(); window.PSR.toast("Saved");
     } catch (err) {
-      P.msg($("editMsg"), "Couldn't save: " + (err.message || err), "err");
+      const m = String(err.message || err);
+      P.msg($("editMsg"), "Couldn't save: " + (/duplicate key.*slug/.test(m) ? "another player already uses that profile link name. Change it and save again." : m), "err");
     }
   });
   $("deletePlayer").addEventListener("click", async () => {
     if (!editing) return;
-    if ($("deletePlayer").dataset.confirm !== "1") { $("deletePlayer").dataset.confirm = "1"; $("deletePlayer").textContent = "Tap again to delete"; return; }
-    $("deletePlayer").dataset.confirm = ""; $("deletePlayer").textContent = "Delete player";
+    const b = $("deletePlayer");
+    if (b.dataset.confirm !== "1") { b.dataset.confirm = "1"; b.textContent = "Tap again to delete"; return; }
     const { error } = await sb.from("players").delete().eq("id", editing.id);
     if (error) return P.msg($("editMsg"), error.message, "err");
-    $("editDlg").close(); loadPlayers();
+    $("editDlg").close(); await loadPlayers(); renderOverview();
   });
 
-  // ----- Logins -----
+  // ---------- Logins ----------
   function openLogin(p) {
     loginTarget = p;
     $("loginFor").textContent = `For ${p.name}. They'll be able to edit their contact email, stats, academics, links and video, but not their name, class or scouting report.`;
@@ -330,15 +654,22 @@
     e.preventDefault();
     P.msg($("giveMsg"), "Creating...", "");
     try {
-      const j = await api("/api/player-login", { method: "POST", body: JSON.stringify({ playerId: loginTarget.id, email: $("loginEmail").value }) });
-      P.msg($("giveMsg"), `Login ready for ${j.email}.`, "ok");
+      const j = await api("player-login", { method: "POST", body: JSON.stringify({ playerId: loginTarget.id, email: $("loginEmail").value, site: window.PSR.siteBase() }) });
+      P.msg($("giveMsg"), `Login ready for ${j.email}. Send them this link (it works once):`, "ok");
       $("linkOut").value = j.link || ""; $("linkBox").hidden = !j.link;
-      loadPlayers();
+      await loadPlayers(); renderOverview();
     } catch (err) { P.msg($("giveMsg"), err.message, "err"); }
   });
-  $("copyLink").addEventListener("click", async () => {
-    try { await navigator.clipboard.writeText($("linkOut").value); window.PSR.toast("Link copied"); } catch (e) { $("linkOut").select(); }
-  });
+  $("copyLink").addEventListener("click", () => window.PSR.copyText($("linkOut").value, "Link copied"));
+
+  // Section tabs: highlight the section in view
+  const tabs = [...document.querySelectorAll(".dash-tabs a")];
+  if ("IntersectionObserver" in window) {
+    const io = new IntersectionObserver((ents) => ents.forEach(en => {
+      if (en.isIntersecting) tabs.forEach(t => t.classList.toggle("on", t.getAttribute("href") === "#" + en.target.id));
+    }), { rootMargin: "-40% 0px -55% 0px" });
+    document.querySelectorAll(".dash-sec").forEach(s => io.observe(s));
+  }
 
   start();
 })();

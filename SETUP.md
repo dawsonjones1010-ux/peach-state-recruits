@@ -1,5 +1,15 @@
 # Turning on auto-posting and player logins
 
+> **Status (Nov 17, 2026):** the database is live on the Supabase project `peach-state-recruits`
+> (`https://eqghenbqsbvifzkzkdwf.supabase.co`) and `config.js` is filled in. Vercel is **not** needed anymore:
+> the server pieces run as Supabase Edge Functions (`supabase/functions/`):
+> - `owner-setup`: one-time owner account creation with a setup code (no confirmation email needed)
+> - `player-login`: the dashboard's "Give login" button (makes a one-time link that opens `account.html`)
+> - `instagram-accounts` and `sync-instagram`: Instagram connect + sync, scheduled every 3 hours with pg_cron
+>
+> The owner dashboard is at `/admin.html`. Steps 1–3 below are done; only step 4 (Instagram tokens) is left.
+> The old `api/` folder is kept for reference only.
+
 Once this is set up:
 - **Every feature you post** on @peachstaterecruits or @peachstaterecruitsfb shows up on the site within a day, or right away when you press **Sync now**, with its own profile page. The cover, highlight video, name, position, class, height, weight, school and scouting write-up are all pulled from the post.
 - **Profile pages are public**, so coaches can open the link. Only the player's own login can edit them.

@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;1,800&family=Inter:wght@400;500;600;700;800&family=Kaushan+Script&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=3">
+<link rel="stylesheet" href="styles.css?v=4">
 </head>
 <body>
 <header class="nav">
@@ -116,9 +116,9 @@
 
 <div class="toast"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="config.js?v=3"></script>
-<script src="shared.js?v=3"></script>
-<script src="portal.js?v=3"></script>
+<script src="config.js?v=4"></script>
+<script src="shared.js?v=4"></script>
+<script src="portal.js?v=4"></script>
 <script>
 (async function () {
   const P = window.PORTAL, C = window.PSR_CONFIG, $ = (id) => document.getElementById(id);
@@ -139,7 +139,7 @@
     const email = $("email").value.trim();
     if (!email) return P.msg($("loginMsg"), "Enter your email first.", "err");
     const { error } = await sb.auth.signInWithOtp({ email, options: { shouldCreateUser: false, emailRedirectTo: window.PSR.siteBase() + "/account.html" } });
-    P.msg($("loginMsg"), error ? "We couldn't find a login for that email. Message us on Instagram." : "Check your email for a sign-in link.", error ? "err" : "ok");
+    P.msg($("loginMsg"), error ? "We couldn't email a sign-in link to that address. Message us on Instagram and we'll send you a new login link." : "Check your email for a sign-in link.", error ? "err" : "ok");
   });
   $("signOut").addEventListener("click", async () => { await sb.auth.signOut(); location.reload(); });
 
@@ -163,6 +163,8 @@
 
   async function loadProfile() {
     const { data: { user } } = await sb.auth.getUser();
+    if (!user) return show("signIn");
+    try { await sb.rpc("claim_my_profile"); } catch (e) {}
     const { data, error } = await sb.from("players").select("*").eq("owner_id", user.id).limit(1);
     if (error || !data || !data.length) return show("noProfile");
     player = data[0];
@@ -224,7 +226,19 @@
     }
   });
 
-  // Arriving from an invite or sign-in link
+  // Arriving from a login link made on the owner dashboard (?th=...&t=invite|magiclink)
+  const qs = new URLSearchParams(location.search);
+  if (qs.get("th")) {
+    const { error } = await sb.auth.verifyOtp({ token_hash: qs.get("th"), type: qs.get("t") === "magiclink" ? "magiclink" : (qs.get("t") || "invite") });
+    history.replaceState(null, "", location.pathname);
+    if (error) {
+      show("signIn");
+      return P.msg($("loginMsg"), "That login link has expired or was already used. Enter your email and tap \"Email me a sign-in link\", or ask Peach State Recruits for a new link.", "err");
+    }
+    try { localStorage.removeItem("psr_pw_set"); } catch (e) {}
+    return start(true);
+  }
+  // Arriving from an emailed sign-in link
   const fromLink = /access_token|type=(invite|magiclink|recovery)|code=/.test(location.hash + location.search);
   sb.auth.onAuthStateChange((evt) => { if (evt === "SIGNED_IN" && fromLink) start(true); });
   start(fromLink);
