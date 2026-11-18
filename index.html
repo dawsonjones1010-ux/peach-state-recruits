@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;1,800&family=Inter:wght@400;500;600;700;800&family=Kaushan+Script&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=4">
+<link rel="stylesheet" href="styles.css?v=5">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"Organization","name":"Peach State Recruits","description":"Sports media company creating player features, highlight videos and recruiting profiles.","sameAs":["https://instagram.com/peachstaterecruits","https://instagram.com/peachstaterecruitsfb","https://instagram.com/peachstaterecruitshq"]}
 </script>
@@ -294,8 +294,8 @@
   <a class="btn btn-peach btn-sm" href="#packages" tabindex="-1">See packages</a>
 </div>
 
-<script src="config.js?v=4"></script>
-<script src="shared.js?v=4"></script>
+<script src="config.js?v=5"></script>
+<script src="shared.js?v=5"></script>
 <script>
 (async function () {
   const C = window.PSR_CONFIG, PSR = window.PSR, { esc, coverOrImage, payLink, loadPlayers, profileUrl, ICON } = PSR;
@@ -318,7 +318,7 @@
     <article class="plan ${p.highlight ? "featured" : ""} reveal" id="plan-${esc(p.id)}" aria-labelledby="plan-${esc(p.id)}-t">
       ${p.highlight ? '<span class="ribbon">Best value</span>' : ""}
       <h3 id="plan-${esc(p.id)}-t">${esc(p.name)}</h3>
-      <p class="tag">${esc(p.tagline)}</p>
+      <p class="plan-tag">${esc(p.tagline)}</p>
       <div class="price">$${p.price}<small>${esc(p.unit)}</small></div>
       <a class="btn ${p.highlight ? "btn-peach" : "btn-ink"} btn-block" href="${esc(payLink(C, p.id))}" ${ext$}>${orderLabel(p.id, esc(short(p)))}</a>
       <ul class="ticks">${p.features.map(f => `<li>${esc(f)}</li>`).join("")}</ul>

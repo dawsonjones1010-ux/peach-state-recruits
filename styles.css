@@ -218,8 +218,8 @@ section{padding:var(--sec) 0}
 .plan.is-picked{outline:3px solid var(--peach);outline-offset:3px}
 .plan .ribbon{position:absolute;top:-13px;left:26px;padding:6px 12px;border-radius:999px;background:var(--peach);color:#1a0b02;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
 .plan h3{font-size:28px;font-style:italic}
-.plan .tag{color:var(--text-2);font-size:15px;min-height:3.2em}
-.plan.featured .tag{color:var(--on-ink-2)}
+.plan .plan-tag{color:var(--text-2);font-size:15px;min-height:3.2em}
+.plan.featured .plan-tag{color:var(--on-ink-2)}
 .plan .price{font-family:var(--display);font-weight:800;font-size:58px;line-height:1;letter-spacing:-.005em;display:flex;align-items:baseline;gap:8px}
 .plan .price small{font-family:var(--body);font-size:14px;font-weight:600;color:var(--text-3);letter-spacing:0}
 .plan.featured .price small{color:var(--on-ink-3)}
@@ -381,7 +381,7 @@ footer .legal span:last-child{max-width:60em}
   .steps{grid-template-columns:1fr 1fr}
   .pricing{grid-template-columns:1fr;max-width:560px;margin-inline:auto}
   .plan.featured{order:-1}
-  .plan .tag{min-height:0}
+  .plan .plan-tag{min-height:0}
 }
 @media (max-width:900px){
   .hero-grid,.show-grid,.picker,.teams,.after{grid-template-columns:1fr}
