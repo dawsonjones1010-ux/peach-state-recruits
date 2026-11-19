@@ -124,7 +124,7 @@ def main():
         title = f"{p['name']} | {' · '.join(bits)} | Peach State Recruits"
         where = p.get("school") or p.get("team") or p.get("location") or ""
         hl = (p.get("headline") or "").strip()
-        if hl and not re.search(r"[.!?]\W*$", hl):
+        if hl and hl[-1].isalnum():
             hl += "."
         desc = (hl + " " if hl else f"{p['name']}. ") + ", ".join([b for b in bits + [where] if b]) + \
                ". Highlights, measurables and scouting report."
