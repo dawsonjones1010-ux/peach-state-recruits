@@ -6,16 +6,19 @@
 <title>Owner dashboard | Peach State Recruits</title>
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#0a1120">
-<link rel="icon" type="image/png" href="favicon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="icon" sizes="any" href="favicon.ico">
+<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;1,800&family=Inter:wght@400;500;600;700;800&family=Kaushan+Script&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=10">
+<link rel="stylesheet" href="styles.css?v=11">
 </head>
 <body class="admin-body">
 <header class="nav">
   <div class="wrap">
-    <a class="logo" href="index.html" id="logo"><span class="logo-badge" aria-hidden="true">PSR</span><span class="logo-text"><b>Peach State</b> Recruits</span></a>
+    <a class="logo" href="index.html" id="logo"><img class="logo-mark" src="images/logo-160.png" alt="" width="44" height="44" decoding="async"><span class="logo-text"><b>Peach State</b> Recruits</span></a>
     <div class="nav-right">
       <span class="owner-chip" id="whoami" hidden></span>
       <button class="btn btn-line btn-sm" id="signOut" hidden>Sign out</button>
@@ -251,9 +254,9 @@
 
 <div class="toast"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="config.js?v=10"></script>
-<script src="shared.js?v=10"></script>
-<script src="portal.js?v=10"></script>
+<script src="config.js?v=11"></script>
+<script src="shared.js?v=11"></script>
+<script src="portal.js?v=11"></script>
 <script>
 (async function () {
   const P = window.PORTAL, C = window.PSR_CONFIG, esc = P.esc, $ = (id) => document.getElementById(id);

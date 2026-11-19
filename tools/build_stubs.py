@@ -68,9 +68,14 @@ def og_card(p, src_path, dest):
     B = lambda n: ImageFont.truetype("tools/fonts/Barlow.ttf", n)
     peach = (255, 138, 76)
     maxw = x0 - 60 - 60
-    d.rounded_rectangle([60, 56, 108, 104], 10, fill=peach)
-    d.text((84, 80), "PSR", font=A(19), fill=(7, 11, 20), anchor="mm")
-    d.text((124, 80), "PEACH STATE RECRUITS", font=B(26), fill=(255, 255, 255), anchor="lm")
+    if os.path.exists("images/logo.png"):
+        badge = Image.open("images/logo.png").convert("RGBA").resize((64, 64), Image.LANCZOS)
+        bg.paste(badge, (56, 48), badge)
+        d.text((134, 80), "PEACH STATE RECRUITS", font=B(26), fill=(255, 255, 255), anchor="lm")
+    else:
+        d.rounded_rectangle([60, 56, 108, 104], 10, fill=peach)
+        d.text((84, 80), "PSR", font=A(19), fill=(7, 11, 20), anchor="mm")
+        d.text((124, 80), "PEACH STATE RECRUITS", font=B(26), fill=(255, 255, 255), anchor="lm")
     parts = clean(p["name"]).upper().split()
     lines = [" ".join(parts[:-1]), parts[-1]] if len(parts) > 1 else parts
     y = 170

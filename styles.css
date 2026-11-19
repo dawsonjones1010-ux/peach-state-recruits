@@ -1288,3 +1288,8 @@ footer .logo{margin-bottom:12px}
   .pf-keys.keys span,.pf-facts dt{color:#333}
   .pf-ig,.pf-coverbox{display:none!important}
 }
+
+/* v11: official badge logo */
+.logo .logo-mark{width:44px;height:44px;flex:none;border-radius:50%;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(0,0,0,.35))}
+footer .logo .logo-mark{width:56px;height:56px}
+@media (max-width:520px){.logo .logo-mark{width:40px;height:40px}}

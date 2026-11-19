@@ -13,7 +13,7 @@ window.PSR_CONFIG = {
   // Your site address, e.g. "https://peachstaterecruits.com". Leave empty to use wherever the site is
   // currently opened (GitHub Pages today). Profile links, QR codes and the URLs shown on the site use this.
   siteUrl: "",
-  logoImage: "",                                    // e.g. "images/logo.png" once you add your logo file
+  logoImage: "images/logo-160.png",                // badge in the nav/footer (full-size cutout: images/logo.png, original: images/logo-original.jpg)
   email: "peachstaterecruitshq@gmail.com",                                      // <-- add your business email (shown in the footer if filled)
   instagram: "peachstaterecruits",                  // main account handle (no @)
   instagramHQ: "peachstaterecruitshq",

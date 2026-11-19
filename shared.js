@@ -3,8 +3,12 @@
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
   // Your logo: set logoImage in config.js (e.g. "images/logo.png"). Until then, only the script wordmark shows.
+  // The badge is in the page markup (images/logo-160.png). If config.js names a different
+  // logoImage, swap it in; nothing is inserted, so this never duplicates the badge.
   function logoMark(cfg) {
-    return cfg && cfg.logoImage ? `<img class="logo-mark" src="${esc(cfg.logoImage)}" alt="">` : "";
+    const src = cfg && cfg.logoImage;
+    if (src) document.querySelectorAll("img.logo-mark").forEach(i => { if (i.getAttribute("src") !== src) i.src = src; });
+    return "";
   }
   const LOGO = "";
 
