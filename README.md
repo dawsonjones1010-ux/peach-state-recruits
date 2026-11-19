@@ -124,3 +124,13 @@ one tab per position.
 - **Share image**: a 1080x1920 PNG drawn on a canvas in the browser (logo, position, class, three numbers,
   headline level, @peachstaterecruits). Download link, plus the native share sheet when
   `navigator.canShare({ files })` is true. Nothing is uploaded.
+
+## Player of the Week (v14)
+
+Owner dashboard (Overview) has a "Player of the Week" control: pick a published player, an optional week
+date and an optional note (160 characters max), then Save; Clear removes it. Stored in Supabase table
+`player_of_week` (one row, `id = 1`; migration `supabase/migrations/20261119_v14_player_of_week.sql`).
+RLS: anyone can read it (only while the picked player is published); only `public.is_admin()` can write.
+A trigger rejects unpublished players. The homepage section (`#potw`) stays hidden when nothing is set
+or the player isn't published. Tests: `node tests/potw.ui.js <site-url> [screenshot-dir]` (uses mocked
+responses for the "set" cases, so it never writes to the live database).

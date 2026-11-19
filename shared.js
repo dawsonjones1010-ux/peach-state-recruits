@@ -254,6 +254,42 @@
     }
   }
 
+  // ---- Player of the Week (v14): one owner-picked row; nothing set = null ----
+  async function loadPlayerOfWeek() {
+    if (!hasDb()) return null;
+    try {
+      const h = { headers: { apikey: C().supabaseAnonKey, Authorization: `Bearer ${C().supabaseAnonKey}` } };
+      const r = await fetch(`${C().supabaseUrl}/rest/v1/player_of_week?id=eq.1&select=player_id,note,week_of`, h);
+      if (!r.ok) return null;
+      const row = (await r.json())[0];
+      return row && row.player_id ? { playerId: row.player_id, note: row.note || "", weekOf: row.week_of || "" } : null;
+    } catch (e) { return null; }
+  }
+  function weekLabel(d) {
+    if (!d) return "";
+    const t = new Date(String(d) + "T12:00:00");
+    return isNaN(t) ? "" : "Week of " + t.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  }
+  // Fills #potw when a published player is set; otherwise leaves it hidden.
+  function renderPlayerOfWeek(sec, potw, players) {
+    if (!sec) return false;
+    const p = potw && (players || []).find(x => x.id && x.id === potw.playerId);
+    if (!p) { sec.hidden = true; return false; }
+    const meta = [p.gradYear ? "Class of " + p.gradYear : "", p.position, p.school || p.team].filter(Boolean).join(" · ");
+    const url = profileUrl(p.slug), wk = weekLabel(potw.weekOf);
+    sec.querySelector("#potwBody").innerHTML = `
+      <a class="potw-media" href="${esc(url)}" aria-label="${esc(p.name)} profile">${photoFrame(p, { sizes: PHOTO_SIZES.card })}</a>
+      <div class="potw-text">
+        <span class="eyebrow">Player of the Week</span>${wk ? `<span class="potw-week">${esc(wk)}</span>` : ""}
+        <h2 id="potwTitle">${esc(p.name)}</h2>
+        ${meta ? `<p class="potw-meta">${esc(meta)}</p>` : ""}
+        ${potw.note ? `<p class="potw-note">${esc(potw.note)}</p>` : ""}
+        <a class="btn btn-peach" href="${esc(url)}">View profile</a>
+      </div>`;
+    sec.hidden = false;
+    return true;
+  }
+
   // Counts a profile view for the owner dashboard (database mode only; no personal data stored).
   function countView(slug) {
     if (!hasDb() || !slug) return;
@@ -440,6 +476,6 @@
     return `<svg viewBox="0 0 ${size} ${size}" role="img" aria-label="${esc(label || "QR code")}" shape-rendering="crispEdges"><rect width="${size}" height="${size}" fill="#fff"/><path d="${d}" fill="#0a1120"/></svg>`;
   }
 
-  window.PSR = { esc, LOGO, logoMark, cover, coverOrImage, photoFrame, photoFallback, photoSrc, initials, PHOTO_SIZES, IMAGE_ACCEPT, prepareImageFile, isHeicFile, isImageFile, payLink, toast, loadPlayers, countView, recentFromPlayers, fromRow, hasDb, profileUrl, siteBase, shareProfileUrl, displayUrl,
+  window.PSR = { loadPlayerOfWeek, renderPlayerOfWeek, weekLabel, esc, LOGO, logoMark, cover, coverOrImage, photoFrame, photoFallback, photoSrc, initials, PHOTO_SIZES, IMAGE_ACCEPT, prepareImageFile, isHeicFile, isImageFile, payLink, toast, loadPlayers, countView, recentFromPlayers, fromRow, hasDb, profileUrl, siteBase, shareProfileUrl, displayUrl,
     ICON, initNav, reveal, fitVideo, playIg, igPermalink, copyText, shareLink, qrSvg, reducedMotion, parseVideo, videoHtml, VIDEO_LABEL };
 })();

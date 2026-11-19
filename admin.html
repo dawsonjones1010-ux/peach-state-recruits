@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;1,800&family=Inter:wght@400;500;600;700;800&family=Kaushan+Script&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=13">
+<link rel="stylesheet" href="styles.css?v=14">
 </head>
 <body class="admin-body">
 <header class="nav">
@@ -87,6 +87,18 @@
     <!-- Overview -->
     <div id="overview" class="dash-sec">
       <div class="kpis" id="kpis"></div>
+      <div class="panel-box potw-admin" id="potwAdmin">
+        <div class="row-between"><h3>Player of the Week</h3><span class="muted small" id="potwNow">Not set. The homepage section is hidden.</span></div>
+        <form id="potwForm" class="potw-form" novalidate>
+          <label class="potw-f"><span>Player</span>
+            <select id="potwPlayer" class="mini-select"><option value="">Choose a published player</option></select></label>
+          <label class="potw-f"><span>Week of</span><input type="date" id="potwWeek"></label>
+          <label class="potw-f potw-f-note"><span>Short note <em class="muted small">(optional, <b id="potwCount">0</b>/160)</em></span>
+            <input type="text" id="potwNote" maxlength="160" placeholder="e.g. 3 hits and a save in Saturday's doubleheader"></label>
+          <div class="portal-actions"><button class="btn btn-peach btn-sm" type="submit" id="potwSave">Save</button><button class="btn btn-line btn-sm" type="button" id="potwClear">Clear</button></div>
+        </form>
+        <p class="muted small">Only published players can be picked. Clearing it hides the homepage section.</p>
+      </div>
       <div class="dash-grid">
         <div class="panel-box">
           <div class="row-between"><h3>Today's goal</h3><span class="muted small" id="goalNote"></span></div>
@@ -254,9 +266,9 @@
 
 <div class="toast"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="config.js?v=13"></script>
-<script src="shared.js?v=13"></script>
-<script src="portal.js?v=13"></script>
+<script src="config.js?v=14"></script>
+<script src="shared.js?v=14"></script>
+<script src="portal.js?v=14"></script>
 <script>
 (async function () {
   const P = window.PORTAL, C = window.PSR_CONFIG, esc = P.esc, $ = (id) => document.getElementById(id);
@@ -341,16 +353,53 @@
     const h = new Date().getHours();
     $("greet").textContent = h < 12 ? "Good morning" : h < 18 ? "Good afternoon" : "Good evening";
     $("todayLine").textContent = new Date().toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" });
-    await Promise.all([loadPlayers(), loadOrders(), loadViews()]);
+    await Promise.all([loadPlayers(), loadOrders(), loadViews(), loadPotw()]);
     renderOverview();
     loadAccounts();
   }
+
+  // ---------- Player of the Week ----------
+  let potw = null;
+  async function loadPotw() {
+    const { data, error } = await sb.from("player_of_week").select("player_id,note,week_of").eq("id", 1).maybeSingle();
+    if (error) { $("potwNow").textContent = "Couldn't load: " + error.message; return; }
+    potw = data && data.player_id ? data : null; renderPotw();
+  }
+  function renderPotw() {
+    const sel = $("potwPlayer"); if (!sel) return;
+    const pub = players.filter(p => p.published).sort((a, b) => String(a.name).localeCompare(String(b.name)));
+    const cur = potw && potw.player_id;
+    sel.innerHTML = `<option value="">Choose a published player</option>` + pub.map(p => `<option value="${esc(p.id)}">${esc(p.name)}${p.grad_year ? " · " + esc(p.grad_year) : ""}${p.position ? " · " + esc(p.position) : ""}</option>`).join("");
+    sel.value = cur && pub.some(p => p.id === cur) ? cur : "";
+    $("potwNote").value = potw ? (potw.note || "") : "";
+    $("potwWeek").value = potw ? (potw.week_of || "") : "";
+    $("potwCount").textContent = $("potwNote").value.length;
+    const p = cur && players.find(x => x.id === cur);
+    $("potwNow").textContent = !cur ? "Not set. The homepage section is hidden."
+      : !p || !p.published ? "The picked player isn't published, so the homepage section is hidden."
+      : `Live: ${p.name}${potw.week_of ? " · " + window.PSR.weekLabel(potw.week_of) : ""}`;
+  }
+  $("potwNote").addEventListener("input", () => { $("potwCount").textContent = $("potwNote").value.length; });
+  $("potwForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const player_id = $("potwPlayer").value;
+    if (!player_id) { window.PSR.toast("Choose a published player first"); $("potwPlayer").focus(); return; }
+    const row = { id: 1, player_id, note: $("potwNote").value.trim().slice(0, 160) || null, week_of: $("potwWeek").value || null };
+    const { error } = await sb.from("player_of_week").upsert(row);
+    if (error) { window.PSR.toast(error.message); return; }
+    potw = row; renderPotw(); window.PSR.toast("Player of the Week saved");
+  });
+  $("potwClear").addEventListener("click", async () => {
+    const { error } = await sb.from("player_of_week").delete().eq("id", 1);
+    if (error) { window.PSR.toast(error.message); return; }
+    potw = null; renderPotw(); window.PSR.toast("Player of the Week cleared");
+  });
 
   // ---------- Data ----------
   async function loadPlayers() {
     const { data, error } = await sb.from("players").select("*").order("posted_at", { ascending: false, nullsFirst: false }).order("created_at", { ascending: false });
     if (error) { $("players").innerHTML = `<p class="form-msg err">${esc(error.message)}</p>`; return; }
-    players = data || []; renderPlayers(); fillPlayerSelect();
+    players = data || []; renderPlayers(); fillPlayerSelect(); renderPotw();
   }
   async function loadOrders() {
     const { data, error } = await sb.from("orders").select("*").order("created_at", { ascending: false }).limit(500);

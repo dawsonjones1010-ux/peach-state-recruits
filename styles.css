@@ -1529,3 +1529,21 @@ footer .logo .logo-mark{width:56px;height:56px}
 .lvl-results .lvl-res-actions{margin:16px 0}
 .lvl-results>.lvl-sec{margin:0}
 @media print{.lvl-tabpanel[hidden]{display:block!important}.lvl-share,.lvl-cta2{display:none!important}}
+
+/* ===== v14: Player of the Week ===== */
+.potw{padding:clamp(36px,6vw,72px) 0;background:linear-gradient(180deg,var(--paper,#f7f4ef),var(--paper-2,#efe9df))}
+.potw-in{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:clamp(20px,4vw,48px);align-items:center}
+.potw-media{display:block;border-radius:20px;overflow:hidden;box-shadow:0 14px 40px rgba(7,11,20,.18);aspect-ratio:4/5}
+.potw-media .photo-frame{width:100%;height:100%}
+.potw-text .eyebrow{color:#b4541c}
+.potw-week{display:block;margin-top:6px;color:#6b5a4a;font-weight:600;font-size:14px}
+.potw-text h2{font-family:var(--display);font-weight:400;text-transform:uppercase;font-size:clamp(40px,6vw,72px);line-height:.98;margin:10px 0 8px}
+.potw-meta{margin:0 0 12px;font-weight:600;color:#4b5567}
+.potw-note{margin:0 0 18px;font-size:18px;line-height:1.5;max-width:34em;border-left:3px solid var(--peach,#ff8a4c);padding-left:12px}
+@media (max-width:720px){.potw-in{grid-template-columns:1fr}.potw-media{max-width:280px;width:100%}}
+.potw-admin{margin:0 0 16px}
+.potw-form{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,.7fr);gap:10px 14px;margin:10px 0 6px;align-items:end}
+.potw-f{display:flex;flex-direction:column;gap:5px;font-size:14px;font-weight:600;min-width:0}
+.potw-f input,.potw-f select{width:100%;min-height:40px;padding:8px 10px;border-radius:10px;border:1px solid var(--line,#e3ddd2);font:inherit;font-weight:500;background:#fff;color:inherit}
+.potw-f-note{grid-column:1 / -1}
+@media (max-width:600px){.potw-form{grid-template-columns:1fr}}

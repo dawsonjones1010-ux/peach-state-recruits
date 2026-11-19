@@ -19,7 +19,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=13">
+<link rel="stylesheet" href="styles.css?v=14">
 <link rel="canonical" href="https://dawsonjones1010-ux.github.io/peach-state-recruits/">
 <meta property="og:url" content="https://dawsonjones1010-ux.github.io/peach-state-recruits/">
 <meta name="twitter:title" content="Peach State Recruits">
@@ -84,6 +84,10 @@
   </div>
 </section>
 <div class="ticker" id="tickerWrap" aria-hidden="true" hidden><div class="ticker-track" id="ticker"></div></div>
+
+<section id="potw" class="potw" aria-labelledby="potwTitle" hidden>
+  <div class="wrap potw-in" id="potwBody"></div>
+</section>
 
 <section id="examples" class="dark work-sec" aria-labelledby="exTitle">
   <div class="wrap">
@@ -220,8 +224,8 @@
   <a class="btn btn-peach btn-sm" href="#packages" tabindex="-1">See packages</a>
 </div>
 
-<script src="config.js?v=13"></script>
-<script src="shared.js?v=13"></script>
+<script src="config.js?v=14"></script>
+<script src="shared.js?v=14"></script>
 <script>
 (async function () {
   const C = window.PSR_CONFIG, PSR = window.PSR, { esc, photoFrame, payLink, loadPlayers, profileUrl, ICON } = PSR;
@@ -322,6 +326,9 @@
     document.getElementById("ticker").innerHTML = `<div>${items}</div><div>${items}</div>`;
     document.getElementById("tickerWrap").hidden = false;
   }
+
+  // Player of the Week: hidden unless the owner set a published player.
+  PSR.loadPlayerOfWeek().then(w => PSR.renderPlayerOfWeek(document.getElementById("potw"), w, players));
 
   // Featured examples: the owner's picks (featured_rank 1-3), then the newest with a real post.
   const withPost = players.filter(p => p.postUrl && PSR.igPermalink(p.postUrl));
