@@ -1,0 +1,9 @@
+{
+  "name": "peach-state-recruits",
+  "private": true,
+  "description": "Static site. No build step.",
+  "scripts": {
+    "test": "node --test tests/estimator.logic.test.js",
+    "test:ui": "node tests/estimator.ui.js"
+  }
+}

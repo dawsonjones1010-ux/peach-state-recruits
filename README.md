@@ -78,3 +78,24 @@ Instagram DMs, X or Facebook show the player's card. They are built from `player
 Run it (then commit) after adding a player, changing a cover or editing `player.html`. It also
 makes the 640px card copies of covers (`images/players/<slug>-640.jpg`) and rewrites `sitemap.xml`.
 Players without a built page still open fine through `404.html`, just with the generic preview.
+
+
+## Find My Level (College Baseball Level Estimator)
+
+Page: `find-my-level.html` (linked as "Find My Level" in the nav, footer and a homepage band).
+Runs entirely in the browser: no accounts, no API keys, no backend, nothing stored or sent.
+
+- `data/level-benchmarks-v1.0.json`: the research data, copied unchanged from the estimator package
+  (schema 1.0, research as of 2026-11-19). Bump the file name when the data changes and update
+  `DATA_URL` in `estimator/config.js`.
+- `estimator/config.js`: category and position mappings, the documented "provisional range" rule
+  (`HIGHLIGHT_RULE`, a product heuristic, not a prediction) and typo-guard input ranges. No benchmark numbers.
+- `estimator/logic.js`: pure comparison functions (browser and Node).
+- `estimator/ui.js`: the stepped form and results.
+- Tests: `node --test tests/estimator.logic.test.js` (logic) and
+  `node tests/estimator.ui.js <site-url> [screenshot-dir]` (Playwright, desktop 1440 and phone 390).
+
+Rules it follows: blank is unknown (never zero); guidelines (NextCommit, NCSA), sample means (BaseballPath,
+Flatground, Slammers) and college norms (Pitching Coach U, SEC study) stay separate; only NextCommit
+guidelines feed the provisional range; missing benchmarks stay missing; no scores, percentages or
+probabilities; height, weight and evidence quality never change the comparison.
