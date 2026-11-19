@@ -16,7 +16,6 @@ window.PSR_CONFIG = {
   logoImage: "",                                    // e.g. "images/logo.png" once you add your logo file
   email: "peachstaterecruitshq@gmail.com",                                      // <-- add your business email (shown in the footer if filled)
   instagram: "peachstaterecruits",                  // main account handle (no @)
-  instagramFootball: "peachstaterecruitsfb",
   instagramHQ: "peachstaterecruitshq",
 
   // The most complete profile, used for "Explore a player profile" and the profile preview.

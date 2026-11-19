@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=9">
+<link rel="stylesheet" href="styles.css?v=10">
 </head>
 <body>
 <a class="skip" href="#app">Skip to profile</a>
@@ -46,11 +46,11 @@
   <div class="wrap">
     <div>
       <a class="logo" href="index.html" id="footLogo"><span class="logo-badge" aria-hidden="true">PSR</span><span class="logo-text"><b>Peach State</b> Recruits</span></a>
-      <p style="max-width:30em">Profile built by Peach State Recruits from the athlete's Instagram feature.</p>
+      <p style="max-width:30em">Profile built by Peach State Recruits from the player's Instagram feature.</p>
     </div>
     <div><h5>Explore</h5><a href="players.html">Find a player</a><a href="index.html#packages">Packages</a></div>
-    <div><h5>Athletes</h5><a href="index.html#packages">Get a profile like this</a><a href="account.html" rel="nofollow">Player login</a></div>
-    <div class="legal"><span>© Peach State Recruits</span><span>We are a sports media company and do not guarantee college interest, offers or scholarships.</span></div>
+    <div><h5>Players</h5><a href="index.html#packages">Get a profile like this</a><a href="account.html" rel="nofollow">Player login</a></div>
+    <div class="legal"><span>© Peach State Recruits</span><span>We are a baseball media brand and do not guarantee college interest, offers or scholarships.</span></div>
   </div>
 </footer>
 
@@ -64,8 +64,8 @@
   </div>
 </dialog>
 
-<script src="config.js?v=9"></script>
-<script src="shared.js?v=9"></script>
+<script src="config.js?v=10"></script>
+<script src="shared.js?v=10"></script>
 <script>
 (async function () {
   const C = window.PSR_CONFIG, PSR = window.PSR, { esc, coverOrImage, photoFrame, toast, ICON } = PSR;
@@ -107,14 +107,14 @@
     }
     PSR.countView(p.slug);
     const cls = p.gradYear ? "Class of " + p.gradYear : "";
-    document.title = `${p.name} | ${[p.sport, p.position, cls].filter(Boolean).join(" · ")} | Peach State Recruits`;
+    document.title = `${p.name} | ${["Baseball", p.position, cls].filter(Boolean).join(" · ")} | Peach State Recruits`;
     const md = document.querySelector('meta[name="description"]');
-    if (md) md.content = `${p.name}: ${[p.sport, p.position, cls, p.school || p.team].filter(Boolean).join(", ")}. Highlights, measurables and contact. Recruiting profile by Peach State Recruits.`;
+    if (md) md.content = `${p.name}: ${["Baseball " + (p.position || "player"), cls, p.school || p.team].filter(Boolean).join(", ")}. Highlights, measurables and contact. Recruiting profile by Peach State Recruits.`;
     const liveUrl = PSR.shareProfileUrl(p.slug);
     const shareUrl = liveUrl;
 
     const classSchool = [cls, p.school, p.team].filter(Boolean).join(" · ");
-    const subject = encodeURIComponent(`Recruiting inquiry: ${p.name} (${p.sport}, Class of ${p.gradYear || ""})`);
+    const subject = encodeURIComponent(`Recruiting inquiry: ${p.name} (${[p.position, p.gradYear ? "Class of " + p.gradYear : ""].filter(Boolean).join(", ")})`);
     const vids = (p.videos || []).filter(v => v.url);
     const legacy = p.video && p.video.youtube ? [{ kind: "youtube", url: "https://youtu.be/" + p.video.youtube }]
       : p.video && p.video.file ? [{ kind: "file", url: p.video.file }] : [];
@@ -156,7 +156,7 @@
         <h3>${esc(p.stats.title || "Stats")}</h3>
         <div style="overflow-x:auto"><table><thead><tr>${p.stats.columns.map(c => `<th scope="col">${esc(c)}</th>`).join("")}</tr></thead>
         <tbody>${p.stats.rows.map(r => `<tr>${r.map(v => `<td>${esc(v)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>
-        <p class="note">Provided by the athlete or family.</p></div>` : "";
+        <p class="note">Provided by the player or family.</p></div>` : "";
     const acadBox = (p.academics || []).length ? `<div class="box"><h3>Academics</h3>
         <div class="kv">${p.academics.map(a => `<div><span>${esc(a.label)}</span><b>${esc(a.value)}</b></div>`).join("")}</div></div>` : "";
     const linksBox = otherLinks.length ? `<div class="box"><h3>Links</h3><div class="links" style="margin-top:0">${otherLinks.map(l => `<a href="${esc(l.url)}" ${ext$}>${esc(l.label)}<span aria-hidden="true">↗</span></a>`).join("")}</div></div>` : "";
@@ -177,7 +177,7 @@
         ${p.coverImage ? `<div class="pf-bg" style="background-image:url('${esc(smallCover)}')"></div>` : ""}
         <div class="wrap">
           <a class="pf-back no-print" href="${base}players.html">${ICON.arrow}All players</a>
-          <div class="p-kicker">${p.sport ? `<span>${esc(p.sport)}</span>` : ""}${cls ? `<span class="hot">${esc(cls)}</span>` : ""}</div>
+          <div class="p-kicker">${cls ? `<span class="hot">${esc(cls)}</span>` : ""}</div>
           <h1 class="pf-name" id="pName">${esc(p.name)}</h1>
           ${keys.length ? `<div class="pf-keys keys" aria-label="Key information">${keys.map(m => `<div><span>${esc(m.label)}</span><b>${esc(m.value)}</b></div>`).join("")}</div>` : ""}
           ${facts.length ? `<dl class="pf-facts">${facts.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>` : ""}
@@ -206,7 +206,7 @@
             ${coachHtml || fullHtml ? `<section class="pf-sec" aria-labelledby="rpT"><div class="pf-sec-h"><i>${num()}</i><h2 id="rpT">${coachHtml ? "Coach summary" : "Scouting report"}</h2></div>
               ${coachHtml || fullHtml}
               ${coachHtml && fullHtml ? `<details class="pf-full no-print"><summary>Read full feature write-up</summary>${fullHtml}</details>` : ""}
-              <p class="note">${coachHtml ? "Summarized from the Peach State Recruits feature, which was written from the athlete's film." : "Written by Peach State Recruits from the athlete's film."}</p></section>` : ""}
+              <p class="note">${coachHtml ? "Summarized from the Peach State Recruits feature, which was written from the player's film." : "Written by Peach State Recruits from the player's film."}</p></section>` : ""}
           </div>
           <aside class="pf-side side" aria-label="Player details">
             ${coverBox}${statsBox}${acadBox}${linksBox}${qrBox}
@@ -225,7 +225,7 @@
     setSticky(false);
     if ("IntersectionObserver" in window) { stickyIO = new IntersectionObserver(([e]) => setSticky(!e.isIntersecting)); stickyIO.observe(document.querySelector(".p-actions")); }
 
-    const share = () => PSR.shareLink(shareUrl, `${p.name} | Peach State Recruits`, `${p.name}, ${[p.sport, p.position, cls].filter(Boolean).join(", ")}`);
+    const share = () => PSR.shareLink(shareUrl, `${p.name} | Peach State Recruits`, `${p.name}, ${["baseball " + (p.position || "player"), cls].filter(Boolean).join(", ")}`);
     document.getElementById("watchBtn").addEventListener("click", e => {
       e.preventDefault();
       document.getElementById("highlights").scrollIntoView({ behavior: PSR.reducedMotion() ? "auto" : "smooth" });

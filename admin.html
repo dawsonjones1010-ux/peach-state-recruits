@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;1,800&family=Inter:wght@400;500;600;700;800&family=Kaushan+Script&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=9">
+<link rel="stylesheet" href="styles.css?v=10">
 </head>
 <body class="admin-body">
 <header class="nav">
@@ -91,7 +91,7 @@
           <p class="muted small">Features ordered today against your 7-a-day target. Log each sale under Orders.</p>
           <div class="mini-stats" id="moneyStats"></div>
         </div>
-        <div class="panel-box">
+        <div class="panel-box" hidden>
           <h3>Players by sport</h3>
           <div class="bars" id="sportBars"></div>
         </div>
@@ -129,7 +129,7 @@
         <button class="btn btn-line btn-sm" id="addPlayer2">+ Add a player by hand</button>
       </div>
       <div class="filter-row">
-        <input id="search" class="search" placeholder="Search by name, sport, school or email" aria-label="Search players">
+        <input id="search" class="search" placeholder="Search by name, school, position or email" aria-label="Search players">
         <div class="chips" id="playerChips"></div>
       </div>
       <div id="players" class="player-list"></div>
@@ -165,8 +165,7 @@
   <form id="editForm" class="form grid-form" method="dialog">
     <div class="row-between wide"><h2 id="editTitle">Edit player</h2><button class="btn btn-line btn-sm" type="button" id="closeEdit">Close</button></div>
     <label>Name<input id="e_name" required></label>
-    <label>Sport<input id="e_sport" list="sports"></label>
-    <datalist id="sports"><option>Baseball</option><option>Football</option><option>Soccer</option><option>Basketball</option><option>Softball</option><option>Volleyball</option><option>Lacrosse</option><option>Track</option></datalist>
+    <input id="e_sport" type="hidden" value="Baseball">
     <label>Position<input id="e_position"></label>
     <label>Class (grad year)<input id="e_grad_year" type="number" min="2020" max="2040"></label>
     <label>High school<input id="e_school"></label>
@@ -233,7 +232,7 @@
     <label>Player name<input id="o_player_name" required placeholder="e.g. Clark Chase"></label>
     <label>Parent or buyer name<input id="o_customer_name"></label>
     <label>Contact (IG handle, phone or email)<input id="o_contact" placeholder="@handle"></label>
-    <label>Sport<input id="o_sport" list="sports" value="Baseball"></label>
+    <input id="o_sport" type="hidden" value="Baseball">
     <label>Package<select id="o_package"></select></label>
     <label>Amount ($)<input id="o_amount" type="number" min="0" step="1" inputmode="numeric"></label>
     <label>Stage<select id="o_stage"></select></label>
@@ -252,9 +251,9 @@
 
 <div class="toast"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="config.js?v=9"></script>
-<script src="shared.js?v=9"></script>
-<script src="portal.js?v=9"></script>
+<script src="config.js?v=10"></script>
+<script src="shared.js?v=10"></script>
+<script src="portal.js?v=10"></script>
 <script>
 (async function () {
   const P = window.PORTAL, C = window.PSR_CONFIG, esc = P.esc, $ = (id) => document.getElementById(id);
@@ -401,7 +400,7 @@
     }).join("") : `<li class="muted small">No views yet. Views are counted when someone opens a profile page.</li>`;
 
     const recent = [...players].sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 5);
-    $("recentList").innerHTML = recent.map(p => `<li><span>${esc(p.name)} <small class="muted">${esc(p.sport || "")}</small></span><small class="muted">${new Date(p.created_at).toLocaleDateString(undefined, { month: "short", day: "numeric" })}</small></li>`).join("") || `<li class="muted small">No players yet.</li>`;
+    $("recentList").innerHTML = recent.map(p => `<li><span>${esc(p.name)} <small class="muted">${esc(p.position || "")}</small></span><small class="muted">${new Date(p.created_at).toLocaleDateString(undefined, { month: "short", day: "numeric" })}</small></li>`).join("") || `<li class="muted small">No players yet.</li>`;
   }
 
   // ---------- Orders ----------
@@ -415,7 +414,7 @@
       <div class="orow">
         <div class="oinfo">
           <b>${esc(o.player_name || "Unnamed")}</b>
-          <span class="small muted">${esc([o.package, o.sport, o.contact, o.account ? "@" + o.account : ""].filter(Boolean).join(" · "))}</span>
+          <span class="small muted">${esc([o.package, o.contact, o.account ? "@" + o.account : ""].filter(Boolean).join(" · "))}</span>
           ${o.notes ? `<span class="small">${esc(o.notes)}</span>` : ""}
         </div>
         <div class="ometa">
@@ -476,7 +475,7 @@
   $("closeOrder").addEventListener("click", () => $("orderDlg").close());
   $("orderForm").addEventListener("submit", async (e) => {
     e.preventDefault();
-    const row = {}; OF.forEach(k => row[k] = $("o_" + k).value.trim() || null);
+    const row = {}; OF.forEach(k => row[k] = $("o_" + k).value.trim() || null); row.sport = row.sport || "Baseball";
     row.amount = Number(row.amount || 0); row.package = row.package || "Basic"; row.stage = row.stage || "New";
     row.paid = $("o_paid").checked;
     if (row.paid && !(editingOrder && editingOrder.paid)) row.paid_at = new Date().toISOString();
@@ -539,7 +538,7 @@
   // ---------- Players ----------
   function renderChips() {
     const sports = [...new Set(players.map(p => p.sport).filter(Boolean))];
-    const opts = [["all", "All"], ["public", "Public"], ["hidden", "Hidden"], ["login", "Has login"], ["nologin", "No login"], ...sports.map(s => ["s:" + s, s])];
+    const opts = [["all", "All"], ["public", "Public"], ["hidden", "Hidden"], ["login", "Has login"], ["nologin", "No login"], ...(sports.length > 1 ? sports.map(s => ["s:" + s, s]) : [])];
     $("playerChips").innerHTML = opts.map(([k, l]) => `<button type="button" class="chip${chip === k ? " on" : ""}" data-chip="${esc(k)}">${esc(l)}</button>`).join("");
   }
   function renderPlayers() {
@@ -557,7 +556,7 @@
         <div class="pthumb">${window.PSR.photoFrame({ name: p.name, cover_url: p.cover_url }, { sizes: window.PSR.PHOTO_SIZES.thumb })}</div>
         <div class="pinfo">
           <b>${esc(p.name)} ${p.sample ? `<span class="tag">Example</span>` : ""}${p.published ? "" : `<span class="tag tag-warn">Hidden</span>`}</b>
-          <span class="small muted">${esc([p.sport, p.position, p.grad_year ? "Class of " + p.grad_year : "", p.school || p.team].filter(Boolean).join(", "))}</span>
+          <span class="small muted">${esc([p.position, p.grad_year ? "Class of " + p.grad_year : "", p.school || p.team].filter(Boolean).join(", "))}</span>
           <span class="small">${p.owner_email ? `<span class="ok-dot"></span>Login: ${esc(p.owner_email)}` : `<span class="muted">No login yet</span>`}${p.show_on_home ? ` · On homepage` : ""}${p.featured_rank ? ` · Featured example #${p.featured_rank}` : ""}${p.video_url ? " · Has video" : ""}${p.views ? ` · ${esc(p.views)} IG views` : ""}</span>
         </div>
         <div class="pbtns">
@@ -639,6 +638,7 @@
       const height = v("height"), weight = v("weight");
       const row = {};
       F.forEach(k => row[k] = v(k));
+      row.sport = row.sport || "Baseball"; // baseball-only site: selector hidden, default Baseball
       row.grad_year = row.grad_year ? parseInt(row.grad_year, 10) : null;
       row.featured_rank = row.featured_rank ? parseInt(row.featured_rank, 10) : null;
       if (row.featured_rank && !row.post_url) throw new Error("A featured example needs its Instagram post link.");

@@ -120,7 +120,7 @@ def main():
             continue
         keep.add(slug)
         cls = f"Class of {p['gradYear']}" if p.get("gradYear") else ""
-        bits = [x for x in [p.get("sport"), p.get("position"), cls] if x]
+        bits = [x for x in ["Baseball", p.get("position"), cls] if x]
         title = f"{p['name']} | {' · '.join(bits)} | Peach State Recruits"
         where = p.get("school") or p.get("team") or p.get("location") or ""
         hl = (p.get("headline") or "").strip()

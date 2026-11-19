@@ -33,7 +33,7 @@
         <path d="M0 330 L400 255 L400 300 L0 375 Z" fill="${hue}"/>
         <path d="M0 384 L400 309 L400 316 L0 391 Z" fill="${hue}" opacity=".45"/>
         <rect x="28" y="30" width="44" height="4" fill="${hue}"/>
-        <text x="28" y="58" font-family="${F}" font-weight="700" font-size="20" letter-spacing="1.5" fill="#fff">${esc(String(p.sport || "").toUpperCase())}</text>
+        <text x="28" y="58" font-family="${F}" font-weight="700" font-size="20" letter-spacing="1.5" fill="#fff">BASEBALL</text>
         <text x="372" y="58" text-anchor="end" font-family="${F}" font-weight="600" font-size="15" letter-spacing="1" fill="#fff" opacity=".55">PEACH STATE RECRUITS</text>
         <text x="28" y="404" font-family="${F}" font-weight="700" font-size="19" letter-spacing=".5" fill="${hue}">${esc([pos, cls].filter(Boolean).join("  |  "))}</text>
         <text x="28" y="440" font-family="${F}" font-weight="600" font-size="34" fill="#fff" opacity=".85">${esc(first)}</text>
@@ -229,6 +229,8 @@
     };
   }
 
+  // Baseball-only site: rows tagged with another sport never show publicly.
+  const isBaseball = (p) => !p || !p.sport || /baseball/i.test(p.sport);
   async function loadPlayers() {
     if (hasDb()) {
       try {
@@ -236,15 +238,15 @@
         const u = `${C().supabaseUrl}/rest/v1/players?published=eq.true&order=posted_at.desc.nullslast&select=`;
         let r = await fetch(u + encodeURIComponent("*,player_videos(id,kind,url,title,created_at)"), h);
         if (!r.ok) r = await fetch(u + "*", h);
-        if (r.ok) { const rows = await r.json(); if (rows.length) return rows.map(fromRow); }
+        if (r.ok) { const rows = await r.json(); if (rows.length) return rows.map(fromRow).filter(isBaseball); }
       } catch (e) {}
     }
     try {
       const r = await fetch("players.json", { cache: "no-cache" });
       if (!r.ok) throw new Error(r.status);
-      return await r.json();
+      return (await r.json()).filter(isBaseball);
     } catch (e) {
-      return window.PSR_PLAYERS || [];
+      return (window.PSR_PLAYERS || []).filter(isBaseball);
     }
   }
 
