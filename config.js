@@ -69,7 +69,8 @@ window.PSR_CONFIG = {
         "Custom cover graphic",
         "3-clip highlight edit",
         "Scouting-style write-up",
-        "Instagram collab post"
+        "Instagram collab post",
+        "Player profile page on our site"
       ]
     },
     {
@@ -118,6 +119,7 @@ window.PSR_CONFIG = {
     { label: "Custom cover graphic", basic: true, pro: true, elite: true },
     { label: "Instagram collab post", basic: true, pro: true, elite: true },
     { label: "Scouting-style write-up", basic: true, pro: true, elite: true },
+    { label: "Player profile page", basic: true, pro: true, elite: true },
     { label: "Clips used", basic: "3", pro: "Up to 8", elite: "Up to 10" },
     { label: "Coach-ready highlight video (60–90 sec)", basic: false, pro: true, elite: true },
     { label: "Player stat card graphic", basic: false, pro: true, elite: true },
