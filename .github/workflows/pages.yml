@@ -1,0 +1,45 @@
+# Deploys only the public site files to GitHub Pages (v14).
+# Repo-only files (README, SETUP, package.json, vercel.json, .htaccess, tests/, tools/, supabase/, api/,
+# .github/) are never published. To publish a NEW top-level file or folder, add it to SITE_FILES/SITE_DIRS.
+name: Deploy site to GitHub Pages
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Assemble public files only
+        run: |
+          set -euo pipefail
+          SITE_FILES="index.html players.html player.html find-my-level.html admin.html account.html 404.html
+            styles.css config.js shared.js portal.js players.json robots.txt sitemap.xml
+            favicon.png favicon-16.png favicon.ico"
+          SITE_DIRS="images videos vendor data estimator player"
+          mkdir -p _site
+          for f in $SITE_FILES; do cp "$f" "_site/$f"; done
+          for d in $SITE_DIRS; do cp -R "$d" "_site/$d"; done
+          touch _site/.nojekyll
+          # Safety: fail the deploy if a repo-only file slipped in.
+          for x in README.md SETUP.md package.json vercel.json .htaccess tests tools supabase api .github; do
+            if [ -e "_site/$x" ]; then echo "::error::$x must not be published"; exit 1; fi
+          done
+          echo "Published files:"; find _site -maxdepth 1 | sort
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -134,3 +134,11 @@ RLS: anyone can read it (only while the picked player is published); only `publi
 A trigger rejects unpublished players. The homepage section (`#potw`) stays hidden when nothing is set
 or the player isn't published. Tests: `node tests/potw.ui.js <site-url> [screenshot-dir]` (uses mocked
 responses for the "set" cases, so it never writes to the live database).
+
+## Deploying (v14)
+
+GitHub Pages is built by `.github/workflows/pages.yml` (Pages source: "GitHub Actions"), which publishes
+an allowlist of site files only. README, SETUP, package.json, vercel.json, .htaccess, tests/, tools/,
+supabase/, api/ and .github/ stay in the repo but are not served. If you add a new top-level page, file or
+folder, add it to `SITE_FILES` or `SITE_DIRS` in that workflow, or it won't go live. To roll back, set
+Pages back to "Deploy from a branch" (main, /) in the repo settings.
