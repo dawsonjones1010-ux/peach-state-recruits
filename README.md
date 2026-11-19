@@ -91,11 +91,36 @@ Runs entirely in the browser: no accounts, no API keys, no backend, nothing stor
 - `estimator/config.js`: category and position mappings, the documented "provisional range" rule
   (`HIGHLIGHT_RULE`, a product heuristic, not a prediction) and typo-guard input ranges. No benchmark numbers.
 - `estimator/logic.js`: pure comparison functions (browser and Node).
+- `estimator/summary.js` (v13): pure presentation helpers for the results page (headline, next step,
+  level statuses, source-free wording). Adds no numbers and changes no calculation.
 - `estimator/ui.js`: the stepped form and results.
-- Tests: `node --test tests/estimator.logic.test.js` (logic) and
+- Tests: `npm test` (logic + summary, `node --test`) and
   `node tests/estimator.ui.js <site-url> [screenshot-dir]` (Playwright, desktop 1440 and phone 390).
 
 Rules it follows: blank is unknown (never zero); guidelines (NextCommit, NCSA), sample means (BaseballPath,
 Flatground, Slammers) and college norms (Pitching Coach U, SEC study) stay separate; only NextCommit
 guidelines feed the provisional range; missing benchmarks stay missing; no scores, percentages or
 probabilities; height, weight and evidence quality never change the comparison.
+
+### Results page (v13)
+
+Main view, in order: "Your results as a <position>.", a headline, a Next step card, a short CTA, a
+"Share my result" button and one row with every level (Power D1, Mid-major D1, Lower D1, D2, D3, NAIA,
+JUCO). Detail sits in four closed sections: All levels in detail, How you compare with committed players,
+Sources (the only place sources are named, plus the tag legend) and How this works. Two-way players get
+one tab per position.
+
+- **Headline**: the first level in that list that passes the existing `HIGHLIGHT_RULE`. Fallbacks:
+  "Your numbers don't fully meet any level's listed targets yet." (something compared, nothing passes)
+  or "More information needed for an overall range." (not enough comparable numbers).
+- **Level status** (from the existing per-tool statuses):
+  Meets targets = passes the highlight rule; Close = at least one compared tool meets that level's
+  published target and at least one is below; Below targets = compared tools exist and none meets;
+  Needs more numbers = targets exist but too few numbers could be compared; No published target = the
+  source has no classifiable target for any tool at that level.
+- **Next step**: the nearest level above the headline with a number below target (no headline: the level
+  with the fewest numbers below target, ties to the later level). Only that level's smallest gap relative
+  to its target (gap ÷ threshold) is shown, using the existing gap numbers.
+- **Share image**: a 1080x1920 PNG drawn on a canvas in the browser (logo, position, class, three numbers,
+  headline level, @peachstaterecruits). Download link, plus the native share sheet when
+  `navigator.canShare({ files })` is true. Nothing is uploaded.

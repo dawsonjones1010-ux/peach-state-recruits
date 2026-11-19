@@ -192,70 +192,92 @@
   const pillClass = (st) => st === S.MEETS ? "ok" : st === S.BELOW ? "below" : st === S.NO_INPUT ? "none" : "na";
   const fmtV = (v, unit) => L.fmt(v, unit === "seconds" ? "seconds" : unit === "mph" ? "mph" : unit);
 
+  const U = window.PSRLevelSummary, ds = (s) => esc(U.deSource(s));
+  const statusText = (st) => st === S.NO_BENCH ? "No published target" : st;
+  const ST_CLASS = { "Meets targets": "ok", "Close": "close", "Below targets": "below", "Needs more numbers": "none", "No published target": "na" };
+
   function toolRow(k, t) {
     const val = t.value != null ? `<span class="lvl-you">You: ${esc(fmtV(t.value, t.unit))}</span>` : "";
     const tgt = t.band && t.status !== S.NO_BENCH ? `<span class="lvl-tgt">Target: ${esc(t.band)}${t.qualifier && /open|least|single|says/i.test(t.qualifier) ? ` <small>(${esc(t.qualifier)})</small>` : ""}</span>` : "";
     const extra = t.status === S.BELOW ? `<span class="lvl-gap">${t.unit === "seconds" ? esc(t.gap.toFixed(2)) + " s slower than" : esc(t.gap) + " mph short of"} the listed ${t.unit === "seconds" ? esc(t.threshold.toFixed(2)) + " s" : esc(t.threshold) + " mph"} mark</span>` : "";
     return `<li class="lvl-tool">
-      <div class="lvl-tool-top"><b>${esc(TOOL_LABEL[k])}</b><span class="lvl-pill ${pillClass(t.status)}">${esc(t.status)}</span></div>
+      <div class="lvl-tool-top"><b>${esc(TOOL_LABEL[k])}</b><span class="lvl-pill ${pillClass(t.status)}">${esc(statusText(t.status))}</span></div>
       <div class="lvl-tool-meta">${val}${tgt}${extra}</div>
-      ${t.note ? `<p class="lvl-note-sm">${esc(t.note)}</p>` : ""}
-      ${(t.status === S.NO_BENCH || t.status === S.REF_ONLY || t.status === S.NOT_COMP) && t.reason ? `<p class="lvl-note-sm">${esc(t.reason)}${t.status === S.REF_ONLY && t.band ? ` Source value: ${esc(t.band)}.` : ""}</p>` : ""}
-      ${t.pooledGroup ? `<p class="lvl-note-sm">Source combines NAIA and JUCO for this target.</p>` : ""}
+      ${t.note ? `<p class="lvl-note-sm">${ds(t.note)}</p>` : ""}
+      ${(t.status === S.NO_BENCH || t.status === S.REF_ONLY || t.status === S.NOT_COMP) && t.reason ? `<p class="lvl-note-sm">${ds(t.reason)}${t.status === S.REF_ONLY && t.band ? ` Source value: ${esc(t.band)}.` : ""}</p>` : ""}
+      ${t.pooledGroup ? `<p class="lvl-note-sm">The source combines NAIA and JUCO for this target.</p>` : ""}
     </li>`;
   }
 
   function catCard(read, c) {
-    const comp = c.compared.map(k => TOOL_LABEL[k]), miss = c.missing.map(x => TOOL_LABEL[x.tool]);
+    const comp = c.compared.map(k => TOOL_LABEL[k]);
+    const notIn = c.missing.filter(x => x.status === S.NO_INPUT).map(x => TOOL_LABEL[x.tool]);
+    const noTgt = c.missing.filter(x => x.status !== S.NO_INPUT).map(x => TOOL_LABEL[x.tool]);
+    const st = U.levelStatus(read, c);
     const noData = read.kind === "position" && c.key === "low";
-    const ns = c.nsRef ? `<div class="lvl-ns"><span class="lvl-kind ref">NCSA reference</span> <b>${esc(c.nsRef.label)}</b> <small>(NCSA group: ${esc(c.nsRef.sourceLevel)})</small>
-      <div class="lvl-tool-meta"><span class="lvl-pill ${pillClass(c.nsRef.cmp.status)}">${esc(c.nsRef.cmp.status)}</span>${c.nsRef.cmp.band && c.nsRef.cmp.status !== S.NO_BENCH ? `<span class="lvl-tgt">Target: ${esc(c.nsRef.cmp.band)}</span>` : ""}</div>
-      ${c.nsRef.cmp.status === S.NO_BENCH ? `<p class="lvl-note-sm">${esc(c.nsRef.cmp.reason)}</p>` : ""}${c.nsRef.pooledNote ? `<p class="lvl-note-sm">${esc(c.nsRef.pooledNote)}</p>` : ""}
-      <p class="lvl-note-sm">Separate guideline source. Shown for reference; not used for the range.</p></div>` : "";
-    const open = window.matchMedia && window.matchMedia("(min-width: 721px)").matches;
-    return `<details class="lvl-cat${c.highlighted ? " is-hl" : ""}" data-cat="${c.key}"${open ? " open" : ""}>
-      <summary><span class="lvl-cat-h"><h4>${esc(c.label)}</h4>${c.highlighted ? `<span class="lvl-badge">${read.kind === "pitching" ? "Velocity match" : "In provisional range"}</span>` : ""}</span>
-        <span class="lvl-mini">${read.toolKeys.map(k => `<span><b>${esc(TOOL_LABEL[k])}</b> <i class="lvl-pill ${pillClass(c.tools[k].status)}">${esc(c.tools[k].status)}</i></span>`).join("")}</span>
+    const ns = c.nsRef ? `<div class="lvl-ns"><span class="lvl-kind ref">Second source</span> <b>${esc(c.nsRef.label)}</b> <small>(its group: ${esc(c.nsRef.sourceLevel)})</small>
+      <div class="lvl-tool-meta"><span class="lvl-pill ${pillClass(c.nsRef.cmp.status)}">${esc(statusText(c.nsRef.cmp.status))}</span>${c.nsRef.cmp.band && c.nsRef.cmp.status !== S.NO_BENCH ? `<span class="lvl-tgt">Target: ${esc(c.nsRef.cmp.band)}</span>` : ""}</div>
+      ${c.nsRef.cmp.status === S.NO_BENCH ? `<p class="lvl-note-sm">${ds(c.nsRef.cmp.reason)}</p>` : ""}${c.nsRef.pooledNote ? `<p class="lvl-note-sm">${ds(c.nsRef.pooledNote)}</p>` : ""}
+      <p class="lvl-note-sm">A separate published target. Shown for reference; not used for the level status.</p></div>` : "";
+    return `<details class="lvl-cat${c.highlighted ? " is-hl" : ""}" data-cat="${c.key}">
+      <summary><span class="lvl-cat-h"><h4>${esc(c.label)}</h4><span class="lvl-st ${ST_CLASS[st]}">${esc(st)}</span></span>
+        <span class="lvl-mini">${read.toolKeys.map(k => `<span><b>${esc(TOOL_LABEL[k])}</b> <i class="lvl-pill ${pillClass(c.tools[k].status)}">${esc(statusText(c.tools[k].status))}</i></span>`).join("")}</span>
         <span class="lvl-more-k" aria-hidden="true">Details</span></summary>
-      <p class="lvl-src"><span class="lvl-kind guide">Guideline</span> NextCommit category: ${esc(c.ncLabel)}</p>
-      ${noData ? `<p class="lvl-note-sm"><b>NextCommit publishes no lower D1 targets for position players.</b> This is a data gap, not a negative result. Nothing is borrowed from mid-major or Other D1 numbers.</p>` : ""}
+      <p class="lvl-src"><span class="lvl-kind guide">Published target</span> Category: ${esc(c.ncLabel)}</p>
+      ${noData ? `<p class="lvl-note-sm"><b>No published lower D1 targets exist for position players.</b> This is a data gap, not a negative result. Nothing is borrowed from mid-major or other D1 numbers.</p>` : ""}
       <ul class="lvl-tools">${read.toolKeys.map(k => toolRow(k, c.tools[k])).join("")}</ul>
-      <p class="lvl-cov"><b>Compared:</b> ${comp.length ? esc(comp.join(", ")) : "none"}${miss.length ? ` · <b>Missing:</b> ${esc(miss.join(", "))}` : ""}</p>
+      <p class="lvl-cov"><b>Compared:</b> ${comp.length ? esc(comp.join(", ")) : "none"}${noTgt.length ? ` · <b>No published target:</b> ${esc(noTgt.join(", "))}` : ""}${notIn.length ? ` · <b>Not entered:</b> ${esc(notIn.join(", "))}` : ""}</p>
       ${ns}
     </details>`;
   }
 
+  const PANEL_TITLE = { BP: "Committed players' best showcase results", FG: "Outfielders during or after their junior season", SL: "Rising-senior summer group" };
   function panelHtml(p) {
     const rows = p.rows.map(r => {
-      const cells = r.notComparable ? `<p class="lvl-pill na">${esc(S.NOT_COMP)}</p><p class="lvl-note-sm">${esc(r.notComparable)}</p>${r.cells.length ? `<ul class="lvl-means">${r.cells.map(c => `<li><span>${esc(c.col)}</span><b>${c.mean == null ? "Not published" : esc(fmtV(c.mean, r.unit))}</b></li>`).join("")}</ul>` : ""}`
+      const cells = r.notComparable ? `<p class="lvl-pill na">${esc(S.NOT_COMP)}</p><p class="lvl-note-sm">${ds(r.notComparable)}</p>${r.cells.length ? `<ul class="lvl-means">${r.cells.map(c => `<li><span>${esc(c.col)}</span><b>${c.mean == null ? "Not published" : esc(fmtV(c.mean, r.unit))}</b></li>`).join("")}</ul>` : ""}`
         : `<ul class="lvl-means">${r.cells.map(c => {
-          if (c.status === S.NO_BENCH) return `<li><span>${esc(c.col)}</span><b>—</b><em class="na">${esc(S.NO_BENCH)}</em></li>`;
+          if (c.status === S.NO_BENCH) return `<li><span>${esc(c.col)}</span><b>—</b><em class="na">No published average</em></li>`;
           if (c.status === S.NO_INPUT) return `<li><span>${esc(c.col)}</span><b>${esc(fmtV(c.mean, r.unit))}</b><em class="none">Not entered</em></li>`;
           const d = r.unit === "seconds" ? c.absDiff.toFixed(2) + " s" : r.unit === "ratio" ? c.absDiff.toFixed(3).replace(/^0/, "") : r.unit === "percent" ? Math.round(c.absDiff * 1000) / 10 + " pts" : (Math.round(c.absDiff * 10) / 10) + (r.unit === "mph" ? " mph" : "");
           return `<li><span>${esc(c.col)}</span><b>${esc(fmtV(c.mean, r.unit))}</b><em class="${c.favorable === true ? "ok" : c.favorable === false ? "below" : "na"}">${esc(c.status)}${c.absDiff ? ` by ${esc(d)}` : ""}</em></li>`;
         }).join("")}</ul>`;
-      return `<div class="lvl-prow"><div class="lvl-prow-h"><b>${esc(r.label)}</b>${r.value != null ? `<span class="lvl-you">You: ${esc(fmtV(r.value, r.unit))}</span>` : ""}<small>${r.direction === "lower_is_better" ? "Lower is better" : "Higher is better"}</small></div>${cells}${(r.caveats || []).map(c => `<p class="lvl-note-sm">${esc(c)}</p>`).join("")}</div>`;
+      return `<div class="lvl-prow"><div class="lvl-prow-h"><b>${esc(r.label)}</b>${r.value != null ? `<span class="lvl-you">You: ${esc(fmtV(r.value, r.unit))}</span>` : ""}<small>${r.direction === "lower_is_better" ? "Lower is better" : "Higher is better"}</small></div>${cells}${(r.caveats || []).map(c => `<p class="lvl-note-sm">${ds(c)}</p>`).join("")}</div>`;
     }).join("");
-    return `<details class="lvl-panel"><summary><span class="lvl-kind mean">Sample mean</span> ${esc(p.title)}</summary>
-      <p class="lvl-note-sm">${esc(p.population)} Source: <a href="${esc(p.source.url)}" target="_blank" rel="noopener">${esc(p.source.publisher)}</a> (${esc(p.source.publication_or_check)}). ${esc(p.source.limitation)}</p>
-      ${p.note ? `<p class="lvl-note-sm"><b>${esc(p.note)}</b></p>` : ""}
-      <p class="lvl-note-sm">A mean is the average of that group, not a pass/fail line. Being below it doesn't rule you out.</p>
-      ${rows}</details>`;
+    return `<div class="lvl-panel lvl-panel-flat" data-panel="${esc(p.id)}"><h4><span class="lvl-kind mean">Average</span> ${esc(PANEL_TITLE[p.id] || U.deSource(p.title))}</h4>
+      <p class="lvl-note-sm">${ds(p.population)}</p>
+      ${p.note ? `<p class="lvl-note-sm"><b>${ds(p.note)}</b></p>` : ""}
+      ${rows}</div>`;
   }
 
   function collegeHtml(c) {
     if (!c) return "";
-    return `<details class="lvl-panel"><summary><span class="lvl-kind ctx">College norm</span> ${esc(c.title)}</summary>
-      <p class="lvl-note-sm"><b>${esc(c.warning)}</b></p>
-      <p class="lvl-note-sm">${esc(c.valueNote)}</p>
+    return `<div class="lvl-panel lvl-panel-flat" data-panel="college"><h4><span class="lvl-kind ctx">College players</span> College pitchers' fastballs (context only)</h4>
+      <p class="lvl-note-sm"><b>${ds(c.warning)}</b></p>
+      <p class="lvl-note-sm">${ds(c.valueNote)}</p>
       <ul class="lvl-means">${c.rows.map(r => `<li><span>${esc(r.level)} ${esc(r.hand)}</span><b>${esc(r.mean)} mph</b><em class="na">${r.diff == null ? `n: ${esc(r.sample)}` : `You ${r.diff >= 0 ? "+" : ""}${esc(r.diff)} mph · n: ${esc(r.sample)}`}</em></li>`).join("")}</ul>
-      <p class="lvl-note-sm">Source: <a href="${esc(c.source.url)}" target="_blank" rel="noopener">${esc(c.source.publisher)}</a>. ${esc(c.source.limitation)}</p>
-      <p class="lvl-note-sm">${esc(c.sec.text)} Source: <a href="${esc(c.sec.source.url)}" target="_blank" rel="noopener">${esc(c.sec.source.publisher)}</a>.</p></details>`;
+      <p class="lvl-note-sm">${ds(c.sec.text)}</p></div>`;
   }
 
-  function readHtml(read, idx, res) {
-    const title = read.kind === "pitching" ? `Pitching read${read.hand ? " (" + read.hand + ")" : ""}` : `Position read: ${read.position}`;
-    const hlCats = read.categories.filter(c => c.highlighted);
+  function yoursFor(read) {
+    const m = state.input.metrics;
+    return read.kind === "pitching" ? [["Max fastball", m.maxFb, "mph"], ["Typical game fastball", m.typFb, "mph"]]
+      : [["Max exit velocity", m.maxEv, "mph"], ["60-yard dash", m.sixty, "seconds"]].concat(read.family === "C" ? [["Catcher throw", m.cVelo, "mph"], ["Best pop time", m.pop, "seconds"]] : read.family === "OF" ? [["Outfield throw", m.ofVelo, "mph"]] : [["Infield throw", m.ifVelo, "mph"]]);
+  }
+
+  function nextFor(read) {
+    const n = U.nextStep(read);
+    if (n) return n.text;
+    const notIn = [...new Set(read.categories.flatMap(c => c.missing.filter(x => x.status === S.NO_INPUT).map(x => x.tool)))];
+    if (notIn.length) return `Next step: add your ${notIn.map(k => ({ hitting: "max exit velocity", running: "60-yard dash", throwing: "throwing numbers", pitching: "fastball velocity" })[k]).join(" and ")} to compare more levels.`;
+    return "Next step: get your full set of numbers and film in front of coaches. A published-target comparison can only go so far for this position.";
+  }
+
+  function sec(id, title, body) {
+    return `<details class="lvl-sec" data-sec="${id}"><summary><span>${esc(title)}</span><i aria-hidden="true"></i></summary><div class="lvl-sec-b">${body}</div></details>`;
+  }
+
+  function readHtml(read, idx) {
+    const h = U.headline(read), i = state.input;
     const gapCat = state.gapCat[idx] || (read.categories.find(c => !c.highlighted && c.compared.length) || read.categories[0]).key;
     const gaps = L.gapsTo(read, gapCat);
     const strengths = read.strengths.map(s => {
@@ -263,23 +285,10 @@
       if (!s.met.length) return `<li><b>${esc(TOOL_LABEL[s.tool])}:</b> below every listed target we could compare.</li>`;
       return `<li><b>${esc(TOOL_LABEL[s.tool])}:</b> meets the listed target for ${esc(metLabels.join(", "))}.</li>`;
     });
-    const m = state.input.metrics;
-    const yours = read.kind === "pitching" ? [["Max fastball", m.maxFb, "mph"], ["Typical game fastball", m.typFb, "mph"]]
-      : [["Max exit velocity", m.maxEv, "mph"], ["60-yard dash", m.sixty, "seconds"]].concat(read.family === "C" ? [["Catcher throw", m.cVelo, "mph"], ["Best pop time", m.pop, "seconds"]] : read.family === "OF" ? [["Outfield throw", m.ofVelo, "mph"]] : [["Infield throw", m.ifVelo, "mph"]]);
-    return `<section class="lvl-read" aria-labelledby="read${idx}">
-      <div class="lvl-read-head">
-        <h3 id="read${idx}">${esc(title)}</h3>
-        ${read.kind === "pitching" ? `<span class="lvl-flag">Velocity comparison only</span>` : ""}
-      </div>
-      <div class="lvl-range${read.highlight.hasRange ? "" : " is-empty"}">
-        <p class="lvl-range-k">Provisional comparison range</p>
-        ${read.highlight.hasRange ? `<ul class="lvl-range-list">${hlCats.map(c => `<li>${esc(c.label)}</li>`).join("")}</ul>` : `<p class="lvl-range-none">More information needed for an overall range</p>`}
-        <ul class="lvl-explain">${read.highlight.explain.map(e => `<li>${esc(e)}</li>`).join("")}</ul>
-        ${read.kind === "position" ? `<p class="lvl-note-sm">Rule used: a level is listed only when at least ${CFG.HIGHLIGHT_RULE.minDistinctCoreTools} different core tools have NextCommit targets there and every compared tool meets its target. This is a product rule, not a validated prediction.</p>` : `<p class="lvl-note-sm">Levels are listed where your fastball meets NextCommit's listed velocity target. Velocity is one part of a pitcher evaluation.</p>`}
-      </div>
-      <div class="lvl-yours"><h4>Your numbers</h4><ul>${yours.map(([l, v, u]) => `<li><span>${esc(l)}</span><b>${v != null ? esc(fmtV(v, u)) : '<em>Unknown</em>'}</b></li>`).join("")}</ul>
+    const m = i.metrics, yours = yoursFor(read);
+    const lv = U.levels(read);
+    const detail = `<div class="lvl-yours"><h4>Your numbers</h4><ul>${yours.map(([l, v, u]) => `<li><span>${esc(l)}</span><b>${v != null ? esc(fmtV(v, u)) : '<em>Not entered</em>'}</b></li>`).join("")}</ul>
         ${read.kind === "pitching" && (m.repertoire || []).length ? `<p class="lvl-note-sm">Repertoire: ${esc(m.repertoire.join(", "))}. Needs evaluation on video; no numeric targets exist.</p>` : ""}</div>
-      <h4 class="lvl-h4">All seven categories <small>NextCommit guideline targets</small></h4>
       <p class="lvl-note-sm">"Meets listed target" uses the edge of each published band as a provisional threshold. That is our implementation choice, not a researched average or an official cutoff. Testing context for these targets is unspecified.</p>
       <div class="lvl-cats">${read.categories.map(c => catCard(read, c)).join("")}</div>
       <div class="lvl-two">
@@ -287,11 +296,27 @@
         <div class="lvl-box"><h4>Gaps to a listed target</h4>
           <label class="lvl-label" for="gap${idx}">Compare with</label>
           <select class="select" id="gap${idx}" data-gap="${idx}">${read.categories.map(c => `<option value="${c.key}" ${c.key === gapCat ? "selected" : ""}>${esc(c.label)}</option>`).join("")}</select>
-          <ul class="lvl-list">${gaps.map(g => `<li><b>${esc(TOOL_LABEL[g.tool])}:</b> ${esc(g.text)}</li>`).join("")}</ul>
+          <ul class="lvl-list">${gaps.map(g => `<li><b>${esc(TOOL_LABEL[g.tool])}:</b> ${ds(g.text)}</li>`).join("")}</ul>
           <p class="lvl-note-sm">Closing a gap doesn't guarantee interest or an offer.</p></div>
+      </div>`;
+    const compare = `<p class="lvl-note-sm">These are averages of researched groups, not pass/fail lines. Being below an average doesn't rule you out. Each group is kept separate.</p>
+      ${read.panels.map(panelHtml).join("")}${collegeHtml(read.college)}`;
+    return `<section class="lvl-read" aria-labelledby="read${idx}" data-read="${idx}">
+      <h2 class="lvl-res-title" id="read${idx}" tabindex="-1">${esc(U.title(read))}</h2>
+      <div class="lvl-head-card">
+        <p class="lvl-head-k">Your result${read.kind === "pitching" ? ` <span class="lvl-flag">Velocity comparison only</span>` : ""}</p>
+        <p class="lvl-head">${esc(h.text)}</p>
+        <p class="lvl-head-sup">${esc(h.support)}</p>
+        <p class="lvl-head-cav">${esc(U.CAVEAT)}</p>
       </div>
-      <h4 class="lvl-h4">Supporting numbers <small>observed averages, kept separate by source</small></h4>
-      ${read.panels.map(panelHtml).join("")}${collegeHtml(read.college)}
+      <div class="lvl-next"><p class="lvl-next-k">Next step</p><p class="lvl-next-t">${esc(nextFor(read))}</p></div>
+      <div class="lvl-cta2 no-print"><p>Turn these numbers into a coach-ready video</p><a class="btn btn-peach" href="index.html#packages">See packages</a></div>
+      <div class="lvl-share no-print"><button class="btn btn-line" type="button" data-share="${idx}">Share my result</button><div class="lvl-share-out" id="shareOut${idx}" hidden></div></div>
+      <div class="lvl-levels"><h3>Every level</h3>
+        <ol class="lvl-lrow">${lv.map(l => `<li class="${ST_CLASS[l.status]}" data-level="${l.key}"><b>${esc(l.label)}</b><span>${esc(l.status)}</span></li>`).join("")}</ol>
+        <p class="lvl-note-sm">D2, D3, NAIA and JUCO overlap; they are not a strict ladder. "Close" means at least one of your numbers meets that level's published target and at least one is below it.</p></div>
+      ${sec("levels", "All levels in detail", detail)}
+      ${sec("compare", "How you compare with committed players", compare)}
     </section>`;
   }
 
@@ -300,28 +325,88 @@
     const ctx = [];
     if (i.heightIn != null) ctx.push(`${Math.floor(i.heightIn / 12)}' ${i.heightIn % 12}"`);
     if (i.weightLb != null) ctx.push(`${i.weightLb} lb`);
+    const tab = Math.min(state.tab || 0, r.reads.length - 1);
+    const tabs = r.reads.length > 1 ? `<div class="lvl-tabs" role="tablist" aria-label="Results by position">${r.reads.map((rd, k) => `<button type="button" role="tab" id="tab${k}" aria-controls="tp${k}" aria-selected="${k === tab}" tabindex="${k === tab ? 0 : -1}" data-tab="${k}">${esc(U.tabLabel(rd))}</button>`).join("")}</div>` : "";
+    const rule = `A level shows "Meets targets" only when at least ${CFG.HIGHLIGHT_RULE.minDistinctCoreTools} different core tools have published targets there and every compared tool meets its target. For pitchers, it's when your fastball meets the listed velocity target. This is a product rule, not a validated prediction.`;
+    const how = `<p>We compare each number you enter with the published recruiting targets for your position at each level, using the edge of each published band as a provisional line. Averages of researched groups and college-player numbers are shown separately and never change a level's status.</p>
+      <p><b>The rule used.</b> ${esc(rule)}</p>
+      <ul class="lvl-list"><li><b>Meets targets:</b> passes the rule above.</li><li><b>Close:</b> at least one of your compared numbers meets that level's target and at least one is below it.</li><li><b>Below targets:</b> your compared numbers are all below that level's targets.</li><li><b>Needs more numbers:</b> targets exist, but too few of your numbers could be compared there.</li><li><b>No published target:</b> the source publishes no target for your position at that level.</li></ul>
+      <p><b>Your headline</b> is the first level in the list that shows "Meets targets". <b>Next step</b> is the nearest level above it with a number below target, showing only that level's smallest gap relative to its target.</p>
+      <h4>Notes on your results</h4><ul class="lvl-list">${r.reads.map(rd => rd.highlight.explain.map(e => `<li>${ds(e)}</li>`).join("")).join("")}</ul>
+      <h4>Limitations</h4>
+      <p>${esc(r.note)}</p>
+      <ul class="lvl-list">${r.evidence.map(e => `<li>${ds(e.text)}</li>`).join("")}${r.stage.map(s => `<li>${ds(s)}</li>`).join("")}</ul>
+      <h4>Missing information</h4>
+      ${r.missing.length ? `<p><b>Not entered:</b> ${esc(r.missing.join(", "))}. Adding these can make the comparison more complete.</p>` : `<p>All core numbers for your position${r.reads.length > 1 ? "s" : ""} were entered.</p>`}
+      ${i.meta.link ? `<p class="lvl-note-sm">Reference link: <span class="lvl-link">${esc(i.meta.link)}</span></p>` : ""}`;
+    const sources = `<div class="lvl-legend" aria-label="Legend"><span class="lvl-kind guide">Published target</span> NextCommit recruiting guideline (used for level status) <span class="lvl-kind ref">Second source</span> NCSA guideline, shown for reference <span class="lvl-kind mean">Average</span> sample mean of a researched group <span class="lvl-kind ctx">College players</span> college norms, context only</div>
+      <p class="lvl-note-sm">Benchmark data v${esc(r.dataVersion)}, research as of ${esc(r.researchAsOf)}. ${esc(r.interpretationNote)}</p>
+      <ul class="lvl-list">${state.data.sources.filter(s => ["NC", "NS", "BP", "FG", "SL", "PC", "SEC"].includes(s.id)).map(s => `<li><b>${esc(s.publisher)}</b> (${esc(s.evidence_type)}, ${esc(s.publication_or_check)}): ${esc(s.limitation)} <a href="${esc(s.url)}" target="_blank" rel="noopener">Source</a></li>`).join("")}</ul>
+      <p class="lvl-note-sm">"Committed players' best showcase results" is BaseballPath. "Outfielders during or after their junior season" is Flatground. "Rising-senior summer group" is Slammers. College pitchers' fastballs come from Pitching Coach U and an SEC research sample.</p>`;
     return `<div class="lvl-results">
-      <div class="lvl-card lvl-res-head">
-        <h2>Your comparison</h2>
-        <p class="lvl-sub">${esc(positions().join(" / "))} · Class of ${esc(i.gradYear)} · Throws ${esc(i.throws)} · Bats ${esc(i.bats)}${ctx.length ? ` · ${esc(ctx.join(", "))} (context only)` : ""}</p>
-        ${r.twoWay ? `<p class="lvl-note-sm"><b>Two-way player:</b> pitching and position play are compared separately. They are never blended into one result.</p>` : ""}
-        <div class="lvl-legend" aria-label="Legend"><span class="lvl-kind guide">Guideline</span> published recruiting target <span class="lvl-kind mean">Sample mean</span> average of a researched group <span class="lvl-kind ref">NCSA reference</span> separate guideline source <span class="lvl-kind ctx">College norm</span> players already in college, context only</div>
-        <div class="lvl-res-actions no-print"><button class="btn btn-peach" type="button" data-go="1">Update my numbers</button><button class="btn btn-line" type="button" data-print>Print</button><button class="btn btn-line" type="button" data-reset>Start over</button></div>
-      </div>
-      ${r.reads.map((rd, k) => readHtml(rd, k, r)).join("")}
-      <section class="lvl-card lvl-ev" aria-labelledby="evTitle">
-        <h3 id="evTitle">Missing information and evidence quality</h3>
-        ${r.missing.length ? `<p><b>Not entered:</b> ${esc(r.missing.join(", "))}. Adding these can make the comparison more complete.</p>` : `<p>All core numbers for your position${r.reads.length > 1 ? "s" : ""} were entered.</p>`}
-        <ul class="lvl-list">${r.evidence.map(e => `<li>${esc(e.text)}</li>`).join("")}${r.stage.map(s => `<li>${esc(s)}</li>`).join("")}</ul>
-        ${i.meta.link ? `<p class="lvl-note-sm">Reference link: <span class="lvl-link">${esc(i.meta.link)}</span></p>` : ""}
-      </section>
-      <p class="lvl-final">${esc(r.note)}</p>
-      <details class="lvl-panel lvl-sources"><summary>Sources and data version</summary>
-        <p class="lvl-note-sm">Benchmark data v${esc(r.dataVersion)}, research as of ${esc(r.researchAsOf)}. ${esc(r.interpretationNote)}</p>
-        <ul class="lvl-list">${state.data.sources.filter(s => ["NC", "NS", "BP", "FG", "SL", "PC", "SEC"].includes(s.id)).map(s => `<li><b>${esc(s.publisher)}</b> (${esc(s.evidence_type)}, ${esc(s.publication_or_check)}): ${esc(s.limitation)} <a href="${esc(s.url)}" target="_blank" rel="noopener">Source</a></li>`).join("")}</ul>
-      </details>
+      <p class="lvl-sub lvl-res-meta">${esc(positions().join(" / "))} · Class of ${esc(i.gradYear)} · Throws ${esc(i.throws)} · Bats ${esc(i.bats)}${ctx.length ? ` · ${esc(ctx.join(", "))} (context only)` : ""}</p>
+      ${tabs}
+      ${r.reads.map((rd, k) => `<div class="lvl-tabpanel" id="tp${k}"${r.reads.length > 1 ? ` role="tabpanel" aria-labelledby="tab${k}"` : ""}${k === tab ? "" : " hidden"}>${readHtml(rd, k)}</div>`).join("")}
+      ${r.twoWay ? `<p class="lvl-note-sm">Two-way player: pitching and position play are compared separately and never blended into one result.</p>` : ""}
+      <div class="lvl-res-actions no-print"><button class="btn btn-line" type="button" data-go="1">Update my numbers</button><button class="btn btn-line" type="button" data-print>Print</button><button class="btn btn-line" type="button" data-reset>Start over</button></div>
+      ${sec("sources", "Sources", sources)}
+      ${sec("how", "How this works", how)}
       <div class="lvl-card lvl-cta no-print"><div><h3>Want coaches to see your film?</h3><p>Peach State Recruits builds Instagram features, highlight videos and recruiting profiles for baseball players.</p></div><a class="btn btn-peach btn-lg" href="index.html#packages">See packages</a></div>
     </div>`;
+  }
+
+  // ---------- Share image (drawn in the browser; nothing is uploaded) ----------
+  let logoImg = null;
+  const loadLogo = () => logoImg || (logoImg = new Promise((res) => { const im = new Image(); im.onload = () => res(im); im.onerror = () => res(null); im.src = "images/logo.png"; }));
+  function wrap(ctx, text, maxW) {
+    const words = text.split(" "), lines = []; let line = "";
+    words.forEach(w => { const t = line ? line + " " + w : w; if (ctx.measureText(t).width > maxW && line) { lines.push(line); line = w; } else line = t; });
+    if (line) lines.push(line); return lines;
+  }
+  async function storyBlob(read) {
+    try { await Promise.all(["120px Anton", "700 60px 'Barlow Condensed'", "600 40px Inter"].map(f => document.fonts && document.fonts.load(f))); } catch (e) { /* fonts optional */ }
+    const W = 1080, H = 1920, cv = document.createElement("canvas"); cv.width = W; cv.height = H;
+    const x = cv.getContext("2d"), i = state.input, m = i.metrics, h = U.headline(read);
+    const g = x.createLinearGradient(0, 0, 0, H); g.addColorStop(0, "#0d1526"); g.addColorStop(1, "#070b14"); x.fillStyle = g; x.fillRect(0, 0, W, H);
+    const rg = x.createRadialGradient(900, 160, 0, 900, 160, 900); rg.addColorStop(0, "rgba(255,138,76,.30)"); rg.addColorStop(1, "rgba(255,138,76,0)"); x.fillStyle = rg; x.fillRect(0, 0, W, H);
+    x.textAlign = "center"; x.textBaseline = "alphabetic";
+    const logo = await loadLogo(); if (logo) x.drawImage(logo, W / 2 - 150, 120, 300, 300);
+    x.fillStyle = "#ff8a4c"; x.font = "700 52px 'Barlow Condensed', sans-serif"; x.fillText("FIND MY LEVEL", W / 2, 520);
+    x.fillStyle = "#fff"; x.font = "112px Anton, Impact, sans-serif"; x.fillText((U.POS[read.position] || read.position).toUpperCase(), W / 2, 660);
+    x.fillStyle = "#c9d2e3"; x.font = "600 46px Inter, sans-serif"; x.fillText(`Class of ${i.gradYear}${read.kind === "pitching" && read.hand ? " · " + read.hand : ""}`, W / 2, 740);
+    const v = (n, u) => n == null ? "—" : u === "s" ? n.toFixed(2) : String(n);
+    const stats = read.kind === "pitching" ? [["MAX FB", v(m.maxFb), "mph"], ["GAME FB", v(m.typFb), "mph"], ["THROWS", i.throws || "—", ""]]
+      : [["MAX EV", v(m.maxEv), "mph"], ["60-YARD", v(m.sixty, "s"), "sec"]].concat(read.family === "C" ? [["POP TIME", v(m.pop, "s"), "sec"]] : read.family === "OF" ? [["OF ARM", v(m.ofVelo), "mph"]] : [["IF ARM", v(m.ifVelo), "mph"]]);
+    const bw = 300, gap = 30, x0 = (W - (bw * 3 + gap * 2)) / 2, y0 = 820;
+    stats.forEach(([lab, val, unit], k) => {
+      const bx = x0 + k * (bw + gap);
+      x.fillStyle = "rgba(255,255,255,.06)"; x.strokeStyle = "rgba(255,255,255,.16)"; x.lineWidth = 2;
+      x.beginPath(); x.roundRect ? x.roundRect(bx, y0, bw, 300, 28) : x.rect(bx, y0, bw, 300); x.fill(); x.stroke();
+      x.fillStyle = "#ff8a4c"; x.font = "700 40px 'Barlow Condensed', sans-serif"; x.fillText(lab, bx + bw / 2, y0 + 70);
+      x.fillStyle = "#fff"; x.font = "120px Anton, Impact, sans-serif"; x.fillText(val, bx + bw / 2, y0 + 210);
+      x.fillStyle = "#c9d2e3"; x.font = "600 34px Inter, sans-serif"; x.fillText(unit, bx + bw / 2, y0 + 262);
+    });
+    x.fillStyle = "#c9d2e3"; x.font = "600 44px Inter, sans-serif";
+    x.fillText(h.level ? (read.kind === "pitching" ? "FASTBALL MEETS THE LISTED" : "NUMBERS MEET THE LISTED") : "WORKING TOWARD", W / 2, 1260);
+    x.fillStyle = "#fff"; x.font = "128px Anton, Impact, sans-serif";
+    const big = h.level ? (U.LONG[h.level] + (read.kind === "pitching" ? " velocity target" : " targets")).toUpperCase() : "THE PUBLISHED TARGETS";
+    wrap(x, big, 960).slice(0, 3).forEach((ln, k) => x.fillText(ln, W / 2, 1400 + k * 136));
+    x.fillStyle = "#8f9bb3"; x.font = "500 32px Inter, sans-serif";
+    x.fillText("A benchmark comparison, not a prediction.", W / 2, 1720);
+    x.fillStyle = "#ff8a4c"; x.font = "700 64px 'Barlow Condensed', sans-serif"; x.fillText("@peachstaterecruits", W / 2, 1820);
+    return new Promise(res => cv.toBlob(b => res(b), "image/png"));
+  }
+  async function share(idx) {
+    const read = state.result.reads[idx], out = document.getElementById("shareOut" + idx); if (!out) return;
+    out.hidden = false; out.innerHTML = `<p class="lvl-note-sm">Making your image…</p>`;
+    const blob = await storyBlob(read);
+    const url = URL.createObjectURL(blob), name = `find-my-level-${read.position.toLowerCase()}.png`;
+    const file = typeof File === "function" ? new File([blob], name, { type: "image/png" }) : null;
+    const canShare = !!(file && navigator.canShare && navigator.canShare({ files: [file] }));
+    state.share = { blob, file, name };
+    out.innerHTML = `<img src="${url}" alt="Your Find My Level story image" width="1080" height="1920">
+      <div class="lvl-share-btns">${canShare ? `<button class="btn btn-peach" type="button" data-native="${idx}">Share…</button>` : ""}<a class="btn btn-line" href="${url}" download="${name}">Download image</a></div>
+      <p class="lvl-note-sm">Made on your device. Nothing is uploaded.</p>`;
   }
 
   // ---------- Input collection ----------
@@ -380,10 +465,12 @@
       const n = +li.dataset.step; li.classList.toggle("is-on", n === state.step); li.classList.toggle("is-done", n < state.step);
       if (n === state.step) li.setAttribute("aria-current", "step"); else li.removeAttribute("aria-current");
     });
+    const openSecs = state.step === 4 ? [...app.querySelectorAll("details[open][data-sec]")].map(d => d.closest("[data-read]") ? d.closest("[data-read]").dataset.read + ":" + d.dataset.sec : d.dataset.sec) : [];
     app.innerHTML = state.step === 1 ? step1(v) : state.step === 2 ? step2(v) : state.step === 3 ? step3(v) : results();
+    openSecs.forEach(k => { const [r, sct] = k.includes(":") ? k.split(":") : [null, k]; const d = app.querySelector(r != null ? `[data-read="${r}"] [data-sec="${sct}"]` : `.lvl-results > [data-sec="${sct}"]`); if (d) d.open = true; });
     const sum = document.getElementById("lvlSummary");
     if (sum) sum.focus();
-    else if (focus) { const h = app.querySelector("h2"); if (h) { h.setAttribute("tabindex", "-1"); h.focus({ preventScroll: true }); } const top = document.querySelector(".lvl-main"); if (top) window.scrollTo({ top: top.getBoundingClientRect().top + window.scrollY - 80, behavior: "auto" }); }
+    else if (focus) { const h = app.querySelector(state.step === 4 ? ".lvl-tabpanel:not([hidden]) h2" : "h2"); if (h) { h.setAttribute("tabindex", "-1"); h.focus({ preventScroll: true }); } const top = state.step === 4 ? app.querySelector(".lvl-results") : document.querySelector(".lvl-main"); const nav = document.querySelector(".nav"); if (top) window.scrollTo({ top: top.getBoundingClientRect().top + window.scrollY - (nav ? nav.offsetHeight : 64) - 8, behavior: "auto" }); }
   }
 
   function go(step) { collect(); state.step = step; render(NOV, true); }
@@ -393,15 +480,28 @@
     collect();
     const v = check(state.step);
     if (v.errors.length || v.warnings.length) { render(v); return; }
-    if (state.step === 3) { state.result = L.evaluate(state.data, state.input); state.step = 4; }
+    if (state.step === 3) { state.result = L.evaluate(state.data, state.input); state.step = 4; state.tab = 0; }
     else state.step += 1;
     render(NOV, true);
   });
   app.addEventListener("click", (e) => {
+    const tb = e.target.closest("[data-tab]"); if (tb) { selectTab(+tb.dataset.tab, true); return; }
+    const sh = e.target.closest("[data-share]"); if (sh) { share(+sh.dataset.share); return; }
+    const nv = e.target.closest("[data-native]"); if (nv && state.share) { navigator.share({ files: [state.share.file], title: "Find My Level", text: "My college baseball benchmark comparison. @peachstaterecruits" }).catch(() => {}); return; }
     const g = e.target.closest("[data-go]"); if (g) { e.preventDefault(); go(+g.dataset.go); return; }
     if (e.target.closest("[data-print]")) { app.querySelectorAll("details").forEach(d => d.open = true); window.print(); return; }
     if (e.target.closest("[data-reset]")) { location.href = location.pathname; return; }
     const f = e.target.closest("[data-focus]"); if (f) { e.preventDefault(); const el = document.getElementById("f_" + f.dataset.focus) || app.querySelector(`[name="${f.dataset.focus}"]`); if (el) el.focus(); }
+  });
+  function selectTab(k, focus) {
+    state.tab = k;
+    app.querySelectorAll("[data-tab]").forEach(b => { const on = +b.dataset.tab === k; b.setAttribute("aria-selected", on); b.tabIndex = on ? 0 : -1; if (on && focus) b.focus(); });
+    app.querySelectorAll(".lvl-tabpanel").forEach((p, j) => { p.hidden = j !== k; });
+  }
+  app.addEventListener("keydown", (e) => {
+    const tb = e.target.closest("[data-tab]"); if (!tb || !/^(ArrowLeft|ArrowRight|Home|End)$/.test(e.key)) return;
+    const n = app.querySelectorAll("[data-tab]").length, c = +tb.dataset.tab; e.preventDefault();
+    selectTab(e.key === "Home" ? 0 : e.key === "End" ? n - 1 : (c + (e.key === "ArrowRight" ? 1 : n - 1)) % n, true);
   });
   app.addEventListener("change", (e) => {
     const t = e.target;
