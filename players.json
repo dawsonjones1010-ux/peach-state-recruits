@@ -1,5 +1,516 @@
 [
   {
+    "slug": "beck-hoover",
+    "active": true,
+    "name": "Beck Hoover",
+    "sport": "Baseball",
+    "position": "SS / OF",
+    "gradYear": 2027,
+    "school": "Myers Park High School",
+    "team": "Stampede Baseball Club",
+    "location": "Charlotte, NC",
+    "coverImage": "images/players/beck-hoover.jpg",
+    "headline": "Beck Hoover has unreal pop",
+    "playerInstagram": [
+      "beck_hoover4"
+    ],
+    "measurables": [
+      {
+        "label": "Height",
+        "value": "6'1\""
+      },
+      {
+        "label": "Weight",
+        "value": "160 lb"
+      },
+      {
+        "label": "Position",
+        "value": "SS / OF"
+      }
+    ],
+    "video": {
+      "youtube": "",
+      "file": ""
+    },
+    "highlights": [
+      {
+        "title": "Watch the feature on Instagram",
+        "url": "https://www.instagram.com/p/Df0o6AulBGh/"
+      }
+    ],
+    "report": "🔥 Beck Hoover is a 2027 prospect out of Charlotte, North Carolina who brings a long, athletic 6'1, 160-pound frame to the field. The Stampede Baseball Club standout offers an intriguing mix of length, athleticism and offensive ability.\n\n💥 At the plate, Hoover pairs a good approach with plus bat speed, giving him the ability to do damage when he gets his pitch. He also shows good adjustability to stay on the barrel even when he's fooled, a trait that makes him a tough out and should keep paying off as he adds strength to his frame.\n\n⚡️ Defensively, Hoover brings experience at shortstop and in the outfield. His length and athleticism give him a strong foundation at both spots and plenty of ways to impact the game.\n\nWith bat speed, a mature approach and a projectable frame, Hoover is a 2027 North Carolina prospect worth keeping an eye on! 👀📈",
+    "stats": null,
+    "academics": [],
+    "links": [],
+    "contactEmail": "",
+    "contactInstagram": "peachstaterecruits",
+    "contactName": "Peach State Recruits",
+    "postUrl": "https://www.instagram.com/p/Df0o6AulBGh/",
+    "account": "peachstaterecruits",
+    "showOnHome": true,
+    "videos": []
+  },
+  {
+    "slug": "shaun-munger",
+    "active": true,
+    "name": "Shaun Munger",
+    "sport": "Baseball",
+    "position": "SS / 2B / 3B",
+    "gradYear": 2028,
+    "school": "King School",
+    "team": "Connecticut Baseball Club",
+    "location": "Connecticut",
+    "coverImage": "images/players/shaun-munger.jpg",
+    "headline": "Shaun Munger is dirty",
+    "playerInstagram": [
+      "shaun_sk19",
+      "shaunbaseball19"
+    ],
+    "measurables": [
+      {
+        "label": "Height",
+        "value": "5'10\""
+      },
+      {
+        "label": "Weight",
+        "value": "170 lb"
+      },
+      {
+        "label": "Position",
+        "value": "SS / 2B / 3B"
+      }
+    ],
+    "video": {
+      "youtube": "",
+      "file": ""
+    },
+    "highlights": [
+      {
+        "title": "Watch the feature on Instagram",
+        "url": "https://www.instagram.com/p/Dfz0Z0JlKAv/"
+      }
+    ],
+    "report": "🔥 Shaun Munger is a 2028 middle infield prospect out of Connecticut who brings a strong, athletic 5'10, 170-pound frame to the diamond. The Connecticut Baseball Club standout pairs that athleticism with a well-rounded game on both sides of the ball.\n\n💥 At the plate, the right-handed hitter brings a competitive approach and the strength to put a charge into the baseball. He works to barrel up quality pitches and has the tools to grow into a tough out at the top of the order, with more impact coming as he keeps getting stronger.\n\n⚡️ Defensively, Munger handles shortstop, second base and third base, giving his team plenty of flexibility around the infield. His athleticism and ability to play all three spots make him a valuable piece on the dirt.\n\nWith an athletic build, infield versatility and plenty of upside ahead, Munger is a 2028 Connecticut prospect worth keeping an eye on! 👀📈",
+    "stats": null,
+    "academics": [],
+    "links": [],
+    "contactEmail": "",
+    "contactInstagram": "peachstaterecruits",
+    "contactName": "Peach State Recruits",
+    "postUrl": "https://www.instagram.com/p/Dfz0Z0JlKAv/",
+    "account": "peachstaterecruits",
+    "showOnHome": true,
+    "videos": []
+  },
+  {
+    "slug": "chase-doyle",
+    "active": true,
+    "name": "Chase Doyle",
+    "sport": "Baseball",
+    "position": "OF / 1B",
+    "gradYear": 2029,
+    "school": "Hamden Hall Country Day School",
+    "team": "Body Armor Titans",
+    "location": "Cheshire, CT",
+    "coverImage": "images/players/chase-doyle.jpg",
+    "headline": "Chase Doyle is unreal",
+    "playerInstagram": [
+      "chase_d5"
+    ],
+    "measurables": [
+      {
+        "label": "Height",
+        "value": "6'4\""
+      },
+      {
+        "label": "Weight",
+        "value": "190 lb"
+      },
+      {
+        "label": "Position",
+        "value": "OF / 1B"
+      }
+    ],
+    "video": {
+      "youtube": "",
+      "file": ""
+    },
+    "highlights": [
+      {
+        "title": "Watch the feature on Instagram",
+        "url": "https://www.instagram.com/p/DfzfrIzoQD-/"
+      }
+    ],
+    "report": "🔥 Chase Doyle is a long, athletic 2029 prospect out of Cheshire, Connecticut whose size jumps out right away. Standing 6'4 with a projectable frame, the Body Armor Titans standout pairs that length with real athleticism.\n\n💥 At the plate, the right-handed hitter has shown legitimate power, with the strength to leave the yard and the ability to drive the ball for extra bases. He can stack quality at-bats and drive in runs in bunches, and his bat should only get more dangerous as he fills out his frame.\n\n⚡️ Defensively, Doyle brings experience in the outfield and at first base. He moves well for his size, with the speed to cover ground in the outfield and to create pressure on the bases.\n\nWith size, power and athleticism that's hard to find, Doyle is a 2029 Connecticut prospect worth keeping an eye on! 👀📈",
+    "stats": null,
+    "academics": [],
+    "links": [],
+    "contactEmail": "",
+    "contactInstagram": "peachstaterecruits",
+    "contactName": "Peach State Recruits",
+    "postUrl": "https://www.instagram.com/p/DfzfrIzoQD-/",
+    "account": "peachstaterecruits",
+    "showOnHome": true,
+    "videos": []
+  },
+  {
+    "slug": "michael-coticchio",
+    "active": true,
+    "name": "Michael Coticchio",
+    "sport": "Baseball",
+    "position": "OF",
+    "gradYear": 2029,
+    "school": "St. Anthony's High School",
+    "team": "Next Level",
+    "location": "Wantagh, NY",
+    "coverImage": "images/players/michael-coticchio.jpg",
+    "headline": "Michael Coticchio is elite",
+    "playerInstagram": [
+      "michaelcoticchio"
+    ],
+    "measurables": [
+      {
+        "label": "Height",
+        "value": "5'6\""
+      },
+      {
+        "label": "Weight",
+        "value": "155 lb"
+      },
+      {
+        "label": "Position",
+        "value": "OF"
+      }
+    ],
+    "video": {
+      "youtube": "",
+      "file": ""
+    },
+    "highlights": [
+      {
+        "title": "Watch the feature on Instagram",
+        "url": "https://www.instagram.com/p/Dfye6tZIT8m/"
+      }
+    ],
+    "report": "🔥 Michael Coticchio is an athletic 2029 outfielder out of Wantagh, New York who brings speed and energy to every inning he plays. The Next Level outfielder continues to build a game that can impact contests in several ways.\n\n💥 At the plate, the right-handed hitter offers more thump than his frame suggests, with sneaky power that lets him do damage when he gets a pitch to handle. Paired with his quickness, his bat gives him a chance to put pressure on a defense every time he steps in.\n\n⚡️ Defensively, Coticchio's speed is a real asset in the outfield, allowing him to cover ground and track down balls in the gaps. That same burst plays on the bases, where he looks to take the extra base.\n\nWith speed, sneaky pop and plenty of room to grow, Coticchio is a 2029 New York outfielder worth keeping an eye on! 👀📈",
+    "stats": null,
+    "academics": [],
+    "links": [],
+    "contactEmail": "",
+    "contactInstagram": "peachstaterecruits",
+    "contactName": "Peach State Recruits",
+    "postUrl": "https://www.instagram.com/p/Dfye6tZIT8m/",
+    "account": "peachstaterecruits",
+    "showOnHome": true,
+    "videos": []
+  },
+  {
+    "slug": "andrew-campon",
+    "active": true,
+    "name": "Andrew Campon",
+    "sport": "Baseball",
+    "position": "MIF / 1B / 3B / RHP",
+    "gradYear": 2029,
+    "school": "Chaminade High School",
+    "team": "Next Level",
+    "location": "Garden City, NY",
+    "coverImage": "images/players/andrew-campon.jpg",
+    "headline": "Andrew Campon is clutch",
+    "playerInstagram": [
+      "andrew_campon3"
+    ],
+    "measurables": [
+      {
+        "label": "Height",
+        "value": "5'9\""
+      },
+      {
+        "label": "Weight",
+        "value": "160 lb"
+      },
+      {
+        "label": "Position",
+        "value": "MIF / 1B / 3B / RHP"
+      }
+    ],
+    "video": {
+      "youtube": "",
+      "file": ""
+    },
+    "highlights": [
+      {
+        "title": "Watch the feature on Instagram",
+        "url": "https://www.instagram.com/p/DfyYDHNoYFz/"
+      }
+    ],
+    "report": "🔥 Andrew Campon is a versatile 2029 prospect out of Garden City, New York who gives his team value all over the diamond. The Next Level standout pairs a sturdy 5'9, 160-pound frame with a well-rounded game on both sides of the ball.\n\n💥 At the plate, the right-handed hitter brings a competitive approach and the consistently shown to drive the ball into the gaps. He has the ability to put runs on the board when chances come, and his bat has real room to grow as he keeps getting stronger.\n\n⚡️ Defensively, Campon brings experience in the middle infield, at first base and at third base, with outfield reps on top of that. His flexibility gives a coach several ways to keep him in the lineup every day.\n\n🎯 On the mound, the right-hander adds another dimension to his game, with the ability to work clean innings and give his team a dependable arm.\n\nWith versatility, two-way value and plenty of upside ahead, Campon is a 2029 New York prospect worth keeping an eye on! 👀📈",
+    "stats": null,
+    "academics": [],
+    "links": [],
+    "contactEmail": "",
+    "contactInstagram": "peachstaterecruits",
+    "contactName": "Peach State Recruits",
+    "postUrl": "https://www.instagram.com/p/DfyYDHNoYFz/",
+    "account": "peachstaterecruits",
+    "showOnHome": true,
+    "videos": []
+  },
+  {
+    "slug": "mason-montanez",
+    "active": true,
+    "name": "Mason Montanez",
+    "sport": "Baseball",
+    "position": "SS / 2B",
+    "gradYear": 2029,
+    "school": "Oceanside High School",
+    "team": "Next Level",
+    "location": "Oceanside, NY",
+    "coverImage": "images/players/mason-montanez.jpg",
+    "headline": "Mason Montanez is a stud",
+    "playerInstagram": [
+      "mason.montanez27"
+    ],
+    "measurables": [
+      {
+        "label": "Height",
+        "value": "5'7\""
+      },
+      {
+        "label": "Weight",
+        "value": "130 lb"
+      },
+      {
+        "label": "Position",
+        "value": "SS / 2B"
+      }
+    ],
+    "video": {
+      "youtube": "",
+      "file": ""
+    },
+    "highlights": [
+      {
+        "title": "Watch the feature on Instagram",
+        "url": "https://www.instagram.com/p/DfyV0pyFKFr/"
+      }
+    ],
+    "report": "🔥 Mason Montanez is a 2029 middle infielder out of Oceanside, New York who brings energy, athleticism and a team-first mentality to the diamond. The Next Level infielder continues to round out his game as he develops.\n\n💥 At the plate, the right-handed hitter competes in every at-bat and has shown the ability to string together hits and drive the ball into the gaps for extra bases. As he adds strength, his bat has plenty of room to keep growing.\n\n⚡️ Defensively, Montanez handles shortstop and second base, giving his team a reliable option up the middle. He also brings an active presence on the bases, with the athleticism to swipe a bag and create pressure.\n\nWith a well-rounded skill set and plenty of upside ahead, Montanez is a 2029 New York middle infielder worth keeping an eye on! 👀📈",
+    "stats": null,
+    "academics": [],
+    "links": [],
+    "contactEmail": "",
+    "contactInstagram": "peachstaterecruits",
+    "contactName": "Peach State Recruits",
+    "postUrl": "https://www.instagram.com/p/DfyV0pyFKFr/",
+    "account": "peachstaterecruits",
+    "showOnHome": true,
+    "videos": []
+  },
+  {
+    "slug": "dylan-herbert",
+    "active": true,
+    "name": "Dylan Herbert",
+    "sport": "Baseball",
+    "position": "SS / 2B",
+    "gradYear": 2029,
+    "school": "Kellenberg Memorial High School",
+    "team": "Long Island Dodger Nation",
+    "location": "Seaford, NY",
+    "coverImage": "images/players/dylan-herbert.jpg",
+    "headline": "Dylan Herbert has huge pop",
+    "playerInstagram": [
+      "dylan.herbert5"
+    ],
+    "measurables": [
+      {
+        "label": "Height",
+        "value": "5'6\""
+      },
+      {
+        "label": "Weight",
+        "value": "130 lb"
+      },
+      {
+        "label": "Position",
+        "value": "SS / 2B"
+      }
+    ],
+    "video": {
+      "youtube": "",
+      "file": ""
+    },
+    "highlights": [
+      {
+        "title": "Watch the feature on Instagram",
+        "url": "https://www.instagram.com/p/DfyS0r7lO5a/"
+      }
+    ],
+    "report": "🔥 Dylan Herbert is a 2029 middle infielder out of Seaford, New York who brings elite energy, versatility and a well-rounded game to the diamond. The Kellenberg Memorial and Long Island Dodger Nation infielder is a very fast, twitchy athlete who impacts the game in a variety of ways.\n\n💥 At the plate, the right-handed hitter has a contact-first approach with great pop, consistently putting the ball in play while showing the ability to drive it for extra bases. As he continues to add strength, his offensive profile has plenty of room to grow.\n\n💨 Once on base, Herbert becomes a constant threat. His speed and instincts let him take extra bases and put pressure on the defense every time he reaches.\n\n⚡️ Defensively, Herbert handles shortstop and second base, and he has also seen time at third base and in the outfield. His quick-twitch athleticism and versatility give his team plenty of ways to use him.\n\nWith game-changing speed, a contact bat and plenty of projection left, Herbert is a 2029 New York infielder worth keeping an eye on! 👀📈",
+    "stats": null,
+    "academics": [],
+    "links": [],
+    "contactEmail": "",
+    "contactInstagram": "peachstaterecruits",
+    "contactName": "Peach State Recruits",
+    "postUrl": "https://www.instagram.com/p/DfyS0r7lO5a/",
+    "account": "peachstaterecruits",
+    "showOnHome": true,
+    "videos": []
+  },
+  {
+    "slug": "cole-corey",
+    "active": true,
+    "name": "Cole Corey",
+    "sport": "Baseball",
+    "position": "LHP / 1B",
+    "gradYear": 2028,
+    "school": "Locust Valley High School",
+    "team": "Next Level Baseball",
+    "location": "Locust Valley, NY",
+    "coverImage": "images/players/cole-corey.jpg",
+    "headline": "Cole Corey is a top tier lefty",
+    "playerInstagram": [
+      "colecorey96"
+    ],
+    "measurables": [
+      {
+        "label": "Height",
+        "value": "6'2\""
+      },
+      {
+        "label": "Weight",
+        "value": "150 lb"
+      },
+      {
+        "label": "Position",
+        "value": "LHP / 1B"
+      }
+    ],
+    "video": {
+      "youtube": "",
+      "file": ""
+    },
+    "highlights": [
+      {
+        "title": "Watch the feature on Instagram",
+        "url": "https://www.instagram.com/p/DfyKcL-lJje/"
+      }
+    ],
+    "report": "🔥 Cole Corey is a projectable 2028 left-handed prospect out of Locust Valley, New York who pairs a long, lean frame with a two-way skill set. The Next Level Baseball arm brings the kind of size and length from the left side that college programs look for.\n\n🎯 On the mound, Corey works with the leverage and extension that come with a 6'2 frame, giving him a natural advantage from the left side. Pitching is his primary focus, and his size and athleticism give him a strong foundation to keep building on.\n\n💪 Corey is putting in the work in the weight room to add strength to his frame, and as he fills out physically, there is plenty of room for his stuff to take another step forward.\n\n💥 At the plate and at first base, Corey adds another dimension as a two-way option. His ability to contribute at first base gives his team flexibility when he is not on the mound.\n\nWith size, projection and a left-handed arm with plenty left to unlock, Corey is a 2028 New York prospect worth keeping an eye on! 👀📈",
+    "stats": null,
+    "academics": [],
+    "links": [],
+    "contactEmail": "",
+    "contactInstagram": "peachstaterecruits",
+    "contactName": "Peach State Recruits",
+    "postUrl": "https://www.instagram.com/p/DfyKcL-lJje/",
+    "account": "peachstaterecruits",
+    "showOnHome": true,
+    "videos": []
+  },
+  {
+    "slug": "tim-ressegger",
+    "active": true,
+    "name": "Tim Ressegger",
+    "sport": "Baseball",
+    "position": "RHP / C / 1B / OF",
+    "gradYear": 2029,
+    "school": "Kellenberg Memorial High School",
+    "team": "Next Level",
+    "location": "Rockville Centre, NY",
+    "coverImage": "images/players/tim-ressegger.jpg",
+    "headline": "Tim Ressegger is dirty",
+    "playerInstagram": [
+      "tim_ressegger8"
+    ],
+    "measurables": [
+      {
+        "label": "Height",
+        "value": "5'11\""
+      },
+      {
+        "label": "Weight",
+        "value": "175 lb"
+      },
+      {
+        "label": "Position",
+        "value": "RHP / C / 1B / OF"
+      }
+    ],
+    "video": {
+      "youtube": "",
+      "file": ""
+    },
+    "highlights": [
+      {
+        "title": "Watch the feature on Instagram",
+        "url": "https://www.instagram.com/p/DfyAUZTlJzm/"
+      }
+    ],
+    "report": "🔥 Tim Ressegger is a talented 2029 right-handed pitcher out of Rockville Centre, New York and one of the top arms in his class in the state, ranked as the #11 RHP in New York's 2029 class. The Kellenberg Memorial arm will take the mound for Next Level this summer.\n\n🎯 On the mound, Ressegger brings real arm strength for his age and a fastball that already stacks up well against the top arms in his class. He pitches with a competitive mentality and a confident presence on the rubber.\n\n⚡️ Beyond the mound, Ressegger also brings versatility behind the plate, at first base and in the outfield, giving his team several ways to use him.\n\n💪 With his frame and continued physical development, Ressegger has plenty of projection remaining, and his arm strength gives him a high ceiling as he matures and keeps refining his craft.\n\nWith a ranked right arm, a competitive edge and plenty of upside, Ressegger is a 2029 New York pitcher worth keeping an eye on! 👀📈",
+    "stats": null,
+    "academics": [],
+    "links": [],
+    "contactEmail": "",
+    "contactInstagram": "peachstaterecruits",
+    "contactName": "Peach State Recruits",
+    "postUrl": "https://www.instagram.com/p/DfyAUZTlJzm/",
+    "account": "peachstaterecruits",
+    "showOnHome": true,
+    "videos": []
+  },
+  {
+    "slug": "cj-castillo",
+    "active": true,
+    "name": "CJ Castillo",
+    "sport": "Baseball",
+    "position": "SS",
+    "gradYear": 2029,
+    "school": "East Meadow High School",
+    "team": "LIB Prime",
+    "location": "East Meadow, NY",
+    "coverImage": "images/players/cj-castillo.jpg",
+    "headline": "CJ Castillo is a big prospect",
+    "playerInstagram": [
+      "cj_castillo30"
+    ],
+    "measurables": [
+      {
+        "label": "Height",
+        "value": "5'6\""
+      },
+      {
+        "label": "Weight",
+        "value": "150 lb"
+      },
+      {
+        "label": "Position",
+        "value": "SS"
+      }
+    ],
+    "video": {
+      "youtube": "",
+      "file": ""
+    },
+    "highlights": [
+      {
+        "title": "Watch the feature on Instagram",
+        "url": "https://www.instagram.com/p/DfxtNXolOgV/"
+      }
+    ],
+    "report": "🔥 CJ Castillo is a 2029 shortstop out of East Meadow, New York who brings a competitive, team-first approach to the diamond. The LIB Prime infielder is already contributing at the high school level for East Meadow and continues to build an intriguing all-around game.\n\n💥 At the plate, the right-handed hitter brings an aggressive, confident approach and has shown the ability to drive the ball for extra bases. He makes the most of his pitch when he gets it and gives his lineup a productive presence, with more strength still to come as he matures physically.\n\n⚡️ Defensively, Castillo handles shortstop, the most demanding spot on the infield. His experience at the position gives him a strong foundation as he keeps sharpening his footwork and actions.\n\nWith a productive bat, a shortstop's résumé and plenty of projection left, Castillo is a 2029 New York prospect worth keeping an eye on! 👀📈",
+    "stats": null,
+    "academics": [],
+    "links": [],
+    "contactEmail": "",
+    "contactInstagram": "peachstaterecruits",
+    "contactName": "Peach State Recruits",
+    "postUrl": "https://www.instagram.com/p/DfxtNXolOgV/",
+    "account": "peachstaterecruits",
+    "showOnHome": true,
+    "videos": []
+  },
+  {
     "slug": "clark-chase",
     "sample": true,
     "sampleNote": "Example profile built from a Peach State Recruits feature.",
