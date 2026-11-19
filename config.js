@@ -20,16 +20,12 @@ window.PSR_CONFIG = {
   instagramHQ: "peachstaterecruitshq",
 
   // The most complete profile, used for "Explore a player profile" and the profile preview.
-  featuredProfile: "luca-bocchini",
+  featuredProfile: "eduardo-vazquez",
 
   // Real features shown on the homepage. Add new ones at the top.
   // image: cover file in the images folder. views + viewsAsOf: from Instagram insights.
   // postUrl: paste the link to the exact Instagram post (Share > Copy link). profile: the player's profile slug, if they have one.
-  recentFeatures: [
-    { name: "Clark Chase", sport: "Baseball", detail: "1B/LHP, Class of 2029, Centreville High School", views: "22.9K", viewsAsOf: "Nov 17, 2026", postUrl: "https://www.instagram.com/p/DfkLeciFqUz/", profile: "clark-chase", image: "images/clark-chase.jpg", account: "peachstaterecruits" },
-    { name: "Armani Strong", sport: "Football", detail: "WR, Class of 2028, Chaminade-Madonna, Florida commit", views: "16.2K", viewsAsOf: "Nov 17, 2026", postUrl: "https://www.instagram.com/p/Df0chVlmffK/", profile: "armani-strong", image: "images/armani-strong.jpg", account: "peachstaterecruitsfb" },
-    { name: "Luca Bocchini", sport: "Soccer", detail: "CAM/W, Class of 2031, Roswell Santos MLS NEXT", views: "4.8K", viewsAsOf: "Nov 17, 2026", postUrl: "https://www.instagram.com/p/De_5CE4ETxf/", profile: "luca-bocchini", image: "images/luca-bocchini.jpg", account: "peachstaterecruitshq" }
-  ],
+  recentFeatures: [],
 
   // Where people go after paying (your Google Form for clips + photos).
   intakeFormUrl: "",

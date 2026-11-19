@@ -6,18 +6,22 @@
 <title>Peach State Recruits | Player Features & Recruiting Profiles</title>
 <meta name="description" content="Professional player features, coach-ready highlight videos and recruiting profile pages for athletes in every sport, nationwide.">
 <meta property="og:title" content="Peach State Recruits">
-<meta property="og:description" content="Player features, coach-ready highlight videos and recruiting profiles for every sport. 4M+ views, 10K+ followers.">
+<meta property="og:description" content="Player features, coach-ready highlight videos and recruiting profiles. Baseball first, every sport welcome. 4M+ views, 10K+ followers.">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
 <meta property="og:image" content="https://dawsonjones1010-ux.github.io/peach-state-recruits/images/share.jpg">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://dawsonjones1010-ux.github.io/peach-state-recruits/images/share.jpg">
-<meta name="theme-color" content="#0a1120">
+<meta name="theme-color" content="#070b14">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;1,800&family=Inter:wght@400;500;600;700;800&family=Kaushan+Script&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=7">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css?v=8">
+<link rel="canonical" href="https://dawsonjones1010-ux.github.io/peach-state-recruits/">
+<meta property="og:url" content="https://dawsonjones1010-ux.github.io/peach-state-recruits/">
+<meta name="twitter:title" content="Peach State Recruits">
+<meta name="twitter:description" content="Player features, coach-ready highlight videos and recruiting profiles. Baseball first.">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"Organization","name":"Peach State Recruits","description":"Sports media company creating player features, highlight videos and recruiting profiles.","sameAs":["https://instagram.com/peachstaterecruits","https://instagram.com/peachstaterecruitsfb","https://instagram.com/peachstaterecruitshq"]}
 </script>
@@ -27,9 +31,9 @@
 
 <header class="nav">
   <div class="wrap">
-    <a class="logo" href="#top" id="logo" aria-label="Peach State Recruits, back to top"><span class="logo-text">Peach State Recruits</span></a>
+    <a class="logo" href="#top" id="logo" aria-label="Peach State Recruits, back to top"><span class="logo-badge" aria-hidden="true">PSR</span><span class="logo-text"><b>Peach State</b> Recruits</span></a>
     <nav class="nav-links" aria-label="Main">
-      <a href="#work">Our work</a>
+      <a href="#work">Features</a>
       <a href="#packages">Packages</a>
       <a href="#players">Players</a>
       <a href="#teams">Teams</a>
@@ -41,7 +45,7 @@
     </div>
   </div>
   <nav class="mobile-menu" id="mobileMenu" aria-label="Mobile">
-    <a href="#work">Our work</a>
+    <a href="#work">Latest features</a>
     <a href="#how">How it works</a>
     <a href="#picker">Help me choose</a>
     <a href="#packages">Packages &amp; prices</a>
@@ -53,18 +57,16 @@
 </header>
 
 <main id="main">
-<section class="hero dark" id="top" aria-labelledby="heroTitle">
-  <div class="wrap hero-grid">
-    <div>
-      <span class="badge"><i></i>Baseball first · Every sport welcome</span>
-      <h1 id="heroTitle">Your film.<span class="accent">Featured.</span></h1>
-      <a class="spot" id="spot" hidden></a>
-      <p class="lead">Professional Instagram features, coach-ready highlight videos and recruiting profiles for baseball players, built from your clips. Football, soccer and every other sport are welcome too.</p>
-      <div class="quick" id="quick" role="group" aria-label="Packages"></div>
-      <p class="quick-note" id="quickNote"></p>
-      <div class="hero-cta">
-        <a class="btn btn-line" href="#packages" id="heroBuy">Compare packages</a>
-        <a class="btn btn-ghost" href="#picker">Help me choose →</a>
+<section class="hx dark" id="top" aria-labelledby="heroTitle">
+  <div class="hx-bg" id="hxBg" aria-hidden="true"></div>
+  <div class="wrap hx-grid">
+    <div class="hx-copy">
+      <span class="hx-kick"><i></i>Baseball first · Every sport welcome</span>
+      <h1 id="heroTitle" class="hx-title"><span class="l1">Your film.</span><span class="l2">Featured.</span></h1>
+      <p class="hx-lead">Professional Instagram features, coach-ready highlight videos and recruiting profiles for baseball players, built from your clips. Football, soccer and every other sport are welcome too.</p>
+      <div class="hx-cta">
+        <a class="btn btn-peach btn-lg" href="#packages" id="heroBuy">Get featured</a>
+        <a class="btn btn-line btn-lg" href="#players">Browse players</a>
       </div>
       <div class="stats" id="stats">
         <div><b>4M+</b><span>views on our features</span></div>
@@ -72,23 +74,24 @@
         <div id="statTop"><b>Every</b><span>sport, nationwide</span></div>
       </div>
     </div>
-    <div class="stage" id="stage" aria-label="Recent Peach State Recruits feature covers, baseball first"></div>
+    <div class="hx-stage" id="stage" aria-label="Latest Peach State Recruits feature covers"></div>
   </div>
   <div class="wrap">
     <div class="handles" id="handles"><span>Posted as a collab on</span></div>
   </div>
 </section>
+<div class="ticker" id="tickerWrap" aria-hidden="true" hidden><div class="ticker-track" id="ticker"></div></div>
 
-<section id="work" aria-labelledby="workTitle">
+<section id="work" class="dark work-sec" aria-labelledby="workTitle">
   <div class="wrap">
     <div class="head-row">
       <div class="head reveal">
-        <span class="eyebrow">Recent features</span>
+        <span class="eyebrow">Latest features</span>
         <h2 id="workTitle">Real athletes. Real numbers.</h2>
         <p class="lead">Every feature is posted as a collab, so it reaches our audience and the athlete's. View counts come straight from Instagram insights.</p>
       </div>
     </div>
-    <div class="work" id="work-grid"></div>
+    <div class="fc-grid" id="work-grid"></div>
   </div>
 </section>
 
@@ -269,7 +272,7 @@
 <footer>
   <div class="wrap">
     <div>
-      <div class="logo" id="footLogo">Peach State Recruits</div>
+      <div class="logo" id="footLogo"><span class="logo-badge" aria-hidden="true">PSR</span><span class="logo-text"><b>Peach State</b> Recruits</span></div>
       <p style="max-width:28em">A sports media company creating player features, highlight videos and recruiting profiles for athletes in every sport.</p>
     </div>
     <div>
@@ -295,8 +298,8 @@
   <a class="btn btn-peach btn-sm" href="#packages" tabindex="-1">See packages</a>
 </div>
 
-<script src="config.js?v=7"></script>
-<script src="shared.js?v=7"></script>
+<script src="config.js?v=8"></script>
+<script src="shared.js?v=8"></script>
 <script>
 (async function () {
   const C = window.PSR_CONFIG, PSR = window.PSR, { esc, coverOrImage, photoFrame, payLink, loadPlayers, profileUrl, ICON } = PSR;
@@ -326,17 +329,7 @@
       <p class="plan-terms">${esc(p.clips)}, ${esc(C.terms.revisions)}</p>
     </article>`).join("");
 
-  // Hero quick-pick: every package one tap from the top of the page
-  const bf = (C.compare || []).find(r => /best for/i.test(r.label)) || {};
-  document.getElementById("quick").innerHTML = P.map(p => `
-    <a class="qp ${p.highlight ? "hl" : ""}" href="${esc(payLink(C, p.id))}" ${ext$} aria-label="${esc(orderLabel(p.id, p.name))}: ${esc(p.name)}, $${p.price} ${esc(p.unit)}">
-      <span class="qp-n">${esc(short(p))}</span><span class="qp-p">$${p.price}</span>
-      ${bf[p.id] ? `<span class="qp-b">${esc(bf[p.id])}</span>` : ""}
-      <span class="qp-o">${hasLink(p.id) ? "Order" : "Order on IG"} ${ICON.arrow}</span>
-    </a>`).join("");
-  document.getElementById("quickNote").textContent = Object.values(C.paymentLinks || {}).some(Boolean)
-    ? "One-time prices. Secure card checkout. No contracts."
-    : "One-time prices, no contracts. Tap a package to order by Instagram DM and we'll send you a payment link.";
+  document.getElementById("heroBuy").innerHTML = `Get featured <span class="btn-from">from $${minPrice}</span>`;
 
   document.getElementById("addons").innerHTML = `
     <div class="addon reveal"><div><b>Player profile page</b><span>Add a coach-ready profile to any feature</span></div>
@@ -441,37 +434,47 @@
 
   const isBB = (x) => /baseball/i.test(x.sport || "");
   const heroRF = [...RF.filter(isBB), ...RF.filter(f => !isBB(f))];
+  const metaLine = (f) => [f.position, f.gradYear ? "Class of " + f.gradYear : ""].filter(Boolean).join(" · ");
+  const mainHref = (f) => f.profile ? profileUrl(f.profile) : (f.postUrl || "");
+
+  // Hero: the newest covers fanned out; tap/hover a back card to bring it forward
   const stage = document.getElementById("stage");
   const SR = heroRF.slice(0, 3);
-  stage.innerHTML = SR.map((f, i) => `<div class="card" data-pos="${i}">${photoFrame(f, { eager: i === 0, sizes: PSR.PHOTO_SIZES.hero })}<span class="views">${views(f)}</span></div>`).join("");
-  // Tap/hover a back card to bring it forward; the baseball feature returns to the front afterwards
-  const cards = [...stage.querySelectorAll(".card")];
-  const front = (k) => cards.forEach((c, j) => c.dataset.pos = (j - k + cards.length) % cards.length);
-  cards.forEach((c, k) => { c.addEventListener("mouseenter", () => front(k)); });
+  if (SR[0]) document.getElementById("hxBg").style.backgroundImage = `url("${esc(String(SR[0].image).replace(/(\/images\/players\/[\w-]+)\.jpg/, "$1-640.jpg"))}")`;
+  stage.innerHTML = SR.map((f, i) => `<a class="hs-card" data-pos="${i}" href="${esc(mainHref(f) || "#work")}" aria-label="${esc(f.name)}, ${esc(metaLine(f))}">${photoFrame(f, { eager: i === 0, sizes: PSR.PHOTO_SIZES.hero })}${i === 0 ? '<span class="hs-new">Latest feature</span>' : ""}</a>`).join("")
+    + (SR[0] ? `<div class="hs-cap" id="stageCap"></div>` : "");
+  const cards = [...stage.querySelectorAll(".hs-card")];
+  const cap = document.getElementById("stageCap");
+  const setCap = (f) => { if (cap && f) cap.innerHTML = `<b>${esc(f.name)}</b><span>${esc(metaLine(f))}${f.school ? " · " + esc(f.school) : ""}</span>`; };
+  const front = (k) => { cards.forEach((c, j) => c.dataset.pos = (j - k + cards.length) % cards.length); setCap(SR[k]); };
+  setCap(SR[0]);
+  cards.forEach((c, k) => {
+    c.addEventListener("mouseenter", () => front(k));
+    c.addEventListener("click", e => { if (c.dataset.pos !== "0") { e.preventDefault(); front(k); } });
+  });
   stage.addEventListener("mouseleave", () => front(0));
 
-  // Mobile spotlight: the lead baseball feature right under the headline
-  const sp = heroRF[0];
-  if (sp) {
-    const spot = document.getElementById("spot");
-    spot.href = sp.profile ? profileUrl(sp.profile) : (sp.postUrl || "https://instagram.com/" + sp.account);
-    if (!sp.profile) { spot.target = "_blank"; spot.rel = "noopener"; }
-    spot.innerHTML = `${photoFrame(sp, { eager: true, sizes: PSR.PHOTO_SIZES.spot, cls: "photo-frame-spot" })}
-      <span class="spot-t"><span class="spot-k">${isBB(sp) ? "Latest baseball feature" : "Latest feature"}</span><b>${esc(sp.name)}</b><span>${esc(sp.detail || "")}</span>${sp.views ? `<span class="chip-views">${ICON.eye}${esc(sp.views)} views</span>` : ""}</span>`;
-    spot.hidden = false;
+  // Ticker: the newest features, scrolling under the hero
+  if (RF.length) {
+    const items = RF.map(f => `<span><b>${esc(f.name)}</b>${esc(metaLine(f))}</span>`).join("");
+    document.getElementById("ticker").innerHTML = `<div>${items}</div><div>${items}</div>`;
+    document.getElementById("tickerWrap").hidden = false;
   }
 
-  document.getElementById("work-grid").innerHTML = RF.map(f => {
-    const href = esc(f.postUrl || "https://instagram.com/" + f.account);
-    return `<article class="feat reveal">
-      <a class="c" href="${href}" ${ext$} aria-label="${esc(f.name)} feature on Instagram">${photoFrame(f, { sizes: PSR.PHOTO_SIZES.card })}${views(f)}${f.sport ? `<span class="tag-sport">${esc(f.sport)}</span>` : ""}</a>
-      <div class="feat-body">
+  // Latest features: one lead card, then the rest. "View on Instagram" only when the exact post is known.
+  document.getElementById("work-grid").innerHTML = RF.map((f, i) => {
+    const href = mainHref(f), lead = i === 0;
+    const media = photoFrame(f, { sizes: lead ? "(max-width: 700px) 80vw, 600px" : PSR.PHOTO_SIZES.card }) + views(f) + (lead ? '<span class="fc-flag">New</span>' : "");
+    return `<article class="fc reveal${lead ? " fc-lead" : ""}">
+      ${href ? `<a class="fc-media" href="${esc(href)}" ${f.profile ? "" : ext$} aria-label="${esc(f.name)}${f.profile ? " profile" : " feature on Instagram"}">${media}</a>` : `<div class="fc-media">${media}</div>`}
+      <div class="fc-body">
+        <span class="fc-meta">${esc([f.sport, metaLine(f)].filter(Boolean).join(" · "))}</span>
         <h3>${esc(f.name)}</h3>
-        <p>${esc(f.detail)}</p>
-        ${f.views ? `<p class="asof">${esc(f.views)} views${f.viewsAsOf ? " as of " + esc(f.viewsAsOf) : ""}${f.account ? " · @" + esc(f.account) : ""}</p>` : ""}
-        <div class="feat-links">
-          <a href="${href}" ${ext$}>${f.postUrl ? "View post" : "View on Instagram"} ↗</a>
-          ${f.profile ? `<a href="${profileUrl(f.profile)}">View profile →</a>` : ""}
+        ${f.school ? `<p class="fc-sub">${esc(f.school)}</p>` : ""}
+        ${lead && f.headline ? `<p class="fc-hl">${esc(f.headline)}</p>` : ""}
+        <div class="fc-links">
+          ${f.profile ? `<a class="fc-go" href="${profileUrl(f.profile)}">View profile ${ICON.arrow}</a>` : ""}
+          ${f.postUrl ? `<a class="fc-ig" href="${esc(f.postUrl)}" ${ext$}>${ICON.ig}<span>View post</span></a>` : ""}
         </div>
       </div>
     </article>`;
@@ -506,17 +509,23 @@
   yEl.insertAdjacentHTML("beforeend", years.map(y => `<option value="${esc(y)}">Class of ${esc(y)}</option>`).join(""));
   sEl.innerHTML = ["All sports", ...sports].map((s, i) => `<button type="button" class="pill" aria-pressed="${i === 0}" data-sport="${i === 0 ? "" : esc(s)}">${esc(s)}</button>`).join("");
   if (players.some(p => p.sample)) document.getElementById("playersLead").textContent = "Search by name, school or position, or filter by sport and class. Profile pages are new: these examples are built from real Peach State features and show what a coach sees.";
+  sEl.hidden = sports.length < 2; // one sport so far: the pills add nothing
   let sport = "";
-  const card = (p) => `<a class="sample reveal" href="${profileUrl(p.slug)}">
-      <div class="c">${photoFrame(p, { sizes: PSR.PHOTO_SIZES.card })}${p.sample ? '<span class="flag">Example</span>' : ""}</div>
-      <div class="info">
+  const card = (p) => {
+    const m = (p.measurables || []).filter(x => !/position/i.test(x.label)).slice(0, 2);
+    return `<a class="pc reveal" href="${profileUrl(p.slug)}">
+      <div class="pc-media">${photoFrame(p, { sizes: PSR.PHOTO_SIZES.card })}${p.gradYear ? `<span class="pc-class">${esc(p.gradYear)}</span>` : ""}</div>
+      <div class="pc-body">
+        <span class="pc-meta">${esc([p.sport, p.position].filter(Boolean).join(" · "))}</span>
         <h3>${esc(p.name)}</h3>
-        <p>${esc([p.sport, p.position].filter(Boolean).join(" · "))}</p>
-        <p>${esc([p.gradYear ? "Class of " + p.gradYear : "", p.school || p.team].filter(Boolean).join(" · "))}</p>
-        <div class="chips">${(p.measurables || []).slice(0, 3).map(m => `<span title="${esc(m.label)}">${esc(m.value)}</span>`).join("")}</div>
-        <span class="open">Open profile ${ICON.arrow}</span>
+        <p class="pc-sub">${esc(p.school || p.team || p.location || "")}</p>
+        <div class="pc-foot">
+          <div class="pc-stats">${m.map(x => `<span><b>${esc(x.value)}</b><small>${esc(x.label)}</small></span>`).join("")}</div>
+          <span class="pc-go" aria-hidden="true">${ICON.arrow}</span>
+        </div>
       </div>
     </a>`;
+  };
   function filter() {
     const q = qEl.value.trim().toLowerCase(), y = yEl.value, pos = pEl.value;
     const list = players.filter(p => (!sport || p.sport === sport) && (!y || String(p.gradYear) === y) && (!pos || posTokens(p).includes(pos)) &&

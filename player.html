@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<script>if (location.pathname.indexOf("/player/") !== -1) document.write('<base href="/">');</script>
+<script>(function(){var m=location.pathname.match(/^(.*?)\/player\/[^\/]+\/?$/);if(m)document.write('<base href="'+m[1]+'/">');})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Player Profile | Peach State Recruits</title>
 <meta name="description" content="Recruiting profile by Peach State Recruits.">
@@ -12,17 +12,17 @@
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://dawsonjones1010-ux.github.io/peach-state-recruits/images/share.jpg">
-<meta name="theme-color" content="#0a1120">
+<meta name="theme-color" content="#070b14">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;1,800&family=Inter:wght@400;500;600;700;800&family=Kaushan+Script&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=7">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css?v=8">
 </head>
 <body>
 <a class="skip" href="#app">Skip to profile</a>
 <header class="nav">
   <div class="wrap">
-    <a class="logo" href="index.html" id="logo" aria-label="Peach State Recruits home"><span class="logo-text">Peach State Recruits</span></a>
+    <a class="logo" href="index.html" id="logo" aria-label="Peach State Recruits home"><span class="logo-badge" aria-hidden="true">PSR</span><span class="logo-text"><b>Peach State</b> Recruits</span></a>
     <nav class="nav-links" aria-label="Main">
       <a href="index.html#players">Players</a>
       <a href="index.html#packages">Packages</a>
@@ -45,7 +45,7 @@
 <footer>
   <div class="wrap">
     <div>
-      <a class="logo" href="index.html" id="footLogo">Peach State Recruits</a>
+      <a class="logo" href="index.html" id="footLogo"><span class="logo-badge" aria-hidden="true">PSR</span><span class="logo-text"><b>Peach State</b> Recruits</span></a>
       <p style="max-width:30em">Profile created by Peach State Recruits with the athlete's and family's approval.</p>
     </div>
     <div><h5>Explore</h5><a href="index.html#players">Find a player</a><a href="index.html#packages">Packages</a></div>
@@ -64,8 +64,8 @@
   </div>
 </dialog>
 
-<script src="config.js?v=7"></script>
-<script src="shared.js?v=7"></script>
+<script src="config.js?v=8"></script>
+<script src="shared.js?v=8"></script>
 <script>
 (async function () {
   const C = window.PSR_CONFIG, PSR = window.PSR, { esc, coverOrImage, photoFrame, toast, ICON } = PSR;
@@ -74,6 +74,12 @@
   document.getElementById("logo").insertAdjacentHTML("afterbegin", PSR.logoMark(C));
   document.getElementById("footLogo").insertAdjacentHTML("afterbegin", PSR.logoMark(C));
   const ext$ = 'target="_blank" rel="noopener"';
+  document.addEventListener("click", e => {
+    const a = e.target.closest('a[href^="#"]'); if (!a) return;
+    const t = document.getElementById(decodeURIComponent(a.getAttribute("href").slice(1)));
+    if (t) { e.preventDefault(); t.scrollIntoView({ behavior: PSR.reducedMotion() ? "auto" : "smooth" }); if (t.tabIndex >= 0 || t.id === "app") t.focus({ preventScroll: true }); }
+  });
+
 
   function currentSlug() {
     const m = location.pathname.match(/\/player\/([^/?#]+)/);
@@ -146,18 +152,27 @@
         <div><p>Scan with a phone camera to open this profile. Handy at showcases and camps.</p>
         <div class="acts"><button class="btn btn-line btn-sm" type="button" data-copy>${ICON.link}Copy link</button></div></div></div></div>`;
 
+    const parts = String(p.name || "").trim().split(/\s+/);
+    const firstN = parts.length > 1 ? parts.slice(0, -1).join(" ") : "";
+    const lastN = parts[parts.length - 1] || "";
+    const where = [p.school, p.team, p.location].filter(Boolean).join(" · ");
+    const reportHtml = p.report ? String(p.report).split(/\n\s*\n/).map(t => t.trim()).filter(Boolean).map(t => `<p>${esc(t)}</p>`).join("") : "";
+    const smallCover = String(p.coverImage || "").replace(/(images\/players\/[\w-]+)\.jpg/, "$1-640.jpg");
+    let sec = 0; const num = () => String(++sec).padStart(2, "0");
     app.innerHTML = `
       ${p.sample ? `<div class="sample-bar">${esc(p.sampleNote || "This is a sample profile.")}</div>` : ""}
-      <section class="p-top dark" id="pTop" aria-labelledby="pName">
-        ${p.coverImage ? `<div class="p-bg" style="background-image:url('${esc(p.coverImage)}')"></div>` : ""}
-        <div class="wrap p-grid">
-          <div class="p-cover">${photoFrame(p, { eager: true, sizes: PSR.PHOTO_SIZES.profile })}</div>
-          <div class="p-head">
+      <section class="pf-hero dark" id="pTop" aria-labelledby="pName" data-num="${esc(p.gradYear ? "'" + String(p.gradYear).slice(-2) : "")}">
+        ${p.coverImage ? `<div class="pf-bg" style="background-image:url('${esc(smallCover)}')"></div>` : ""}
+        <div class="wrap pf-grid">
+          <div class="pf-head">
+            <a class="pf-back no-print" href="${base}index.html#players">${ICON.arrow}All players</a>
             <div class="p-kicker">${[p.sport, p.position].filter(Boolean).map(x => `<span>${esc(x)}</span>`).join("")}${cls ? `<span class="hot">${esc(cls)}</span>` : ""}</div>
-            <h1 class="p-name" id="pName">${esc(p.name)}</h1>
-            ${p.headline ? `<p class="p-headline">${esc(p.headline)}</p>` : ""}
-            ${classSchool ? `<div class="p-class">${esc([p.school, p.team, p.location].filter(Boolean).join(" · ") || classSchool)}</div>` : ""}
-            ${keys.length ? `<div class="keys" aria-label="Key measurables">${keys.map(m => `<div><b>${esc(m.value)}</b><span>${esc(m.label)}</span></div>`).join("")}</div>` : ""}
+            <h1 class="pf-name" id="pName">${firstN ? `<span class="first">${esc(firstN)}</span> ` : ""}<span class="last">${esc(lastN)}</span></h1>
+            ${p.headline ? `<p class="pf-headline">${esc(p.headline)}</p>` : ""}
+            ${where ? `<div class="pf-where">${esc(where)}</div>` : ""}
+          </div>
+          <div class="pf-cover">${photoFrame(p, { eager: true, full: true, sizes: PSR.PHOTO_SIZES.profile })}<span class="pf-cover-tag">Peach State feature</span></div>
+          <div class="pf-acts">
             <div class="p-actions">
               ${contactBtn}
               <a class="btn btn-line btn-lg" href="#highlights" id="watchBtn">${ICON.play}Watch highlights</a>
@@ -172,20 +187,21 @@
             <p class="print-only small" style="margin-top:10px">Profile: ${esc(shareUrl)}</p>
           </div>
         </div>
+        ${keys.length ? `<div class="pf-strip"><div class="wrap"><div class="keys" style="--n:${keys.length}" aria-label="Key measurables">${keys.map(m => `<div><b>${esc(m.value)}</b><span>${esc(m.label)}</span></div>`).join("")}</div></div></div>` : ""}
       </section>
       <div class="wrap">
-        <div class="p-body">
+        <div class="pf-body">
           <div>
-            <div class="p-block" id="highlights">
-              <h2>Highlights</h2>
+            <section class="pf-sec" id="highlights" tabindex="-1" aria-labelledby="hlT">
+              <div class="pf-sec-h"><i>${num()}</i><h2 id="hlT">Highlights</h2></div>
               ${video}
               ${highlightLinks.filter(h => h !== igPost).length ? `<div class="links">${highlightLinks.filter(h => h !== igPost).map(h => `<a href="${esc(h.url)}" ${ext$}>${esc(h.title)}<span aria-hidden="true">↗</span></a>`).join("")}</div>` : ""}
-            </div>
-            ${p.report ? `<div class="p-block"><h2>Scouting report</h2><div class="report">${esc(p.report)}</div><p class="note">Written by Peach State Recruits from the athlete's film.</p></div>` : ""}
+            </section>
+            ${reportHtml ? `<section class="pf-sec" aria-labelledby="rpT"><div class="pf-sec-h"><i>${num()}</i><h2 id="rpT">Scouting report</h2></div><div class="pf-report">${reportHtml}</div><p class="note">Written by Peach State Recruits from the athlete's film.</p></section>` : ""}
           </div>
-          <aside class="side" aria-label="Player details">
+          <aside class="pf-side side" aria-label="Player details">
             ${snapBox}${statsBox}${acadBox}${linksBox}${qrBox}
-            <div class="cta-mini"><h3>Want a profile like this?</h3><p>Every sport. Built from your film in a few days.</p><a class="btn btn-peach" href="${base}index.html#packages">Get featured</a></div>
+            <div class="cta-mini no-print"><h3>Want a profile like this?</h3><p>Built from your film in a few days.</p><a class="btn btn-peach" href="${base}index.html#packages">Get featured</a></div>
           </aside>
         </div>
       </div>`;

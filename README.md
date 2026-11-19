@@ -67,3 +67,14 @@ Profile links then look like `yourdomain.com/player/jordan-hayes`. The "Copy pro
 - Profile pages: key measurables up top, one-tap Share (phone share sheet or copy link), a QR code drawn on the device, and a print-friendly one-page sheet.
 - `vendor/qrcode.min.js` is the QR code library (MIT license). It only loads on profile pages.
 - After changing `styles.css` or a `.js` file, bump the `?v=` number where it's linked in the `.html` files so visitors get the new version.
+
+## Player share pages (link previews)
+Each published player has a static page at `player/<slug>/index.html` with that player's title,
+description and preview image (`images/og/<slug>.jpg`) baked in, so links pasted into iMessage,
+Instagram DMs, X or Facebook show the player's card. They are built from `player.html` by:
+
+    python3 tools/build_stubs.py
+
+Run it (then commit) after adding a player, changing a cover or editing `player.html`. It also
+makes the 640px card copies of covers (`images/players/<slug>-640.jpg`) and rewrites `sitemap.xml`.
+Players without a built page still open fine through `404.html`, just with the generic preview.

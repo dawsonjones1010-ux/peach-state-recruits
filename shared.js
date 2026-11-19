@@ -45,10 +45,10 @@
   // Frame sizes used by srcset. The box itself keeps its CSS aspect-ratio;
   // the photo is shown in full (object-fit:contain) over a blurred fill.
   const PHOTO_SIZES = {
-    card: "(max-width: 700px) 92vw, (max-width: 1100px) 45vw, 380px",
-    hero: "(max-width: 900px) 92vw, 330px",
+    card: "(max-width: 700px) 80vw, (max-width: 1100px) 45vw, 380px",
+    hero: "(max-width: 900px) 70vw, 420px",
     spot: "92px",
-    profile: "(max-width: 760px) 116px, 360px",
+    profile: "(max-width: 760px) 80vw, 460px",
     mini: "(max-width: 700px) 96px, 140px",
     thumb: "56px",
     preview: "220px",
@@ -68,6 +68,14 @@
   }
 
   function photoFallback(img) {
+    // A missing 640px copy falls back to the full image before giving up
+    const full = img && img.getAttribute && img.getAttribute("data-full");
+    if (full && img.getAttribute("src") !== full) {
+      img.removeAttribute("srcset"); img.setAttribute("src", full);
+      const bgEl = img.parentNode && img.parentNode.querySelector(".photo-frame-bg");
+      if (bgEl) bgEl.style.backgroundImage = `url('${full.replace(/'/g, "%27")}')`;
+      return;
+    }
     const frame = img && img.closest && img.closest(".photo-frame");
     if (frame) frame.classList.add("is-fallback");
     if (img) { img.removeAttribute("src"); img.removeAttribute("srcset"); }
@@ -86,7 +94,12 @@
     }
     const safe = esc(src);
     const eager = !!opts.eager;
-    return `<div class="${cls}"><span class="photo-frame-bg" aria-hidden="true" style="background-image:url('${safe}')"></span><img class="photo-frame-img" src="${safe}" srcset="${safe} 1600w" sizes="${esc(sizes)}" alt="${esc(name)} feature cover" ${eager ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async" onerror="window.PSR.photoFallback(this)"><span class="photo-frame-ph" aria-hidden="true">${esc(initials(name))}</span>${extra}</div>`;
+    // Our own covers (images/players/<slug>.jpg) ship a 640px copy for cards and phones.
+    const m = String(src).match(/^(.*\/images\/players\/[\w-]+|images\/players\/[\w-]+)\.jpg(\?.*)?$/);
+    const small = m ? esc(m[1] + "-640.jpg" + (m[2] || "")) : "";
+    const srcset = small ? `${small} 640w, ${safe} 1600w` : `${safe} 1600w`;
+    const bg = small || safe;
+    return `<div class="${cls}"><span class="photo-frame-bg" aria-hidden="true" style="background-image:url('${bg}')"></span><img class="photo-frame-img" src="${opts.full ? safe : (small || safe)}" srcset="${srcset}" sizes="${esc(sizes)}"${small ? ` data-full="${safe}"` : ""} alt="${esc(name)} feature cover" ${eager ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async" onerror="window.PSR.photoFallback(this)"><span class="photo-frame-ph" aria-hidden="true">${esc(initials(name))}</span>${extra}</div>`;
   }
 
   function coverOrImage(p, cls, eager) {
@@ -252,13 +265,14 @@
 
   // Homepage "Recent features": newest synced posts, or the hand-entered list in config.js
   function recentFromPlayers(players) {
-    const live = players.filter(p => p.showOnHome && p.coverImage).slice(0, 6);
+    const live = players.filter(p => p.showOnHome && p.coverImage).slice(0, 9);
     if (!live.length) return C().recentFeatures || [];
     return live.map(p => ({
       name: p.name, sport: p.sport,
       detail: [p.position, p.gradYear ? "Class of " + p.gradYear : "", p.school || p.team].filter(Boolean).join(", "),
       views: p.views, viewsAsOf: p.viewsAsOf, image: p.coverImage, postUrl: p.postUrl,
-      profile: p.slug, account: p.account
+      profile: p.slug, account: p.account, position: p.position, gradYear: p.gradYear,
+      school: p.school || p.team, location: p.location, headline: p.headline, coverImage: p.coverImage
     }));
   }
 
@@ -303,10 +317,19 @@
   function videoHtml(v, name) {
     const p = v.kind === "file" ? { kind: "file", url: v.url } : (parseVideo(v.url) || { kind: "link", url: v.url });
     const t = esc(v.title || `${name || "Player"} highlights`);
-    if (p.kind === "youtube") return `<div class="video"><iframe src="https://www.youtube-nocookie.com/embed/${esc(p.id)}" title="${t}" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`;
-    if (p.kind === "vimeo") return `<div class="video"><iframe src="https://player.vimeo.com/video/${esc(p.id)}" title="${t}" allow="fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`;
-    if (p.kind === "file") return `<div class="video"><video src="${esc(p.url)}" controls playsinline preload="metadata" aria-label="${t}"></video></div>`;
+    if (p.kind === "youtube") return `<div class="video${/\/shorts\//.test(p.url) ? " is-portrait yt-short" : " is-landscape"}"><iframe src="https://www.youtube-nocookie.com/embed/${esc(p.id)}" title="${t}" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`;
+    if (p.kind === "vimeo") return `<div class="video is-landscape"><iframe src="https://player.vimeo.com/video/${esc(p.id)}" title="${t}" allow="fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`;
+    // Uploaded clips keep their own shape: portrait phone clips stay portrait, landscape spans the row.
+    if (p.kind === "file") return `<div class="video video-file is-portrait"><video src="${esc(p.url)}#t=0.1" controls playsinline preload="metadata" aria-label="${t}" onloadedmetadata="window.PSR.fitVideo(this)"></video></div>`;
     return `<a class="vlink" href="${esc(p.url)}" target="_blank" rel="noopener"><span class="vlink-ic">${ICON.play}</span><span><b>${esc(v.title || "Watch on " + VIDEO_LABEL[p.kind])}</b><small>${esc(VIDEO_LABEL[p.kind])} · ${esc(displayUrl(p.url)).slice(0, 48)}</small></span><span aria-hidden="true">↗</span></a>`;
+  }
+
+  function fitVideo(v) {
+    const w = v.videoWidth, h = v.videoHeight, box = v.closest(".video");
+    if (!w || !h || !box) return;
+    box.style.aspectRatio = `${w} / ${h}`;
+    box.classList.toggle("is-portrait", h > w);
+    box.classList.toggle("is-landscape", w >= h);
   }
 
   // ---- v2 helpers: icons, nav, motion, sharing, QR ----
@@ -329,6 +352,8 @@
   // Mobile menu toggle (button#menuBtn + #mobileMenu), closes on link tap and Escape.
   function initNav() {
     document.documentElement.classList.add("js");
+    const navEl = document.querySelector(".nav");
+    if (navEl) { const onS = () => navEl.classList.toggle("is-scrolled", window.scrollY > 8); onS(); window.addEventListener("scroll", onS, { passive: true }); }
     const btn = document.getElementById("menuBtn"), menu = document.getElementById("mobileMenu");
     if (!btn || !menu) return;
     const set = (open) => { btn.setAttribute("aria-expanded", String(open)); menu.classList.toggle("open", open); };
@@ -386,5 +411,5 @@
   }
 
   window.PSR = { esc, LOGO, logoMark, cover, coverOrImage, photoFrame, photoFallback, photoSrc, initials, PHOTO_SIZES, IMAGE_ACCEPT, prepareImageFile, isHeicFile, isImageFile, payLink, toast, loadPlayers, countView, recentFromPlayers, fromRow, hasDb, profileUrl, siteBase, shareProfileUrl, displayUrl,
-    ICON, initNav, reveal, copyText, shareLink, qrSvg, reducedMotion, parseVideo, videoHtml, VIDEO_LABEL };
+    ICON, initNav, reveal, fitVideo, copyText, shareLink, qrSvg, reducedMotion, parseVideo, videoHtml, VIDEO_LABEL };
 })();

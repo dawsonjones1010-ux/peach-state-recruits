@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /peach-state-recruits/admin.html
+Disallow: /peach-state-recruits/account.html
+Disallow: /admin.html
+Disallow: /account.html
+
+Sitemap: https://dawsonjones1010-ux.github.io/peach-state-recruits/sitemap.xml
