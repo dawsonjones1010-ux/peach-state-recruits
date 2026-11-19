@@ -96,7 +96,6 @@ window.PSR_CONFIG = {
       highlight: true,
       features: [
         "Everything in Pro",
-        "Player profile page for 1 year",
         "One-page recruiting profile (PDF)",
         "Coach intro email template",
         "Priority turnaround"
@@ -123,7 +122,6 @@ window.PSR_CONFIG = {
     { label: "Coach-ready highlight video (60–90 sec)", basic: false, pro: true, elite: true },
     { label: "Player stat card graphic", basic: false, pro: true, elite: true },
     { label: "HD files to keep", basic: false, pro: true, elite: true },
-    { label: "Player profile page (1 year)", basic: false, pro: false, elite: true },
     { label: "One-page recruiting PDF", basic: false, pro: false, elite: true },
     { label: "Coach intro email template", basic: false, pro: false, elite: true },
     { label: "Best for", basic: "Getting seen on social", pro: "Sending film to coaches", elite: "Actively reaching out to colleges" }
