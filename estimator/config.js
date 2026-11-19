@@ -16,6 +16,8 @@
   "use strict";
 
   const DATA_URL = "data/level-benchmarks-v1.0.json";
+  // v17: context-only additions (sophomore cohorts, recruiting calendar, reference ranges).
+  const ADDITIONS_URL = "data/level-benchmarks-v1.1-additions.json";
 
   // The seven comparison categories, in a fixed display order. The order is for reading only:
   // D2, D3, NAIA and JUCO overlap and are NOT a strict descending talent ladder.
@@ -90,7 +92,6 @@
 
   // Typo guards, not benchmarks. `hard` = must be fixed. `soft` = unusual; the player confirms.
   const RANGES = {
-    age:          { hard: [8, 30],     soft: [12, 23],   unit: "years" },
     gradYear:     { hard: [2020, 2040], unit: "year" },
     heightIn:     { hard: [48, 90],    soft: [60, 82],   unit: "inches" },
     weightLb:     { hard: [70, 400],   soft: [110, 280], unit: "lb" },
@@ -109,10 +110,16 @@
     slg:          { hard: [0, 4],      unit: "ratio" },
     era:          { hard: [0, 100],    unit: "runs / 9 innings" },
     whip:         { hard: [0, 20],     unit: "(H+BB) / inning" },
-    strikePct:    { hard: [0, 100],    unit: "percent" }
+    strikePct:    { hard: [0, 100],    unit: "percent" },
+    // v17 optional advanced fields (context only; never used to pick a level)
+    fbSpin:       { hard: [500, 3500], soft: [1400, 2800], unit: "rpm" },
+    bbSpin:       { hard: [500, 3800], soft: [1500, 3200], unit: "rpm" },
+    extension:    { hard: [3, 9],      soft: [5, 7.5],     unit: "ft" },
+    ivb:          { hard: [-30, 30],   soft: [-5, 25],     unit: "inches" },
+    batSpeed:     { hard: [30, 100],   soft: [50, 85],     unit: "mph" }
   };
 
   const NOTE = "This compares your current metrics with published benchmarks. Coaches also evaluate game performance, defense, projection and roster needs. It does not predict an offer.";
 
-  return { DATA_URL, CATEGORIES, POSITIONS, POSITION_GROUPS, TOOLS, HIGHLIGHT_RULE, RANGES, NOTE };
+  return { DATA_URL, ADDITIONS_URL, CATEGORIES, POSITIONS, POSITION_GROUPS, TOOLS, HIGHLIGHT_RULE, RANGES, NOTE };
 });

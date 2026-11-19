@@ -1,0 +1,410 @@
+{
+  "schema_version": "1.1-additions",
+  "research_as_of": "2026-11-19",
+  "sources": [
+    {
+      "id": "PBR_IN_P",
+      "publisher": "Prep Baseball (Indiana)",
+      "title": "Data Dive: Valued Metrics in Evaluating Underclass Arms",
+      "url": "https://www.prepbaseballreport.com/news/IN/data-dive--valued-metrics-in-evaluating-underclass-arms",
+      "evidence_type": "Reported sample means and in-sample percentile bands",
+      "limitation": "118 Indiana D1 signees/commits, classes 2024-27, sophomore-year PBR showcase data (TrackMan bullpens). One state. Article has minor inconsistencies (height counts sum to 108; one spin threshold misstated)."
+    },
+    {
+      "id": "PBR_IN_E",
+      "publisher": "Prep Baseball (Indiana)",
+      "title": "Data Dive: 'New Age' Early Recruiting",
+      "url": "https://www.prepbaseballreport.com/news/IN/data-dive---new-age--early-recruiting",
+      "evidence_type": "Reported sample means",
+      "limitation": "67 early commits (39 P4, 28 mid-major), classes 2025-27, sophomore-year showcase data. Early commits only. Very small position samples. Some counts in the article don't reconcile."
+    },
+    {
+      "id": "PBR_WI_E",
+      "publisher": "Prep Baseball (Wisconsin)",
+      "title": "New Age Recruiting Round-Up",
+      "url": "https://www.prepbaseballreport.com/news/WI/new-age-recruiting-round-up",
+      "evidence_type": "Reported sample means",
+      "limitation": "Stated 54 early commits. Internal inconsistencies (class counts sum to 27; text refers to Indiana). owner_review_required."
+    },
+    {
+      "id": "NCAA_PROB",
+      "publisher": "NCAA Research",
+      "title": "Probability of Competing Beyond High School",
+      "url": "https://www.ncaa.org/sports/2013/12/17/probability-of-competing-beyond-high-school.aspx",
+      "evidence_type": "Participation counts",
+      "limitation": "2024-25 NFHS and NCAA participation data. NCAA only; excludes NAIA and JUCO."
+    },
+    {
+      "id": "CAL",
+      "publisher": "NCSA / SportsRecruits / NCAA bylaws",
+      "title": "Baseball recruiting calendar",
+      "url": "https://ncsasports.org/baseball/recruiting-rules-calendar",
+      "evidence_type": "Rules",
+      "limitation": "Re-check each August; NCAA calendars change."
+    },
+    {
+      "id": "BLAST",
+      "publisher": "Blast Motion / Prep Baseball",
+      "title": "Bat speed reference ranges",
+      "url": "https://blastmotion.com/?p=123788",
+      "evidence_type": "Vendor reference ranges",
+      "limitation": "Reference ranges, not level cutoffs."
+    }
+  ],
+  "sophomore_cohorts": [
+    {
+      "source_id": "PBR_IN_P",
+      "population": "Eventual D1 pitchers, measured as sophomores",
+      "n": 118,
+      "region": "Indiana",
+      "classes": "2024-2027",
+      "means": {
+        "peak_fb_mph": {
+          "D1": {
+            "all": 87.7,
+            "LHP": 86.6,
+            "RHP": 88.1
+          },
+          "Power 4": {
+            "all": 89.1,
+            "LHP": 87.7,
+            "RHP": 89.8
+          }
+        },
+        "fb_spin_rpm": {
+          "D1": {
+            "all": 2161,
+            "LHP": 2147,
+            "RHP": 2166
+          },
+          "Power 4": {
+            "all": 2235,
+            "LHP": 2195,
+            "RHP": 2270
+          }
+        },
+        "bb_spin_rpm": {
+          "D1": {
+            "all": 2224,
+            "LHP": 2258,
+            "RHP": 2213
+          },
+          "Power 4": {
+            "all": null,
+            "LHP": 2321,
+            "RHP": 2305
+          }
+        }
+      },
+      "in_sample_bands_peak_fb_mph": [
+        {
+          "label": "98th percentile and up",
+          "min": 95.0,
+          "max": null
+        },
+        {
+          "label": "84th to 98th",
+          "min": 90.6,
+          "max": 94.9
+        },
+        {
+          "label": "50th to 84th",
+          "min": 87.7,
+          "max": 90.5
+        },
+        {
+          "label": "16th to 50th",
+          "min": 84.9,
+          "max": 87.6
+        },
+        {
+          "label": "Below 16th",
+          "min": null,
+          "max": 84.8
+        }
+      ],
+      "in_sample_bands_fb_spin_rpm": [
+        {
+          "label": "98th percentile and up",
+          "min": 2545,
+          "max": null
+        },
+        {
+          "label": "84th to 98th",
+          "min": 2353,
+          "max": 2544
+        },
+        {
+          "label": "50th to 84th",
+          "min": 2161,
+          "max": 2352
+        },
+        {
+          "label": "16th to 50th",
+          "min": 1950,
+          "max": 2160
+        },
+        {
+          "label": "Below 16th",
+          "min": null,
+          "max": 1949
+        }
+      ],
+      "context_facts": [
+        "18 eventual D1 signees threw under 85 mph as sophomores; 4 became Power 4 signees and gained an average of 6.75 mph by graduation."
+      ],
+      "use": "context_panel_only",
+      "exclude_from_automatic_classification": true
+    },
+    {
+      "source_id": "PBR_IN_E",
+      "population": "Early D1 commits (within ~5 months of Aug 1 junior year), measured as sophomores",
+      "n": 67,
+      "region": "Indiana",
+      "classes": "2025-2027",
+      "hitters_overall": {
+        "Power 4": {
+          "sixty_s": 6.84,
+          "pos_velo_mph": 88,
+          "peak_ev_mph": 98.6,
+          "bat_speed_mph": 71.5
+        },
+        "Mid-major D1": {
+          "sixty_s": 7.01,
+          "pos_velo_mph": 85,
+          "peak_ev_mph": 97.0,
+          "bat_speed_mph": 70.3
+        }
+      },
+      "by_position": {
+        "SS": {
+          "n": {
+            "Power 4": 5,
+            "Mid-major D1": 5
+          },
+          "Power 4": {
+            "sixty_s": 6.77,
+            "if_velo_mph": 90,
+            "peak_ev_mph": 98.4,
+            "bat_speed_mph": 70.4
+          },
+          "Mid-major D1": {
+            "sixty_s": 7.06,
+            "if_velo_mph": 85,
+            "peak_ev_mph": 95.8,
+            "bat_speed_mph": 70.2
+          }
+        },
+        "OF": {
+          "n": {
+            "Power 4": 8,
+            "Mid-major D1": 4
+          },
+          "Power 4": {
+            "sixty_s": 6.72,
+            "of_velo_mph": 88,
+            "peak_ev_mph": 99.5,
+            "bat_speed_mph": 71.1
+          },
+          "Mid-major D1": {
+            "sixty_s": 6.75,
+            "of_velo_mph": 88,
+            "peak_ev_mph": 98.3,
+            "bat_speed_mph": 70.3
+          }
+        },
+        "C": {
+          "n": {
+            "Power 4": 4,
+            "Mid-major D1": 3
+          },
+          "Power 4": {
+            "sixty_s": 7.0,
+            "c_velo_mph": 83,
+            "peak_ev_mph": 100.3,
+            "bat_speed_mph": 71.9
+          },
+          "Mid-major D1": {
+            "sixty_s": 7.2,
+            "c_velo_mph": 79,
+            "peak_ev_mph": 95.8,
+            "bat_speed_mph": 68.4
+          }
+        },
+        "1B/3B": {
+          "n": {
+            "Power 4": 5,
+            "Mid-major D1": 2
+          },
+          "Power 4": {
+            "sixty_s": 7.08,
+            "if_velo_mph": 87,
+            "peak_ev_mph": 97.8,
+            "bat_speed_mph": 72.3
+          },
+          "Mid-major D1": {
+            "sixty_s": 7.13,
+            "if_velo_mph": 85,
+            "peak_ev_mph": 98.7,
+            "bat_speed_mph": 73.7
+          }
+        }
+      },
+      "pitchers": {
+        "Power 4": {
+          "max_fb_all": 89.6,
+          "RHP": 90.5,
+          "LHP": 88.6
+        },
+        "Mid-major D1": {
+          "max_fb_all": 88.2,
+          "RHP": 88.6,
+          "LHP": 87.2
+        }
+      },
+      "context_facts": [
+        "About 12.5% of early commits who passed signing day decommitted: 1 moved up a level, 3 moved down."
+      ],
+      "use": "context_panel_only",
+      "exclude_from_automatic_classification": true,
+      "small_sample_warning_below_n": 6
+    },
+    {
+      "source_id": "PBR_WI_E",
+      "population": "Early D1 commits, measured as sophomores",
+      "n_stated": 54,
+      "region": "Wisconsin (article text inconsistent)",
+      "hitters_overall": {
+        "Power 4": {
+          "sixty_s": 6.8,
+          "pos_velo_mph": 86,
+          "peak_ev_mph": 98,
+          "bat_speed_mph": 71.5
+        },
+        "Mid-major D1": {
+          "sixty_s": 7.0,
+          "pos_velo_mph": 82,
+          "peak_ev_mph": 95,
+          "bat_speed_mph": 70.2
+        }
+      },
+      "pitchers": {
+        "Power 4": {
+          "avg_fb_mph": 86.8,
+          "bb_spin_rpm": 2263
+        },
+        "Mid-major D1": {
+          "avg_fb_mph": 86.2,
+          "bb_spin_rpm": 2086
+        }
+      },
+      "use": "hidden_until_owner_review",
+      "exclude_from_automatic_classification": true
+    }
+  ],
+  "recruiting_calendar": {
+    "source_id": "CAL",
+    "rules": [
+      {
+        "level": "D1",
+        "event": "Coach calls, texts, emails may begin",
+        "when": "Aug 1 before junior year"
+      },
+      {
+        "level": "D1",
+        "event": "Off-campus contact and visits may begin",
+        "when": "Sept 1 of junior year"
+      },
+      {
+        "level": "D2",
+        "event": "Contact, off-campus contact and official visits may begin",
+        "when": "June 15 after sophomore year"
+      },
+      {
+        "level": "D3",
+        "event": "No dead periods",
+        "when": "Year-round"
+      },
+      {
+        "level": "JUCO",
+        "event": "Contact allowed",
+        "when": "Any time (unless signed elsewhere)"
+      },
+      {
+        "level": "NAIA",
+        "event": "No contact limits: the NAIA does not regulate coach contact with high school athletes",
+        "when": "Any time",
+        "owner_confirmed": "2026-11-19",
+        "source_note": "NCSA baseball recruiting rules page: \"the NAIA does not regulate or limit the contact and communication between a coach and a current high school athlete.\""
+      }
+    ],
+    "commitment_waves_indiana": {
+      "source_id": "PBR_IN_E",
+      "d1_commits_per_class_approx": 60,
+      "waves": [
+        {
+          "window": "First ~5 months after Aug 1 of junior year",
+          "d1_commits_approx": 32
+        },
+        {
+          "window": "June to early-November signing day (summer before senior year)",
+          "d1_commits_approx": "20-30"
+        },
+        {
+          "window": "After signing day to graduation",
+          "commits_approx": "50-80, mostly non-D1"
+        }
+      ],
+      "all_college_commits_per_class_approx": 350
+    },
+    "review_every": "August"
+  },
+  "landscape_facts": [
+    {
+      "source_id": "NCAA_PROB",
+      "fact": "472,598 high school baseball players; 8.8% go on to NCAA baseball (2.7% D1, 2.6% D2, 3.5% D3)."
+    },
+    {
+      "source_id": "NCSA",
+      "fact": "Roughly 1,700 college baseball programs across D1, D2, D3, NAIA and JUCO.",
+      "url": "https://www.ncsasports.org/baseball"
+    },
+    {
+      "source_id": "BA_ROSTER",
+      "fact": "D1 rosters are capped at 34 beginning with the 2026 season, down from 40; about 1,800 fewer D1 roster spots.",
+      "url": "https://www.baseballamerica.com/stories/college-baseball-coaches-voice-concerns-over-looming-ncaa-roster-rule-changes/"
+    }
+  ],
+  "reference_ranges": [
+    {
+      "source_id": "BLAST",
+      "metric": "Bat speed (Blast)",
+      "unit": "mph",
+      "ranges": {
+        "HS varsity": [
+          60,
+          70
+        ],
+        "College-bound HS": [
+          63,
+          70
+        ],
+        "College": [
+          66,
+          75
+        ]
+      },
+      "use": "context_only"
+    }
+  ],
+  "measurement_notes": [
+    "Hand-timed sprints read faster than electronic times (40-yard studies: roughly 0.1-0.3 s). Never convert; label method.",
+    "Exit velocity off a tee and in live BP are different measurements. Ask which.",
+    "Record the device: TrackMan, Rapsodo, Pocket Radar, Blast, stadium gun, unknown."
+  ],
+  "notes": [
+    "Part 3 of Find_My_Level_v2_Research_and_Build_Package.md, copied as written. Only change: the NAIA calendar rule wording, confirmed by the owner on 2026-11-19 and checked against the NCSA calendar page.",
+    "Everything in this file is context only. Nothing here changes which level is highlighted.",
+    "PBR_WI_E stays hidden (use: hidden_until_owner_review)."
+  ]
+}

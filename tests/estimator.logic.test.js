@@ -6,7 +6,7 @@ const CFG = require("../estimator/config.js");
 const data = require("../data/level-benchmarks-v1.0.json");
 const S = L.S;
 
-const base = (o) => Object.assign({ age: 17, gradYear: 2027, primary: "SS", secondary: "", throws: "R", bats: "R", heightIn: null, weightLb: null, metrics: {}, meta: {} }, o);
+const base = (o) => Object.assign({ gradYear: 2027, primary: "SS", secondary: "", throws: "R", bats: "R", heightIn: null, weightLb: null, metrics: {}, meta: {} }, o);
 const run = (o) => L.evaluate(data, base(o));
 const cat = (read, key) => read.categories.find(c => c.key === key);
 const RANK = { [S.MEETS]: 2, [S.BELOW]: 1 };
@@ -282,7 +282,7 @@ test("unknown metadata is allowed and its consequence is labeled", () => {
 });
 
 test("young player stage mismatch is explained, metrics are not adjusted", () => {
-  const r = run({ age: 14, gradYear: 2029, primary: "CF", metrics: { maxEv: 85, sixty: 7.2 }, meta: { date: "2026-10-01" } });
+  const r = run({ gradYear: 2029, primary: "CF", metrics: { maxEv: 85, sixty: 7.2 }, meta: { date: "2026-10-01" } });
   assert.match(r.stage.join(" "), /grade 10.*don't project future growth/);
   assert.equal(r.reads[0].categories[0].tools.hitting.value, 85);
 });
@@ -318,8 +318,9 @@ test("validation: units, decimals, contradictions and suspicious entries", () =>
   assert.equal(L.validate(base({ metrics: { sixty: 6.0 } }), new Set(["sixty"])).warnings.length, 0);
   v = L.validate(base({ metrics: { maxFb: 140 } }));
   assert.ok(v.errors.some(e => e.field === "maxFb"));
-  v = L.validate(base({ age: 12, gradYear: 2027 }));
-  assert.ok(v.warnings.some(w => w.field === "age"));
+  v = L.validate(base({ gradYear: null }));
+  assert.ok(v.errors.some(e => e.field === "gradYear"));
+  assert.ok(!L.validate(base({})).errors.concat(L.validate(base({})).warnings).some(x => x.field === "age"), "age is no longer an input");
   v = L.validate(base({ primary: "SS", secondary: "SS" }));
   assert.ok(v.errors.some(e => e.field === "secondary"));
   v = L.validate(base({ meta: { link: "not a link" } }));

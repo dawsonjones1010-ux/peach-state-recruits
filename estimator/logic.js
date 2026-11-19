@@ -38,6 +38,8 @@
     if (unit === "percent") return round(v * 100, 1) + "%";
     if (unit === "inches") return v + " in";
     if (unit === "lb") return v + " lb";
+    if (unit === "rpm") return Math.round(v) + " rpm";
+    if (unit === "ft") return v + " ft";
     return String(v);
   };
 
@@ -63,6 +65,15 @@
       if (!/^(\d)?\.\d{1,3}$|^[01](\.0+)?$|^\d\.\d{1,3}$/.test(s)) return { value: null, error: "Enter it like .345 (three decimals)." };
       return { value: parseFloat(s), error: null };
     }
+    if (kind === "rpm") {
+      const t = s.replace(/,/g, "");
+      if (!/^\d{3,4}$/.test(t)) return { value: null, error: "Enter spin as a whole number, like 2150." };
+      return { value: parseInt(t, 10), error: null };
+    }
+    if (kind === "signed") {
+      if (!/^-?\d{1,2}(\.\d{1,2})?$/.test(s)) return { value: null, error: "Enter a number, like 16.5 or -3." };
+      return { value: parseFloat(s), error: null };
+    }
     if (!/^\d{1,3}(\.\d{1,2})?$/.test(s)) return { value: null, error: "Enter a number, like 84 or 84.5." };
     return { value: parseFloat(s), error: null };
   }
@@ -80,8 +91,6 @@
       if (v < r.hard[0] || v > r.hard[1]) err(field, `${label} of ${v} ${r.unit} is outside the possible range (${r.hard[0]}–${r.hard[1]}). Please check it.`);
       else if (r.soft && (v < r.soft[0] || v > r.soft[1])) warn(field, `${label} of ${v} ${r.unit} is unusual. Please double-check it, or confirm it is correct.`);
     };
-    if (!isNum(input.age)) err("age", "Enter age at measurement.");
-    else range("age", input.age, "age", "Age");
     if (!isNum(input.gradYear)) err("gradYear", "Enter graduation year.");
     else range("gradYear", input.gradYear, "gradYear", "Graduation year");
     if (!input.primary) err("primary", "Choose a primary position.");
@@ -95,7 +104,8 @@
       maxFb: "Max fastball", typFb: "Typical game fastball", maxEv: "Max exit velocity", avgEv: "Average exit velocity",
       sixty: "60-yard time", thirty: "30-yard time", ifVelo: "Infield throwing velocity", ofVelo: "Outfield throwing velocity",
       cVelo: "Catcher throwing velocity", pop: "Pop time", avg: "Batting average", obp: "On-base percentage", slg: "Slugging",
-      era: "ERA", whip: "WHIP", strikePct: "Strike rate"
+      era: "ERA", whip: "WHIP", strikePct: "Strike rate",
+      fbSpin: "Fastball spin", bbSpin: "Breaking-ball spin", extension: "Extension", ivb: "Induced vertical break", batSpeed: "Bat speed"
     };
     Object.keys(L).forEach(k => range(k, m[k], k, L[k]));
     if (isNum(m.typFb) && isNum(m.maxFb) && m.typFb > m.maxFb) err("typFb", "Typical game fastball can't be higher than your max fastball. Please correct one of them.");
@@ -111,12 +121,6 @@
       else if (d.getTime() > Date.now() + 86400000) err("date", "Measurement date can't be in the future.");
     }
     if (meta.link && !/^https?:\/\/\S+\.\S+/.test(meta.link)) err("link", "Enter a full link starting with https://, or leave it blank.");
-    // Age vs graduation year (most players graduate at 17 to 19).
-    if (isNum(input.age) && isNum(input.gradYear)) {
-      const y = meta.date ? parseInt(meta.date.slice(0, 4), 10) : new Date().getFullYear();
-      const ageAtGrad = input.age + (input.gradYear - y);
-      if (ageAtGrad < 16 || ageAtGrad > 20) warn("age", `Age ${input.age} and graduation year ${input.gradYear} don't usually go together. Please check both, or confirm they are correct.`);
-    }
     return { errors, warnings, ok: errors.length === 0 && warnings.length === 0 };
   }
 
@@ -256,7 +260,7 @@
       const g = CFG.POSITION_GROUPS[read.position];
       add(`Maximum exit velocity, ${g.bp}`, m.maxEv, "mph", "higher_is_better", `Max exit velocity (${g.bp})`);
       const runRec = ds.records.find(r => r.metric === `60-yard dash, ${g.bp}`);
-      if (runRec) add(runRec.metric, m.sixty, "seconds", "lower_is_better", `60-yard dash (${g.bp})`, { caveat: (input.meta || {}).method === "hand" ? "Hand-timed. Timing methods aren't interchangeable; we don't adjust your time." : "" });
+      if (runRec) add(runRec.metric, m.sixty, "seconds", "lower_is_better", `60-yard dash (${g.bp})`, { caveat: (input.meta || {}).method === "hand" || (input.methods || {}).sixty === "hand" ? "Hand-timed. Timing methods aren't interchangeable; we don't adjust your time." : "" });
       else rows.push({ metric: "60-yard dash", label: "60-yard dash (C)", unit: "seconds", value: isNum(m.sixty) ? m.sixty : null, notComparable: "BaseballPath publishes no 60-yard mean for catchers.", cells: [], caveats: [] });
       if (g.throwTest === "outfield") add("Outfield throwing velocity", m.ofVelo, "mph", "higher_is_better", "Outfield throwing velocity");
       if (g.throwTest === "infield") add("Infield throwing velocity, pooled IF", m.ifVelo, "mph", "higher_is_better", "Infield throwing velocity (all infielders pooled)");

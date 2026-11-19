@@ -1,11 +1,14 @@
 /*
   College Baseball Level Estimator: interface. Uses PSRLevel (logic) and PSRLevelConfig (config).
-  Everything stays in memory on this page: no storage, no analytics, no network calls except
-  loading the static benchmark data file.
+  Nothing leaves the browser unless the player taps Send (the opt-in free review). No analytics.
+  The only network calls are the two static benchmark files and, after Send, one insert into
+  level_reviews. Completed results are saved in this browser's localStorage (progress), and the
+  player can clear them.
 */
 (function () {
   "use strict";
-  const L = window.PSRLevel, CFG = window.PSRLevelConfig, S = L.S;
+  const L = window.PSRLevel, CFG = window.PSRLevelConfig, S = L.S, V = window.PSRLevelV2, PG = window.PSRLevelProgress;
+  const store = (() => { try { const k = "__psr_t"; localStorage.setItem(k, "1"); localStorage.removeItem(k); return localStorage; } catch (e) { return null; } })();
   const app = document.getElementById("lvlApp");
   if (!app || !L) return;
   const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -27,20 +30,31 @@
     pop:       { label: "Best pop time to 2B", unit: "seconds", kind: "seconds", hint: "Glove to glove, accurate throw (for example 2.05)." },
     avg:       { label: "Batting average", unit: "", kind: "ratio", hint: "For example .345" },
     obp:       { label: "On-base percentage", unit: "", kind: "ratio", hint: "For example .420" },
-    slg:       { label: "Slugging", unit: "", kind: "ratio", hint: "For example .510" }
+    slg:       { label: "Slugging", unit: "", kind: "ratio", hint: "For example .510" },
+    fbSpin:    { label: "Fastball spin", unit: "rpm", kind: "rpm", hint: "Average four-seam spin, for example 2150. Context only." },
+    bbSpin:    { label: "Breaking-ball spin", unit: "rpm", kind: "rpm", hint: "Curveball or slider spin. Context only." },
+    extension: { label: "Extension", unit: "ft", kind: "number", hint: "Release extension, for example 6.1. Recorded only." },
+    ivb:       { label: "Induced vertical break", unit: "in", kind: "signed", hint: "Four-seam IVB, for example 16.5. Context only." },
+    batSpeed:  { label: "Bat speed", unit: "mph", kind: "number", hint: "From Blast or a similar sensor. Context only." }
   };
   const PITCHES = ["Four-seam fastball", "Two-seam / sinker", "Curveball", "Slider", "Sweeper", "Changeup", "Cutter", "Splitter", "Knuckle-curve", "Other"];
   const ENV = [["", "I don't know"], ["game", "Game"], ["showcase", "Showcase"], ["bullpen", "Bullpen"], ["facility", "Facility / training"], ["tee", "Tee"], ["front_toss", "Front toss"], ["live_bp", "Live BP"]];
   const METHOD = [["", "I don't know"], ["radar", "Radar gun"], ["trackman", "TrackMan"], ["rapsodo", "Rapsodo"], ["sensor", "Bat or ball sensor"], ["electronic", "Laser / electronic timing"], ["hand", "Hand-held stopwatch"]];
   const SOURCE = [["self", "Self-reported"], ["event", "Event or showcase result"], ["device", "Device report"], ["", "I don't know"]];
   const IF = ["1B", "2B", "SS", "3B"], OF = ["LF", "CF", "RF"];
+  const SIXTY_M = [["", "I don't know"], ["laser", "Laser / electronic"], ["hand", "Hand-timed"]];
+  const EV_M = [["", "I don't know"], ["tee", "Tee"], ["bp", "Live BP"], ["game", "Game"]];
+  const EV_DEV = [["", "I don't know"], ["trackman", "TrackMan"], ["rapsodo", "Rapsodo"], ["hittrax", "HitTrax"], ["blast", "Blast"], ["pocket", "Pocket Radar"], ["other", "Other"]];
+  const VELO_DEV = [["", "I don't know"], ["gun", "Radar gun"], ["pocket", "Pocket Radar"], ["trackman", "TrackMan"], ["rapsodo", "Rapsodo"], ["stadium", "Stadium gun"], ["other", "Other"]];
+  const PITCH_DEV = [["", "I don't know"], ["trackman", "TrackMan"], ["rapsodo", "Rapsodo"], ["other", "Other"]];
+  const GRADES = [["", "Work it out from the date"], ["8", "8th grade or earlier"], ["9", "9th (freshman)"], ["10", "10th (sophomore)"], ["11", "11th (junior)"], ["12", "12th (senior)"], ["grad", "After graduating"]];
   const TOOL_LABEL = { hitting: "Hitting", running: "Running", throwing: "Throwing", pitching: "Fastball" };
 
   // ---------- State (memory only) ----------
   const state = {
     step: 1, data: null, result: null, confirmed: new Set(), gapCat: {},
     raw: {}, unknown: new Set(),
-    input: { age: null, gradYear: null, primary: "", secondary: "", throws: "", bats: "", heightIn: null, weightLb: null, metrics: { repertoire: [] }, meta: { date: "", environment: "", method: "", source: "", link: "" } }
+    input: { gradYear: null, primary: "", secondary: "", throws: "", bats: "", heightIn: null, weightLb: null, metrics: { repertoire: [] }, methods: { sixty: "", ev: "", evDevice: "", veloDevice: "", pitchDevice: "" }, meta: { date: "", environment: "", method: "", source: "", link: "", grade: "" } }
   };
 
   const positions = () => [state.input.primary, state.input.secondary].filter(Boolean);
@@ -88,7 +102,7 @@
   }
 
   // ---------- Steps ----------
-  const STEP1 = ["age", "gradYear", "primary", "secondary", "throws", "bats", "heightIn", "weightLb"];
+  const STEP1 = ["gradYear", "primary", "secondary", "throws", "bats", "heightIn", "weightLb"];
   function step1(v) {
     const i = state.input, y = new Date().getFullYear();
     const years = [["", "Choose year"]].concat(Array.from({ length: 11 }, (_, k) => [String(y - 2 + k), String(y - 2 + k)]));
@@ -101,8 +115,6 @@
       <p class="lvl-sub">Position decides which numbers we ask for next. A second position gets its own separate read.</p>
       ${summary(v, STEP1)}
       <div class="lvl-grid">
-        <div class="lvl-field${v.errors.some(x => x.field === "age") || v.warnings.some(x => x.field === "age") ? " is-invalid" : ""}" data-wrap="age"><label for="f_age">Age when measured</label>
-          <div class="lvl-input-unit"><input class="input" id="f_age" data-plain="age" inputmode="numeric" autocomplete="off" value="${esc(state.raw.age != null ? state.raw.age : (i.age != null ? i.age : ""))}"><span class="lvl-unit" aria-hidden="true">years</span></div>${errorsFor("age", v)}</div>
         ${select("gradYear", "Graduation year", years, i.gradYear != null ? i.gradYear : "", v)}
         ${select("primary", "Primary position", pos, i.primary, v)}
         ${select("secondary", "Second position", pos2, i.secondary, v, { optional: true, hint: "Two-way? Pick Pitcher here (or as primary) for a separate pitching read." })}
@@ -120,15 +132,15 @@
           <div class="lvl-field${v.errors.some(x => x.field === "weightLb") || v.warnings.some(x => x.field === "weightLb") ? " is-invalid" : ""}" data-wrap="weightLb"><label for="f_weightLb">Weight</label><div class="lvl-input-unit"><input class="input" id="f_weightLb" data-plain="weightLb" inputmode="numeric" autocomplete="off" value="${esc(state.raw.weightLb != null ? state.raw.weightLb : (i.weightLb != null ? i.weightLb : ""))}"><span class="lvl-unit" aria-hidden="true">lb</span></div>${errorsFor("weightLb", v)}</div>
         </div>
       </details>
-      <div class="lvl-actions"><span></span><button class="btn btn-peach btn-lg" type="submit">Next: your numbers</button></div>
+      <div class="lvl-actions"><span class="lvl-privacy">Nothing leaves your browser unless you tap Send.</span><button class="btn btn-peach btn-lg" type="submit">Next: your numbers</button></div>
     </form>`;
   }
 
   function step2Fields() {
     const f = [];
-    if (hasP()) f.push("maxFb", "typFb", "strikePct", "era", "whip");
+    if (hasP()) f.push("maxFb", "typFb", "strikePct", "era", "whip", "fbSpin", "bbSpin", "extension", "ivb");
     if (hasField()) {
-      f.push("maxEv", "sixty", "avgEv", "thirty", "avg", "obp", "slg");
+      f.push("maxEv", "sixty", "avgEv", "batSpeed", "thirty", "avg", "obp", "slg");
       if (positions().some(p => IF.includes(p))) f.push("ifVelo");
       if (positions().some(p => OF.includes(p))) f.push("ofVelo");
       if (positions().includes("C")) f.push("cVelo", "pop");
@@ -143,7 +155,8 @@
         <div class="lvl-grid">${numField("maxFb", v)}${numField("typFb", v, { optional: true })}</div>
         <fieldset class="lvl-field"><legend>Pitches you throw in games <span class="lvl-opt">optional</span></legend><div class="lvl-chips">${PITCHES.map(p => `<label><input type="checkbox" data-rep="${esc(p)}" ${rep.includes(p) ? "checked" : ""}><span>${esc(p)}</span></label>`).join("")}</div>
         <p class="lvl-hint">Recorded for your read. There are no published numeric targets for repertoire, command or pitch quality.</p></fieldset>
-        <details class="lvl-more"><summary>Add more information <span class="lvl-opt">control and results, optional</span></summary><div class="lvl-grid">${numField("strikePct", v, { optional: true })}${numField("era", v, { optional: true })}${numField("whip", v, { optional: true })}</div></details>
+        <details class="lvl-more"><summary>Add more information <span class="lvl-opt">control and results, optional</span></summary><div class="lvl-grid">${numField("strikePct", v, { optional: true })}${numField("era", v, { optional: true })}${numField("whip", v, { optional: true })}${numField("fbSpin", v, { optional: true })}${numField("bbSpin", v, { optional: true })}${numField("extension", v, { optional: true })}${numField("ivb", v, { optional: true })}</div>
+          <div class="lvl-grid">${select("pitchDevice", "Spin and movement measured with", PITCH_DEV, state.input.methods.pitchDevice, v, { optional: true })}</div></details>
       </fieldset>`);
     }
     if (hasField()) {
@@ -154,7 +167,7 @@
       const fieldPos = positions().filter(p => p !== "P").join(" and ");
       parts.push(`<fieldset class="lvl-group"><legend>Hitting, running and throwing <small>(${esc(fieldPos)})</small></legend>
         <div class="lvl-grid">${numField("maxEv", v)}${numField("sixty", v, { optional: positions().includes("C") })}${throws.join("")}</div>
-        <details class="lvl-more"><summary>Add more information <span class="lvl-opt">optional</span></summary><div class="lvl-grid">${numField("avgEv", v, { optional: true })}${numField("thirty", v, { optional: true })}${numField("avg", v, { optional: true })}${numField("obp", v, { optional: true })}${numField("slg", v, { optional: true })}</div></details>
+        <details class="lvl-more"><summary>Add more information <span class="lvl-opt">optional</span></summary><div class="lvl-grid">${numField("avgEv", v, { optional: true })}${numField("batSpeed", v, { optional: true })}${numField("thirty", v, { optional: true })}${numField("avg", v, { optional: true })}${numField("obp", v, { optional: true })}${numField("slg", v, { optional: true })}</div></details>
       </fieldset>`);
     }
     return `<form class="lvl-card lvl-form" data-step="2" novalidate>
@@ -162,6 +175,14 @@
       <p class="lvl-sub">Enter what you know. Leave a box blank or tick "I don't know" if you don't have it. Blank is treated as unknown, never as zero.</p>
       ${summary(v, fs)}
       ${parts.join("")}
+      <details class="lvl-more lvl-methods"${Object.values(state.input.methods).some(Boolean) ? " open" : ""}><summary>How were these measured? <span class="lvl-opt">optional</span></summary>
+        <p class="lvl-hint">Shown as a chip next to each number. We never convert one method into another.</p>
+        <div class="lvl-grid">
+          ${hasField() ? select("m_sixty", "60-yard timed by", SIXTY_M, state.input.methods.sixty, v, { optional: true }) : ""}
+          ${hasField() ? select("m_ev", "Exit velocity hit off", EV_M, state.input.methods.ev, v, { optional: true }) : ""}
+          ${hasField() ? select("m_evDevice", "Exit velocity device", EV_DEV, state.input.methods.evDevice, v, { optional: true }) : ""}
+          ${select("m_veloDevice", hasP() && hasField() ? "Velocity device (fastball and throws)" : hasP() ? "Fastball velocity device" : "Throwing velocity device", VELO_DEV, state.input.methods.veloDevice, v, { optional: true })}
+        </div></details>
       <div class="lvl-actions"><button class="btn btn-line btn-lg" type="button" data-go="1">Back</button><button class="btn btn-peach btn-lg" type="submit">Next: about the numbers</button></div>
     </form>`;
   }
@@ -179,6 +200,7 @@
           <label class="lvl-check"><input type="checkbox" data-unknown="date" ${unkDate ? "checked" : ""}> I don't know</label>${errorsFor("date", v)}</div>
         ${select("environment", "Testing environment", ENV, m.environment, v)}
         ${select("method", "Measured with", METHOD, m.method, v)}
+        ${select("grade", "What grade were you in when you got these numbers?", GRADES, m.grade, v, { optional: true, hint: "Used only for the same-age comparison. It never changes your level." })}
       </div>
       ${seg("source", "Where do the numbers come from?", SOURCE, m.source, v, true)}
       <div class="lvl-field${v.errors.some(x => x.field === "link") ? " is-invalid" : ""}" data-wrap="link"><label for="f_link">Result link <span class="lvl-opt">optional</span></label>
@@ -300,7 +322,7 @@
           <p class="lvl-note-sm">Closing a gap doesn't guarantee interest or an offer.</p></div>
       </div>`;
     const compare = `<p class="lvl-note-sm">These are averages of researched groups, not pass/fail lines. Being below an average doesn't rule you out. Each group is kept separate.</p>
-      ${read.panels.map(panelHtml).join("")}${collegeHtml(read.college)}`;
+      ${read.panels.map(panelHtml).join("")}${collegeHtml(read.college)}${idx === 0 ? advancedHtml() : ""}`;
     return `<section class="lvl-read" aria-labelledby="read${idx}" data-read="${idx}">
       <h2 class="lvl-res-title" id="read${idx}" tabindex="-1">${esc(U.title(read))}</h2>
       <div class="lvl-head-card">
@@ -310,11 +332,13 @@
         <p class="lvl-head-cav">${esc(U.CAVEAT)}</p>
       </div>
       <div class="lvl-next"><p class="lvl-next-k">Next step</p><p class="lvl-next-t">${esc(nextFor(read))}</p></div>
-      <div class="lvl-cta2 no-print"><p>Turn these numbers into a coach-ready video</p><a class="btn btn-peach" href="index.html#packages">See packages</a></div>
+      <div class="lvl-cta2 no-print"><p class="lvl-cta2-t">Turn these numbers into a coach-ready video</p><a class="btn btn-peach" href="index.html#packages">See packages</a><p class="lvl-cta2-s">${esc(V.ctaSentence(read))}</p></div>
       <div class="lvl-share no-print"><button class="btn btn-line" type="button" data-share="${idx}">Share my result</button><div class="lvl-share-out" id="shareOut${idx}" hidden></div></div>
       <div class="lvl-levels"><h3>Every level</h3>
         <ol class="lvl-lrow">${lv.map(l => `<li class="${ST_CLASS[l.status]}" data-level="${l.key}"><b>${esc(l.label)}</b><span>${esc(l.status)}</span></li>`).join("")}</ol>
         <p class="lvl-note-sm">D2, D3, NAIA and JUCO overlap; they are not a strict ladder. "Close" means at least one of your numbers meets that level's published target and at least one is below it.</p></div>
+      ${numbersStrip(read)}
+      ${youngHtml(read, idx)}
       ${sec("levels", "All levels in detail", detail)}
       ${sec("compare", "How you compare with committed players", compare)}
     </section>`;
@@ -339,18 +363,26 @@
       <h4>Missing information</h4>
       ${r.missing.length ? `<p><b>Not entered:</b> ${esc(r.missing.join(", "))}. Adding these can make the comparison more complete.</p>` : `<p>All core numbers for your position${r.reads.length > 1 ? "s" : ""} were entered.</p>`}
       ${i.meta.link ? `<p class="lvl-note-sm">Reference link: <span class="lvl-link">${esc(i.meta.link)}</span></p>` : ""}`;
+    const addSrc = (state.add && state.add.sources || []).filter(s => s.id !== "PBR_WI_E");
     const sources = `<div class="lvl-legend" aria-label="Legend"><span class="lvl-kind guide">Published target</span> NextCommit recruiting guideline (used for level status) <span class="lvl-kind ref">Second source</span> NCSA guideline, shown for reference <span class="lvl-kind mean">Average</span> sample mean of a researched group <span class="lvl-kind ctx">College players</span> college norms, context only</div>
       <p class="lvl-note-sm">Benchmark data v${esc(r.dataVersion)}, research as of ${esc(r.researchAsOf)}. ${esc(r.interpretationNote)}</p>
       <ul class="lvl-list">${state.data.sources.filter(s => ["NC", "NS", "BP", "FG", "SL", "PC", "SEC"].includes(s.id)).map(s => `<li><b>${esc(s.publisher)}</b> (${esc(s.evidence_type)}, ${esc(s.publication_or_check)}): ${esc(s.limitation)} <a href="${esc(s.url)}" target="_blank" rel="noopener">Source</a></li>`).join("")}</ul>
+      ${addSrc.length ? `<h4>v2 context sources (never change your level)</h4><ul class="lvl-list">${addSrc.map(s => `<li><b>${esc(s.publisher)}</b>, ${esc(s.title)} (${esc(s.evidence_type)}): ${esc(s.limitation)} <a href="${esc(s.url)}" target="_blank" rel="noopener">Source</a></li>`).join("")}</ul>` : ""}
+      ${state.add && state.add.landscape_facts ? `<h4>The landscape</h4><ul class="lvl-list">${state.add.landscape_facts.map(f => `<li>${esc(f.fact)}${f.url ? ` <a href="${esc(f.url)}" target="_blank" rel="noopener">Source</a>` : ""}</li>`).join("")}</ul>` : ""}
+      ${state.add && state.add.measurement_notes ? `<h4>Measurement notes</h4><ul class="lvl-list">${state.add.measurement_notes.map(n => `<li>${esc(n)}</li>`).join("")}</ul>` : ""}
       <p class="lvl-note-sm">"Committed players' best showcase results" is BaseballPath. "Outfielders during or after their junior season" is Flatground. "Rising-senior summer group" is Slammers. College pitchers' fastballs come from Pitching Coach U and an SEC research sample.</p>`;
     return `<div class="lvl-results">
       <p class="lvl-sub lvl-res-meta">${esc(positions().join(" / "))} · Class of ${esc(i.gradYear)} · Throws ${esc(i.throws)} · Bats ${esc(i.bats)}${ctx.length ? ` · ${esc(ctx.join(", "))} (context only)` : ""}</p>
       ${tabs}
       ${r.reads.map((rd, k) => `<div class="lvl-tabpanel" id="tp${k}"${r.reads.length > 1 ? ` role="tabpanel" aria-labelledby="tab${k}"` : ""}${k === tab ? "" : " hidden"}>${readHtml(rd, k)}</div>`).join("")}
       ${r.twoWay ? `<p class="lvl-note-sm">Two-way player: pitching and position play are compared separately and never blended into one result.</p>` : ""}
+      ${clockHtml()}
+      ${progressHtml()}
+      ${reviewHtml()}
       <div class="lvl-res-actions no-print"><button class="btn btn-line" type="button" data-go="1">Update my numbers</button><button class="btn btn-line" type="button" data-print>Print</button><button class="btn btn-line" type="button" data-reset>Start over</button></div>
       ${sec("sources", "Sources", sources)}
       ${sec("how", "How this works", how)}
+      ${printHtml()}
       <div class="lvl-card lvl-cta no-print"><div><h3>Want coaches to see your film?</h3><p>Peach State Recruits builds Instagram features, highlight videos and recruiting profiles for baseball players.</p></div><a class="btn btn-peach btn-lg" href="index.html#packages">See packages</a></div>
     </div>`;
   }
@@ -409,6 +441,123 @@
       <p class="lvl-note-sm">Made on your device. Nothing is uploaded.</p>`;
   }
 
+  // ---------- v17 (v2): chips, same-age panel, clock, advanced, progress, review, print ----------
+  const chipHtml = (key) => `<span class="lvl-chips-row">${V.chips(state.input, key).map(c => `<i class="lvl-chip${/Hand-timed/.test(c) ? " warn" : ""}">${esc(c)}</i>`).join("")}</span>${V.chipNote(state.input, key) ? `<small class="lvl-chip-note">${esc(V.chipNote(state.input, key))}</small>` : ""}`;
+  const KEY_OF = { "Max fastball": "maxFb", "Typical game fastball": "typFb", "Max exit velocity": "maxEv", "60-yard dash": "sixty", "Catcher throw": "cVelo", "Best pop time": "pop", "Outfield throw": "ofVelo", "Infield throw": "ifVelo" };
+  function numbersStrip(read) {
+    const ys = yoursFor(read).filter(([, v]) => v != null);
+    if (!ys.length) return "";
+    return `<div class="lvl-nums"><h3>Your numbers</h3><ul>${ys.map(([l, v, u]) => `<li><span>${esc(l)}</span><b>${esc(fmtV(v, u))}</b>${chipHtml(KEY_OF[l])}</li>`).join("")}</ul></div>`;
+  }
+  function cohortTable(g) {
+    const head = `<p class="lvl-note-sm"><b>${esc(g.title)}.</b> ${esc(g.region)}, classes ${esc(g.classes)}, ${typeof g.n === "object" ? Object.keys(g.n).map(k => `${esc(k)} n ${esc(g.n[k])}`).join(", ") : `n ${esc(g.n)}`}${g.earlyOnly ? ". Early commits only" : ""}.${g.source ? ` <a href="${esc(g.source.url)}" target="_blank" rel="noopener">PBR</a>` : ""}</p>
+      ${g.smallSample ? `<p class="lvl-note-sm lvl-small">Small sample: fewer than 6 players in at least one group. Treat these as a rough picture.</p>` : ""}`;
+    const rows = g.rows.filter(r => r.cols.some(c => c.mean != null)).map(r => `<div class="lvl-prow"><div class="lvl-prow-h"><b>${esc(r.label)}</b>${r.you != null ? `<span class="lvl-you">You: ${esc(r.unit === "s" ? r.you.toFixed(2) + " s" : r.you + " " + r.unit)}</span>` : ""}</div>
+      <ul class="lvl-means">${r.cols.map(c => `<li><span>${esc(c.col)}</span><b>${c.mean == null ? "Not published" : esc(r.unit === "s" ? c.mean.toFixed(2) + " s" : c.mean + " " + r.unit)}</b><em class="na">${c.text ? esc(c.text) : r.you == null ? "Not entered" : ""}</em></li>`).join("")}</ul></div>`).join("");
+    return head + rows;
+  }
+  function youngHtml(read, idx) {
+    if (!state.add || !V) return "";
+    const y = V.youngPanel(state.add, state.input, [read]);
+    if (y.status === "none") return "";
+    if (y.status !== "panel") return `<p class="lvl-note-sm lvl-young-line" data-young="${esc(y.status)}">${esc(y.line)}</p>`;
+    const p = y.reads[0]; if (!p) return "";
+    return `<section class="lvl-young" data-young="panel" aria-labelledby="yg${idx}"><h3 id="yg${idx}">When they were your age</h3>
+      <p class="lvl-note-sm">${esc(y.intro)}</p>
+      ${p.band ? `<p class="lvl-young-band">${esc(p.band)}</p>` : ""}${p.spinBand ? `<p class="lvl-young-band">${esc(p.spinBand)}</p>` : ""}
+      ${p.needsPeak ? `<p class="lvl-note-sm">Add your max (peak) fastball to compare it with this group.</p>` : ""}
+      ${(p.facts || []).map(f => `<p class="lvl-young-fact">${esc(f)}</p>`).join("")}
+      ${p.noPositionGroup ? `<p class="lvl-note-sm">${esc(p.noPositionGroup)}</p>` : ""}
+      ${p.groups.map(cohortTable).join("")}</section>`;
+  }
+  function clockHtml() {
+    if (!state.add || !V) return "";
+    const c = V.clock(state.add, state.input.gradYear, new Date()); if (!c) return "";
+    if (c.graduated) return `<section class="lvl-clock" aria-labelledby="clockT"><h3 id="clockT">${esc(c.title)}</h3><p>${esc(c.line)}</p></section>`;
+    const lv = (a) => a.length <= 1 ? a.join("") : a.slice(0, -1).join(", ") + " and " + a[a.length - 1];
+    return `<section class="lvl-clock" aria-labelledby="clockT"><h3 id="clockT">${esc(c.title)} <small>Class of ${esc(c.gradYear)}</small></h3>
+      <p class="lvl-clock-now"><b>${c.openLevels.length ? `${esc(lv(c.openLevels))} coaches can contact you now.` : "No level can contact you yet."}</b>${c.closedLevels.length ? ` ${esc(lv(c.closedLevels))}: not yet.` : ""}</p>
+      ${c.next ? `<p class="lvl-clock-next"><span class="lvl-count">${esc(c.next.days)}<small>${c.next.days === 1 ? "day" : "days"}</small></span> <span>Next key date: <b>${esc(c.next.dateText)}</b>. ${esc(c.next.level)}: ${esc(c.next.event.toLowerCase())}.</span></p>` : ""}
+      <ul class="lvl-clock-rules">${c.rules.map(r => `<li class="${r.open ? "ok" : ""}"><b>${esc(r.level)}</b> ${esc(r.event)}: ${esc(r.dateText)}</li>`).join("")}</ul>
+      <p class="lvl-note-sm">${esc(c.wave.text)}</p>
+      <p class="lvl-note-sm">${esc(c.waveNote)} ${c.source ? `<a href="${esc(c.source.url)}" target="_blank" rel="noopener">Calendar source</a>` : ""}</p></section>`;
+  }
+  function advancedHtml() {
+    if (!state.add || !V) return "";
+    const a = V.advanced(state.add, state.data, state.input, state.result.reads); if (!a) return "";
+    return `<div class="lvl-panel lvl-panel-flat" data-panel="advanced"><h4><span class="lvl-kind ctx">Context</span> ${esc(a.title)}</h4><p class="lvl-note-sm">${esc(a.note)}</p>
+      ${a.rows.map(r => `<div class="lvl-prow"><div class="lvl-prow-h"><b>${esc(r.label)}</b><span class="lvl-you">You: ${esc(r.you + " " + r.unit)}</span>${chipHtml(r.key)}</div>
+        ${r.cols.length ? `<ul class="lvl-means">${r.cols.map(c => `<li><span>${esc(c.col)}</span><b>${c.mean == null ? "Not published" : esc(c.mean + " " + r.unit)}</b><em class="na">${esc(c.text || "")}</em></li>`).join("")}</ul>` : ""}
+        ${r.ranges ? `<ul class="lvl-means">${r.ranges.map(x => `<li><span>${esc(x.col)}</span><b>${esc(x.lo)}–${esc(x.hi)} mph</b><em class="na">${esc(x.where)}</em></li>`).join("")}</ul>` : ""}
+        ${r.note ? `<p class="lvl-note-sm">${esc(r.note)}</p>` : ""}</div>`).join("")}</div>`;
+  }
+  function saveProgress() {
+    if (!store || !PG) { state.progress = null; return; }
+    try {
+      const entry = PG.entryFrom(state.input, state.result.reads.map(r => U.headline(r).level || ""));
+      const hist = PG.save(store, entry);
+      state.progress = { hist, entry: hist[hist.length - 1], d: PG.deltas(hist, hist[hist.length - 1]) };
+    } catch (e) { state.progress = null; }
+  }
+  function progressHtml() {
+    const p = state.progress; if (!p) return "";
+    const cur = p.entry;
+    const lines = PG.TRACKED.filter(([k]) => cur.metrics[k] != null).map(([k, label]) => {
+      const d = p.d && p.d.items.find(x => x.key === k);
+      const sp = PG.sparkline(PG.series(p.hist, cur.primary, k));
+      return `<li class="${d ? (d.better === true ? "ok" : d.better === false ? "below" : "na") : "na"}"><span>${esc(label.replace(/^./, c => c.toUpperCase()))}</span>${sp}<b>${esc(d ? d.text : "First saved result")}</b></li>`;
+    });
+    return `<section class="lvl-prog no-print" aria-labelledby="progT"><h3 id="progT">Since last time${p.d ? ` <small>(${esc(p.d.since)})</small>` : ""}</h3>
+      ${p.d ? "" : `<p class="lvl-note-sm">This is your first saved result here. Come back after your next showcase or training block to see what changed.</p>`}
+      ${lines.length ? `<ul class="lvl-prog-d">${lines.join("")}</ul>` : ""}
+      <p class="lvl-note-sm">Saved only in this browser (${esc(p.hist.length)} result${p.hist.length === 1 ? "" : "s"}). No account needed.</p>
+      <button class="btn btn-line btn-sm" type="button" data-clear-history>Clear my saved results</button></section>`;
+  }
+  function reviewHtml() {
+    const done = state.reviewSent;
+    return `<section class="lvl-review no-print" aria-labelledby="revT"><h3 id="revT">Want a free look from Peach State?</h3>
+      ${done ? `<p class="lvl-review-ok" role="status">Sent. We'll take a look and reply on Instagram to @${esc(done)}.</p>` : `
+      <p>We'll look at your numbers and reply on Instagram. Free, no obligation.</p>
+      <button class="btn btn-peach" type="button" data-review-open>Send my numbers to Peach State for a free look</button>
+      <div id="lvlReviewForm" class="lvl-review-form" hidden>
+        <label for="f_igHandle">Your Instagram handle</label>
+        <div class="lvl-review-row"><input class="input" id="f_igHandle" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="@yourhandle" maxlength="31"><button class="btn btn-peach" type="button" data-review-send>Send</button></div>
+        <p class="lvl-note-sm">We'll send your handle, class, position, numbers, how they were measured and your headline result. Nothing else.</p>
+        <p class="lvl-err" id="reviewErr" hidden></p>
+      </div>`}
+      <p class="lvl-privacy">Nothing leaves your browser unless you tap Send.</p></section>`;
+  }
+  async function sendReview() {
+    const h = document.getElementById("f_igHandle"), er = document.getElementById("reviewErr"), btn = app.querySelector("[data-review-send]");
+    const show = (m) => { er.textContent = m; er.hidden = !m; };
+    const payload = V.reviewPayload(h ? h.value : "", state.input, state.result);
+    if (!payload.ig_handle) { show("Enter your Instagram handle, like @yourname (letters, numbers, dots and underscores)."); if (h) h.focus(); return; }
+    const C = window.PSR_CONFIG || {};
+    if (!C.supabaseUrl || !C.supabaseAnonKey) { show("Sending isn't available right now. DM us on Instagram instead."); return; }
+    show(""); if (btn) { btn.disabled = true; btn.textContent = "Sending…"; }
+    try {
+      const r = await fetch(`${C.supabaseUrl}/rest/v1/level_reviews`, { method: "POST", headers: { apikey: C.supabaseAnonKey, Authorization: `Bearer ${C.supabaseAnonKey}`, "Content-Type": "application/json", Prefer: "return=minimal" }, body: JSON.stringify(payload) });
+      if (!r.ok) throw new Error(r.status);
+      state.reviewSent = payload.ig_handle; const y = window.scrollY; render(NOV); window.scrollTo(0, y);
+      if (window.PSR && window.PSR.toast) window.PSR.toast("Sent to Peach State");
+    } catch (e) { show("That didn't send. Check your connection and try again, or DM us on Instagram."); if (btn) { btn.disabled = false; btn.textContent = "Send"; } }
+  }
+  function printHtml() {
+    const r = state.result, i = state.input;
+    const reads = r.reads.map(rd => { const h = U.headline(rd), n = U.nextStep(rd);
+      return `<div class="pr-read"><h3>${esc(U.title(rd))}</h3><p class="pr-head">${esc(h.text)}</p><p>${esc(h.support)}</p>${n ? `<p><b>Next benchmark:</b> ${esc(n.text.replace(/^Next benchmark: /, ""))}</p>` : ""}
+        <table class="pr-levels"><tr>${U.levels(rd).map(l => `<th>${esc(l.label)}</th>`).join("")}</tr><tr>${U.levels(rd).map(l => `<td>${esc(l.status)}</td>`).join("")}</tr></table>
+        <ul class="pr-nums">${yoursFor(rd).filter(([, v]) => v != null).map(([l, v, u]) => `<li><b>${esc(l)}:</b> ${esc(fmtV(v, u))} <small>(${esc(V.chips(i, KEY_OF[l]).join(", "))})</small></li>`).join("")}</ul></div>`; }).join("");
+    const c = state.add ? V.clock(state.add, i.gradYear, new Date()) : null;
+    return `<div class="lvl-print" aria-hidden="true">
+      <div class="pr-top"><img src="images/logo-160.png" alt="" width="56" height="56"><div><b>Find My Level</b><span>Peach State Recruits · ${esc(new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }))}</span></div></div>
+      <p class="pr-meta">${esc(positions().join(" / "))} · Class of ${esc(i.gradYear)} · Throws ${esc(i.throws)} · Bats ${esc(i.bats)}</p>
+      ${reads}
+      ${c && !c.graduated ? `<p><b>Recruiting clock:</b> ${esc(c.openLevels.join(", "))} can contact now.${c.next ? ` Next key date: ${esc(c.next.dateText)} (${esc(c.next.level)}).` : ""}</p>` : ""}
+      <p class="pr-cav">${esc(U.CAVEAT)} Benchmark data v${esc(r.dataVersion)}. Sources: NextCommit, NCSA, BaseballPath, Flatground, Slammers, Pitching Coach U, PBR. Numbers are self-reported.</p>
+      <p class="pr-foot">peachstaterecruits on Instagram · dawsonjones1010-ux.github.io/peach-state-recruits/find-my-level.html</p></div>`;
+  }
+
   // ---------- Input collection ----------
   function collect() {
     const i = state.input;
@@ -416,7 +565,9 @@
     app.querySelectorAll("[data-sel]").forEach(el => {
       const k = el.dataset.sel, v = el.value;
       if (k === "gradYear") i.gradYear = v ? parseInt(v, 10) : null;
-      else if (k === "environment" || k === "method") i.meta[k] = v;
+      else if (k === "environment" || k === "method" || k === "grade") i.meta[k] = v;
+      else if (k === "pitchDevice") i.methods.pitchDevice = v;
+      else if (k.startsWith("m_")) i.methods[k.slice(2)] = v;
       else i[k] = v;
     });
     ["throws", "bats"].forEach(n => { const el = app.querySelector(`input[name="${n}"]:checked`); if (el) i[n] = el.value; else if (app.querySelector(`input[name="${n}"]`)) i[n] = ""; });
@@ -439,7 +590,7 @@
       const p = L.parseEntry(raw, kind);
       if (p.error) { errors.push({ field: k, msg: p.error }); i[k] = null; } else i[k] = p.value;
     };
-    plain("age", "number"); plain("weightLb", "number");
+    plain("weightLb", "number");
     const active = step2Fields();
     Object.keys(F).forEach(k => {
       if (!active.includes(k) || state.unknown.has(k)) { i.metrics[k] = null; return; }
@@ -480,7 +631,7 @@
     collect();
     const v = check(state.step);
     if (v.errors.length || v.warnings.length) { render(v); return; }
-    if (state.step === 3) { state.result = L.evaluate(state.data, state.input); state.step = 4; state.tab = 0; }
+    if (state.step === 3) { state.result = L.evaluate(state.data, state.input); state.step = 4; state.tab = 0; saveProgress(); }
     else state.step += 1;
     render(NOV, true);
   });
@@ -489,7 +640,10 @@
     const sh = e.target.closest("[data-share]"); if (sh) { share(+sh.dataset.share); return; }
     const nv = e.target.closest("[data-native]"); if (nv && state.share) { navigator.share({ files: [state.share.file], title: "Find My Level", text: "My college baseball benchmark comparison. @peachstaterecruits" }).catch(() => {}); return; }
     const g = e.target.closest("[data-go]"); if (g) { e.preventDefault(); go(+g.dataset.go); return; }
-    if (e.target.closest("[data-print]")) { app.querySelectorAll("details").forEach(d => d.open = true); window.print(); return; }
+    if (e.target.closest("[data-print]")) { window.print(); return; }
+    if (e.target.closest("[data-clear-history]")) { if (store && PG) PG.clear(store); state.progress = null; const y = window.scrollY; render(NOV); window.scrollTo(0, y); if (window.PSR && window.PSR.toast) window.PSR.toast("Saved results cleared on this device"); return; }
+    if (e.target.closest("[data-review-open]")) { const f = document.getElementById("lvlReviewForm"); if (f) { f.hidden = false; const h = document.getElementById("f_igHandle"); if (h) h.focus(); } return; }
+    if (e.target.closest("[data-review-send]")) { sendReview(); return; }
     if (e.target.closest("[data-reset]")) { location.href = location.pathname; return; }
     const f = e.target.closest("[data-focus]"); if (f) { e.preventDefault(); const el = document.getElementById("f_" + f.dataset.focus) || app.querySelector(`[name="${f.dataset.focus}"]`); if (el) el.focus(); }
   });
@@ -516,8 +670,9 @@
   });
 
   // ---------- Boot ----------
-  fetch(CFG.DATA_URL + "?v=1.0", { cache: "no-cache" }).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(d => {
-    state.data = d; render();
+  const getJson = (u) => fetch(u, { cache: "no-cache" }).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); });
+  Promise.all([getJson(CFG.DATA_URL + "?v=1.0"), getJson(CFG.ADDITIONS_URL + "?v=1.1").catch(() => null)]).then(([d, a]) => {
+    state.data = d; state.add = a; render();
   }).catch(() => { app.innerHTML = `<p class="lvl-card">The benchmark data couldn't load. Please refresh the page.</p>`; });
 
   window.PSRLevelUI = { state }; // for tests only; holds nothing outside this page

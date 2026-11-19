@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;1,800&family=Inter:wght@400;500;600;700;800&family=Kaushan+Script&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=16">
+<link rel="stylesheet" href="styles.css?v=17">
 </head>
 <body class="admin-body">
 <header class="nav">
@@ -81,7 +81,7 @@
     </div>
 
     <nav class="dash-tabs" aria-label="Dashboard sections">
-      <a href="#overview" class="on">Overview</a><a href="#orders">Orders</a><a href="#playersSec">Players</a><a href="#instagram">Instagram</a>
+      <a href="#overview" class="on">Overview</a><a href="#orders">Orders</a><a href="#playersSec">Players</a><a href="#instagram">Instagram</a><a href="#levelReviews">Level reviews</a>
     </nav>
 
     <!-- Overview -->
@@ -171,6 +171,21 @@
         <button class="btn btn-line btn-sm" type="submit">Connect</button>
       </form>
       <p class="form-msg" id="syncMsg" hidden></p>
+    </div>
+
+    <!-- Level reviews (Find My Level opt-in "free look" requests) -->
+    <div id="levelReviews" class="panel-box dash-sec">
+      <div class="row-between">
+        <h2>Level reviews <span class="muted small" id="lrCount"></span></h2>
+        <div class="portal-actions">
+          <select id="lrFilter" class="mini-select" aria-label="Filter level reviews">
+            <option value="open">New and contacted</option><option value="new">New</option><option value="contacted">Contacted</option><option value="done">Done</option><option value="all">All</option>
+          </select>
+          <button class="btn btn-line btn-sm" id="lrRefresh" type="button">Refresh</button>
+        </div>
+      </div>
+      <p class="muted small">Sent from Find My Level only when a player taps "Send my numbers to Peach State for a free look". Reply to them on Instagram.</p>
+      <div id="lrList" class="order-list lr-list"></div>
     </div>
   </section>
 </main>
@@ -266,9 +281,9 @@
 
 <div class="toast"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="config.js?v=16"></script>
-<script src="shared.js?v=16"></script>
-<script src="portal.js?v=16"></script>
+<script src="config.js?v=17"></script>
+<script src="shared.js?v=17"></script>
+<script src="portal.js?v=17"></script>
 <script>
 (async function () {
   const P = window.PORTAL, C = window.PSR_CONFIG, esc = P.esc, $ = (id) => document.getElementById(id);
@@ -353,7 +368,7 @@
     const h = new Date().getHours();
     $("greet").textContent = h < 12 ? "Good morning" : h < 18 ? "Good afternoon" : "Good evening";
     $("todayLine").textContent = new Date().toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" });
-    await Promise.all([loadPlayers(), loadOrders(), loadViews(), loadPotw()]);
+    await Promise.all([loadPlayers(), loadOrders(), loadViews(), loadPotw(), loadReviews()]);
     renderOverview();
     loadAccounts();
   }
@@ -411,6 +426,46 @@
     const { data } = await sb.from("profile_views").select("slug,viewed_at").gte("viewed_at", since).limit(10000);
     views = data || [];
   }
+  // ---------- Level reviews ----------
+  let reviews = [];
+  const LR_LABEL = { maxFb: "Max FB", typFb: "Typical FB", maxEv: "Max EV", avgEv: "Avg EV", sixty: "60", ifVelo: "IF velo", ofVelo: "OF velo", cVelo: "C velo", pop: "Pop", fbSpin: "FB spin", bbSpin: "BB spin", extension: "Ext", ivb: "IVB", batSpeed: "Bat speed", thirty: "30", strikePct: "Strike %", era: "ERA", whip: "WHIP", avg: "AVG", obp: "OBP", slg: "SLG", heightIn: "Height (in)", weightLb: "Weight" };
+  const LR_UNIT = { maxFb: " mph", typFb: " mph", maxEv: " mph", avgEv: " mph", ifVelo: " mph", ofVelo: " mph", cVelo: " mph", batSpeed: " mph", sixty: " s", pop: " s", thirty: " s", fbSpin: " rpm", bbSpin: " rpm", extension: " ft", ivb: " in" };
+  async function loadReviews() {
+    const { data, error } = await sb.from("level_reviews").select("*").order("created_at", { ascending: false }).limit(300);
+    if (error) { $("lrList").innerHTML = `<p class="form-msg err">${esc(error.message)}</p>`; return; }
+    reviews = data || []; renderReviews();
+  }
+  function renderReviews() {
+    const f = $("lrFilter").value;
+    const list = reviews.filter(r => f === "all" ? true : f === "open" ? r.status !== "done" : r.status === f);
+    const nNew = reviews.filter(r => r.status === "new").length;
+    $("lrCount").textContent = nNew ? `${nNew} new` : "";
+    if (!list.length) { $("lrList").innerHTML = `<p class="muted">${reviews.length ? "Nothing in this filter." : "No level reviews yet."}</p>`; return; }
+    $("lrList").innerHTML = list.map(r => {
+      const m = r.metrics || {}, mt = r.methods || {};
+      const nums = Object.keys(m).filter(k => m[k] != null && k !== "repertoire").map(k => `<span class="lr-num"><b>${esc(LR_LABEL[k] || k)}</b> ${esc(m[k])}${esc(LR_UNIT[k] || "")}</span>`).join("");
+      const how = ["sixty", "ev", "evDevice", "veloDevice", "pitchDevice", "date", "source", "method", "environment", "grade"].filter(k => mt[k]).map(k => `${esc(k)}: ${esc(mt[k])}`).join(" · ");
+      const when = new Date(r.created_at).toLocaleString(undefined, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+      return `<article class="orow lr-card" data-lr="${esc(r.id)}">
+        <div class="row-between"><div><b><a href="https://instagram.com/${esc(r.ig_handle)}" target="_blank" rel="noopener">@${esc(r.ig_handle)}</a></b> <span class="muted small">${esc(r.positions || "")}${r.grad_year ? ` · ${esc(r.grad_year)}` : ""}${r.throws ? ` · T ${esc(r.throws)}` : ""}${r.bats ? ` B ${esc(r.bats)}` : ""} · ${esc(when)}</span></div>
+          <select class="mini-select" data-lr-status="${esc(r.id)}" aria-label="Status for @${esc(r.ig_handle)}">${["new", "contacted", "done"].map(s => `<option value="${s}" ${r.status === s ? "selected" : ""}>${s[0].toUpperCase() + s.slice(1)}</option>`).join("")}</select></div>
+        ${r.headline ? `<p class="lr-head">${esc(r.headline)}</p>` : ""}
+        <div class="lr-nums">${nums || '<span class="muted small">No numbers entered</span>'}</div>
+        ${how ? `<p class="muted small">${how}</p>` : ""}
+        ${r.data_version ? `<p class="muted small">Benchmark data v${esc(r.data_version)}</p>` : ""}
+      </article>`;
+    }).join("");
+  }
+  $("lrFilter").addEventListener("change", renderReviews);
+  $("lrRefresh").addEventListener("click", loadReviews);
+  $("lrList").addEventListener("change", async (e) => {
+    const s = e.target.closest("[data-lr-status]"); if (!s) return;
+    const { error } = await sb.from("level_reviews").update({ status: s.value }).eq("id", s.dataset.lrStatus);
+    if (error) { window.PSR.toast("Couldn't update: " + error.message); return; }
+    const r = reviews.find(x => x.id === s.dataset.lrStatus); if (r) r.status = s.value;
+    renderReviews(); window.PSR.toast("Status updated");
+  });
+
   const refreshAll = async () => { await Promise.all([loadPlayers(), loadOrders()]); renderOverview(); };
 
   // ---------- Overview ----------

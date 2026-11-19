@@ -19,7 +19,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=16">
+<link rel="stylesheet" href="styles.css?v=17">
 <link rel="canonical" href="https://dawsonjones1010-ux.github.io/peach-state-recruits/">
 <meta property="og:url" content="https://dawsonjones1010-ux.github.io/peach-state-recruits/">
 <meta name="twitter:title" content="Peach State Recruits">
@@ -103,12 +103,23 @@
   </div>
 </section>
 
+<section id="parents" class="parents" aria-labelledby="parentsTitle" hidden>
+  <div class="wrap">
+    <div class="head"><span class="eyebrow">Families</span><h2 id="parentsTitle">What parents say</h2></div>
+    <div class="quotes parents-grid" id="parentQuotes">
+      <figure class="quote" data-slot="1"><blockquote></blockquote><figcaption><b></b><span></span></figcaption></figure>
+      <figure class="quote" data-slot="2"><blockquote></blockquote><figcaption><b></b><span></span></figcaption></figure>
+      <figure class="quote" data-slot="3"><blockquote></blockquote><figcaption><b></b><span></span></figcaption></figure>
+    </div>
+  </div>
+</section>
+
 <section class="lvl-band" id="find-my-level" aria-labelledby="lvlBandTitle">
   <div class="wrap">
     <div>
       <span class="eyebrow">Free tool</span>
       <h2 id="lvlBandTitle">Find my level</h2>
-      <p>Enter your fastball, exit velo, 60 time, arm or pop time and see how they compare with published college recruiting benchmarks, from Power conference D1 to JUCO. Every source is shown, and missing benchmarks stay missing.</p>
+      <p>Enter your exit velo, 60 time, fastball, arm or pop time and see how you compare with published college benchmarks, from D1 to JUCO. Free, about 2 minutes.</p>
     </div>
     <a class="btn btn-peach btn-lg" href="find-my-level.html">Find My Level</a>
   </div>
@@ -223,8 +234,8 @@
   <a class="btn btn-peach btn-sm" href="#packages" tabindex="-1">See packages</a>
 </div>
 
-<script src="config.js?v=16"></script>
-<script src="shared.js?v=16"></script>
+<script src="config.js?v=17"></script>
+<script src="shared.js?v=17"></script>
 <script>
 (async function () {
   const C = window.PSR_CONFIG, PSR = window.PSR, { esc, photoFrame, payLink, loadPlayers, profileUrl, ICON } = PSR;
@@ -282,6 +293,16 @@
     q.hidden = false;
   }
   if ((F.photo && F.bio) || Q.length) document.getElementById("trust").hidden = false;
+
+  // ---- What parents say: hidden until real quotes are added to config.js (parentQuotes) ----
+  const PQ = (C.parentQuotes || []).filter(t => t && t.quote && t.name).slice(0, 3);
+  if (PQ.length) {
+    document.querySelectorAll("#parentQuotes .quote").forEach((fig, i) => {
+      const t = PQ[i]; if (!t) { fig.remove(); return; }
+      fig.querySelector("blockquote").textContent = t.quote; fig.querySelector("b").textContent = t.name; fig.querySelector("span").textContent = t.detail || "";
+    });
+    document.getElementById("parents").hidden = false;
+  }
 
   // ---- Footer + handles ----
   const accts = [[C.instagram, "Features"], [C.instagramHQ, "HQ"]].filter(a => a[0]);
@@ -354,6 +375,10 @@
 
   // ---- Mobile sticky CTA: after the hero, hidden at packages and the closing CTA ----
   const sticky = document.getElementById("stickyCta");
+  // Below 900px the box never shows while any part of the hero is on screen.
+  const heroEl = document.getElementById("top");
+  const inHero = () => document.body.classList.toggle("in-hero", heroEl.getBoundingClientRect().bottom > 0);
+  inHero(); addEventListener("scroll", inHero, { passive: true }); addEventListener("resize", inHero);
   if ("IntersectionObserver" in window) {
     const seen = new Map();
     const io = new IntersectionObserver(es => {

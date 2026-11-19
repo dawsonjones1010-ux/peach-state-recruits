@@ -10,7 +10,6 @@ const ok = (cond, name) => { if (cond) pass++; else { fail++; failures.push(name
 async function start(page, s) {
   await page.goto(BASE + "find-my-level.html", { waitUntil: "networkidle" });
   await page.waitForSelector('form[data-step="1"]');
-  await page.fill("#f_age", String(s.age || 17));
   await page.selectOption("#f_gradYear", String(s.grad || 2027));
   await page.selectOption("#f_primary", s.primary);
   if (s.secondary) await page.selectOption("#f_secondary", s.secondary);
@@ -53,7 +52,10 @@ const LEVELS = ["Power D1", "Mid-major D1", "Lower D1", "D2", "D3", "NAIA", "JUC
     page.on("console", m => { if (m.type() === "error") errs.push(m.text()); });
     page.on("pageerror", e => errs.push(String(e)));
     // Only the estimator page is checked: other pages keep their existing behaviour (e.g. profile view counts).
-    page.on("request", r => { if (!/find-my-level/.test(page.url())) return; const same = r.url().startsWith(BASE) || r.url().startsWith("blob:") || /fonts\.(googleapis|gstatic)\.com/.test(r.url()); if (r.method() !== "GET" || !same) posts.push(r.method() + " " + r.url()); });
+    // The opt-in review is the only allowed outside call, and only after "Send" is tapped. It is mocked here.
+    let sendTapped = false; const reviewBodies = [];
+    await ctx.route("**/rest/v1/level_reviews*", (route) => { reviewBodies.push({ tapped: sendTapped, body: route.request().postData(), prefer: route.request().headers()["prefer"] }); route.fulfill({ status: 201, body: "" }); });
+    page.on("request", r => { if (!/find-my-level/.test(page.url())) return; if (sendTapped && /\/rest\/v1\/level_reviews/.test(r.url()) && r.method() === "POST") return; const same = r.url().startsWith(BASE) || r.url().startsWith("blob:") || /fonts\.(googleapis|gstatic)\.com/.test(r.url()); if (r.method() !== "GET" || !same) posts.push(r.method() + " " + r.url()); });
     const fitsFirst = () => page.evaluate(() => { const p = document.querySelector(".lvl-tabpanel:not([hidden])"); const b = p.querySelector(".lvl-cta2").getBoundingClientRect(); const t = p.querySelector(".lvl-head-card").getBoundingClientRect(); return t.top >= 0 && b.bottom <= innerHeight; });
     const story = async (idx, file) => {
       await page.click(`[data-share="${idx}"]`); await page.waitForSelector(`#shareOut${idx} img`);
@@ -66,7 +68,7 @@ const LEVELS = ["Power D1", "Mid-major D1", "Lower D1", "D2", "D3", "NAIA", "JUC
 
     // 0. Hero
     await page.goto(BASE + "find-my-level.html", { waitUntil: "networkidle" }); await page.waitForSelector('form[data-step="1"]');
-    const hero = await page.evaluate(() => ({ h1: document.querySelector(".lvl-intro h1").textContent, lead: document.querySelector(".lvl-intro .lead").textContent, meta: document.querySelector(".lvl-meta").textContent, pills: document.querySelectorAll(".lvl-promise").length, heroBottom: document.querySelector(".lvl-intro").getBoundingClientRect().bottom, formTop: document.querySelector('form[data-step="1"]').getBoundingClientRect().top, firstField: document.querySelector("#f_age").getBoundingClientRect().bottom, vh: innerHeight }));
+    const hero = await page.evaluate(() => ({ h1: document.querySelector(".lvl-intro h1").textContent, lead: document.querySelector(".lvl-intro .lead").textContent, meta: document.querySelector(".lvl-meta").textContent, pills: document.querySelectorAll(".lvl-promise").length, heroBottom: document.querySelector(".lvl-intro").getBoundingClientRect().bottom, formTop: document.querySelector('form[data-step="1"]').getBoundingClientRect().top, firstField: document.querySelector("#f_gradYear").getBoundingClientRect().bottom, vh: innerHeight }));
     ok(hero.h1 === "Find My Level" && hero.lead === "Enter your numbers and see how they compare with published college baseball benchmarks." && hero.meta === "Free · About 2 minutes · No sign-up" && hero.pills === 0, `${tag}: hero title, line and small line; pill badges removed`);
     ok(hero.heroBottom < hero.vh, `${tag}: hero fits in under one screen (${Math.round(hero.heroBottom)}px of ${hero.vh})`);
     ok(hero.formTop < hero.vh && hero.firstField <= hero.vh, `${tag}: step 1 visible on the first screen (first field ends at ${Math.round(hero.firstField)}px)`);
@@ -103,11 +105,12 @@ const LEVELS = ["Power D1", "Mid-major D1", "Lower D1", "D2", "D3", "NAIA", "JUC
     const resTxt = await page.textContent(".lvl-results");
     ok(resTxt.includes("Measurement date unknown"), `${tag}: unknown metadata consequence labeled`);
     ok(resTxt.includes("count as one piece of evidence"), `${tag}: NAIA/JUCO pooled targets flagged as one piece of evidence`);
-    ok(!/probability|percentile|fit score|% chance/i.test(resTxt), `${tag}: no fabricated scores or probabilities`);
+    const resMain = await page.evaluate(() => { const c = document.querySelector(".lvl-results").cloneNode(true); c.querySelectorAll('[data-sec="sources"], .lvl-print').forEach(e => e.remove()); return c.textContent; });
+    ok(!/probability|percentile|fit score|% chance/i.test(resMain), `${tag}: no fabricated scores or probabilities (the Sources list may name published studies)`);
     if (SHOTS) await page.screenshot({ path: `${SHOTS}/${tag}-results-ss.png`, fullPage: !mobile ? false : false });
     // Update my numbers keeps values
     await page.click("text=Update my numbers"); await page.waitForSelector('form[data-step="1"]');
-    ok((await page.inputValue("#f_age")) === "17" && (await page.inputValue("#f_primary")) === "SS", `${tag}: "Update my numbers" keeps entries`);
+    ok((await page.inputValue("#f_gradYear")) === "2027" && !(await page.$("#f_age")) && (await page.inputValue("#f_primary")) === "SS", `${tag}: "Update my numbers" keeps entries`);
     await next(page); ok((await page.inputValue("#f_maxEv")) === "93", `${tag}: step 2 values kept after update`);
 
     // 3. Outfielders: LF -> Corner OF, CF -> CF
@@ -205,6 +208,110 @@ const LEVELS = ["Power D1", "Mid-major D1", "Lower D1", "D2", "D3", "NAIA", "JUC
     ok(await page.isVisible("text=More information needed for an overall range") && (await page.$$(".lvl-cat.is-hl")).length === 0, `${tag}: all-unknown input gives no division`);
     await overflow("all-unknown results");
 
+    // ===== v17: Part 4 test players (CF 2027, 2028 RHP 86 + spin, 2029 freshman, two-way SS/P, all blank) =====
+    const sel = async (id, v) => { await page.evaluate(() => document.querySelectorAll("details.lvl-more").forEach(d => d.open = true)); await page.selectOption(id, v); };
+    const toResults = async () => page.evaluate(() => { document.documentElement.style.scrollBehavior = "auto"; const r = document.querySelector(".lvl-results"); window.scrollTo(0, r.getBoundingClientRect().top + scrollY - document.querySelector(".nav").offsetHeight - 8); });
+    const shot = async (name, full) => { if (SHOTS) await page.screenshot({ path: `${SHOTS}/${tag}-${name}.png`, fullPage: !!full }); };
+    await page.evaluate(() => { try { localStorage.clear(); } catch (e) {} });
+
+    // P1: CF, class of 2027
+    await start(page, { primary: "CF", grad: 2027 });
+    ok(!(await page.$("#f_age")) && !(await page.isVisible("text=Age when measured")), `${tag}: no age field anywhere (grad year only)`);
+    await numbers(page, { maxEv: 94, sixty: 6.75, ofVelo: 88 });
+    await sel("#f_m_sixty", "laser"); await sel("#f_m_ev", "game"); await sel("#f_m_evDevice", "trackman"); await sel("#f_m_veloDevice", "pocket");
+    await next(page);
+    ok(await page.isVisible("#f_grade") && (await page.textContent('label[for="f_grade"]')).includes("What grade were you in when you got these numbers?"), `${tag}: step 3 asks the grade question`);
+    await evidence(page, { date: "2026-07-20", environment: "showcase", method: "electronic", source: "event" });
+    let tx = await page.textContent("#tp0");
+    ok(/Laser/.test(await page.textContent("#tp0 .lvl-nums")) && /TrackMan/.test(await page.textContent("#tp0 .lvl-nums")) && /Game/.test(await page.textContent("#tp0 .lvl-nums")), `${tag}: method chips shown next to each number`);
+    ok((await page.textContent(".lvl-cta2-s")) === "Your bat and speed already meet the listed mid-major D1 targets. Coaches still need to see them on film." && (await page.getAttribute(".lvl-cta2 a", "href")) === "index.html#packages", `${tag}: CTA sentence chosen by the result, links to packages`);
+    ok(await page.isVisible(".lvl-cta"), `${tag}: bottom CTA kept`);
+    const clk = await page.textContent(".lvl-clock");
+    ok(/Your recruiting clock/.test(clk) && /D1, D2, D3, NAIA and JUCO coaches can contact you now/.test(clk) && /one state's data/.test(clk) && /NAIA/.test(clk) && /does not regulate/.test(clk), `${tag}: recruiting clock (2027: all levels open, NAIA rule shown, wave labeled as one state)`);
+    ok(!(await page.$(".lvl-young")) , `${tag}: no sophomore panel for junior-year numbers`);
+    ok(/First saved result/.test(await page.textContent(".lvl-prog")) && await page.isVisible("text=Clear my saved results"), `${tag}: progress saved, clear button shown`);
+    ok((await page.$$eval(".lvl-privacy", e => e.map(x => x.textContent))).includes("Nothing leaves your browser unless you tap Send."), `${tag}: privacy line`);
+    ok(await fitsFirst(), `${tag}: CF 2027 headline, next step and CTA fit the first results screen`);
+    await toResults(); await shot("p1-cf2027-first"); await shot("p1-cf2027-full", true);
+    // Progress on return
+    await page.click("text=Update my numbers"); await page.waitForSelector('form[data-step="1"]'); await next(page);
+    await page.fill("#f_maxEv", "96"); await next(page); await evidence(page, {});
+    const pr = await page.textContent(".lvl-prog");
+    ok(/Since last time/.test(pr) && /\+2 mph max exit velocity since/.test(pr) && (await page.$$(".lvl-prog svg.lvl-spark")).length >= 1, `${tag}: "Since last time" change and sparkline on return`);
+    await page.evaluate(() => document.querySelector(".lvl-prog").scrollIntoView({ block: "center" })); await shot("p1-cf2027-progress");
+    // Opt-in review: nothing sent until Send is tapped
+    ok(reviewBodies.length === 0, `${tag}: nothing sent before Send`);
+    await page.click("[data-review-open]"); await page.fill("#f_igHandle", "bad handle!"); sendTapped = true; await page.click("[data-review-send]");
+    ok(await page.isVisible("#reviewErr") && reviewBodies.length === 0, `${tag}: invalid handle is not sent`);
+    await page.fill("#f_igHandle", "@test.player27"); await page.click("[data-review-send]"); await page.waitForSelector(".lvl-review-ok");
+    const rb = reviewBodies[0] ? JSON.parse(reviewBodies[0].body) : {};
+    ok(reviewBodies.length === 1 && reviewBodies[0].tapped && reviewBodies[0].prefer === "return=minimal" && rb.ig_handle === "test.player27" && rb.positions === "CF" && rb.grad_year === 2027 && rb.metrics.maxEv === 96 && rb.methods.sixty === "laser" && /mid-major/.test(rb.headline) && !("age" in rb), `${tag}: review sends handle, class, position, numbers, method chips and headline only after tapping Send`);
+    await page.evaluate(() => document.querySelector(".lvl-review").scrollIntoView({ block: "center" })); await shot("p1-review-sent");
+    sendTapped = false;
+    // Print: one clean page
+    await page.emulateMedia({ media: "print" });
+    const prt = await page.evaluate(() => ({ print: getComputedStyle(document.querySelector(".lvl-print")).display, others: [...document.querySelectorAll(".lvl-results > :not(.lvl-print)")].every(e => getComputedStyle(e).display === "none"), nav: getComputedStyle(document.querySelector(".nav")).display }));
+    ok(prt.print === "block" && prt.others && prt.nav === "none", `${tag}: print layout shows only the one-page sheet`);
+    if (!mobile) { const pdf = await page.pdf({ format: "Letter", printBackground: true }); const pages = (pdf.toString("latin1").match(/\/Type\s*\/Page[^s]/g) || []).length; ok(pages === 1, `${tag}: print is one page (${pages})`); if (SHOTS) require("fs").writeFileSync(`${SHOTS}/print-cf2027.pdf`, pdf); await page.screenshot({ path: `${SHOTS}/desktop-print-preview.png`, fullPage: true }); }
+    await page.emulateMedia({ media: "screen" });
+    await page.click("[data-clear-history]");
+    ok(!(await page.$(".lvl-prog")) && (await page.evaluate(() => localStorage.getItem("psr_fml_history_v1"))) === null, `${tag}: "Clear my saved results" clears localStorage`);
+
+    // P2: 2028 RHP, 86 mph with spin, sophomore-year numbers
+    await start(page, { primary: "P", throws: "R", grad: 2028 });
+    await numbers(page, { maxFb: 86, typFb: 84 });
+    await page.evaluate(() => document.querySelectorAll("details.lvl-more").forEach(d => d.open = true));
+    await numbers(page, { fbSpin: 2250, bbSpin: 2450, extension: 6.1, ivb: 16.5 });
+    await sel("#f_pitchDevice", "rapsodo"); await sel("#f_m_veloDevice", "pocket");
+    await next(page); await evidence(page, { date: "2026-06-10", environment: "showcase", method: "radar", source: "event" });
+    const yg = await page.textContent("#tp0 .lvl-young");
+    ok(/When they were your age/.test(yg) && yg.includes("Your 86 mph peak sits between the 16th and 50th percentile of Indiana's eventual D1 arms as sophomores.") && /Indiana/.test(yg) && /n /.test(yg), `${tag}: RHP 86 sophomore panel with the in-sample band, state and sample size`);
+    ok(!/18 eventual D1 signees/.test(yg), `${tag}: under-85 fact not shown at 86`);
+    ok(/Pocket Radar/.test(await page.textContent("#tp0 .lvl-nums")), `${tag}: velo device chip`);
+    await page.evaluate(() => { const d = document.querySelector('#tp0 [data-sec="compare"]'); d.open = true; });
+    const adv = await page.textContent('[data-panel="advanced"]');
+    ok(/Fastball spin/.test(adv) && /Breaking-ball spin/.test(adv) && /No published level comparison/.test(adv) && /Rapsodo/.test(adv) && /never change your level/.test(adv), `${tag}: advanced pitch numbers compared as context only`);
+    ok(JSON.stringify(await hlCats(page, 0)) === JSON.stringify(["low", "d2", "d3", "naia", "juco"]), `${tag}: spin and sophomore data do not change the highlighted levels`);
+    await page.evaluate(() => { const d = document.querySelector('#tp0 [data-sec="compare"]'); d.open = false; });
+    await toResults(); await shot("p2-rhp2028-first");
+    await page.evaluate(() => { document.querySelector('#tp0 [data-sec="compare"]').open = true; }); await shot("p2-rhp2028-full", true);
+    if (mobile) await story(0, "story-rhp2028.png");
+    await overflow("RHP 2028 results");
+
+    // P3: class of 2029 freshman
+    await start(page, { primary: "SS", grad: 2029 });
+    await numbers(page, { maxEv: 82, sixty: 7.3, ifVelo: 74 }); await next(page);
+    await page.selectOption("#f_grade", "9"); await evidence(page, { date: "2026-10-01" });
+    ok(/No freshman-year data has been published/.test(await page.textContent("#tp0")) && !(await page.$(".lvl-young")), `${tag}: freshman gets the short line, no panel`);
+    const c29 = await page.textContent(".lvl-clock");
+    ok(/D3, NAIA and JUCO coaches can contact you now/.test(c29) && /D1 and D2: not yet/.test(c29) && /June 15, 2027/.test(c29) && /\d+\s*days/.test(c29), `${tag}: 2029 clock: open levels, next key date with countdown`);
+    await toResults(); await shot("p3-fr2029-first"); await shot("p3-fr2029-full", true);
+
+    // P4: two-way SS/P, sophomore numbers, hand-timed 60
+    await start(page, { primary: "SS", secondary: "P", grad: 2028 });
+    await numbers(page, { maxFb: 84, maxEv: 90, sixty: 6.9, ifVelo: 84 });
+    await sel("#f_m_sixty", "hand"); await next(page);
+    await page.selectOption("#f_grade", "10"); await evidence(page, {});
+    ok(/Hand times usually read faster than laser times\./.test(await page.textContent("#tp0 .lvl-nums")), `${tag}: hand-timed 60 note`);
+    const y0 = await page.textContent("#tp0 .lvl-young");
+    ok(/Early D1 commits at SS/.test(y0) && /Early commits only/.test(y0) && /Indiana/.test(y0), `${tag}: SS sophomore panel by position, early commits labeled`);
+    ok((await page.$$eval("[role=tab]", e => e.map(x => x.textContent))).join("|") === "Shortstop|Pitcher", `${tag}: two-way tabs`);
+    await toResults(); await shot("p4-twoway-ss-first");
+    await page.click("#tab1");
+    const y1 = await page.textContent("#tp1 .lvl-young");
+    ok(/18 eventual D1 signees threw under 85 mph as sophomores; 4 became Power 4 signees/.test(y1), `${tag}: pitcher under 85 sees the 4-of-18 fact`);
+    await toResults(); await shot("p4-twoway-p-first"); await shot("p4-twoway-p-full", true);
+    await overflow("two-way v2 results");
+
+    // P5: all-blank form
+    await start(page, { primary: "CF", grad: 2028 });
+    await next(page);
+    if (await page.$('form[data-step="2"]')) { await shot("p5-blank-step2"); for (const k of ["maxEv", "sixty", "ofVelo"]) await page.check(`[data-unknown="${k}"]`); await next(page); }
+    await evidence(page, {});
+    ok(await page.isVisible("text=More information needed for an overall range") && (await page.$$(".lvl-cat.is-hl")).length === 0 && !(await page.$(".lvl-nums")), `${tag}: all-blank form gives no level and no invented numbers`);
+    await toResults(); await shot("p5-blank-first"); await shot("p5-blank-full", true);
+    await overflow("blank results");
+
     // Screens of the form steps (phone)
     if (SHOTS && mobile) {
       await page.goto(BASE + "find-my-level.html", { waitUntil: "networkidle" });
@@ -224,8 +331,33 @@ const LEVELS = ["Power D1", "Mid-major D1", "Lower D1", "D2", "D3", "NAIA", "JUC
     await page.goto(BASE, { waitUntil: "networkidle" });
     ok(await page.$('a.nav-level[href="find-my-level.html"]') !== null && await page.isVisible("#find-my-level"), `${tag}: homepage has nav link and Find My Level band`);
     ok((await page.$$(".ex")).length === 3, `${tag}: homepage featured examples still render`);
+    const homeCard = await page.textContent("#find-my-level p");
+    ok(homeCard.trim() === "Enter your exit velo, 60 time, fastball, arm or pop time and see how you compare with published college benchmarks, from D1 to JUCO. Free, about 2 minutes.", `${tag}: homepage Find My Level card text`);
+    const sk = await page.evaluate(() => { const e = document.getElementById("plan-starter"); return e && { t: e.innerText, prev: e.previousElementSibling && e.previousElementSibling.id, btn: e.querySelector("a.btn").textContent }; });
+    ok(sk && /Recruiting Starter Kit/i.test(sk.t) && /\$129/.test(sk.t) && /one time/.test(sk.t) && /Coach-ready highlight video/.test(sk.t) && /Instagram feature/.test(sk.t) && /One-page recruiting resume \(PDF\)/.test(sk.t) && /Summer schedule graphic/.test(sk.t) && sk.prev === "plan-elite" && sk.btn === "Order on Instagram", `${tag}: Recruiting Starter Kit $129 next to Elite with Order on Instagram`);
+    ok((await page.evaluate(() => [...document.querySelectorAll(".plan .price")].map(p => p.textContent).join("|"))) === "$25one time|$49one time|$99one time|$129one time", `${tag}: existing prices unchanged`);
+    ok(await page.evaluate(() => { const s = document.getElementById("parents"); return s && s.hidden && s.querySelectorAll(".quote").length === 3 && s.previousElementSibling.id === "examples"; }), `${tag}: "What parents say" section (3 cards) after examples, hidden`);
+    await overflow("homepage");
+    if (mobile) {
+      ok(await page.evaluate(() => getComputedStyle(document.querySelector(".hx-grid")).gridTemplateColumns.split(" ").length === 1 && document.querySelector(".hx-copy").scrollWidth <= innerWidth), `${tag}: hero grid is one minmax(0,1fr) column`);
+      for (const y of [0, 600, 1100]) { await page.evaluate(y => window.scrollTo(0, y), y); await page.waitForTimeout(350); const vis = await page.evaluate(() => { const s = document.getElementById("stickyCta"); const r = s.getBoundingClientRect(); return getComputedStyle(s).display !== "none" && r.top < innerHeight && s.classList.contains("show"); }); ok(!vis, `${tag}: floating "See packages" box hidden in the hero (scroll ${y})`); }
+      await page.evaluate(() => window.scrollTo(0, 0)); await page.waitForTimeout(300);
+      if (SHOTS) await page.screenshot({ path: `${SHOTS}/phone-home-hero.png` });
+      await page.evaluate(() => { document.documentElement.style.scrollBehavior = "auto"; document.getElementById("find-my-level").scrollIntoView(); }); await page.waitForTimeout(400);
+      if (SHOTS) await page.screenshot({ path: `${SHOTS}/phone-home-fml-card.png` });
+      await page.evaluate(() => { document.getElementById("packages").scrollIntoView(); document.querySelectorAll(".reveal").forEach(e => e.classList.add("in")); }); await page.waitForTimeout(500);
+      if (SHOTS) await page.screenshot({ path: `${SHOTS}/phone-packages.png`, fullPage: false });
+      if (SHOTS) await page.evaluate(() => document.getElementById("plan-starter").scrollIntoView({ block: "center" }));
+      if (SHOTS) { await page.waitForTimeout(300); await page.screenshot({ path: `${SHOTS}/phone-packages-starter.png` }); }
+    } else if (SHOTS) {
+      await page.screenshot({ path: `${SHOTS}/desktop-home-hero.png` });
+      await page.evaluate(() => { document.documentElement.style.scrollBehavior = "auto"; document.getElementById("packages").scrollIntoView(); document.querySelectorAll(".reveal").forEach(e => e.classList.add("in")); }); await page.waitForTimeout(500);
+      await page.screenshot({ path: `${SHOTS}/desktop-packages.png` });
+    }
     await page.goto(BASE + "players.html", { waitUntil: "networkidle" });
     ok(/players?/.test(await page.textContent("#count")), `${tag}: players page still works`);
+    await overflow("players page");
+    if (mobile) ok(await page.evaluate(() => [...document.querySelectorAll(".photo-frame-bg")].every(e => e.getBoundingClientRect().right <= innerWidth + 1)), `${tag}: players .photo-frame-bg stays inside the 390px viewport`);
     await page.goto(BASE + "player/beck-hoover/", { waitUntil: "networkidle" });
     ok(await page.isVisible("h1") && (await page.textContent("h1")).includes("Beck"), `${tag}: player profile still works`);
     ok(errs.length === 0, `${tag}: no console errors${errs.length ? " → " + errs.join(" | ") : ""}`);
