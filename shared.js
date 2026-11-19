@@ -42,10 +42,143 @@
     </svg>`;
   }
 
-  function coverOrImage(p, cls, eager) {
-    if (p.coverImage) return `<img src="${esc(p.coverImage)}" alt="${esc(p.name)} feature cover" ${cls ? `class="${cls}"` : ""} width="1080" height="1432" ${eager ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async">`;
-    return cover(p, { cls });
+  // Frame sizes used by srcset. The box itself keeps its CSS aspect-ratio;
+  // the photo is shown in full (object-fit:contain) over a blurred fill.
+  const PHOTO_SIZES = {
+    card: "(max-width: 700px) 92vw, (max-width: 1100px) 45vw, 380px",
+    hero: "(max-width: 900px) 92vw, 330px",
+    spot: "92px",
+    profile: "(max-width: 760px) 116px, 360px",
+    mini: "(max-width: 700px) 96px, 140px",
+    thumb: "56px",
+    preview: "220px",
+    video: "(max-width: 700px) 92vw, 640px"
+  };
+  const IMAGE_ACCEPT = "image/jpeg,image/png,image/webp,image/gif,image/heic,image/heif,.jpg,.jpeg,.png,.webp,.gif,.heic,.heif";
+
+  function initials(name) {
+    const parts = String(name || "").trim().split(/\s+/).filter(Boolean);
+    if (!parts.length) return "PS";
+    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
   }
+
+  function photoSrc(p) {
+    return (p && (p.coverImage || p.image || p.cover_url)) || "";
+  }
+
+  function photoFallback(img) {
+    const frame = img && img.closest && img.closest(".photo-frame");
+    if (frame) frame.classList.add("is-fallback");
+    if (img) { img.removeAttribute("src"); img.removeAttribute("srcset"); }
+  }
+
+  // Reusable cover: the whole photo, any aspect ratio, in a fixed frame.
+  // Missing photos get the generated graphic; a broken image falls back to initials on navy.
+  function photoFrame(p, opts = {}) {
+    const src = photoSrc(p);
+    const cls = ["photo-frame", opts.cls].filter(Boolean).join(" ");
+    const sizes = opts.sizes || PHOTO_SIZES.card;
+    const extra = opts.extra || "";
+    const name = (p && p.name) || "Athlete";
+    if (!src) {
+      return `<div class="${cls} is-generated">${cover(p || {}, { cls: "photo-frame-img" })}${extra}</div>`;
+    }
+    const safe = esc(src);
+    const eager = !!opts.eager;
+    return `<div class="${cls}"><span class="photo-frame-bg" aria-hidden="true" style="background-image:url('${safe}')"></span><img class="photo-frame-img" src="${safe}" srcset="${safe} 1600w" sizes="${esc(sizes)}" alt="${esc(name)} feature cover" ${eager ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async" onerror="window.PSR.photoFallback(this)"><span class="photo-frame-ph" aria-hidden="true">${esc(initials(name))}</span>${extra}</div>`;
+  }
+
+  function coverOrImage(p, cls, eager) {
+    return photoFrame(p, { cls, eager });
+  }
+
+  function isHeicFile(file) {
+    const t = (file.type || "").toLowerCase();
+    const n = (file.name || "").toLowerCase();
+    return /image\/hei[cf]/.test(t) || /\.hei[cf]$/.test(n);
+  }
+
+  function isImageFile(file) {
+    const t = (file.type || "").toLowerCase();
+    const n = (file.name || "").toLowerCase();
+    return /image\/(jpeg|jpg|pjpeg|png|webp|gif|hei[cf])/.test(t) || /\.(jpe?g|png|webp|gif|hei[cf])$/.test(n);
+  }
+
+  let heicLoading = null;
+  function loadHeic2any() {
+    if (window.heic2any) return Promise.resolve(window.heic2any);
+    if (!heicLoading) heicLoading = new Promise((res, rej) => {
+      const s = document.createElement("script");
+      s.src = "vendor/heic2any.min.js?v=1";
+      s.async = true;
+      s.onload = () => window.heic2any ? res(window.heic2any) : rej(new Error("Couldn't load the HEIC converter."));
+      s.onerror = () => rej(new Error("Couldn't load the HEIC converter. Check your connection and try again, or export the photo as a JPG first."));
+      document.head.appendChild(s);
+    });
+    return heicLoading;
+  }
+
+  async function blobToBitmap(blob) {
+    if (typeof createImageBitmap === "function") {
+      try { return await createImageBitmap(blob, { imageOrientation: "from-image" }); }
+      catch (e) {
+        try { return await createImageBitmap(blob); } catch (e2) {}
+      }
+    }
+    return await new Promise((res, rej) => {
+      const url = URL.createObjectURL(blob);
+      const img = new Image();
+      img.onload = () => { URL.revokeObjectURL(url); res(img); };
+      img.onerror = () => { URL.revokeObjectURL(url); rej(new Error("Couldn't read that photo.")); };
+      img.src = url;
+    });
+  }
+
+  // Convert any common photo (JPG, PNG, WebP, GIF, iPhone HEIC) to a reasonably
+  // sized JPEG before upload. Max long edge ~1600px, quality ~0.85, EXIF orientation applied.
+  async function prepareImageFile(file, opts = {}) {
+    const maxEdge = opts.maxEdge || 1600;
+    const quality = opts.quality == null ? 0.85 : opts.quality;
+    if (!file) throw new Error("Choose a photo first.");
+    if (!isImageFile(file) && !isHeicFile(file)) {
+      throw new Error("Use a JPG, PNG, WebP, GIF, or an iPhone photo (HEIC).");
+    }
+    let blob = file;
+    if (isHeicFile(file)) {
+      try {
+        const heic2any = await loadHeic2any();
+        blob = await heic2any({ blob: file, toType: "image/jpeg", quality });
+        if (Array.isArray(blob)) blob = blob[0];
+      } catch (e) {
+        const msg = (e && e.message) || String(e || "");
+        if (/Couldn't load the HEIC converter/.test(msg)) throw e;
+        throw new Error("Couldn't convert that iPhone photo. Try exporting it as a JPG in Photos and upload that instead.");
+      }
+    }
+    let bmp;
+    try { bmp = await blobToBitmap(blob); }
+    catch (e) { throw new Error("Couldn't read that photo. Try a JPG or PNG, or export it from your phone as a JPG."); }
+    const w = bmp.width || bmp.naturalWidth, h = bmp.height || bmp.naturalHeight;
+    if (!w || !h) throw new Error("That photo looks empty. Try a different file.");
+    const scale = Math.min(1, maxEdge / Math.max(w, h));
+    const tw = Math.max(1, Math.round(w * scale)), th = Math.max(1, Math.round(h * scale));
+    const canvas = document.createElement("canvas");
+    canvas.width = tw; canvas.height = th;
+    const ctx = canvas.getContext("2d");
+    ctx.fillStyle = "#0a1120";
+    ctx.fillRect(0, 0, tw, th);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+    ctx.drawImage(bmp, 0, 0, tw, th);
+    if (bmp.close) try { bmp.close(); } catch (e) {}
+    const jpeg = await new Promise((res, rej) => {
+      canvas.toBlob(b => b ? res(b) : rej(new Error("Couldn't process that photo.")), "image/jpeg", quality);
+    });
+    const base = (file.name || "cover").replace(/\.[^.]+$/, "").replace(/[^\w.-]+/g, "-").slice(0, 40) || "cover";
+    return new File([jpeg], base + ".jpg", { type: "image/jpeg", lastModified: Date.now() });
+  }
+
 
   function payLink(cfg, id) {
     const link = cfg.paymentLinks && cfg.paymentLinks[id];
@@ -252,6 +385,6 @@
     return `<svg viewBox="0 0 ${size} ${size}" role="img" aria-label="${esc(label || "QR code")}" shape-rendering="crispEdges"><rect width="${size}" height="${size}" fill="#fff"/><path d="${d}" fill="#0a1120"/></svg>`;
   }
 
-  window.PSR = { esc, LOGO, logoMark, cover, coverOrImage, payLink, toast, loadPlayers, countView, recentFromPlayers, fromRow, hasDb, profileUrl, siteBase, shareProfileUrl, displayUrl,
+  window.PSR = { esc, LOGO, logoMark, cover, coverOrImage, photoFrame, photoFallback, photoSrc, initials, PHOTO_SIZES, IMAGE_ACCEPT, prepareImageFile, isHeicFile, isImageFile, payLink, toast, loadPlayers, countView, recentFromPlayers, fromRow, hasDb, profileUrl, siteBase, shareProfileUrl, displayUrl,
     ICON, initNav, reveal, copyText, shareLink, qrSvg, reducedMotion, parseVideo, videoHtml, VIDEO_LABEL };
 })();

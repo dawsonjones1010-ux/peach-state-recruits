@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;1,800&family=Inter:wght@400;500;600;700;800&family=Kaushan+Script&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=6">
+<link rel="stylesheet" href="styles.css?v=7">
 </head>
 <body>
 <a class="skip" href="#app">Skip to profile</a>
@@ -64,11 +64,11 @@
   </div>
 </dialog>
 
-<script src="config.js?v=6"></script>
-<script src="shared.js?v=6"></script>
+<script src="config.js?v=7"></script>
+<script src="shared.js?v=7"></script>
 <script>
 (async function () {
-  const C = window.PSR_CONFIG, PSR = window.PSR, { esc, coverOrImage, toast, ICON } = PSR;
+  const C = window.PSR_CONFIG, PSR = window.PSR, { esc, coverOrImage, photoFrame, toast, ICON } = PSR;
   const base = "";
   PSR.initNav();
   document.getElementById("logo").insertAdjacentHTML("afterbegin", PSR.logoMark(C));
@@ -115,7 +115,7 @@
     const allVids = [...vids, ...legacy];
     const hasVideo = allVids.length > 0;
     const igPost = (p.highlights || []).find(h => /instagram\.com/.test(h.url || ""));
-    const igCard = igPost ? `<a class="video video-ig${hasVideo ? " video-ig-sm" : ""}" href="${esc(igPost.url)}" ${ext$} ${p.coverImage ? `style="background-image:url('${esc(p.coverImage)}')"` : ""}><div class="video-ph"><div class="play"><svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="#0a1120"/></svg></div><div class="vp-t">${esc(igPost.title || "Watch the feature on Instagram")}</div></div></a>` : "";
+    const igCard = igPost ? `<a class="video video-ig${hasVideo ? " video-ig-sm" : ""}" href="${esc(igPost.url)}" ${ext$}>${p.coverImage ? photoFrame(p, { sizes: PSR.PHOTO_SIZES.video }) : ""}<div class="video-ph"><div class="play"><svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="#0a1120"/></svg></div><div class="vp-t">${esc(igPost.title || "Watch the feature on Instagram")}</div></div></a>` : "";
     const video = (hasVideo ? `<div class="vids">${allVids.map(v => PSR.videoHtml(v, p.name)).join("")}</div>` : "") + igCard
       || `<p class="muted">Highlights coming soon.</p>`;
 
@@ -151,7 +151,7 @@
       <section class="p-top dark" id="pTop" aria-labelledby="pName">
         ${p.coverImage ? `<div class="p-bg" style="background-image:url('${esc(p.coverImage)}')"></div>` : ""}
         <div class="wrap p-grid">
-          <div class="p-cover">${coverOrImage(p, "", true)}</div>
+          <div class="p-cover">${photoFrame(p, { eager: true, sizes: PSR.PHOTO_SIZES.profile })}</div>
           <div class="p-head">
             <div class="p-kicker">${[p.sport, p.position].filter(Boolean).map(x => `<span>${esc(x)}</span>`).join("")}${cls ? `<span class="hot">${esc(cls)}</span>` : ""}</div>
             <h1 class="p-name" id="pName">${esc(p.name)}</h1>

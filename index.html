@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;1,800&family=Inter:wght@400;500;600;700;800&family=Kaushan+Script&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=6">
+<link rel="stylesheet" href="styles.css?v=7">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"Organization","name":"Peach State Recruits","description":"Sports media company creating player features, highlight videos and recruiting profiles.","sameAs":["https://instagram.com/peachstaterecruits","https://instagram.com/peachstaterecruitsfb","https://instagram.com/peachstaterecruitshq"]}
 </script>
@@ -295,11 +295,11 @@
   <a class="btn btn-peach btn-sm" href="#packages" tabindex="-1">See packages</a>
 </div>
 
-<script src="config.js?v=6"></script>
-<script src="shared.js?v=6"></script>
+<script src="config.js?v=7"></script>
+<script src="shared.js?v=7"></script>
 <script>
 (async function () {
-  const C = window.PSR_CONFIG, PSR = window.PSR, { esc, coverOrImage, payLink, loadPlayers, profileUrl, ICON } = PSR;
+  const C = window.PSR_CONFIG, PSR = window.PSR, { esc, coverOrImage, photoFrame, payLink, loadPlayers, profileUrl, ICON } = PSR;
   PSR.initNav();
   document.getElementById("logo").insertAdjacentHTML("afterbegin", PSR.logoMark(C));
   document.getElementById("footLogo").insertAdjacentHTML("afterbegin", PSR.logoMark(C));
@@ -443,7 +443,7 @@
   const heroRF = [...RF.filter(isBB), ...RF.filter(f => !isBB(f))];
   const stage = document.getElementById("stage");
   const SR = heroRF.slice(0, 3);
-  stage.innerHTML = SR.map((f, i) => `<div class="card" data-pos="${i}"><img src="${esc(f.image)}" alt="${esc(f.name)} feature cover" width="1080" height="1432" ${i === 0 ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async"><span class="views">${views(f)}</span></div>`).join("");
+  stage.innerHTML = SR.map((f, i) => `<div class="card" data-pos="${i}">${photoFrame(f, { eager: i === 0, sizes: PSR.PHOTO_SIZES.hero })}<span class="views">${views(f)}</span></div>`).join("");
   // Tap/hover a back card to bring it forward; the baseball feature returns to the front afterwards
   const cards = [...stage.querySelectorAll(".card")];
   const front = (k) => cards.forEach((c, j) => c.dataset.pos = (j - k + cards.length) % cards.length);
@@ -456,7 +456,7 @@
     const spot = document.getElementById("spot");
     spot.href = sp.profile ? profileUrl(sp.profile) : (sp.postUrl || "https://instagram.com/" + sp.account);
     if (!sp.profile) { spot.target = "_blank"; spot.rel = "noopener"; }
-    spot.innerHTML = `<img src="${esc(sp.image)}" alt="${esc(sp.name)} feature cover" width="1080" height="1432" fetchpriority="high" decoding="async">
+    spot.innerHTML = `${photoFrame(sp, { eager: true, sizes: PSR.PHOTO_SIZES.spot, cls: "photo-frame-spot" })}
       <span class="spot-t"><span class="spot-k">${isBB(sp) ? "Latest baseball feature" : "Latest feature"}</span><b>${esc(sp.name)}</b><span>${esc(sp.detail || "")}</span>${sp.views ? `<span class="chip-views">${ICON.eye}${esc(sp.views)} views</span>` : ""}</span>`;
     spot.hidden = false;
   }
@@ -464,7 +464,7 @@
   document.getElementById("work-grid").innerHTML = RF.map(f => {
     const href = esc(f.postUrl || "https://instagram.com/" + f.account);
     return `<article class="feat reveal">
-      <a class="c" href="${href}" ${ext$} aria-label="${esc(f.name)} feature on Instagram"><img src="${esc(f.image)}" alt="${esc(f.name)} feature cover" width="1080" height="1432" loading="lazy" decoding="async">${views(f)}${f.sport ? `<span class="tag-sport">${esc(f.sport)}</span>` : ""}</a>
+      <a class="c" href="${href}" ${ext$} aria-label="${esc(f.name)} feature on Instagram">${photoFrame(f, { sizes: PSR.PHOTO_SIZES.card })}${views(f)}${f.sport ? `<span class="tag-sport">${esc(f.sport)}</span>` : ""}</a>
       <div class="feat-body">
         <h3>${esc(f.name)}</h3>
         <p>${esc(f.detail)}</p>
@@ -483,7 +483,7 @@
     document.getElementById("mockUrl").textContent = PSR.displayUrl(PSR.shareProfileUrl(first.slug));
     const m = (first.measurables || []).slice(0, 3);
     document.getElementById("mini").innerHTML = `
-      <div class="c">${coverOrImage(first)}</div>
+      <div class="c">${photoFrame(first, { sizes: PSR.PHOTO_SIZES.mini })}</div>
       <div>
         <h4>${esc(first.name)}</h4>
         <div class="meta">${esc([first.sport, first.position, first.gradYear ? "Class of " + first.gradYear : ""].filter(Boolean).join(", "))}</div>
@@ -508,7 +508,7 @@
   if (players.some(p => p.sample)) document.getElementById("playersLead").textContent = "Search by name, school or position, or filter by sport and class. Profile pages are new: these examples are built from real Peach State features and show what a coach sees.";
   let sport = "";
   const card = (p) => `<a class="sample reveal" href="${profileUrl(p.slug)}">
-      <div class="c">${coverOrImage(p)}${p.sample ? '<span class="flag">Example</span>' : ""}</div>
+      <div class="c">${photoFrame(p, { sizes: PSR.PHOTO_SIZES.card })}${p.sample ? '<span class="flag">Example</span>' : ""}</div>
       <div class="info">
         <h3>${esc(p.name)}</h3>
         <p>${esc([p.sport, p.position].filter(Boolean).join(" · "))}</p>

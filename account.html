@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;1,800&family=Inter:wght@400;500;600;700;800&family=Kaushan+Script&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=6">
+<link rel="stylesheet" href="styles.css?v=7">
 </head>
 <body>
 <header class="nav">
@@ -67,6 +67,13 @@
     </div>
 
     <form id="profileForm" class="form grid-form">
+      <fieldset>
+        <legend>Cover photo</legend>
+        <div class="wide cover-edit">
+          <div class="cover-preview" id="coverPreview"></div>
+          <label>Upload a new photo (JPG, PNG, WebP, GIF, or iPhone HEIC)<input type="file" id="f_cover" accept="image/jpeg,image/png,image/webp,image/gif,image/heic,image/heif,.jpg,.jpeg,.png,.webp,.gif,.heic,.heif"><span class="hint">The whole photo will show on your profile, no matter the shape. We'll size it automatically. Tap Save changes to update it.</span></label>
+        </div>
+      </fieldset>
       <fieldset>
         <legend>Contact</legend>
         <label>Contact email shown to coaches<input type="email" id="f_contact_email" placeholder="parent@email.com"><span class="hint">For athletes under 18, use a parent's email.</span></label>
@@ -125,9 +132,9 @@
 
 <div class="toast"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="config.js?v=6"></script>
-<script src="shared.js?v=6"></script>
-<script src="portal.js?v=6"></script>
+<script src="config.js?v=7"></script>
+<script src="shared.js?v=7"></script>
+<script src="portal.js?v=7"></script>
 <script>
 (async function () {
   const P = window.PORTAL, C = window.PSR_CONFIG, $ = (id) => document.getElementById(id);
@@ -192,6 +199,9 @@
     $("f_stats_title").value = s.title; $("f_stats_cols").value = s.cols; $("f_stats_row").value = s.row;
     $("f_academics").value = P.pairsToText(p.academics);
     $("f_links").value = P.linksToText(p.links);
+    $("f_cover").value = "";
+    pendingCover = null;
+    renderCoverPreview(p);
     loadVideos();
   }
 
@@ -267,6 +277,30 @@
     try { await navigator.clipboard.writeText(link); window.PSR.toast("Profile link copied"); } catch (e) { window.PSR.toast(link); }
   });
 
+  let pendingCover = null;
+  function renderCoverPreview(p, url) {
+    const box = $("coverPreview");
+    if (!box) return;
+    const src = url || (p && p.cover_url) || "";
+    box.innerHTML = window.PSR.photoFrame({ name: (p && p.name) || "Athlete", cover_url: src }, { eager: true, sizes: window.PSR.PHOTO_SIZES.preview });
+  }
+  $("f_cover").addEventListener("change", async (e) => {
+    const file = e.target.files[0];
+    pendingCover = null;
+    if (!file) return renderCoverPreview(player);
+    try {
+      P.msg($("saveMsg"), "Preparing photo...", "");
+      pendingCover = await window.PSR.prepareImageFile(file);
+      const url = URL.createObjectURL(pendingCover);
+      renderCoverPreview(player, url);
+      P.msg($("saveMsg"), "Photo ready. Tap Save changes to update your cover.", "ok");
+    } catch (err) {
+      e.target.value = "";
+      renderCoverPreview(player);
+      P.msg($("saveMsg"), err.message || "Couldn't use that photo.", "err");
+    }
+  });
+
   $("profileForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     P.msg($("saveMsg"), "Saving...", "");
@@ -284,8 +318,14 @@
         academics: P.textToPairs($("f_academics").value),
         links: P.textToLinks($("f_links").value)
       };
+      if (pendingCover) {
+        P.msg($("saveMsg"), "Uploading photo...", "");
+        const url = await P.upload(player.id, pendingCover, "cover");
+        update.cover_url = url;
+      }
       const { data, error } = await sb.from("players").update(update).eq("id", player.id).select().single();
       if (error) throw error;
+      pendingCover = null;
       player = data; fill(player);
       P.msg($("saveMsg"), "Saved. Your profile is updated.", "ok");
     } catch (err) {

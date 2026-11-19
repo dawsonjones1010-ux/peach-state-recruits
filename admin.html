@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;1,800&family=Inter:wght@400;500;600;700;800&family=Kaushan+Script&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=6">
+<link rel="stylesheet" href="styles.css?v=7">
 </head>
 <body class="admin-body">
 <header class="nav">
@@ -190,7 +190,10 @@
     <label>Views (e.g. 22.9K)<input id="e_views"></label>
     <label>Views as of<input id="e_views_as_of" placeholder="Nov 17, 2026"></label>
     <label>Instagram account (for "Message" button)<input id="e_ig_account"></label>
-    <label>New cover image<input type="file" id="e_cover" accept="image/*"></label>
+    <div class="wide cover-edit">
+      <div class="cover-preview" id="e_coverPreview"></div>
+      <label>New cover image<input type="file" id="e_cover" accept="image/jpeg,image/png,image/webp,image/gif,image/heic,image/heif,.jpg,.jpeg,.png,.webp,.gif,.heic,.heif"><span class="hint">JPG, PNG, WebP, GIF, or an iPhone photo (HEIC). Any shape works — the whole photo will show.</span></label>
+    </div>
     <label>New highlight video<input type="file" id="e_video" accept="video/*"></label>
     <div class="wide checks">
       <label class="check"><input type="checkbox" id="e_published"> Profile is public</label>
@@ -246,9 +249,9 @@
 
 <div class="toast"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="config.js?v=6"></script>
-<script src="shared.js?v=6"></script>
-<script src="portal.js?v=6"></script>
+<script src="config.js?v=7"></script>
+<script src="shared.js?v=7"></script>
+<script src="portal.js?v=7"></script>
 <script>
 (async function () {
   const P = window.PORTAL, C = window.PSR_CONFIG, esc = P.esc, $ = (id) => document.getElementById(id);
@@ -548,7 +551,7 @@
     });
     $("players").innerHTML = list.length ? list.map(p => `
       <div class="prow${p.published ? "" : " is-hidden"}">
-        <div class="pthumb">${p.cover_url ? `<img src="${esc(p.cover_url)}" alt="" loading="lazy">` : ""}</div>
+        <div class="pthumb">${window.PSR.photoFrame({ name: p.name, cover_url: p.cover_url }, { sizes: window.PSR.PHOTO_SIZES.thumb })}</div>
         <div class="pinfo">
           <b>${esc(p.name)} ${p.sample ? `<span class="tag">Example</span>` : ""}${p.published ? "" : `<span class="tag tag-warn">Hidden</span>`}</b>
           <span class="small muted">${esc([p.sport, p.position, p.grad_year ? "Class of " + p.grad_year : "", p.school || p.team].filter(Boolean).join(", "))}</span>
@@ -591,6 +594,8 @@
     $("e_published").checked = p ? p.published : true;
     $("e_show_on_home").checked = p ? p.show_on_home : false;
     $("e_cover").value = ""; $("e_video").value = "";
+    pendingCover = null;
+    renderCoverPreview(p);
     $("deletePlayer").hidden = !p; $("deletePlayer").dataset.confirm = ""; $("deletePlayer").textContent = "Delete player";
     P.msg($("editMsg"), "", "");
     $("editDlg").showModal();
@@ -598,6 +603,30 @@
   $("closeEdit").addEventListener("click", () => $("editDlg").close());
   $("addPlayer").addEventListener("click", () => openEdit(null));
   $("addPlayer2").addEventListener("click", () => openEdit(null));
+
+  let pendingCover = null;
+  function renderCoverPreview(p, url) {
+    const box = $("e_coverPreview");
+    if (!box) return;
+    const src = url || (p && p.cover_url) || "";
+    box.innerHTML = window.PSR.photoFrame({ name: (p && p.name) || "Athlete", cover_url: src }, { eager: true, sizes: window.PSR.PHOTO_SIZES.preview });
+  }
+  $("e_cover").addEventListener("change", async (e) => {
+    const file = e.target.files[0];
+    pendingCover = null;
+    if (!file) return renderCoverPreview(editing);
+    try {
+      P.msg($("editMsg"), "Preparing photo...", "");
+      pendingCover = await window.PSR.prepareImageFile(file);
+      const url = URL.createObjectURL(pendingCover);
+      renderCoverPreview(editing || { name: $("e_name").value }, url);
+      P.msg($("editMsg"), "Photo ready. Tap Save to upload it.", "ok");
+    } catch (err) {
+      e.target.value = "";
+      renderCoverPreview(editing);
+      P.msg($("editMsg"), err.message || "Couldn't use that photo.", "err");
+    }
+  });
 
   $("editForm").addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -625,9 +654,15 @@
         row.posted_at = new Date().toISOString();
         ({ data: saved } = await sb.from("players").insert(row).select().single().throwOnError());
       }
-      const cover = $("e_cover").files[0], video = $("e_video").files[0];
+      const cover = pendingCover || $("e_cover").files[0], video = $("e_video").files[0];
       const files = {};
-      if (cover) { P.msg($("editMsg"), "Uploading cover...", ""); files.cover_url = await P.upload(saved.id, cover, "cover"); }
+      if (cover) {
+        P.msg($("editMsg"), "Preparing cover...", "");
+        const prepared = pendingCover || await window.PSR.prepareImageFile(cover);
+        P.msg($("editMsg"), "Uploading cover...", "");
+        files.cover_url = await P.upload(saved.id, prepared, "cover");
+        pendingCover = null;
+      }
       if (video) { P.msg($("editMsg"), "Uploading video...", ""); files.video_url = await P.upload(saved.id, video, "highlights"); files.video_poster = null; }
       if (Object.keys(files).length) await sb.from("players").update(files).eq("id", saved.id).throwOnError();
       $("editDlg").close(); await loadPlayers(); renderOverview(); window.PSR.toast("Saved");
