@@ -27,6 +27,24 @@ window.PSR_CONFIG = {
   // postUrl: paste the link to the exact Instagram post (Share > Copy link). profile: the player's profile slug, if they have one.
   recentFeatures: [],
 
+  // Optional one-line explanation shown under the "4M+ views" stats (e.g. what accounts/period it covers).
+  // Leave empty to hide it.
+  statsCaption: "",
+
+  // Founder introduction. The section stays hidden until photo AND bio are filled in.
+  // photo: an image file in the images folder, e.g. "images/founder.jpg".
+  founder: {
+    name: "",
+    role: "",          // e.g. "Founder, Peach State Recruits"
+    photo: "",
+    bio: ""            // 2-4 sentences in your own words
+  },
+
+  // Genuine customer testimonials, used with permission. Hidden while the list is empty.
+  // Example of the format (do not use made-up quotes):
+  // { quote: "...", name: "Parent of a 2028 SS", detail: "Pro Feature, Oct 2026" }
+  testimonials: [],
+
   // Where people go after paying (your Google Form for clips + photos).
   intakeFormUrl: "",
 

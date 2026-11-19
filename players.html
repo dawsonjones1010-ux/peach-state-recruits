@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Players | Peach State Recruits</title>
+<meta name="description" content="Every athlete featured by Peach State Recruits. Search by name, school or position and filter by class to open a player's profile, film and coach summary.">
+<meta property="og:title" content="Players | Peach State Recruits">
+<meta property="og:description" content="Player features, coach-ready highlight videos and recruiting profiles. Baseball first, every sport welcome. 4M+ views, 10K+ followers.">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+<meta property="og:image" content="https://dawsonjones1010-ux.github.io/peach-state-recruits/images/share.jpg">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://dawsonjones1010-ux.github.io/peach-state-recruits/images/share.jpg">
+<meta name="theme-color" content="#070b14">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css?v=9">
+<link rel="canonical" href="https://dawsonjones1010-ux.github.io/peach-state-recruits/players.html">
+<meta property="og:url" content="https://dawsonjones1010-ux.github.io/peach-state-recruits/players.html">
+<meta name="twitter:title" content="Peach State Recruits">
+<meta name="twitter:description" content="Player features, coach-ready highlight videos and recruiting profiles. Baseball first.">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav">
+  <div class="wrap">
+    <a class="logo" href="index.html" id="logo" aria-label="Peach State Recruits home"><span class="logo-badge" aria-hidden="true">PSR</span><span class="logo-text"><b>Peach State</b> Recruits</span></a>
+    <nav class="nav-links" aria-label="Main">
+      <a href="index.html#examples">Examples</a>
+      <a href="index.html#packages">Packages</a>
+      <a href="index.html#how">How to order</a>
+      <a href="players.html" aria-current="true">Players</a>
+      <a href="index.html#faq">FAQ</a>
+    </nav>
+    <div class="nav-right">
+      <a class="btn btn-peach btn-sm" href="index.html#packages">Get featured</a>
+      <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="mobileMenu" aria-label="Menu"><span></span></button>
+    </div>
+  </div>
+  <nav class="mobile-menu" id="mobileMenu" aria-label="Mobile">
+    <a href="index.html#examples">Featured examples</a>
+    <a href="index.html#packages">Packages &amp; prices</a>
+    <a href="index.html#how">How to order</a>
+    <a href="players.html">All players</a>
+    <a href="index.html#faq">FAQ</a>
+    <a class="btn btn-peach btn-block" href="index.html#packages">Get featured</a>
+  </nav>
+</header>
+<main id="main">
+<section class="players-page" id="players" aria-labelledby="playersTitle">
+  <div class="wrap">
+    <div class="head reveal">
+      <span class="eyebrow">Player profiles</span>
+      <h1 id="playersTitle">Find a player</h1>
+      <p class="lead" id="playersLead">Every athlete we've featured. Search by name, school or position, or filter by class. Each profile has the player's film, measurables and a short coach summary.</p>
+    </div>
+    <div class="finder" role="search">
+      <label class="field"><span class="sr-only">Search players</span><span id="searchIcon"></span><input class="input" id="q" type="search" placeholder="Search name, school, position" autocomplete="off"></label>
+      <label><span class="sr-only">Class year</span><select class="select" id="year"><option value="">All classes</option></select></label>
+      <label><span class="sr-only">Position</span><select class="select" id="pos"><option value="">All positions</option></select></label>
+    </div>
+    <div class="pills" id="sports" role="group" aria-label="Filter by sport" style="margin-bottom:18px"></div>
+    <p class="result-count" id="count" aria-live="polite"></p>
+    <div class="samples" id="samples"></div>
+  </div>
+</section>
+<section class="closing dark" id="closing" aria-labelledby="closeTitle">
+  <div class="wrap">
+    <h2 id="closeTitle">Want a feature like these?</h2>
+    <p class="lead">Packages start at $25. Message us on Instagram to order.</p>
+    <div class="hero-cta"><a class="btn btn-peach btn-lg" href="index.html#packages">See packages</a><a class="btn btn-line btn-lg" href="index.html#examples">Watch examples</a></div>
+  </div>
+</section>
+</main>
+<footer>
+  <div class="wrap">
+    <div>
+      <div class="logo" id="footLogo"><span class="logo-badge" aria-hidden="true">PSR</span><span class="logo-text"><b>Peach State</b> Recruits</span></div>
+      <p style="max-width:28em">A sports media company creating player features, highlight videos and recruiting profiles. Baseball first, every sport welcome.</p>
+    </div>
+    <div>
+      <h5>Follow</h5>
+      <div id="footSocial"></div>
+    </div>
+    <div>
+      <h5>Explore</h5>
+      <a href="index.html#examples">Examples</a>
+      <a href="index.html#packages">Packages</a>
+      <a href="players.html">All players</a>
+      <a href="index.html#faq">FAQ</a>
+      <a href="account.html" rel="nofollow">Player login</a>
+    </div>
+    <div class="legal">
+      <span id="copy"></span>
+      <span>We create player content and profiles. We are not a recruiting agency and do not guarantee college interest, offers or scholarships.</span>
+    </div>
+  </div>
+</footer>
+<script src="config.js?v=9"></script>
+<script src="shared.js?v=9"></script>
+<script>
+(async function () {
+  const C = window.PSR_CONFIG, PSR = window.PSR, { esc, photoFrame, loadPlayers, profileUrl, ICON } = PSR;
+  PSR.initNav();
+  document.getElementById("logo").insertAdjacentHTML("afterbegin", PSR.logoMark(C));
+  document.getElementById("footLogo").insertAdjacentHTML("afterbegin", PSR.logoMark(C));
+  document.getElementById("searchIcon").outerHTML = ICON.search;
+  const ext$ = 'target="_blank" rel="noopener"';
+  const accts = [[C.instagram, "Baseball"], [C.instagramFootball, "Football"], [C.instagramHQ, "All sports"]].filter(a => a[0]);
+  const social = accts.map(([h, l]) => `<a href="https://instagram.com/${esc(h)}" ${ext$}>${esc(l)}: @${esc(h)}</a>`);
+  if (C.email) social.push(`<a href="mailto:${esc(C.email)}">${esc(C.email)}</a>`);
+  document.getElementById("footSocial").innerHTML = social.join("");
+  document.getElementById("copy").textContent = `© ${new Date().getFullYear()} Peach State Recruits`;
+  const players = (await loadPlayers()).filter(p => p.active !== false);
+  if (players[0] && players[0].coverImage) document.getElementById("closing").style.backgroundImage = `url("${esc(String(players[0].coverImage).replace(/(images\/players\/[\w-]+)\.jpg/, "$1-640.jpg"))}")`;
+  // ---- Player finder: search + sport + class year ----
+  const qEl = document.getElementById("q"), yEl = document.getElementById("year"), sEl = document.getElementById("sports"), pEl = document.getElementById("pos");
+  const posTokens = (p) => String(p.position || "").toUpperCase().split(/[\/,|]+/).map(t => t.trim()).filter(Boolean);
+  const POS_ORDER = ["RHP", "LHP", "P", "C", "1B", "2B", "3B", "SS", "MIF", "IF", "OF", "UT", "QB", "RB", "WR", "TE", "OL", "DL", "LB", "DB", "ATH"];
+  const allPos = [...new Set(players.flatMap(posTokens))].sort((a, b) => ((POS_ORDER.indexOf(a) + 1) || 99) - ((POS_ORDER.indexOf(b) + 1) || 99) || a.localeCompare(b));
+  pEl.insertAdjacentHTML("beforeend", allPos.map(t => `<option value="${esc(t)}">${esc(t)}</option>`).join(""));
+  const sportRank = (x) => /baseball/i.test(x || "") ? 0 : 1;
+  const sports = [...new Set(players.map(p => p.sport).filter(Boolean))].sort((a, b) => sportRank(a) - sportRank(b) || a.localeCompare(b));
+  players.sort((a, b) => sportRank(a.sport) - sportRank(b.sport));
+  const years = [...new Set(players.map(p => p.gradYear).filter(Boolean))].sort();
+  yEl.insertAdjacentHTML("beforeend", years.map(y => `<option value="${esc(y)}">Class of ${esc(y)}</option>`).join(""));
+  sEl.innerHTML = ["All sports", ...sports].map((s, i) => `<button type="button" class="pill" aria-pressed="${i === 0}" data-sport="${i === 0 ? "" : esc(s)}">${esc(s)}</button>`).join("");
+  sEl.hidden = sports.length < 2; // one sport so far: the pills add nothing
+  let sport = "";
+  const card = (p) => {
+    const m = (p.measurables || []).filter(x => !/position/i.test(x.label)).slice(0, 2);
+    return `<a class="pc reveal" href="${profileUrl(p.slug)}">
+      <div class="pc-media">${photoFrame(p, { sizes: PSR.PHOTO_SIZES.card })}${p.gradYear ? `<span class="pc-class">${esc(p.gradYear)}</span>` : ""}</div>
+      <div class="pc-body">
+        <span class="pc-meta">${esc([p.sport, p.position].filter(Boolean).join(" · "))}</span>
+        <h3>${esc(p.name)}</h3>
+        <p class="pc-sub">${esc(p.school || p.team || p.location || "")}</p>
+        <div class="pc-foot">
+          <div class="pc-stats">${m.map(x => `<span><b>${esc(x.value)}</b><small>${esc(x.label)}</small></span>`).join("")}</div>
+          <span class="pc-go" aria-hidden="true">${ICON.arrow}</span>
+        </div>
+      </div>
+    </a>`;
+  };
+  function filter() {
+    const q = qEl.value.trim().toLowerCase(), y = yEl.value, pos = pEl.value;
+    const list = players.filter(p => (!sport || p.sport === sport) && (!y || String(p.gradYear) === y) && (!pos || posTokens(p).includes(pos)) &&
+      (!q || [p.name, p.school, p.team, p.position, p.sport, p.location].filter(Boolean).join(" ").toLowerCase().includes(q)));
+    document.getElementById("samples").innerHTML = list.length ? list.map(card).join("") : `<div class="empty" style="grid-column:1/-1">No players match those filters. <button type="button" class="link" id="clearF" style="background:none;border:0;cursor:pointer">Clear filters</button></div>`;
+    document.getElementById("count").textContent = `${list.length} ${list.length === 1 ? "player" : "players"}${sport ? " in " + sport : ""}${y ? ", Class of " + y : ""}${pos ? ", " + pos : ""}`;
+    const c = document.getElementById("clearF"); if (c) c.onclick = () => { qEl.value = ""; yEl.value = ""; pEl.value = ""; setSport(""); };
+    PSR.reveal(document.getElementById("samples"));
+  }
+  function setSport(s) { sport = s; sEl.querySelectorAll(".pill").forEach(b => b.setAttribute("aria-pressed", b.dataset.sport === s)); filter(); }
+  sEl.addEventListener("click", e => { const b = e.target.closest(".pill"); if (b) setSport(b.dataset.sport); });
+  qEl.addEventListener("input", filter); yEl.addEventListener("change", filter); pEl.addEventListener("change", filter);
+  filter();
+
+
+  // Deep link: players.html?q=name
+  const q0 = new URLSearchParams(location.search).get("q"); if (q0) { qEl.value = q0; filter(); }
+  PSR.reveal();
+})();
+</script>
+</body>
+</html>

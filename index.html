@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=8">
+<link rel="stylesheet" href="styles.css?v=9">
 <link rel="canonical" href="https://dawsonjones1010-ux.github.io/peach-state-recruits/">
 <meta property="og:url" content="https://dawsonjones1010-ux.github.io/peach-state-recruits/">
 <meta name="twitter:title" content="Peach State Recruits">
@@ -33,10 +33,10 @@
   <div class="wrap">
     <a class="logo" href="#top" id="logo" aria-label="Peach State Recruits, back to top"><span class="logo-badge" aria-hidden="true">PSR</span><span class="logo-text"><b>Peach State</b> Recruits</span></a>
     <nav class="nav-links" aria-label="Main">
-      <a href="#work">Features</a>
+      <a href="#examples">Examples</a>
       <a href="#packages">Packages</a>
-      <a href="#players">Players</a>
-      <a href="#teams">Teams</a>
+      <a href="#how">How to order</a>
+      <a href="players.html">Players</a>
       <a href="#faq">FAQ</a>
     </nav>
     <div class="nav-right">
@@ -45,12 +45,10 @@
     </div>
   </div>
   <nav class="mobile-menu" id="mobileMenu" aria-label="Mobile">
-    <a href="#work">Latest features</a>
-    <a href="#how">How it works</a>
-    <a href="#picker">Help me choose</a>
+    <a href="#examples">Featured examples</a>
     <a href="#packages">Packages &amp; prices</a>
-    <a href="#players">Player profiles</a>
-    <a href="#teams">Teams</a>
+    <a href="#how">How to order</a>
+    <a href="players.html">All players</a>
     <a href="#faq">FAQ</a>
     <a class="btn btn-peach btn-block" href="#packages">Get featured</a>
   </nav>
@@ -66,13 +64,14 @@
       <p class="hx-lead">Professional Instagram features, coach-ready highlight videos and recruiting profiles for baseball players, built from your clips. Football, soccer and every other sport are welcome too.</p>
       <div class="hx-cta">
         <a class="btn btn-peach btn-lg" href="#packages" id="heroBuy">Get featured</a>
-        <a class="btn btn-line btn-lg" href="#players">Browse players</a>
+        <a class="btn btn-line btn-lg" href="#examples">See examples</a>
       </div>
       <div class="stats" id="stats">
         <div><b>4M+</b><span>views on our features</span></div>
         <div><b>10K+</b><span>followers</span></div>
         <div id="statTop"><b>Every</b><span>sport, nationwide</span></div>
       </div>
+      <p class="stats-cap" id="statsCap" hidden></p>
     </div>
     <div class="hx-stage" id="stage" aria-label="Latest Peach State Recruits feature covers"></div>
   </div>
@@ -82,49 +81,17 @@
 </section>
 <div class="ticker" id="tickerWrap" aria-hidden="true" hidden><div class="ticker-track" id="ticker"></div></div>
 
-<section id="work" class="dark work-sec" aria-labelledby="workTitle">
+<section id="examples" class="dark work-sec" aria-labelledby="exTitle">
   <div class="wrap">
     <div class="head-row">
       <div class="head reveal">
-        <span class="eyebrow">Latest features</span>
-        <h2 id="workTitle">Real athletes. Real numbers.</h2>
-        <p class="lead">Every feature is posted as a collab, so it reaches our audience and the athlete's. View counts come straight from Instagram insights.</p>
+        <span class="eyebrow">Featured examples</span>
+        <h2 id="exTitle">See the finished work</h2>
+        <p class="lead">Three recent features, exactly as they ran on Instagram. Tap play to watch the edit right here.</p>
       </div>
+      <a class="btn btn-line" href="players.html">All players</a>
     </div>
-    <div class="fc-grid" id="work-grid"></div>
-  </div>
-</section>
-
-<section id="how" class="tint" aria-labelledby="howTitle">
-  <div class="wrap">
-    <div class="head reveal">
-      <span class="eyebrow">How it works</span>
-      <h2 id="howTitle">Clips in. Feature out.</h2>
-      <p class="lead">From your clips to a finished feature in a few days. You never have to edit anything yourself.</p>
-    </div>
-    <ol class="steps" style="list-style:none">
-      <li class="step reveal"><div class="n">1</div><h3>Pick a package</h3><p id="howPay">Choose Basic, Pro or Elite and check out by card.</p></li>
-      <li class="step reveal"><div class="n">2</div><h3>Send your clips</h3><p>Upload your best clips, a photo and your info on one short form.</p></li>
-      <li class="step reveal"><div class="n">3</div><h3>We build it</h3><p>We edit the highlights, design your cover and write your scouting report.</p></li>
-      <li class="step reveal"><div class="n">4</div><h3>Go live</h3><p>We post it with you as a collab and send you every file to keep.</p></li>
-    </ol>
-  </div>
-</section>
-
-<section id="picker" aria-labelledby="pickTitle">
-  <div class="wrap">
-    <div class="picker dark reveal">
-      <div>
-        <span class="eyebrow">30-second package finder</span>
-        <h2 id="pickTitle">Which package is right for you?</h2>
-        <p class="lead">Pick your main goal and we'll point you to the package that fits. You can always compare everything below.</p>
-        <div class="choices" id="choices" role="radiogroup" aria-labelledby="pickTitle"></div>
-      </div>
-      <div aria-live="polite">
-        <div class="pick-empty" id="pickEmpty"><p>Choose a goal to see your match.</p></div>
-        <div class="pick-result" id="pickResult" hidden></div>
-      </div>
-    </div>
+    <div class="ex-grid" id="exGrid"></div>
   </div>
 </section>
 
@@ -133,107 +100,45 @@
     <div class="head center reveal">
       <span class="eyebrow">Packages</span>
       <h2 id="pkgTitle">Simple, one-time prices</h2>
-      <p class="lead">For every sport. No contracts, no subscriptions and no sales calls.</p>
+      <p class="lead">No contracts and no subscriptions. Tap a package to order by Instagram DM.</p>
     </div>
     <div class="pricing" id="pricing"></div>
     <p class="pay-note" id="payNote"></p>
     <div class="addons" id="addons"></div>
-
-    <details class="compare-wrap" id="compareWrap" open>
+    <details class="compare-wrap" id="compareWrap">
       <summary>Compare packages side by side</summary>
       <div class="table-scroll" tabindex="0" role="region" aria-label="Package comparison table"><table class="compare" id="compare"></table></div>
     </details>
-
-    <div class="after">
-      <div>
-        <h3>What happens after you order</h3>
-        <ol>
-          <li id="stepPay"><span><b>Checkout.</b> Pay securely by card.</span></li>
-          <li><span><b>Send your clips.</b> You'll get a short form for your clips, cover photo and info. <span id="tClock"></span>.</span></li>
-          <li><span><b>Review.</b> We send your feature for approval. <span id="tRev"></span> is included.</span></li>
-          <li><span><b>Go live.</b> We post the collab and send you your files.</span></li>
-        </ol>
-        <p class="renewal" id="tRenew"></p>
-      </div>
-      <div>
-        <h3>Our promises</h3>
-        <ul class="rules">
-          <li>We never guarantee offers, scholarships or college interest. We make your game easy for coaches to see.</li>
-          <li>For athletes under 18, a parent or guardian approves anything that goes on a public page.</li>
-          <li>Coach contact goes only to the email you approve. We never show a home address or phone number.</li>
-          <li>Your video, PDF and files are yours to keep.</li>
-        </ul>
-      </div>
-    </div>
+    <p class="renewal" id="tRenew"></p>
   </div>
 </section>
 
-<section class="dark showcase" id="profiles" aria-labelledby="showTitle">
-  <div class="wrap show-grid">
-    <div class="reveal">
-      <span class="eyebrow">Player profile pages</span>
-      <h2 id="showTitle" style="margin-top:14px">One link for every coach</h2>
-      <p class="lead" style="margin-top:16px">Your video, stats and contact information in one shareable link. Drop it into any email or DM to a coach, or let them scan the QR code at a showcase.</p>
-      <ul class="show-list">
-        <li>Highlight video and your Peach State feature</li>
-        <li>Key measurables up top, plus stats and academics</li>
-        <li>Scouting report written from your film</li>
-        <li>Contact button that goes to your approved email</li>
-        <li>One-tap share, QR code and a printable one-page sheet</li>
-      </ul>
-      <div class="show-price"><b id="profilePrice"></b><span id="profileUnit"></span></div>
-      <div style="display:flex;flex-wrap:wrap;gap:12px">
-        <a class="btn btn-peach" id="profileBtn" href="#">Add a profile</a>
-        <a class="btn btn-line" id="sampleBtn" href="#">Open an example</a>
-      </div>
-      <p class="small" style="margin-top:16px;color:var(--on-ink-3)">Included for one year with the Elite Recruiting Kit.</p>
-    </div>
-    <div class="browser reveal" aria-hidden="true">
-      <div class="browser-bar"><i></i><i></i><i></i><div class="url" id="mockUrl"></div></div>
-      <div class="mini" id="mini"></div>
-      <div class="mini-video"><i><svg width="20" height="20" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="#0a1120"/></svg></i></div>
-    </div>
-  </div>
-</section>
-
-<section id="players" aria-labelledby="playersTitle">
+<section id="how" aria-labelledby="howTitle">
   <div class="wrap">
     <div class="head reveal">
-      <span class="eyebrow">Player profiles</span>
-      <h2 id="playersTitle">Find a player</h2>
-      <p class="lead" id="playersLead">Search by name, school or position, or filter by sport and class. This is exactly what a coach sees when they open a player's link.</p>
+      <span class="eyebrow">How to order</span>
+      <h2 id="howTitle">Clips in. Feature out.</h2>
+      <p class="lead">Ordering happens in our Instagram DMs for now. You never have to edit anything yourself.</p>
     </div>
-    <div class="finder" role="search">
-      <label class="field"><span class="sr-only">Search players</span><span id="searchIcon"></span><input class="input" id="q" type="search" placeholder="Search name, school, position" autocomplete="off"></label>
-      <label><span class="sr-only">Class year</span><select class="select" id="year"><option value="">All classes</option></select></label>
-      <label><span class="sr-only">Position</span><select class="select" id="pos"><option value="">All positions</option></select></label>
-    </div>
-    <div class="pills" id="sports" role="group" aria-label="Filter by sport" style="margin-bottom:18px"></div>
-    <p class="result-count" id="count" aria-live="polite"></p>
-    <div class="samples" id="samples"></div>
+    <ol class="steps" style="list-style:none">
+      <li class="step reveal"><div class="n">1</div><h3>Message us</h3><p id="howPay">DM @peachstaterecruits with the package you want. We'll reply with how to pay.</p></li>
+      <li class="step reveal"><div class="n">2</div><h3>Send your clips</h3><p id="howClips">Send your best clips, a photo for the cover and your position, class, school and team in the DM.</p></li>
+      <li class="step reveal"><div class="n">3</div><h3>We build it</h3><p>We edit the highlights, design your cover and write your scouting write-up, then send it to you to approve. <span id="tRev"></span> included.</p></li>
+      <li class="step reveal"><div class="n">4</div><h3>Go live</h3><p>We post it with you as a collab and send you your files.</p></li>
+    </ol>
+    <p class="how-note"><span id="tClock"></span>.</p>
+    <ul class="rules promise-row">
+      <li>We never guarantee offers, scholarships or college interest. We make your game easy for coaches to see.</li>
+      <li>For athletes under 18, a parent or guardian approves anything that goes on a public page.</li>
+      <li>We never show a home address or phone number.</li>
+    </ul>
   </div>
 </section>
 
-<section id="teams" style="padding-top:0" aria-labelledby="teamsTitle">
-  <div class="wrap">
-    <div class="teams reveal">
-      <div>
-        <span class="eyebrow">For programs</span>
-        <h2 id="teamsTitle" style="margin-top:12px">Feature your whole roster</h2>
-        <p class="lead" style="margin-top:14px">For coaches, directors and booster clubs. One contact sends the clips, and we handle the rest.</p>
-        <ul class="ticks">
-          <li id="teamMax"></li>
-          <li>One team graphic</li>
-          <li>One team collaboration post on Peach State Recruits, on a date we agree beforehand</li>
-          <li>All finished files for your program's own pages</li>
-        </ul>
-      </div>
-      <div class="team-box" id="teamsBox">
-        <div class="price" id="teamPrice"></div>
-        <p>per team, paid once</p>
-        <a class="btn btn-peach btn-block" id="teamBtn" href="#">Book your team</a>
-      </div>
-    </div>
+<section id="trust" class="tint" aria-labelledby="trustTitle" hidden>
+  <div class="wrap trust-grid">
+    <div class="founder reveal" id="founder" hidden></div>
+    <div class="quotes" id="quotes" hidden></div>
   </div>
 </section>
 
@@ -242,16 +147,16 @@
     <div class="head reveal"><span class="eyebrow">FAQ</span><h2 id="faqTitle">Questions, answered</h2></div>
     <div class="faq">
       <div class="faq-col">
-        <details><summary>Which sports do you cover?</summary><p>All of them, including baseball, football, soccer, basketball, softball, volleyball, lacrosse and track. If you have clips, we can feature you.</p></details>
-        <details><summary>What do I need to send?</summary><p>Your best clips, one good photo for the cover, and your position, grad year, school or team and any stats you want shown. After checkout you'll get a short form to upload everything.</p></details>
-        <details><summary>How long does it take?</summary><p>Most features are finished within a few days of receiving everything. Elite orders are handled first. You'll get a delivery date once your clips are in.</p></details>
-        <details><summary>Can parents order for their athlete?</summary><p>Yes, and most do. For athletes under 18, a parent or guardian approves what goes on a public profile.</p></details>
+        <details><summary>How do I order and pay?</summary><p>For now, every order goes through Instagram. Message @peachstaterecruits with the package you want and we'll reply with how to pay. Online checkout isn't available yet.</p></details>
+        <details><summary>What do I need to send?</summary><p>Your best clips, one good photo for the cover, and your position, grad year, school or team and any stats you want shown. You can send it all in the Instagram DM.</p></details>
+        <details><summary>How long does it take?</summary><p>Most features are finished within a few days of receiving everything. Elite orders are handled first. We'll give you a delivery date once your clips are in.</p></details>
+        <details><summary>Which sports do you cover?</summary><p>Baseball first, but we feature football, soccer, basketball, softball, volleyball, lacrosse, track and more. If you have clips, we can feature you.</p></details>
       </div>
       <div class="faq-col">
-        <details><summary>What's shown on a profile page?</summary><p>Your feature, video, stats, measurables, school or team, city and state, and a contact button to the email you approve. We never show a home address or phone number.</p></details>
+        <details><summary>Can parents order for their athlete?</summary><p>Yes, and most do. For athletes under 18, a parent or guardian approves what goes on a public page.</p></details>
+        <details><summary>What's on a player's profile page?</summary><p>The feature cover, film, measurables, school or team, hometown and a short coach summary. The contact button goes to an email the family approves. Until a family adds one, it goes to Peach State on Instagram and we pass messages along. We never show a home address or phone number.</p></details>
         <details><summary>Do you guarantee offers or scholarships?</summary><p>No, and nobody honest can. We make you look professional and make your game easy for coaches to see. Your play and your outreach do the rest.</p></details>
-        <details><summary>How long does my post stay up?</summary><p>As long as you want. Profile pages stay live for the year you've paid for and can be renewed.</p></details>
-        <details><summary>Can I pay another way?</summary><p>Card checkout is fastest. If you need another option, message us on Instagram.</p></details>
+        <details><summary>How long does my post stay up?</summary><p>Your Instagram feature stays up as long as you want it to.</p></details>
       </div>
     </div>
   </div>
@@ -260,10 +165,10 @@
 <section class="closing dark" id="closing" aria-labelledby="closeTitle">
   <div class="wrap">
     <h2 id="closeTitle">Your film deserves to be seen.</h2>
-    <p class="lead">Pick a package in under a minute. We'll take it from there.</p>
+    <p class="lead">Pick a package and message us. We'll take it from there.</p>
     <div class="hero-cta">
       <a class="btn btn-peach btn-lg" href="#packages">Choose a package</a>
-      <a class="btn btn-line btn-lg" href="#picker">Help me choose</a>
+      <a class="btn btn-line btn-lg" href="players.html">Browse players</a>
     </div>
   </div>
 </section>
@@ -273,18 +178,19 @@
   <div class="wrap">
     <div>
       <div class="logo" id="footLogo"><span class="logo-badge" aria-hidden="true">PSR</span><span class="logo-text"><b>Peach State</b> Recruits</span></div>
-      <p style="max-width:28em">A sports media company creating player features, highlight videos and recruiting profiles for athletes in every sport.</p>
+      <p style="max-width:28em">A sports media company creating player features, highlight videos and recruiting profiles. Baseball first, every sport welcome.</p>
     </div>
     <div>
       <h5>Follow</h5>
       <div id="footSocial"></div>
     </div>
     <div>
-      <h5>Order</h5>
+      <h5>Explore</h5>
+      <a href="#examples">Examples</a>
       <a href="#packages">Packages</a>
-      <a href="#profiles">Profile pages</a>
-      <a href="#teams">Team rosters</a>
+      <a href="players.html">All players</a>
       <a href="#faq">FAQ</a>
+      <a href="account.html" rel="nofollow">Player login</a>
     </div>
     <div class="legal">
       <span id="copy"></span>
@@ -298,24 +204,24 @@
   <a class="btn btn-peach btn-sm" href="#packages" tabindex="-1">See packages</a>
 </div>
 
-<script src="config.js?v=8"></script>
-<script src="shared.js?v=8"></script>
+<script src="config.js?v=9"></script>
+<script src="shared.js?v=9"></script>
 <script>
 (async function () {
-  const C = window.PSR_CONFIG, PSR = window.PSR, { esc, coverOrImage, photoFrame, payLink, loadPlayers, profileUrl, ICON } = PSR;
+  const C = window.PSR_CONFIG, PSR = window.PSR, { esc, photoFrame, payLink, loadPlayers, profileUrl, ICON } = PSR;
   PSR.initNav();
   document.getElementById("logo").insertAdjacentHTML("afterbegin", PSR.logoMark(C));
   document.getElementById("footLogo").insertAdjacentHTML("afterbegin", PSR.logoMark(C));
-  document.getElementById("searchIcon").outerHTML = ICON.search;
-  const ext = (a) => { a.target = "_blank"; a.rel = "noopener"; return a; };
   const ext$ = 'target="_blank" rel="noopener"';
   const hasLink = (id) => !!(C.paymentLinks && C.paymentLinks[id]);
+  const anyLink = Object.values(C.paymentLinks || {}).some(Boolean);
   const short = (p) => p.name.split(" ")[0];
   const orderLabel = (id, word) => hasLink(id) ? `Order ${word}` : "Order on Instagram";
   const P = C.packages;
   const minPrice = Math.min(...P.map(p => p.price));
-
   document.getElementById("stickyFrom").textContent = `Packages from $${minPrice}, one time`;
+  document.getElementById("heroBuy").innerHTML = `Get featured <span class="btn-from">from $${minPrice}</span>`;
+  if (C.statsCaption) { const sc = document.getElementById("statsCap"); sc.textContent = C.statsCaption; sc.hidden = false; }
 
   // ---- Packages ----
   document.getElementById("pricing").innerHTML = P.map(p => `
@@ -328,26 +234,18 @@
       <ul class="ticks">${p.features.map(f => `<li>${esc(f)}</li>`).join("")}</ul>
       <p class="plan-terms">${esc(p.clips)}, ${esc(C.terms.revisions)}</p>
     </article>`).join("");
-
-  document.getElementById("heroBuy").innerHTML = `Get featured <span class="btn-from">from $${minPrice}</span>`;
-
   document.getElementById("addons").innerHTML = `
     <div class="addon reveal"><div><b>Player profile page</b><span>Add a coach-ready profile to any feature</span></div>
       <div style="display:flex;align-items:center;gap:14px"><span class="p">$${C.profileAddon.price}</span><span>${esc(C.profileAddon.unit)}</span>
       <a class="btn btn-line btn-sm" href="${esc(payLink(C, "profile"))}" ${ext$}>${hasLink("profile") ? "Add profile" : "Order on Instagram"}</a></div></div>
-    <div class="addon reveal"><div><b>Team roster</b><span>Features for up to ${C.team.maxPlayers} players</span></div>
+    <div class="addon reveal"><div><b>Team roster</b><span>Features for up to ${C.team.maxPlayers} players, one team graphic and one team collab post</span></div>
       <div style="display:flex;align-items:center;gap:14px"><span class="p">$${C.team.price}</span><span>per team</span>
-      <a class="btn btn-line btn-sm" href="#teams">Details</a></div></div>`;
-
-  const anyLink = Object.values(C.paymentLinks || {}).some(Boolean);
-  if (!anyLink) {
-    document.getElementById("stepPay").innerHTML = "<span><b>Order.</b> Message us on Instagram with the package you want, and we'll send you a payment link.</span>";
-    document.getElementById("howPay").textContent = "Choose Basic, Pro or Elite and message us on Instagram to order.";
-  }
+      <a class="btn btn-line btn-sm" href="${esc(payLink(C, "team"))}" ${ext$}>${hasLink("team") ? "Book your team" : "Book on Instagram"}</a></div></div>`;
   document.getElementById("payNote").innerHTML = ICON.lock + " " + esc(anyLink
-    ? "Secure card checkout. After you pay, you'll get a short form to send your clips and photo."
-    : "Ordering is through Instagram for now. Message us the package you want and we'll send you a payment link.");
-
+    ? "Secure card checkout. After you pay, we'll tell you how to send your clips and photo."
+    : "Ordering is through Instagram for now. Message us the package you want and we'll reply with how to pay.");
+  if (anyLink) document.getElementById("howPay").textContent = "Choose a package and check out by card, or message us on Instagram with questions.";
+  if (C.intakeFormUrl) document.getElementById("howClips").innerHTML = `Upload your clips, a cover photo and your info on <a class="link" href="${esc(C.intakeFormUrl)}" ${ext$}>our short form</a>.`;
   const T = C.terms;
   document.getElementById("tClock").textContent = T.clock;
   document.getElementById("tRev").textContent = T.revisions.charAt(0).toUpperCase() + T.revisions.slice(1);
@@ -358,62 +256,21 @@
     <thead><tr><th scope="col"><span class="sr-only">Feature</span></th>${P.map(p => `<th scope="col" class="${p.highlight ? "hl" : ""}">${esc(short(p))}<small>$${p.price}</small></th>`).join("")}</tr></thead>
     <tbody>${C.compare.map(r => `<tr><th scope="row" style="font-weight:500;text-align:left">${esc(r.label)}</th>${P.map(p => `<td class="${p.highlight ? "hl" : ""}">${cell(r[p.id])}</td>`).join("")}</tr>`).join("")}</tbody>
     <tfoot><tr><td></td>${P.map(p => `<td class="${p.highlight ? "hl" : ""}"><a class="btn ${p.highlight ? "btn-peach" : "btn-line"} btn-sm" href="${esc(payLink(C, p.id))}" ${ext$}>${hasLink(p.id) ? "Order " + esc(short(p)) : "Order on IG"}</a></td>`).join("")}</tr></tfoot>`;
-  // Long table: start collapsed on phones (the cards above already list everything)
-  if (window.matchMedia("(max-width:700px)").matches) document.getElementById("compareWrap").open = false;
 
-  document.getElementById("profilePrice").textContent = `$${C.profileAddon.price}`;
-  document.getElementById("profileUnit").textContent = C.profileAddon.unit;
-  ext(document.getElementById("profileBtn")).href = payLink(C, "profile");
-  if (!hasLink("profile")) document.getElementById("profileBtn").textContent = "Order on Instagram";
-  document.getElementById("teamPrice").textContent = `$${C.team.price}`;
-  document.getElementById("teamMax").textContent = `Features for up to ${C.team.maxPlayers} players`;
-  ext(document.getElementById("teamBtn")).href = payLink(C, "team");
-  if (!hasLink("team")) document.getElementById("teamBtn").textContent = "Book on Instagram";
-
-  // ---- Package picker (labels come from the "Best for" row in config.compare) ----
-  const bestFor = (C.compare || []).find(r => /best for/i.test(r.label)) || {};
-  const goals = [
-    ...P.map(p => ({ id: p.id, label: bestFor[p.id] || p.tagline, sub: `${p.name}, $${p.price}` })),
-    { id: "profile", label: "I already have a feature and just need a profile link", sub: `Profile page, $${C.profileAddon.price} ${C.profileAddon.unit}` },
-    { id: "team", label: "Feature my whole team", sub: `Team roster, $${C.team.price}` }
-  ];
-  const choices = document.getElementById("choices");
-  choices.innerHTML = goals.map((g, i) => `<button type="button" class="choice" role="radio" aria-checked="false" tabindex="${i === 0 ? 0 : -1}" data-id="${esc(g.id)}"><span class="dot" aria-hidden="true"></span><span>${esc(g.label)}<small>${esc(g.sub)}</small></span></button>`).join("");
-  const btns = [...choices.querySelectorAll(".choice")];
-  function pick(id, focus, userPick = true) {
-    btns.forEach(b => { const on = b.dataset.id === id; b.setAttribute("aria-checked", on); b.tabIndex = on ? 0 : -1; if (on && focus) b.focus(); });
-    document.querySelectorAll(".plan").forEach(el => el.classList.toggle("is-picked", el.id === "plan-" + id));
-    const pk = P.find(p => p.id === id);
-    let html;
-    if (pk) {
-      html = `<span class="k">Your match</span><h3>${esc(pk.name)}</h3><div class="price">$${pk.price}<small>${esc(pk.unit)}</small></div>
-        <p class="muted">${esc(pk.tagline)}</p><ul class="ticks">${pk.features.slice(0, 4).map(f => `<li>${esc(f)}</li>`).join("")}</ul>
-        <div class="acts"><a class="btn btn-peach" href="${esc(payLink(C, pk.id))}" ${ext$}>${orderLabel(pk.id, esc(short(pk)))}</a><a class="btn btn-line" href="#plan-${esc(pk.id)}">See it with the others</a></div>`;
-    } else if (id === "profile") {
-      html = `<span class="k">Your match</span><h3>Player profile page</h3><div class="price">$${C.profileAddon.price}<small>${esc(C.profileAddon.unit)}</small></div>
-        <p class="muted">Your video, stats and contact information in one shareable link for coaches.</p>
-        <ul class="ticks"><li>Highlight video and your feature</li><li>Measurables, stats and academics</li><li>Contact button to your approved email</li><li>Share link, QR code and printable sheet</li></ul>
-        <div class="acts"><a class="btn btn-peach" href="${esc(payLink(C, "profile"))}" ${ext$}>${hasLink("profile") ? "Add a profile" : "Order on Instagram"}</a><a class="btn btn-line" href="#profiles">Learn more</a></div>`;
-    } else {
-      html = `<span class="k">Your match</span><h3>Team roster</h3><div class="price">$${C.team.price}<small>per team, paid once</small></div>
-        <p class="muted">For coaches, directors and booster clubs. One contact sends the clips, and we handle the rest.</p>
-        <ul class="ticks"><li>Features for up to ${C.team.maxPlayers} players</li><li>One team graphic</li><li>One team collaboration post</li><li>All finished files for your program</li></ul>
-        <div class="acts"><a class="btn btn-peach" href="${esc(payLink(C, "team"))}" ${ext$}>${hasLink("team") ? "Book your team" : "Book on Instagram"}</a><a class="btn btn-line" href="#teams">Learn more</a></div>`;
-    }
-    const r = document.getElementById("pickResult");
-    r.innerHTML = html; r.hidden = false; document.getElementById("pickEmpty").hidden = true;
-    // On phones the result sits below the choices: bring it into view
-    if (userPick && window.matchMedia("(max-width:900px)").matches) {
-      const b = r.getBoundingClientRect();
-      if (b.top > window.innerHeight - 120) r.scrollIntoView({ behavior: PSR.reducedMotion() ? "auto" : "smooth", block: "nearest" });
-    }
+  // ---- Founder + testimonials: only real content from config.js ----
+  const F = C.founder || {}, Q = (C.testimonials || []).filter(t => t && t.quote && t.name);
+  if (F.photo && F.bio) {
+    const f = document.getElementById("founder");
+    f.innerHTML = `<img class="founder-photo" src="${esc(F.photo)}" alt="${esc(F.name || "Founder")}" loading="lazy" decoding="async" width="320" height="400">
+      <div><span class="eyebrow">Behind Peach State</span><h2 id="trustTitle">${esc(F.name || "Meet the founder")}</h2>${F.role ? `<p class="founder-role">${esc(F.role)}</p>` : ""}<p class="founder-bio">${esc(F.bio)}</p></div>`;
+    f.hidden = false;
   }
-  choices.addEventListener("click", e => { const b = e.target.closest(".choice"); if (b) pick(b.dataset.id); });
-  choices.addEventListener("keydown", e => {
-    const i = btns.indexOf(document.activeElement); if (i < 0) return;
-    const k = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 }[e.key];
-    if (k) { e.preventDefault(); pick(btns[(i + k + btns.length) % btns.length].dataset.id, true); }
-  });
+  if (Q.length) {
+    const q = document.getElementById("quotes");
+    q.innerHTML = (F.photo && F.bio ? "" : `<h2 id="trustTitle" class="sr-only">What families say</h2>`) + Q.slice(0, 3).map(t => `<figure class="quote reveal"><blockquote>${esc(t.quote)}</blockquote><figcaption><b>${esc(t.name)}</b>${t.detail ? `<span>${esc(t.detail)}</span>` : ""}</figcaption></figure>`).join("");
+    q.hidden = false;
+  }
+  if ((F.photo && F.bio) || Q.length) document.getElementById("trust").hidden = false;
 
   // ---- Footer + handles ----
   const accts = [[C.instagram, "Baseball"], [C.instagramFootball, "Football"], [C.instagramHQ, "All sports"]].filter(a => a[0]);
@@ -423,25 +280,16 @@
   document.getElementById("footSocial").innerHTML = social.join("");
   document.getElementById("copy").textContent = `© ${new Date().getFullYear()} Peach State Recruits`;
 
-  // ---- Players + recent features ----
+  // ---- Players: hero covers, ticker, featured examples ----
   const players = (await loadPlayers()).filter(p => p.active !== false);
   const RF = PSR.recentFromPlayers(players);
-  const views = (f) => f.views ? `<span class="chip-views">${ICON.eye}${esc(f.views)} views</span>` : "";
-  const top = [...RF, ...PSR.recentFromPlayers(players.filter(p => p.views).map(p => ({ ...p, showOnHome: true })))].filter(f => f.views).sort((a, b) => parseFloat(b.views) * (/k/i.test(b.views) ? 1e3 : /m/i.test(b.views) ? 1e6 : 1) - parseFloat(a.views) * (/k/i.test(a.views) ? 1e3 : /m/i.test(a.views) ? 1e6 : 1))[0];
-  if (top) document.getElementById("statTop").innerHTML = `<b>${esc(top.views)}</b><span>views on ${esc(top.name)}'s feature${top.viewsAsOf ? ` (as of ${esc(top.viewsAsOf)})` : ""}</span>`;
-  if (RF[1]) document.getElementById("teamsBox").style.backgroundImage = `url("${RF[1].image}")`;
-  if (RF[2]) document.getElementById("closing").style.backgroundImage = `url("${RF[2].image}")`;
-
+  const metaLine = (f) => [f.gradYear ? "Class of " + f.gradYear : "", f.position].filter(Boolean).join(" · ");
   const isBB = (x) => /baseball/i.test(x.sport || "");
   const heroRF = [...RF.filter(isBB), ...RF.filter(f => !isBB(f))];
-  const metaLine = (f) => [f.position, f.gradYear ? "Class of " + f.gradYear : ""].filter(Boolean).join(" · ");
-  const mainHref = (f) => f.profile ? profileUrl(f.profile) : (f.postUrl || "");
-
-  // Hero: the newest covers fanned out; tap/hover a back card to bring it forward
   const stage = document.getElementById("stage");
   const SR = heroRF.slice(0, 3);
   if (SR[0]) document.getElementById("hxBg").style.backgroundImage = `url("${esc(String(SR[0].image).replace(/(\/images\/players\/[\w-]+)\.jpg/, "$1-640.jpg"))}")`;
-  stage.innerHTML = SR.map((f, i) => `<a class="hs-card" data-pos="${i}" href="${esc(mainHref(f) || "#work")}" aria-label="${esc(f.name)}, ${esc(metaLine(f))}">${photoFrame(f, { eager: i === 0, sizes: PSR.PHOTO_SIZES.hero })}${i === 0 ? '<span class="hs-new">Latest feature</span>' : ""}</a>`).join("")
+  stage.innerHTML = SR.map((f, i) => `<a class="hs-card" data-pos="${i}" href="${esc(f.profile ? profileUrl(f.profile) : "#examples")}" aria-label="${esc(f.name)}, ${esc(metaLine(f))}">${photoFrame(f, { eager: i === 0, sizes: PSR.PHOTO_SIZES.hero })}${i === 0 ? '<span class="hs-new">Latest feature</span>' : ""}</a>`).join("")
     + (SR[0] ? `<div class="hs-cap" id="stageCap"></div>` : "");
   const cards = [...stage.querySelectorAll(".hs-card")];
   const cap = document.getElementById("stageCap");
@@ -453,106 +301,56 @@
     c.addEventListener("click", e => { if (c.dataset.pos !== "0") { e.preventDefault(); front(k); } });
   });
   stage.addEventListener("mouseleave", () => front(0));
-
-  // Ticker: the newest features, scrolling under the hero
   if (RF.length) {
     const items = RF.map(f => `<span><b>${esc(f.name)}</b>${esc(metaLine(f))}</span>`).join("");
     document.getElementById("ticker").innerHTML = `<div>${items}</div><div>${items}</div>`;
     document.getElementById("tickerWrap").hidden = false;
   }
 
-  // Latest features: one lead card, then the rest. "View on Instagram" only when the exact post is known.
-  document.getElementById("work-grid").innerHTML = RF.map((f, i) => {
-    const href = mainHref(f), lead = i === 0;
-    const media = photoFrame(f, { sizes: lead ? "(max-width: 700px) 80vw, 600px" : PSR.PHOTO_SIZES.card }) + views(f) + (lead ? '<span class="fc-flag">New</span>' : "");
-    return `<article class="fc reveal${lead ? " fc-lead" : ""}">
-      ${href ? `<a class="fc-media" href="${esc(href)}" ${f.profile ? "" : ext$} aria-label="${esc(f.name)}${f.profile ? " profile" : " feature on Instagram"}">${media}</a>` : `<div class="fc-media">${media}</div>`}
-      <div class="fc-body">
-        <span class="fc-meta">${esc([f.sport, metaLine(f)].filter(Boolean).join(" · "))}</span>
-        <h3>${esc(f.name)}</h3>
-        ${f.school ? `<p class="fc-sub">${esc(f.school)}</p>` : ""}
-        ${lead && f.headline ? `<p class="fc-hl">${esc(f.headline)}</p>` : ""}
+  // Featured examples: the owner's picks (featured_rank 1-3), then the newest with a real post.
+  const withPost = players.filter(p => p.postUrl && PSR.igPermalink(p.postUrl));
+  const ranked = withPost.filter(p => p.featuredRank).sort((a, b) => a.featuredRank - b.featuredRank);
+  const EX = [...ranked, ...withPost.filter(p => !p.featuredRank)].slice(0, 3);
+  const fmtDate = (d) => { const t = new Date(String(d) + "T12:00:00"); return isNaN(t) ? String(d) : t.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }); };
+  const grid = document.getElementById("exGrid");
+  grid.innerHTML = EX.map((p, i) => {
+    const result = [p.views ? `${ICON.eye}<b>${esc(p.views)}</b> views${p.viewsAsOf ? ` as of ${esc(p.viewsAsOf)}` : ""}` : "", p.featureDate ? `Posted ${esc(fmtDate(p.featureDate))}` : ""].filter(Boolean);
+    return `<article class="ex reveal">
+      <div class="ex-media" data-ig="${esc(p.postUrl)}">
+        ${photoFrame(p, { sizes: PSR.PHOTO_SIZES.card })}
+        <button class="ex-play" type="button" aria-label="Play ${esc(p.name)}'s feature (loads Instagram)"><span class="ex-play-ic">${ICON.play}</span><span>Play the feature</span></button>
+      </div>
+      <div class="ex-body">
+        <span class="fc-meta">${esc(metaLine(p))}</span>
+        <h3>${esc(p.name)}</h3>
+        <p class="fc-sub">${esc(p.school || p.team || "")}</p>
+        ${result.length ? `<p class="ex-result">${result.join(" · ")}</p>` : ""}
         <div class="fc-links">
-          ${f.profile ? `<a class="fc-go" href="${profileUrl(f.profile)}">View profile ${ICON.arrow}</a>` : ""}
-          ${f.postUrl ? `<a class="fc-ig" href="${esc(f.postUrl)}" ${ext$}>${ICON.ig}<span>View post</span></a>` : ""}
+          <a class="fc-ig" href="${esc(p.postUrl)}" ${ext$}>${ICON.ig}<span>Open on Instagram</span></a>
+          <a class="fc-go" href="${profileUrl(p.slug)}">Profile ${ICON.arrow}</a>
         </div>
       </div>
     </article>`;
   }).join("");
+  grid.addEventListener("click", e => {
+    const b = e.target.closest(".ex-play"); if (!b) return;
+    const box = b.closest(".ex-media"); PSR.playIg(box, box.dataset.ig);
+  });
+  if (!EX.length) document.getElementById("examples").hidden = true;
+  const bgP = EX[1] || RF[1]; if (bgP) document.getElementById("closing").style.backgroundImage = `url("${esc(String(bgP.coverImage || bgP.image || "").replace(/(images\/players\/[\w-]+)\.jpg/, "$1-640.jpg"))}")`;
 
-  const first = players.find(p => p.slug === C.featuredProfile) || players[0];
-  if (first) {
-    document.getElementById("sampleBtn").href = profileUrl(first.slug);
-    document.getElementById("mockUrl").textContent = PSR.displayUrl(PSR.shareProfileUrl(first.slug));
-    const m = (first.measurables || []).slice(0, 3);
-    document.getElementById("mini").innerHTML = `
-      <div class="c">${photoFrame(first, { sizes: PSR.PHOTO_SIZES.mini })}</div>
-      <div>
-        <h4>${esc(first.name)}</h4>
-        <div class="meta">${esc([first.sport, first.position, first.gradYear ? "Class of " + first.gradYear : ""].filter(Boolean).join(", "))}</div>
-        <div class="m">${m.map(x => `<div><b>${esc(x.value)}</b><span>${esc(x.label)}</span></div>`).join("")}</div>
-        <div class="acts"><span>Contact</span><span>Watch highlights</span></div>
-      </div>`;
-    if (first.video && first.video.poster) document.querySelector(".mini-video").style.backgroundImage = `linear-gradient(rgba(0,0,0,.25),rgba(0,0,0,.25)), url("${first.video.poster}")`;
-  }
-
-  // ---- Player finder: search + sport + class year ----
-  const qEl = document.getElementById("q"), yEl = document.getElementById("year"), sEl = document.getElementById("sports"), pEl = document.getElementById("pos");
-  const posTokens = (p) => String(p.position || "").toUpperCase().split(/[\/,|]+/).map(t => t.trim()).filter(Boolean);
-  const POS_ORDER = ["RHP", "LHP", "P", "C", "1B", "2B", "3B", "SS", "MIF", "IF", "OF", "UT", "QB", "RB", "WR", "TE", "OL", "DL", "LB", "DB", "ATH"];
-  const allPos = [...new Set(players.flatMap(posTokens))].sort((a, b) => ((POS_ORDER.indexOf(a) + 1) || 99) - ((POS_ORDER.indexOf(b) + 1) || 99) || a.localeCompare(b));
-  pEl.insertAdjacentHTML("beforeend", allPos.map(t => `<option value="${esc(t)}">${esc(t)}</option>`).join(""));
-  const sportRank = (x) => /baseball/i.test(x || "") ? 0 : 1;
-  const sports = [...new Set(players.map(p => p.sport).filter(Boolean))].sort((a, b) => sportRank(a) - sportRank(b) || a.localeCompare(b));
-  players.sort((a, b) => sportRank(a.sport) - sportRank(b.sport));
-  const years = [...new Set(players.map(p => p.gradYear).filter(Boolean))].sort();
-  yEl.insertAdjacentHTML("beforeend", years.map(y => `<option value="${esc(y)}">Class of ${esc(y)}</option>`).join(""));
-  sEl.innerHTML = ["All sports", ...sports].map((s, i) => `<button type="button" class="pill" aria-pressed="${i === 0}" data-sport="${i === 0 ? "" : esc(s)}">${esc(s)}</button>`).join("");
-  if (players.some(p => p.sample)) document.getElementById("playersLead").textContent = "Search by name, school or position, or filter by sport and class. Profile pages are new: these examples are built from real Peach State features and show what a coach sees.";
-  sEl.hidden = sports.length < 2; // one sport so far: the pills add nothing
-  let sport = "";
-  const card = (p) => {
-    const m = (p.measurables || []).filter(x => !/position/i.test(x.label)).slice(0, 2);
-    return `<a class="pc reveal" href="${profileUrl(p.slug)}">
-      <div class="pc-media">${photoFrame(p, { sizes: PSR.PHOTO_SIZES.card })}${p.gradYear ? `<span class="pc-class">${esc(p.gradYear)}</span>` : ""}</div>
-      <div class="pc-body">
-        <span class="pc-meta">${esc([p.sport, p.position].filter(Boolean).join(" · "))}</span>
-        <h3>${esc(p.name)}</h3>
-        <p class="pc-sub">${esc(p.school || p.team || p.location || "")}</p>
-        <div class="pc-foot">
-          <div class="pc-stats">${m.map(x => `<span><b>${esc(x.value)}</b><small>${esc(x.label)}</small></span>`).join("")}</div>
-          <span class="pc-go" aria-hidden="true">${ICON.arrow}</span>
-        </div>
-      </div>
-    </a>`;
-  };
-  function filter() {
-    const q = qEl.value.trim().toLowerCase(), y = yEl.value, pos = pEl.value;
-    const list = players.filter(p => (!sport || p.sport === sport) && (!y || String(p.gradYear) === y) && (!pos || posTokens(p).includes(pos)) &&
-      (!q || [p.name, p.school, p.team, p.position, p.sport, p.location].filter(Boolean).join(" ").toLowerCase().includes(q)));
-    document.getElementById("samples").innerHTML = list.length ? list.map(card).join("") : `<div class="empty" style="grid-column:1/-1">No players match those filters. <button type="button" class="link" id="clearF" style="background:none;border:0;cursor:pointer">Clear filters</button></div>`;
-    document.getElementById("count").textContent = `${list.length} ${list.length === 1 ? "player" : "players"}${sport ? " in " + sport : ""}${y ? ", Class of " + y : ""}${pos ? ", " + pos : ""}`;
-    const c = document.getElementById("clearF"); if (c) c.onclick = () => { qEl.value = ""; yEl.value = ""; pEl.value = ""; setSport(""); };
-    PSR.reveal(document.getElementById("samples"));
-  }
-  function setSport(s) { sport = s; sEl.querySelectorAll(".pill").forEach(b => b.setAttribute("aria-pressed", b.dataset.sport === s)); filter(); }
-  sEl.addEventListener("click", e => { const b = e.target.closest(".pill"); if (b) setSport(b.dataset.sport); });
-  qEl.addEventListener("input", filter); yEl.addEventListener("change", filter); pEl.addEventListener("change", filter);
-  filter();
-
-  // ---- Mobile sticky CTA: shows after the hero, hides at packages and the closing CTA ----
+  // ---- Mobile sticky CTA: after the hero, hidden at packages and the closing CTA ----
   const sticky = document.getElementById("stickyCta");
   if ("IntersectionObserver" in window) {
     const seen = new Map();
     const io = new IntersectionObserver(es => {
       es.forEach(e => seen.set(e.target.id, e.isIntersecting));
-      const show = !seen.get("top") && !seen.get("packages") && !seen.get("closing") && !seen.get("picker");
+      const show = !seen.get("top") && !seen.get("packages") && !seen.get("closing");
       sticky.classList.toggle("show", show); sticky.setAttribute("aria-hidden", String(!show));
       sticky.querySelector("a").tabIndex = show ? 0 : -1;
     });
-    ["top", "packages", "closing", "picker"].forEach(id => io.observe(document.getElementById(id)));
+    ["top", "packages", "closing"].forEach(id => io.observe(document.getElementById(id)));
   }
-
   PSR.reveal();
 })();
 </script>

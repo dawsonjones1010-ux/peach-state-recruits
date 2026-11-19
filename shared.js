@@ -223,6 +223,7 @@
       contactInstagram: r.contact_email ? "" : r.ig_account,
       showOnHome: r.show_on_home, active: r.published, account: r.ig_account,
       sample: !!r.sample, sampleNote: r.sample_note || "",
+      coachReport: r.coach_report || "", featuredRank: r.featured_rank || null, featureDate: r.feature_date || "",
       headline: r.headline || "", playerInstagram: (r.player_instagram || []).filter(Boolean),
       videos: (r.player_videos || []).slice().sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)))
     };
@@ -332,6 +333,29 @@
     box.classList.toggle("is-landscape", w >= h);
   }
 
+  // Instagram's official embed (blockquote + embed.js), loaded only when someone taps play.
+  let igLoading = null;
+  function loadIgEmbed() {
+    if (window.instgrm) return Promise.resolve(window.instgrm);
+    if (!igLoading) igLoading = new Promise((res, rej) => {
+      const s = document.createElement("script"); s.src = "https://www.instagram.com/embed.js"; s.async = true;
+      s.onload = () => window.instgrm ? res(window.instgrm) : rej(new Error("embed unavailable"));
+      s.onerror = rej; document.head.appendChild(s);
+    });
+    return igLoading;
+  }
+  function igPermalink(url) {
+    const m = String(url || "").match(/instagram\.com\/(?:[\w.]+\/)?(p|reel|tv)\/([\w-]+)/);
+    return m ? `https://www.instagram.com/${m[1]}/${m[2]}/` : "";
+  }
+  async function playIg(box, url) {
+    const link = igPermalink(url); if (!box || !link) return false;
+    box.innerHTML = `<blockquote class="instagram-media" data-instgrm-permalink="${esc(link)}?utm_source=ig_embed" data-instgrm-version="14" style="margin:0;width:100%;min-width:0;max-width:100%;border:0;background:#fff"><a href="${esc(link)}" target="_blank" rel="noopener">View this post on Instagram</a></blockquote>`;
+    box.classList.add("is-embed");
+    try { const ig = await loadIgEmbed(); ig.Embeds.process(); return true; }
+    catch (e) { box.innerHTML = `<a class="ig-fallback" href="${esc(link)}" target="_blank" rel="noopener">${ICON.ig}<span>Watch the feature on Instagram</span></a>`; return false; }
+  }
+
   // ---- v2 helpers: icons, nav, motion, sharing, QR ----
   const ICON = {
     eye: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>',
@@ -411,5 +435,5 @@
   }
 
   window.PSR = { esc, LOGO, logoMark, cover, coverOrImage, photoFrame, photoFallback, photoSrc, initials, PHOTO_SIZES, IMAGE_ACCEPT, prepareImageFile, isHeicFile, isImageFile, payLink, toast, loadPlayers, countView, recentFromPlayers, fromRow, hasDb, profileUrl, siteBase, shareProfileUrl, displayUrl,
-    ICON, initNav, reveal, fitVideo, copyText, shareLink, qrSvg, reducedMotion, parseVideo, videoHtml, VIDEO_LABEL };
+    ICON, initNav, reveal, fitVideo, playIg, igPermalink, copyText, shareLink, qrSvg, reducedMotion, parseVideo, videoHtml, VIDEO_LABEL };
 })();
