@@ -73,7 +73,7 @@
       <div class="stats" id="stats">
         <div><b>4M+</b><span>views on our features</span></div>
         <div><b>10K+</b><span>followers</span></div>
-        <div id="statTop" hidden><b></b><span>player profiles live</span></div>
+        <div id="statTop"><b>450+</b><span>players featured</span></div>
       </div>
       <p class="stats-cap" id="statsCap" hidden></p>
     </div>
@@ -305,7 +305,6 @@
   const RF = PSR.recentFromPlayers(players);
   const metaLine = (f) => [f.gradYear ? "Class of " + f.gradYear : "", f.position].filter(Boolean).join(" · ");
   const heroRF = RF;
-  if (players.length) { const st = document.getElementById("statTop"); st.querySelector("b").textContent = players.length; st.querySelector("span").textContent = players.length === 1 ? "player profile live" : "player profiles live"; st.hidden = false; }
   const stage = document.getElementById("stage");
   const SR = heroRF.slice(0, 3);
   if (SR[0]) document.getElementById("hxBg").style.backgroundImage = `url("${esc(String(SR[0].image).replace(/(\/images\/players\/[\w-]+)\.jpg/, "$1-640.jpg"))}")`;
