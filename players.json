@@ -1,5 +1,65 @@
 [
   {
+    "slug": "eduardo-vazquez",
+    "active": true,
+    "name": "Eduardo Vázquez",
+    "sport": "Baseball",
+    "position": "UTL",
+    "gradYear": 2028,
+    "school": "",
+    "team": "Puerto Rico Bilingual Sports Academy",
+    "location": "Barranquitas, Puerto Rico",
+    "coverImage": "images/players/eduardo-vazquez.jpg",
+    "headline": "EDUARDO VÁZQUEZ IS A JACK OF ALL TRADES🧤📈",
+    "playerInstagram": [],
+    "measurables": [
+      {
+        "label": "Height",
+        "value": "5'9\""
+      },
+      {
+        "label": "Weight",
+        "value": "141 lb"
+      },
+      {
+        "label": "Position",
+        "value": "UTL"
+      }
+    ],
+    "video": {
+      "youtube": "",
+      "file": ""
+    },
+    "highlights": [],
+    "report": "🔥 Eduardo Vázquez is an athletic 2028 prospect out of Barranquitas, Puerto Rico who brings versatility, a lean athletic frame and plenty of projection to the diamond. The Puerto Rico Scout Team standout has the tools to make an impact in several different ways.\n\n💥 At the plate, the right-handed hitter works with an easy, low-effort swing and has shown the ability to put the ball in play with quality contact. As his frame continues to add strength, his bat speed and impact should keep climbing, giving him real offensive upside as he develops.\n\n⚡️ Defensively, Vázquez gives his coaches options all over the field, with experience at second base, shortstop and around the infield. He moves well to his glove side and brings raw arm strength across the diamond, the kind of tools that let him fit wherever his team needs him.\n\n🎯 On the mound, Eduardo shows a loose, athletic delivery and gets down the mound well. He works with a fastball that has good angle to the plate along with a curveball and changeup, giving him a developing mix to build on.\n\nWith versatility, athleticism and a two-way skill set that's still growing, Eduardo Vázquez is a 2028 Puerto Rico prospect worth keeping an eye on! 👀📈",
+    "stats": null,
+    "academics": [],
+    "links": [],
+    "contactEmail": "",
+    "contactInstagram": "peachstaterecruits",
+    "contactName": "Peach State Recruits",
+    "postUrl": "",
+    "account": "peachstaterecruits",
+    "showOnHome": true,
+    "videos": [
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/eduardo-vazquez/clip1.mp4",
+        "title": "Highlight clip 1"
+      },
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/eduardo-vazquez/clip2.mp4",
+        "title": "Highlight clip 2"
+      },
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/eduardo-vazquez/clip3.mp4",
+        "title": "Highlight clip 3"
+      }
+    ]
+  },
+  {
     "slug": "beck-hoover",
     "active": true,
     "name": "Beck Hoover",
