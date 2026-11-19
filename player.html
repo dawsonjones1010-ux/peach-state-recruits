@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;1,800&family=Inter:wght@400;500;600;700;800&family=Kaushan+Script&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=5">
+<link rel="stylesheet" href="styles.css?v=6">
 </head>
 <body>
 <a class="skip" href="#app">Skip to profile</a>
@@ -64,8 +64,8 @@
   </div>
 </dialog>
 
-<script src="config.js?v=5"></script>
-<script src="shared.js?v=5"></script>
+<script src="config.js?v=6"></script>
+<script src="shared.js?v=6"></script>
 <script>
 (async function () {
   const C = window.PSR_CONFIG, PSR = window.PSR, { esc, coverOrImage, toast, ICON } = PSR;
@@ -109,13 +109,15 @@
 
     const classSchool = [cls, p.school, p.team].filter(Boolean).join(" · ");
     const subject = encodeURIComponent(`Recruiting inquiry: ${p.name} (${p.sport}, Class of ${p.gradYear || ""})`);
-    const hasVideo = !!(p.video && (p.video.youtube || p.video.file));
-
-    const video = p.video && p.video.youtube
-      ? `<div class="video"><iframe src="https://www.youtube-nocookie.com/embed/${esc(p.video.youtube)}" title="${esc(p.name)} highlights" allowfullscreen loading="lazy"></iframe></div>`
-      : p.video && p.video.file
-      ? `<div class="video"><video src="${esc(p.video.file)}" ${p.video.poster ? `poster="${esc(p.video.poster)}"` : ""} controls playsinline preload="metadata" aria-label="${esc(p.name)} highlight video"></video></div>`
-      : (() => { const ig = (p.highlights || []).find(h => h.url); return `<a class="video video-ig" href="${ig ? esc(ig.url) : "#"}" ${ext$} ${p.coverImage ? `style="background-image:url('${esc(p.coverImage)}')"` : ""}><div class="video-ph"><div class="play"><svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="#0a1120"/></svg></div><div class="vp-t">Watch ${esc(p.name.split(" ")[0])}'s feature on Instagram</div></div></a>`; })();
+    const vids = (p.videos || []).filter(v => v.url);
+    const legacy = p.video && p.video.youtube ? [{ kind: "youtube", url: "https://youtu.be/" + p.video.youtube }]
+      : p.video && p.video.file ? [{ kind: "file", url: p.video.file }] : [];
+    const allVids = [...vids, ...legacy];
+    const hasVideo = allVids.length > 0;
+    const igPost = (p.highlights || []).find(h => /instagram\.com/.test(h.url || ""));
+    const igCard = igPost ? `<a class="video video-ig${hasVideo ? " video-ig-sm" : ""}" href="${esc(igPost.url)}" ${ext$} ${p.coverImage ? `style="background-image:url('${esc(p.coverImage)}')"` : ""}><div class="video-ph"><div class="play"><svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="#0a1120"/></svg></div><div class="vp-t">${esc(igPost.title || "Watch the feature on Instagram")}</div></div></a>` : "";
+    const video = (hasVideo ? `<div class="vids">${allVids.map(v => PSR.videoHtml(v, p.name)).join("")}</div>` : "") + igCard
+      || `<p class="muted">Highlights coming soon.</p>`;
 
     const highlightLinks = (p.highlights || []).filter(h => h.url);
     const otherLinks = (p.links || []).filter(l => l.url);
@@ -130,7 +132,8 @@
       : p.contactInstagram ? `<a class="btn btn-peach" href="https://ig.me/m/${esc(p.contactInstagram)}" ${ext$}>${ICON.ig}Message</a>` : "";
 
     const snapshot = [["Sport", p.sport], ["Position", p.position], ["Class", p.gradYear], ["High school", p.school], ["Club / team", p.team], ["Location", p.location]].filter(x => x[1]);
-    const snapBox = `<div class="box"><h3>Coach snapshot</h3><div class="kv">${snapshot.map(([k, v]) => `<div><span>${esc(k)}</span><b>${esc(v)}</b></div>`).join("")}</div></div>`;
+    const handles = (p.playerInstagram || []).map(h => String(h).replace(/^@/, "")).filter(h => /^[\w.]{1,30}$/.test(h));
+    const snapBox = `<div class="box"><h3>Coach snapshot</h3><div class="kv">${snapshot.map(([k, v]) => `<div><span>${esc(k)}</span><b>${esc(v)}</b></div>`).join("")}${handles.length ? `<div><span>Instagram</span><b>${handles.map(h => `<a href="https://www.instagram.com/${esc(h)}/" ${ext$}>@${esc(h)}</a>`).join("<br>")}</b></div>` : ""}</div></div>`;
     const statsBox = p.stats && p.stats.rows && p.stats.rows.length ? `<div class="box">
         <h3>${esc(p.stats.title || "Stats")}</h3>
         <div style="overflow-x:auto"><table><thead><tr>${p.stats.columns.map(c => `<th scope="col">${esc(c)}</th>`).join("")}</tr></thead>
@@ -152,6 +155,7 @@
           <div class="p-head">
             <div class="p-kicker">${[p.sport, p.position].filter(Boolean).map(x => `<span>${esc(x)}</span>`).join("")}${cls ? `<span class="hot">${esc(cls)}</span>` : ""}</div>
             <h1 class="p-name" id="pName">${esc(p.name)}</h1>
+            ${p.headline ? `<p class="p-headline">${esc(p.headline)}</p>` : ""}
             ${classSchool ? `<div class="p-class">${esc([p.school, p.team, p.location].filter(Boolean).join(" · ") || classSchool)}</div>` : ""}
             ${keys.length ? `<div class="keys" aria-label="Key measurables">${keys.map(m => `<div><b>${esc(m.value)}</b><span>${esc(m.label)}</span></div>`).join("")}</div>` : ""}
             <div class="p-actions">
@@ -175,7 +179,7 @@
             <div class="p-block" id="highlights">
               <h2>Highlights</h2>
               ${video}
-              ${highlightLinks.length && !hasVideo ? "" : highlightLinks.length ? `<div class="links">${highlightLinks.map(h => `<a href="${esc(h.url)}" ${ext$}>${esc(h.title)}<span aria-hidden="true">↗</span></a>`).join("")}</div>` : ""}
+              ${highlightLinks.filter(h => h !== igPost).length ? `<div class="links">${highlightLinks.filter(h => h !== igPost).map(h => `<a href="${esc(h.url)}" ${ext$}>${esc(h.title)}<span aria-hidden="true">↗</span></a>`).join("")}</div>` : ""}
             </div>
             ${p.report ? `<div class="p-block"><h2>Scouting report</h2><div class="report">${esc(p.report)}</div><p class="note">Written by Peach State Recruits from the athlete's film.</p></div>` : ""}
           </div>

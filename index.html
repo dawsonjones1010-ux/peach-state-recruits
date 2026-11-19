@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;1,800&family=Inter:wght@400;500;600;700;800&family=Kaushan+Script&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=5">
+<link rel="stylesheet" href="styles.css?v=6">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"Organization","name":"Peach State Recruits","description":"Sports media company creating player features, highlight videos and recruiting profiles.","sameAs":["https://instagram.com/peachstaterecruits","https://instagram.com/peachstaterecruitsfb","https://instagram.com/peachstaterecruitshq"]}
 </script>
@@ -203,6 +203,7 @@
     <div class="finder" role="search">
       <label class="field"><span class="sr-only">Search players</span><span id="searchIcon"></span><input class="input" id="q" type="search" placeholder="Search name, school, position" autocomplete="off"></label>
       <label><span class="sr-only">Class year</span><select class="select" id="year"><option value="">All classes</option></select></label>
+      <label><span class="sr-only">Position</span><select class="select" id="pos"><option value="">All positions</option></select></label>
     </div>
     <div class="pills" id="sports" role="group" aria-label="Filter by sport" style="margin-bottom:18px"></div>
     <p class="result-count" id="count" aria-live="polite"></p>
@@ -294,8 +295,8 @@
   <a class="btn btn-peach btn-sm" href="#packages" tabindex="-1">See packages</a>
 </div>
 
-<script src="config.js?v=5"></script>
-<script src="shared.js?v=5"></script>
+<script src="config.js?v=6"></script>
+<script src="shared.js?v=6"></script>
 <script>
 (async function () {
   const C = window.PSR_CONFIG, PSR = window.PSR, { esc, coverOrImage, payLink, loadPlayers, profileUrl, ICON } = PSR;
@@ -433,7 +434,7 @@
   const players = (await loadPlayers()).filter(p => p.active !== false);
   const RF = PSR.recentFromPlayers(players);
   const views = (f) => f.views ? `<span class="chip-views">${ICON.eye}${esc(f.views)} views</span>` : "";
-  const top = RF.filter(f => f.views).sort((a, b) => parseFloat(b.views) * (/k/i.test(b.views) ? 1e3 : /m/i.test(b.views) ? 1e6 : 1) - parseFloat(a.views) * (/k/i.test(a.views) ? 1e3 : /m/i.test(a.views) ? 1e6 : 1))[0];
+  const top = [...RF, ...PSR.recentFromPlayers(players.filter(p => p.views).map(p => ({ ...p, showOnHome: true })))].filter(f => f.views).sort((a, b) => parseFloat(b.views) * (/k/i.test(b.views) ? 1e3 : /m/i.test(b.views) ? 1e6 : 1) - parseFloat(a.views) * (/k/i.test(a.views) ? 1e3 : /m/i.test(a.views) ? 1e6 : 1))[0];
   if (top) document.getElementById("statTop").innerHTML = `<b>${esc(top.views)}</b><span>views on ${esc(top.name)}'s feature${top.viewsAsOf ? ` (as of ${esc(top.viewsAsOf)})` : ""}</span>`;
   if (RF[1]) document.getElementById("teamsBox").style.backgroundImage = `url("${RF[1].image}")`;
   if (RF[2]) document.getElementById("closing").style.backgroundImage = `url("${RF[2].image}")`;
@@ -493,7 +494,11 @@
   }
 
   // ---- Player finder: search + sport + class year ----
-  const qEl = document.getElementById("q"), yEl = document.getElementById("year"), sEl = document.getElementById("sports");
+  const qEl = document.getElementById("q"), yEl = document.getElementById("year"), sEl = document.getElementById("sports"), pEl = document.getElementById("pos");
+  const posTokens = (p) => String(p.position || "").toUpperCase().split(/[\/,|]+/).map(t => t.trim()).filter(Boolean);
+  const POS_ORDER = ["RHP", "LHP", "P", "C", "1B", "2B", "3B", "SS", "MIF", "IF", "OF", "UT", "QB", "RB", "WR", "TE", "OL", "DL", "LB", "DB", "ATH"];
+  const allPos = [...new Set(players.flatMap(posTokens))].sort((a, b) => ((POS_ORDER.indexOf(a) + 1) || 99) - ((POS_ORDER.indexOf(b) + 1) || 99) || a.localeCompare(b));
+  pEl.insertAdjacentHTML("beforeend", allPos.map(t => `<option value="${esc(t)}">${esc(t)}</option>`).join(""));
   const sportRank = (x) => /baseball/i.test(x || "") ? 0 : 1;
   const sports = [...new Set(players.map(p => p.sport).filter(Boolean))].sort((a, b) => sportRank(a) - sportRank(b) || a.localeCompare(b));
   players.sort((a, b) => sportRank(a.sport) - sportRank(b.sport));
@@ -513,17 +518,17 @@
       </div>
     </a>`;
   function filter() {
-    const q = qEl.value.trim().toLowerCase(), y = yEl.value;
-    const list = players.filter(p => (!sport || p.sport === sport) && (!y || String(p.gradYear) === y) &&
+    const q = qEl.value.trim().toLowerCase(), y = yEl.value, pos = pEl.value;
+    const list = players.filter(p => (!sport || p.sport === sport) && (!y || String(p.gradYear) === y) && (!pos || posTokens(p).includes(pos)) &&
       (!q || [p.name, p.school, p.team, p.position, p.sport, p.location].filter(Boolean).join(" ").toLowerCase().includes(q)));
     document.getElementById("samples").innerHTML = list.length ? list.map(card).join("") : `<div class="empty" style="grid-column:1/-1">No players match those filters. <button type="button" class="link" id="clearF" style="background:none;border:0;cursor:pointer">Clear filters</button></div>`;
-    document.getElementById("count").textContent = `${list.length} ${list.length === 1 ? "player" : "players"}${sport ? " in " + sport : ""}${y ? ", Class of " + y : ""}`;
-    const c = document.getElementById("clearF"); if (c) c.onclick = () => { qEl.value = ""; yEl.value = ""; setSport(""); };
+    document.getElementById("count").textContent = `${list.length} ${list.length === 1 ? "player" : "players"}${sport ? " in " + sport : ""}${y ? ", Class of " + y : ""}${pos ? ", " + pos : ""}`;
+    const c = document.getElementById("clearF"); if (c) c.onclick = () => { qEl.value = ""; yEl.value = ""; pEl.value = ""; setSport(""); };
     PSR.reveal(document.getElementById("samples"));
   }
   function setSport(s) { sport = s; sEl.querySelectorAll(".pill").forEach(b => b.setAttribute("aria-pressed", b.dataset.sport === s)); filter(); }
   sEl.addEventListener("click", e => { const b = e.target.closest(".pill"); if (b) setSport(b.dataset.sport); });
-  qEl.addEventListener("input", filter); yEl.addEventListener("change", filter);
+  qEl.addEventListener("input", filter); yEl.addEventListener("change", filter); pEl.addEventListener("change", filter);
   filter();
 
   // ---- Mobile sticky CTA: shows after the hero, hides at packages and the closing CTA ----

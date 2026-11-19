@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;1,800&family=Inter:wght@400;500;600;700;800&family=Kaushan+Script&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=5">
+<link rel="stylesheet" href="styles.css?v=6">
 </head>
 <body>
 <header class="nav">
@@ -29,7 +29,7 @@
   <!-- Sign in -->
   <section id="signIn" class="panel-box narrow" hidden>
     <h1 class="edge">Player login</h1>
-    <p class="muted">Sign in to update your profile, stats, contact email and highlight video.</p>
+    <p class="muted">Sign in to update your profile, stats, contact email and videos.</p>
     <form id="loginForm" class="form">
       <label>Email<input type="email" id="email" autocomplete="email" required></label>
       <label>Password<input type="password" id="password" autocomplete="current-password"></label>
@@ -95,10 +95,19 @@
         <label class="wide">Academics (one per line, "Label: value")<textarea id="f_academics" rows="3" placeholder="GPA: 3.6&#10;Intended major: Business"></textarea></label>
         <label class="wide">Links (one per line, "Label | https://...")<textarea id="f_links" rows="3" placeholder="Hudl | https://www.hudl.com/...&#10;MaxPreps | https://..."></textarea></label>
       </fieldset>
-      <fieldset>
-        <legend>Highlight video</legend>
-        <div class="wide" id="videoNow"></div>
-        <label class="wide">Upload a new video (MP4 or MOV, up to 50 MB)<input type="file" id="f_video" accept="video/*"></label>
+      <fieldset id="videosFs">
+        <legend>Your videos</legend>
+        <p class="wide small muted" style="margin:0">Add highlights for coaches. Videos show on your profile as soon as you add them (no need to tap Save).</p>
+        <div class="wide vm-list" id="vmList"></div>
+        <div class="wide vm-add">
+          <label>Paste a video link (YouTube, Hudl, Vimeo or Instagram)<input type="url" id="vmUrl" inputmode="url" autocomplete="off" placeholder="https://youtu.be/..."></label>
+          <button class="btn btn-ink" type="button" id="vmAddLink">Add link</button>
+          <div class="vm-or">or</div>
+          <label>Upload a clip (MP4 or MOV, up to 50 MB)<input type="file" id="vmFile" accept="video/mp4,video/quicktime,.mp4,.mov"></label>
+          <button class="btn btn-ink" type="button" id="vmUpload">Upload clip</button>
+          <div class="vm-progress" id="vmProg" hidden><i></i></div>
+        </div>
+        <p class="form-msg wide" id="vmMsg" hidden></p>
       </fieldset>
       <div class="form-foot">
         <button class="btn btn-peach" type="submit">Save changes</button>
@@ -116,9 +125,9 @@
 
 <div class="toast"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="config.js?v=5"></script>
-<script src="shared.js?v=5"></script>
-<script src="portal.js?v=5"></script>
+<script src="config.js?v=6"></script>
+<script src="shared.js?v=6"></script>
+<script src="portal.js?v=6"></script>
 <script>
 (async function () {
   const P = window.PORTAL, C = window.PSR_CONFIG, $ = (id) => document.getElementById(id);
@@ -183,10 +192,75 @@
     $("f_stats_title").value = s.title; $("f_stats_cols").value = s.cols; $("f_stats_row").value = s.row;
     $("f_academics").value = P.pairsToText(p.academics);
     $("f_links").value = P.linksToText(p.links);
-    $("videoNow").innerHTML = p.video_url
-      ? `<video src="${P.esc(p.video_url)}" controls playsinline preload="metadata" style="width:100%;border-radius:12px"></video>`
-      : `<p class="muted">No highlight video yet.</p>`;
+    loadVideos();
   }
+
+  // ---- Videos: each one is a row in player_videos (security rules let you change only your own) ----
+  const MAX_MB = 50;
+  let videos = [];
+  async function loadVideos() {
+    const { data, error } = await sb.from("player_videos").select("*").eq("player_id", player.id).order("created_at", { ascending: false });
+    videos = error ? [] : data;
+    renderVideos();
+  }
+  function renderVideos() {
+    const items = videos.map(v => ({ v, html: window.PSR.videoHtml(v, player.name) }));
+    if (player.video_url) items.push({ legacy: true, html: window.PSR.videoHtml({ kind: "file", url: player.video_url }, player.name) });
+    $("vmList").innerHTML = items.length
+      ? items.map((it, i) => `<div class="vm-item">${it.html}<button class="btn btn-line btn-sm" type="button" data-rm="${i}">Remove</button></div>`).join("")
+      : `<p class="muted">No videos yet. Paste a link or upload a clip below.</p>`;
+    $("vmList").querySelectorAll("[data-rm]").forEach(b => b.addEventListener("click", () => removeVideo(items[+b.dataset.rm])));
+  }
+  async function removeVideo(it) {
+    if (!confirm("Remove this video from your profile?")) return;
+    try {
+      if (it.legacy) {
+        const { data, error } = await sb.from("players").update({ video_url: null, video_poster: null }).eq("id", player.id).select().single();
+        if (error) throw error; player = data;
+      } else {
+        const { error } = await sb.from("player_videos").delete().eq("id", it.v.id);
+        if (error) throw error;
+        if (it.v.storage_path) await sb.storage.from("media").remove([it.v.storage_path]);
+      }
+      P.msg($("vmMsg"), "Video removed.", "ok");
+      loadVideos();
+    } catch (err) { P.msg($("vmMsg"), "Couldn't remove it: " + (err.message || err), "err"); }
+  }
+  async function addLink() {
+    const v = window.PSR.parseVideo($("vmUrl").value);
+    if (!v) return P.msg($("vmMsg"), "Paste a full link, like https://youtu.be/... or a Hudl link.", "err");
+    const { error } = await sb.from("player_videos").insert({ player_id: player.id, kind: v.kind, url: v.url });
+    if (error) return P.msg($("vmMsg"), "Couldn't add it: " + error.message, "err");
+    $("vmUrl").value = "";
+    P.msg($("vmMsg"), v.kind === "youtube" || v.kind === "vimeo" ? "Added. It plays right on your profile." : "Added. Coaches will see a button that opens it.", "ok");
+    loadVideos();
+  }
+  $("vmAddLink").addEventListener("click", addLink);
+  $("vmUrl").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); addLink(); } });
+  $("vmUpload").addEventListener("click", async () => {
+    const file = $("vmFile").files[0];
+    if (!file) return P.msg($("vmMsg"), "Choose a video file first.", "err");
+    const ext = (file.name.split(".").pop() || "").toLowerCase();
+    if (!["mp4", "mov", "m4v"].includes(ext) && !/^video\/(mp4|quicktime)$/.test(file.type)) return P.msg($("vmMsg"), "Use an MP4 or MOV file.", "err");
+    if (file.size > MAX_MB * 1024 * 1024) return P.msg($("vmMsg"), `That clip is over ${MAX_MB} MB. Trim it or export at a smaller size, or post it to YouTube and paste the link.`, "err");
+    const btn = $("vmUpload"); btn.disabled = true; $("vmProg").hidden = false;
+    const bar = $("vmProg").firstElementChild; let pct = 5; bar.style.width = "5%";
+    const tick = setInterval(() => { pct = Math.min(92, pct + 3); bar.style.width = pct + "%"; }, 600);
+    P.msg($("vmMsg"), "Uploading... keep this page open.", "");
+    try {
+      const path = `players/${player.id}/videos/${Date.now()}.${ext === "mov" ? "mov" : "mp4"}`;
+      const { error: upErr } = await sb.storage.from("media").upload(path, file, { contentType: file.type || (ext === "mov" ? "video/quicktime" : "video/mp4") });
+      if (upErr) throw upErr;
+      const url = sb.storage.from("media").getPublicUrl(path).data.publicUrl;
+      const { error } = await sb.from("player_videos").insert({ player_id: player.id, kind: "file", url, storage_path: path });
+      if (error) { await sb.storage.from("media").remove([path]); throw error; }
+      bar.style.width = "100%"; $("vmFile").value = "";
+      P.msg($("vmMsg"), "Uploaded. It's on your profile now.", "ok");
+      loadVideos();
+    } catch (err) {
+      P.msg($("vmMsg"), "Upload failed: " + (err.message || err), "err");
+    } finally { clearInterval(tick); btn.disabled = false; setTimeout(() => { $("vmProg").hidden = true; bar.style.width = "0"; }, 800); }
+  });
 
   $("copyBtn").addEventListener("click", async () => {
     const link = P.profileLink(player.slug);
@@ -210,16 +284,9 @@
         academics: P.textToPairs($("f_academics").value),
         links: P.textToLinks($("f_links").value)
       };
-      const file = $("f_video").files[0];
-      if (file) {
-        if (file.size > 50 * 1024 * 1024) throw new Error("That video is over 50 MB. Trim it or export at a smaller size.");
-        P.msg($("saveMsg"), "Uploading video...", "");
-        update.video_url = await P.upload(player.id, file, "highlights");
-        update.video_poster = null;
-      }
       const { data, error } = await sb.from("players").update(update).eq("id", player.id).select().single();
       if (error) throw error;
-      player = data; fill(player); $("f_video").value = "";
+      player = data; fill(player);
       P.msg($("saveMsg"), "Saved. Your profile is updated.", "ok");
     } catch (err) {
       P.msg($("saveMsg"), "Couldn't save: " + (err.message || err), "err");

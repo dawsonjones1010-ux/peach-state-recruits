@@ -76,16 +76,19 @@
       contactEmail: r.contact_email, contactName: r.contact_name || "Peach State Recruits",
       contactInstagram: r.contact_email ? "" : r.ig_account,
       showOnHome: r.show_on_home, active: r.published, account: r.ig_account,
-      sample: !!r.sample, sampleNote: r.sample_note || ""
+      sample: !!r.sample, sampleNote: r.sample_note || "",
+      headline: r.headline || "", playerInstagram: (r.player_instagram || []).filter(Boolean),
+      videos: (r.player_videos || []).slice().sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)))
     };
   }
 
   async function loadPlayers() {
     if (hasDb()) {
       try {
-        const r = await fetch(`${C().supabaseUrl}/rest/v1/players?select=*&published=eq.true&order=posted_at.desc.nullslast`, {
-          headers: { apikey: C().supabaseAnonKey, Authorization: `Bearer ${C().supabaseAnonKey}` }
-        });
+        const h = { headers: { apikey: C().supabaseAnonKey, Authorization: `Bearer ${C().supabaseAnonKey}` } };
+        const u = `${C().supabaseUrl}/rest/v1/players?published=eq.true&order=posted_at.desc.nullslast&select=`;
+        let r = await fetch(u + encodeURIComponent("*,player_videos(id,kind,url,title,created_at)"), h);
+        if (!r.ok) r = await fetch(u + "*", h);
         if (r.ok) { const rows = await r.json(); if (rows.length) return rows.map(fromRow); }
       } catch (e) {}
     }
@@ -141,6 +144,37 @@
   function shareProfileUrl(slug) { return `${siteBase()}/player/${encodeURIComponent(slug)}`; }
   // The same address without https:// or www., for showing on the page
   function displayUrl(url) { return String(url).replace(/^https?:\/\//, "").replace(/^www\./, ""); }
+
+  // ---- Player videos: turn a pasted link into {kind, url, embed} ----
+  function parseVideo(raw) {
+    let url = String(raw || "").trim();
+    if (!url) return null;
+    if (!/^https?:\/\//i.test(url)) url = "https://" + url;
+    let u; try { u = new URL(url); } catch (e) { return null; }
+    if (u.protocol !== "https:" && u.protocol !== "http:") return null;
+    u.protocol = "https:";
+    const host = u.hostname.replace(/^(www|m)\./, "");
+    let m;
+    if (host === "youtu.be" && (m = u.pathname.match(/^\/([\w-]{11})/))) return { kind: "youtube", url: u.href, id: m[1] };
+    if (/(^|\.)youtube(-nocookie)?\.com$/.test(host)) {
+      const id = u.searchParams.get("v") || ((m = u.pathname.match(/^\/(?:shorts|embed|live|v)\/([\w-]{11})/)) && m[1]);
+      if (id && /^[\w-]{11}$/.test(id)) return { kind: "youtube", url: u.href, id };
+    }
+    if (/(^|\.)vimeo\.com$/.test(host) && (m = u.pathname.match(/(?:^|\/)(\d{6,})(?:\/|$)/))) return { kind: "vimeo", url: u.href, id: m[1] };
+    if (/(^|\.)hudl\.com$/.test(host)) return { kind: "hudl", url: u.href };
+    if (/(^|\.)instagram\.com$/.test(host)) return { kind: "instagram", url: u.href };
+    return { kind: "link", url: u.href };
+  }
+  const VIDEO_LABEL = { youtube: "YouTube", vimeo: "Vimeo", hudl: "Hudl", instagram: "Instagram", link: "Video link", file: "Uploaded clip" };
+  // HTML for one video: embedded player for YouTube/Vimeo/uploads, a link card for everything else
+  function videoHtml(v, name) {
+    const p = v.kind === "file" ? { kind: "file", url: v.url } : (parseVideo(v.url) || { kind: "link", url: v.url });
+    const t = esc(v.title || `${name || "Player"} highlights`);
+    if (p.kind === "youtube") return `<div class="video"><iframe src="https://www.youtube-nocookie.com/embed/${esc(p.id)}" title="${t}" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`;
+    if (p.kind === "vimeo") return `<div class="video"><iframe src="https://player.vimeo.com/video/${esc(p.id)}" title="${t}" allow="fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`;
+    if (p.kind === "file") return `<div class="video"><video src="${esc(p.url)}" controls playsinline preload="metadata" aria-label="${t}"></video></div>`;
+    return `<a class="vlink" href="${esc(p.url)}" target="_blank" rel="noopener"><span class="vlink-ic">${ICON.play}</span><span><b>${esc(v.title || "Watch on " + VIDEO_LABEL[p.kind])}</b><small>${esc(VIDEO_LABEL[p.kind])} · ${esc(displayUrl(p.url)).slice(0, 48)}</small></span><span aria-hidden="true">↗</span></a>`;
+  }
 
   // ---- v2 helpers: icons, nav, motion, sharing, QR ----
   const ICON = {
@@ -219,5 +253,5 @@
   }
 
   window.PSR = { esc, LOGO, logoMark, cover, coverOrImage, payLink, toast, loadPlayers, countView, recentFromPlayers, fromRow, hasDb, profileUrl, siteBase, shareProfileUrl, displayUrl,
-    ICON, initNav, reveal, copyText, shareLink, qrSvg, reducedMotion };
+    ICON, initNav, reveal, copyText, shareLink, qrSvg, reducedMotion, parseVideo, videoHtml, VIDEO_LABEL };
 })();

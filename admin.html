@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;1,800&family=Inter:wght@400;500;600;700;800&family=Kaushan+Script&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=5">
+<link rel="stylesheet" href="styles.css?v=6">
 </head>
 <body class="admin-body">
 <header class="nav">
@@ -176,7 +176,9 @@
     <label>Height<input id="e_height"></label>
     <label>Weight<input id="e_weight"></label>
     <label class="wide">More measurables (one per line, "Label: value")<textarea id="e_measurables" rows="3"></textarea></label>
+    <label class="wide">Headline (from the graphic, e.g. "Beck Hoover has unreal pop")<input id="e_headline"></label>
     <label class="wide">Scouting report<textarea id="e_report" rows="6"></textarea></label>
+    <label class="wide">Player's Instagram (one or more @handles, separated by commas)<input id="e_player_instagram" placeholder="@player, @player_baseball"></label>
     <label>Stats season<input id="e_stats_title"></label>
     <label>Stat names (commas)<input id="e_stats_cols"></label>
     <label class="wide">Stat values (same order)<input id="e_stats_row"></label>
@@ -244,9 +246,9 @@
 
 <div class="toast"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="config.js?v=5"></script>
-<script src="shared.js?v=5"></script>
-<script src="portal.js?v=5"></script>
+<script src="config.js?v=6"></script>
+<script src="shared.js?v=6"></script>
+<script src="portal.js?v=6"></script>
 <script>
 (async function () {
   const P = window.PORTAL, C = window.PSR_CONFIG, esc = P.esc, $ = (id) => document.getElementById(id);
@@ -574,7 +576,7 @@
     }
   });
 
-  const F = ["name", "sport", "position", "grad_year", "school", "team", "location", "slug", "height", "weight", "report", "contact_email", "contact_name", "post_url", "views", "views_as_of", "ig_account"];
+  const F = ["name", "sport", "position", "grad_year", "school", "team", "location", "slug", "height", "weight", "report", "contact_email", "contact_name", "post_url", "views", "views_as_of", "ig_account", "headline"];
   function openEdit(p) {
     editing = p || null;
     $("editTitle").textContent = p ? `Edit ${p.name}` : "Add a player";
@@ -585,6 +587,7 @@
     $("e_stats_title").value = s.title; $("e_stats_cols").value = s.cols; $("e_stats_row").value = s.row;
     $("e_academics").value = P.pairsToText(p && p.academics);
     $("e_links").value = P.linksToText(p && p.links);
+    $("e_player_instagram").value = ((p && p.player_instagram) || []).map(h => "@" + h).join(", ");
     $("e_published").checked = p ? p.published : true;
     $("e_show_on_home").checked = p ? p.show_on_home : false;
     $("e_cover").value = ""; $("e_video").value = "";
@@ -610,6 +613,7 @@
       row.stats = P.fieldsToStats($("e_stats_title").value, $("e_stats_cols").value, $("e_stats_row").value);
       row.academics = P.textToPairs($("e_academics").value);
       row.links = P.textToLinks($("e_links").value);
+      row.player_instagram = $("e_player_instagram").value.split(/[\s,]+/).map(h => h.replace(/^@/, "").trim()).filter(h => /^[\w.]{1,30}$/.test(h));
       row.published = $("e_published").checked;
       row.show_on_home = $("e_show_on_home").checked;
       if (!row.contact_name) row.contact_name = "Peach State Recruits";
