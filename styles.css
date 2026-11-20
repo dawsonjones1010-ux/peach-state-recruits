@@ -1652,3 +1652,22 @@ html,body{overflow-x:clip}
 @media (max-width:720px){.lvl-frame-t{font-size:12.5px}.lvl-frame-t th,.lvl-frame-t td{padding:6px 4px}}
 @media print{.lvl-frame{display:none}}
 @media (max-width:720px){.lvl-res-meta{font-size:13.5px;line-height:1.4}}
+
+/* v22: compact desktop header so every link (incl. Email Coach, How to order, FAQ) and the full logo fit at 961-1440px+ */
+@media (min-width:961px){
+  header.nav .wrap{width:min(1320px,100% - 32px);gap:14px}
+  header.nav .logo{flex:none;gap:9px}
+  header.nav .logo-text{font-size:15px;line-height:.95;letter-spacing:.07em;overflow:visible}
+  header.nav .logo-text b{display:block}
+  header.nav .nav-links{gap:0;min-width:0}
+  header.nav .nav-links a{font-size:16px;letter-spacing:.06em;padding:8px 10px}
+}
+@media (min-width:961px) and (max-width:1279px){
+  header.nav .nav-links a{font-size:14.5px;letter-spacing:.04em;padding:8px 7px}
+}
+@media (min-width:961px) and (max-width:1099px){
+  header.nav .logo-mark{width:36px;height:36px}
+  header.nav .logo-text{font-size:13px}
+  header.nav .nav-links a{font-size:13.5px;letter-spacing:.03em;padding:6px 5px}
+  header.nav .nav-right .btn-sm{padding:8px 10px;font-size:13.5px}
+}

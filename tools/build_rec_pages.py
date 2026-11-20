@@ -3,15 +3,17 @@
 Run after editing: python3 tools/build_rec_pages.py"""
 import os
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-V = "21"
+V = "22"
 BASE = "https://dawsonjones1010-ux.github.io/peach-state-recruits/"
 
 NAV = [("players.html", "Players"), ("find-my-level.html", "Find My Level"),
-       ("colleges.html", "Colleges"), ("camps.html", "Camps"), ("my-recruiting.html", "My Recruiting")]
+       ("colleges.html", "Colleges"), ("camps.html", "Camps"), ("email-coach.html", "Email Coach"), ("my-recruiting.html", "My Recruiting"),
+       ("index.html#how", "How to order"), ("index.html#faq", "FAQ")]
 
 def page(fname, title, desc, h1, lead, body, scripts, current, robots=False, sub=""):
-    nav = "\n      ".join(f'<a href="{h}"{" aria-current=\"page\"" if h == current else ""}>{t}</a>' for h, t in NAV)
+    nav = "\n      ".join('<a href="{}"{}>{}</a>'.format(h, ' aria-current="page"' if h == current else "", t) for h, t in NAV)
     mnav = "\n    ".join(f'<a href="{h}">{t}</a>' for h, t in NAV)
+    extra_styles = f'<link rel="stylesheet" href="recruiting/email.css?v={V}">' if "recruiting/email-ui.js" in scripts else ""
     js = "\n".join(f'<script src="{s}?v={V}"></script>' for s in scripts)
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -33,6 +35,7 @@ def page(fname, title, desc, h1, lead, body, scripts, current, robots=False, sub
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css?v={V}">
 <link rel="stylesheet" href="recruiting/rec.css?v={V}">
+{extra_styles}
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -75,6 +78,7 @@ def page(fname, title, desc, h1, lead, body, scripts, current, robots=False, sub
       <h5>Recruiting tools</h5>
       <a href="colleges.html">College Finder</a>
       <a href="camps.html">Camp Finder</a>
+      <a href="email-coach.html">Email Coach</a>
       <a href="my-recruiting.html">My Recruiting</a>
       <a href="find-my-level.html">Find My Level</a>
     </div>
@@ -122,7 +126,7 @@ PAGES = [
      "My Recruiting",
      "Your next steps, saved schools, coach emails and follow-ups in one private place.",
      """  <div id="app" aria-live="polite"><div class="rc-empty">Loading…</div></div>""",
-     ["recruiting/hub.js"], "my-recruiting.html", True),
+     ["recruiting/research.js", "recruiting/email.js", "recruiting/email-ui.js", "recruiting/hub.js"], "my-recruiting.html", True),
     ("camps.html",
      "Camp Finder: College Baseball Camps | Peach State Recruits",
      "Upcoming college baseball prospect camps from official school and registration pages. Dates, price, eligible grades, calendar export and travel cost estimates.",

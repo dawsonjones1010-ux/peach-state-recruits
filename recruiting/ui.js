@@ -68,9 +68,10 @@
     d.showModal();
     return d;
   }
-  function confirmDialog(text) {
+  function confirmDialog(text, options) {
+    options = options || {};
     return new Promise(res => {
-      const dialog = openDialog(`<div class="rc-dlg-body"><p style="margin:0">${esc(text)}</p><div class="rc-dlg-actions"><button class="rc-btn" data-v="0">Cancel</button><button class="rc-btn danger" data-v="1">Delete</button></div></div>`, d => {
+      const dialog = openDialog(`<div class="rc-dlg-body"><p style="margin:0">${esc(text)}</p><div class="rc-dlg-actions"><button class="rc-btn" data-v="0">Cancel</button><button class="rc-btn danger" data-v="1">${esc(options.confirmLabel || "Delete")}</button></div></div>`, d => {
         $$("button", d).forEach(b => b.addEventListener("click", () => { res(b.dataset.v === "1"); d.close(); }));
       });
       dialog.addEventListener("close", () => res(false), { once: true });

@@ -214,6 +214,7 @@
   const pillClass = (st) => st === S.MEETS ? "ok" : st === S.BELOW ? "below" : st === S.NO_INPUT ? "none" : "na";
   const fmtV = (v, unit) => L.fmt(v, unit === "seconds" ? "seconds" : unit === "mph" ? "mph" : unit);
 
+  const R = window.PSRLevelReport, Research = window.PSRResearch;
   const U = window.PSRLevelSummary, ds = (s) => esc(U.deSource(s));
   const statusText = (st) => st === S.NO_BENCH ? "No published target" : st;
   const ST_CLASS = { "Meets targets": "ok", "Close": "close", "Below targets": "below", "Needs more numbers": "none", "No published target": "na" };
@@ -246,7 +247,7 @@
         <span class="lvl-mini">${read.toolKeys.map(k => `<span><b>${esc(TOOL_LABEL[k])}</b> <i class="lvl-pill ${pillClass(c.tools[k].status)}">${esc(statusText(c.tools[k].status))}</i></span>`).join("")}</span>
         <span class="lvl-more-k" aria-hidden="true">Details</span></summary>
       <p class="lvl-src"><span class="lvl-kind guide">Published target</span> Category: ${esc(c.ncLabel)}</p>
-      ${noData ? `<p class="lvl-note-sm"><b>No published lower D1 targets exist for position players.</b> This is a data gap, not a negative result. Nothing is borrowed from mid-major or other D1 numbers.</p>` : ""}
+      ${noData ? `<p class="lvl-note-sm"><b>This source has no separate lower D1 targets for position players.</b> This is a data gap, not a negative result. Nothing is borrowed from mid-major or other D1 numbers.</p>` : ""}
       <ul class="lvl-tools">${read.toolKeys.map(k => toolRow(k, c.tools[k])).join("")}</ul>
       <p class="lvl-cov"><b>Compared:</b> ${comp.length ? esc(comp.join(", ")) : "none"}${noTgt.length ? ` · <b>No published target:</b> ${esc(noTgt.join(", "))}` : ""}${notIn.length ? ` · <b>Not entered:</b> ${esc(notIn.join(", "))}` : ""}</p>
       ${ns}
@@ -309,6 +310,18 @@
       <a class="btn btn-line" href="${href}">Open College Finder</a></div>`;
   }
 
+  function reportOverview(read,idx){
+    const evidence=R.evidence(state.input,read), met=read.categories.filter(c=>c.highlighted), max=Math.max(0,...read.categories.map(c=>c.compared.length));
+    return `<div class="pro-overview"><div><span>TOOLS COMPARED</span><strong>${max}<small> / ${read.toolKeys.length}</small></strong><p>${read.kind==='pitching'?'Fastball only; not a complete pitching evaluation.':'Distinct tools with targets in one category. Missing tools stay unknown.'}</p></div><div><span>CATEGORIES TO EXPLORE</span><strong>${met.length}</strong><p>${met.length?'Publisher targets met; several levels can overlap.':'More data or development may help. There is no ceiling assigned.'}</p></div><div><span>MEASUREMENT CONTEXT</span><strong class="pro-small-value">${esc(evidence.label)}</strong><p>${esc(evidence.sourceLabel)}.</p><button class="pro-text-button" type="button" data-edit-evidence>Review test details</button></div></div>
+    ${evidence.issues.length?`<details class="pro-context"><summary>Make this comparison more useful <span>${evidence.issues.length} context notes</span></summary><ul>${evidence.issues.map(t=>`<li>${esc(t)}</li>`).join('')}</ul><p>These notes affect how you interpret the result. They never add or subtract athletic points.</p></details>`:''}`;
+  }
+  function crossCheckHtml(read){const rows=R.crossCheck(state.data,state.input,read);return `<section class="pro-crosscheck"><div class="pro-section-head"><div><p class="pro-eyebrow">A SEPARATE REFERENCE</p><h3>NCSA guideline cross-check</h3></div><a href="https://www.ncsasports.org/baseball/recruiting-guidelines" target="_blank" rel="noopener">Read the source</a></div><p class="lvl-note-sm">NCSA groups all D1 together and combines D3 with NAIA. It cannot separate Power, mid-major and lower D1. Guidelines describe tools; they do not assign a player to a school.</p><div class="pro-cross-grid">${rows.map(r=>`<article><h4>${esc(r.level)}</h4>${r.tools.length?r.tools.map(t=>`<div><b>${esc(t.label)}</b><span>${esc(t.target)}</span><strong class="${t.met===null?'neutral':t.met?'positive':'attention'}">${t.value==null?'Add this measurement':esc(t.value+(t.unit==='s'?' s':' mph'))+' · '+(t.met?'Numerically meets':'Below guideline')}</strong><small>${esc(t.note)}</small></div>`).join(''):'<p>No usable numeric guideline for this position in our checked records. Review the source with your coach.</p>'}</article>`).join('')}</div></section>`;}
+  function workbenchRows(read,key){const r=R.rows(read,key);return r.tools.map(t=>`<article class="pro-tool"><div><span>${esc(t.label)}</span><strong>${t.value==null?'Not entered':esc(fmtV(t.value,t.unit))}</strong></div><div><span>Published target</span><b>${t.target?esc(t.target):'Not published for this tool/category'}</b><small>${esc(statusText(t.status))}</small></div><div><span>What this tells you</span><p>${t.gap!=null?esc((t.unit==='seconds'?t.gap.toFixed(2)+' s':t.gap+' mph')+' from the listed edge.'):t.status===S.MEETS?'This number reaches the listed edge. Keep game performance and consistency in the evaluation.':esc(t.note||'Add the relevant measurement or discuss the missing benchmark with your coach.')}${t.narrow?' <b>Small numerical gap: retest under the same protocol before treating this as a meaningful difference.</b>':''}</p></div></article>`).join('');}
+  function workbenchHtml(read,idx){const chosen=state.gapCat[idx]||(read.categories.find(c=>c.highlighted)||read.categories[0]).key;return `<section class="pro-workbench" id="target-workbench${idx}"><div class="pro-section-head"><div><p class="pro-eyebrow">KNOW WHAT TO WORK ON</p><h3>Your target comparison</h3></div><label>Compare against<select class="select" data-target="${idx}" aria-label="Target category for ${esc(read.position)}">${read.categories.map(c=>`<option value="${c.key}" ${c.key===chosen?'selected':''}>${esc(c.label)}</option>`).join('')}</select></label></div><div id="workbenchRows${idx}">${workbenchRows(read,chosen)}</div><p class="lvl-note-sm">Targets from NextCommit. Exact differences are arithmetic, not evidence of a meaningful performance gap or a training prescription.</p></section>`;}
+  function scenarioHtml(read,idx){return `<details class="pro-scenario no-print"><summary>What if my numbers change?</summary><p>Try hypothetical measurements. Your actual result and saved history stay unchanged. This does not forecast development.</p><div class="pro-scenario-inputs">${R.fields(read).map(([k,l,u])=>`<label>${esc(l)} (${esc(u)})<input class="input" type="number" inputmode="decimal" step="0.01" data-scenario="${idx}:${k}" value="${state.input.metrics[k]??''}" min="${CFG.RANGES[k].hard[0]}" max="${CFG.RANGES[k].hard[1]}"></label>`).join('')}</div><button class="btn btn-line" type="button" data-run-scenario="${idx}">Compare hypothetical numbers</button><p id="scenarioResult${idx}" role="status"></p></details>`;}
+  function runScenario(idx){const patch={};const output=document.getElementById('scenarioResult'+idx);app.querySelectorAll(`[data-scenario^="${idx}:"]`).forEach(el=>{if(el.value!=='')patch[el.dataset.scenario.split(':')[1]]=Number(el.value);});try{const r=R.scenario(state.data,state.input,state.result.reads[idx],patch);const met=r.read.categories.filter(c=>c.highlighted);output.textContent='Hypothetical only: '+(met.length?'reaches the listed targets for '+met.map(c=>c.label).join(', '):'does not fully reach a listed category with these inputs')+'. Actual result unchanged.';}catch(error){output.textContent=error.message;}}
+  function nextMovesHtml(read){return `<section class="pro-actions"><p class="pro-eyebrow">TURN A RESULT INTO ACTION</p><h3>Your next three moves</h3><ol>${R.actionPlan(state.input,read).map((a,k)=>`<li><span>${k+1}</span><div><h4>${esc(a.title)}</h4><p>${esc(a.detail)}</p>${a.href==='#edit-evidence'?'<button class="pro-text-button" type="button" data-edit-evidence>Edit measurement context</button>':a.href==='#target-workbench'?'<p class="lvl-note-sm">Use the target comparison above.</p>':`<a href="${esc(a.href)}">${a.href.includes('email')?'Open Email Coach':'Find colleges'}</a>`}</div></li>`).join('')}</ol><div class="pro-snapshot"><button type="button" class="btn btn-line" data-copy-snapshot="${state.result.reads.indexOf(read)}">Copy coach snapshot</button><textarea class="input" id="snapshotText${state.result.reads.indexOf(read)}" hidden readonly aria-label="Coach snapshot text"></textarea><p>No assigned-level claim is added to your email. Coaches see your actual measurements.</p></div></section>`;}
+
   function readHtml(read, idx) {
     const h = U.headline(read), i = state.input;
     const gapCat = state.gapCat[idx] || (read.categories.find(c => !c.highlighted && c.compared.length) || read.categories[0]).key;
@@ -337,21 +350,25 @@
     return `<section class="lvl-read" aria-labelledby="read${idx}" data-read="${idx}">
       <h2 class="lvl-res-title" id="read${idx}" tabindex="-1">${esc(U.title(read))}</h2>
       <div class="lvl-head-card">
-        <p class="lvl-head-k">Your result${read.kind === "pitching" ? ` <span class="lvl-flag">Velocity comparison only</span>` : ""}</p>
+        <p class="lvl-head-k">Your benchmark snapshot${read.kind === "pitching" ? ` <span class="lvl-flag">Velocity comparison only</span>` : ""}</p>
         <p class="lvl-head">${esc(h.text)}</p>
         <p class="lvl-head-sup">${esc(h.support)}</p>
-        <p class="lvl-head-cav">${esc(U.CAVEAT)}</p>
+        <p class="lvl-head-cav">${esc(U.CAVEAT)}</p><p class="pro-source-note">Seven-category targets: <a href="https://www.nextcommit.ai/downloads/college-baseball-recruiting-standards-by-division.pdf" target="_blank" rel="noopener">NextCommit</a>. These publisher targets are one reference; the NCSA cross-check below stays separate.</p>
       </div>
-      <div class="lvl-next"><p class="lvl-next-k">Next step</p><p class="lvl-next-t">${esc(nextFor(read))}</p></div>
-      <div class="lvl-cta2 no-print"><p class="lvl-cta2-t">Turn these numbers into a coach-ready video</p><a class="btn btn-peach" href="index.html#packages">See packages</a><p class="lvl-cta2-s">${esc(V.ctaSentence(read))}</p></div>
+      ${reportOverview(read, idx)}
+      <div class="lvl-next"><p class="lvl-next-k">A benchmark to discuss</p><p class="lvl-next-t">${esc(nextFor(read))}</p></div>
+      <div class="lvl-cta2 no-print"><div><p class="lvl-cta2-t">Make your next move.</p><p class="lvl-cta2-s">Use your actual numbers in a personal coach email.</p></div><button class="btn btn-peach" type="button" data-email-handoff="${idx}">Build my coach email</button></div>
+      ${crossCheckHtml(read)}
+      ${workbenchHtml(read, idx)}
+      ${scenarioHtml(read, idx)}
+      ${nextMovesHtml(read)}
       ${exploreHtml(read)}
       <div class="lvl-share no-print"><button class="btn btn-line" type="button" data-share="${idx}">Share my result</button><div class="lvl-share-out" id="shareOut${idx}" hidden></div></div>
       <div class="lvl-levels"><h3>Every level</h3>
         <ol class="lvl-lrow">${lv.map(l => `<li class="${ST_CLASS[l.status]}" data-level="${l.key}"><b>${esc(l.label)}</b><span>${esc(l.status)}</span></li>`).join("")}</ol>
         <p class="lvl-note-sm">D2, D3, NAIA and JUCO overlap; they are not a strict ladder. "Close" means at least one of your numbers meets that level's published target and at least one is below it.</p></div>
       ${numbersStrip(read)}
-      ${youngHtml(read, idx)}
-      ${frameHtml(read, idx)}
+      ${sec("age-frame", "Same-grade, height and weight context", youngHtml(read, idx) + frameHtml(read, idx))}
       ${sec("levels", "All levels in detail", detail)}
       ${sec("compare", "How you compare with committed players", compare)}
     </section>`;
@@ -365,7 +382,7 @@
     const tab = Math.min(state.tab || 0, r.reads.length - 1);
     const tabs = r.reads.length > 1 ? `<div class="lvl-tabs" role="tablist" aria-label="Results by position">${r.reads.map((rd, k) => `<button type="button" role="tab" id="tab${k}" aria-controls="tp${k}" aria-selected="${k === tab}" tabindex="${k === tab ? 0 : -1}" data-tab="${k}">${esc(U.tabLabel(rd))}</button>`).join("")}</div>` : "";
     const rule = `A level shows "Meets targets" only when at least ${CFG.HIGHLIGHT_RULE.minDistinctCoreTools} different core tools have published targets there and every compared tool meets its target. For pitchers, it's when your fastball meets the listed velocity target. This is a product rule, not a validated prediction.`;
-    const how = `<p>We compare each number you enter with the published recruiting targets for your position at each level, using the edge of each published band as a provisional line. Averages of researched groups and college-player numbers are shown separately and never change a level's status.</p>
+    const how = `<p><b>Evidence policy:</b> NCAA rules are used for timing, MLB for definitions, NCSA for a separate guideline check, and the named original publishers for their own targets and samples. No offer odds, percentiles or growth forecasts are calculated.</p><p>We compare each number you enter with the published recruiting targets for your position at each level, using the edge of each published band as a provisional line. Averages of researched groups and college-player numbers are shown separately and never change a level's status.</p>
       <p><b>The rule used.</b> ${esc(rule)}</p>
       <ul class="lvl-list"><li><b>Meets targets:</b> passes the rule above.</li><li><b>Close:</b> at least one of your compared numbers meets that level's target and at least one is below it.</li><li><b>Below targets:</b> your compared numbers are all below that level's targets.</li><li><b>Needs more numbers:</b> targets exist, but too few of your numbers could be compared there.</li><li><b>No published target:</b> the source publishes no target for your position at that level.</li></ul>
       <p><b>Your headline</b> is the first level in the list that shows "Meets targets". <b>Next step</b> is the nearest level above it with a number below target, showing only that level's smallest gap relative to its target.</p>
@@ -379,7 +396,8 @@
     const addSrc = (state.add && state.add.sources || []).filter(s => s.id !== "PBR_WI_E");
     const sources = `<div class="lvl-legend" aria-label="Legend"><span class="lvl-kind guide">Published target</span> NextCommit recruiting guideline (used for level status) <span class="lvl-kind ref">Second source</span> NCSA guideline, shown for reference <span class="lvl-kind mean">Average</span> sample mean of a researched group <span class="lvl-kind ctx">College players</span> college norms, context only</div>
       <p class="lvl-note-sm">Benchmark data v${esc(r.dataVersion)}, research as of ${esc(r.researchAsOf)}. ${esc(r.interpretationNote)}</p>
-      <ul class="lvl-list">${state.data.sources.filter(s => ["NC", "NS", "BP", "FG", "SL", "PC", "SEC"].includes(s.id)).map(s => `<li><b>${esc(s.publisher)}</b> (${esc(s.evidence_type)}, ${esc(s.publication_or_check)}): ${esc(s.limitation)} <a href="${esc(s.url)}" target="_blank" rel="noopener">Source</a></li>`).join("")}</ul>
+      <h4>Rules, definitions and recruiting education</h4><ul class="lvl-list">${Research.sources.map(x => `<li><a href="${esc(x.url)}" target="_blank" rel="noopener"><b>${esc(x.name)}</b></a> · ${esc(x.kind)}. ${esc(x.use)} <span>${esc(x.limit)}</span></li>`).join("")}</ul><p class="lvl-note-sm">Research checked ${esc(Research.checked)}. A linked source does not endorse this tool.</p>
+      <h4>Original benchmark publishers</h4><ul class="lvl-list">${state.data.sources.filter(s => ["NC", "NS", "BP", "FG", "SL", "PC", "SEC"].includes(s.id)).map(s => `<li><b>${esc(s.publisher)}</b> (${esc(s.evidence_type)}, ${esc(s.publication_or_check)}): ${esc(s.limitation)} <a href="${esc(s.url)}" target="_blank" rel="noopener">Source</a></li>`).join("")}</ul>
       ${addSrc.length ? `<h4>v2 context sources (never change your level)</h4><ul class="lvl-list">${addSrc.map(s => `<li><b>${esc(s.publisher)}</b>, ${esc(s.title)} (${esc(s.evidence_type)}): ${esc(s.limitation)} <a href="${esc(s.url)}" target="_blank" rel="noopener">Source</a></li>`).join("")}</ul>` : ""}
       ${state.size ? `<h4>Height and weight study (context only)</h4><ul class="lvl-list"><li><b>Peach State Recruits</b>, college roster sample (751 players, 20 rosters, official school roster pages, Nov 2026). ${esc(state.size.college_roster_sample.limitations)} <a href="${esc(CFG.SIZE_CSV_URL)}" download>Download the roster rows (CSV)</a></li><li><b>Slammers</b> and <b>Flatground</b> committed high school player heights and weights, from the reports listed above.</li></ul>` : ""}
       ${state.add && state.add.landscape_facts ? `<h4>The landscape</h4><ul class="lvl-list">${state.add.landscape_facts.map(f => `<li>${esc(f.fact)}${f.url ? ` <a href="${esc(f.url)}" target="_blank" rel="noopener">Source</a>` : ""}</li>`).join("")}</ul>` : ""}
@@ -514,10 +532,11 @@
     if (c.graduated) return `<section class="lvl-clock" aria-labelledby="clockT"><h3 id="clockT">${esc(c.title)}</h3><p>${esc(c.line)}</p></section>`;
     const lv = (a) => a.length <= 1 ? a.join("") : a.slice(0, -1).join(", ") + " and " + a[a.length - 1];
     return `<section class="lvl-clock" aria-labelledby="clockT"><h3 id="clockT">${esc(c.title)} <small>Class of ${esc(c.gradYear)}</small></h3>
-      <p class="lvl-clock-now"><b>${c.openLevels.length ? `${esc(lv(c.openLevels))} coaches can contact you now.` : "No level can contact you yet."}</b>${c.closedLevels.length ? ` ${esc(lv(c.closedLevels))}: not yet.` : ""}</p>
+      <p class="lvl-clock-now"><b>${c.openLevels.length ? `${esc(lv(c.openLevels))} recruiting communication is generally available for your class.` : "Coach communication depends on the rules below."}</b>${c.closedLevels.length ? ` ${esc(lv(c.closedLevels))}: not yet.` : ""}</p>
       ${c.next ? `<p class="lvl-clock-next"><span class="lvl-count">${esc(c.next.days)}<small>${c.next.days === 1 ? "day" : "days"}</small></span> <span>Next key date: <b>${esc(c.next.dateText)}</b>. ${esc(c.next.level)}: ${esc(c.next.event.toLowerCase())}.</span></p>` : ""}
       <ul class="lvl-clock-rules">${c.rules.map(r => `<li class="${r.open ? "ok" : ""}"><b>${esc(r.level)}</b> ${esc(r.event)}: ${esc(r.dateText)}</li>`).join("")}</ul>
-      <p class="lvl-note-sm">${esc(c.wave.text)}</p>
+      <p class="lvl-note-sm">You can prepare or send your introduction before a D1 response date. A lack of reply does not determine your ability. Dates below concern high-school prospects on a traditional U.S. school calendar; they do not resolve transfer or signed-aid restrictions.</p>
+      <details class="lvl-about"><summary>One-state commitment context</summary><p class="lvl-note-sm">${esc(c.wave.text)}</p></details>
       <p class="lvl-note-sm">${esc(c.waveNote)} ${c.source ? `<a href="${esc(c.source.url)}" target="_blank" rel="noopener">Calendar source</a>` : ""}</p></section>`;
   }
   function advancedHtml() {
@@ -571,10 +590,11 @@
     const payload = V.reviewPayload(h ? h.value : "", state.input, state.result);
     if (!payload.ig_handle) { show("Enter your Instagram handle, like @yourname (letters, numbers, dots and underscores)."); if (h) h.focus(); return; }
     const C = window.PSR_CONFIG || {};
-    if (!C.supabaseUrl || !C.supabaseAnonKey) { show("Sending isn't available right now. DM us on Instagram instead."); return; }
+    const reviewKey=C.supabasePublishableKey||C.supabaseAnonKey;
+    if (!C.supabaseUrl || !reviewKey) { show("Sending isn't available right now. DM us on Instagram instead."); return; }
     show(""); if (btn) { btn.disabled = true; btn.textContent = "Sending…"; }
     try {
-      const r = await fetch(`${C.supabaseUrl}/rest/v1/level_reviews`, { method: "POST", headers: { apikey: C.supabaseAnonKey, Authorization: `Bearer ${C.supabaseAnonKey}`, "Content-Type": "application/json", Prefer: "return=minimal" }, body: JSON.stringify(payload) });
+      const r = await fetch(`${C.supabaseUrl}/rest/v1/level_reviews`, { method: "POST", headers: { apikey: reviewKey, Authorization: `Bearer ${reviewKey}`, "Content-Type": "application/json", Prefer: "return=minimal" }, body: JSON.stringify(payload) });
       if (!r.ok) throw new Error(r.status);
       state.reviewSent = payload.ig_handle; const y = window.scrollY; render(NOV); window.scrollTo(0, y);
       if (window.PSR && window.PSR.toast) window.PSR.toast("Sent to Peach State");
@@ -591,7 +611,7 @@
       <div class="pr-top"><img src="images/logo-160.png" alt="" width="56" height="56"><div><b>Find My Level</b><span>Peach State Recruits · ${esc(new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }))}</span></div></div>
       <p class="pr-meta">${esc(positions().join(" / "))} · Class of ${esc(i.gradYear)} · Throws ${esc(i.throws)} · Bats ${esc(i.bats)}</p>
       ${reads}
-      ${c && !c.graduated ? `<p><b>Recruiting clock:</b> ${esc(c.openLevels.join(", "))} can contact now.${c.next ? ` Next key date: ${esc(c.next.dateText)} (${esc(c.next.level)}).` : ""}</p>` : ""}
+      ${c && !c.graduated ? `<p><b>Recruiting clock:</b> ${esc(c.openLevels.join(", "))} communication may be available; verify the rules with the school.${c.next ? ` Next key date: ${esc(c.next.dateText)} (${esc(c.next.level)}).` : ""}</p>` : ""}
       <p class="pr-cav">${esc(U.CAVEAT)} Benchmark data v${esc(r.dataVersion)}. Sources: NextCommit, NCSA, BaseballPath, Flatground, Slammers, Pitching Coach U, PBR. Numbers are self-reported.</p>
       <p class="pr-foot">peachstaterecruits on Instagram · dawsonjones1010-ux.github.io/peach-state-recruits/find-my-level.html</p></div>`;
   }
@@ -674,6 +694,11 @@
     render(NOV, true);
   });
   app.addEventListener("click", (e) => {
+    const eh = e.target.closest("[data-email-handoff]");
+    if(eh){try{sessionStorage.setItem("psr_email_handoff_v2",JSON.stringify(R.handoff(state.input,state.result.reads[+eh.dataset.emailHandoff])));location.href="email-coach.html?from=level";}catch(error){if(window.PSR)window.PSR.toast("This browser cannot transfer your numbers. Open Email Coach and enter them there.");}return;}
+    const cp=e.target.closest("[data-copy-snapshot]");if(cp){const text=R.snapshot(state.input,state.result.reads[+cp.dataset.copySnapshot]);Promise.resolve().then(()=>navigator.clipboard.writeText(text)).then(()=>window.PSR&&window.PSR.toast("Coach snapshot copied")).catch(()=>{const out=document.getElementById("snapshotText"+cp.dataset.copySnapshot);out.hidden=false;out.value=text;out.focus();out.select();});return;}
+    const sc=e.target.closest("[data-run-scenario]");if(sc){runScenario(+sc.dataset.runScenario);return;}
+    const edit=e.target.closest('[data-edit-evidence]');if(edit){go(3);return;}
     const tb = e.target.closest("[data-tab]"); if (tb) { selectTab(+tb.dataset.tab, true); return; }
     const sh = e.target.closest("[data-share]"); if (sh) { share(+sh.dataset.share); return; }
     const nv = e.target.closest("[data-native]"); if (nv && state.share) { navigator.share({ files: [state.share.file], title: "Find My Level", text: "My college baseball benchmark comparison. @peachstaterecruits" }).catch(() => {}); return; }
@@ -695,8 +720,10 @@
     const n = app.querySelectorAll("[data-tab]").length, c = +tb.dataset.tab; e.preventDefault();
     selectTab(e.key === "Home" ? 0 : e.key === "End" ? n - 1 : (c + (e.key === "ArrowRight" ? 1 : n - 1)) % n, true);
   });
+  app.addEventListener("input", e => { if (e.target.dataset.num) state.confirmed.delete(e.target.dataset.num); if (e.target.dataset.plain) state.confirmed.delete(e.target.dataset.plain); });
   app.addEventListener("change", (e) => {
     const t = e.target;
+    if(t.dataset.h)state.confirmed.delete("heightIn");
     if (t.dataset.unknown) {
       const k = t.dataset.unknown; collect();
       if (t.checked) { state.unknown.add(k); if (k !== "date") state.raw[k] = ""; } else state.unknown.delete(k);
@@ -704,6 +731,7 @@
       return;
     }
     if (t.dataset.confirm) { t.checked ? state.confirmed.add(t.dataset.confirm) : state.confirmed.delete(t.dataset.confirm); return; }
+    if(t.dataset.target!=null){const idx=+t.dataset.target;state.gapCat[idx]=t.value;const box=document.getElementById("workbenchRows"+idx);box.innerHTML=workbenchRows(state.result.reads[idx],t.value);return;}
     if (t.dataset.gap != null) { state.gapCat[t.dataset.gap] = t.value; const y = window.scrollY; render(NOV); window.scrollTo(0, y); const s = document.getElementById("gap" + t.dataset.gap); if (s) s.focus({ preventScroll: true }); }
   });
 

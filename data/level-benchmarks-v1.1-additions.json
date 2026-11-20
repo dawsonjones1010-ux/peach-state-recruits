@@ -36,11 +36,11 @@
     },
     {
       "id": "CAL",
-      "publisher": "NCSA / SportsRecruits / NCAA bylaws",
-      "title": "Baseball recruiting calendar",
-      "url": "https://ncsasports.org/baseball/recruiting-rules-calendar",
+      "publisher": "NCAA",
+      "title": "Current NCAA recruiting guidance and Division I / II manuals",
+      "url": "https://www.ncaa.org/eligibility-center/recruiting/",
       "evidence_type": "Rules",
-      "limitation": "Re-check each August; NCAA calendars change."
+      "limitation": "Individual sport, calendar periods, nontraditional academic calendars, signed aid and transfer restrictions need school compliance review. Re-check before acting."
     },
     {
       "id": "BLAST",
@@ -308,22 +308,32 @@
       {
         "level": "D1",
         "event": "Coach calls, texts, emails may begin",
-        "when": "Aug 1 before junior year"
+        "when": "Aug 1 before junior year",
+        "source_url": "https://web3.ncaa.org/lsdbi/reports/getReport/90008"
       },
       {
         "level": "D1",
         "event": "Off-campus contact and visits may begin",
-        "when": "Sept 1 of junior year"
+        "when": "Sept 1 of junior year",
+        "source_url": "https://web3.ncaa.org/lsdbi/reports/getReport/90008"
       },
       {
         "level": "D2",
-        "event": "Contact, off-campus contact and official visits may begin",
-        "when": "June 15 after sophomore year"
+        "event": "Recruiting calls, texts and emails",
+        "when": "Any time",
+        "source_url": "https://web3.ncaa.org/lsdbi/reports/getReport/90010",
+        "bylaw": "13.1.3.1"
+      },
+      {
+        "level": "D2",
+        "event": "Off-campus contact and official visits may begin",
+        "when": "June 15 after sophomore year",
+        "source_url": "https://web3.ncaa.org/lsdbi/reports/getReport/90010"
       },
       {
         "level": "D3",
-        "event": "No dead periods",
-        "when": "Year-round"
+        "event": "High-school recruiting communication",
+        "when": "Year-round; check current school rules"
       },
       {
         "level": "JUCO",
@@ -357,7 +367,9 @@
       ],
       "all_college_commits_per_class_approx": 350
     },
-    "review_every": "August"
+    "review_every": "August",
+    "checked": "2026-11-20",
+    "scope": "Traditional U.S. high-school calendar; not a transfer or signed-aid eligibility determination."
   },
   "landscape_facts": [
     {

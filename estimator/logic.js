@@ -92,11 +92,12 @@
       else if (r.soft && (v < r.soft[0] || v > r.soft[1])) warn(field, `${label} of ${v} ${r.unit} is unusual. Please double-check it, or confirm it is correct.`);
     };
     if (!isNum(input.gradYear)) err("gradYear", "Enter graduation year.");
+    else if (!Number.isInteger(input.gradYear)) err("gradYear", "Graduation year must be a whole year.");
     else range("gradYear", input.gradYear, "gradYear", "Graduation year");
-    if (!input.primary) err("primary", "Choose a primary position.");
+    if (!CFG.POSITIONS.some(p=>p.code===input.primary)) err("primary", "Choose a valid primary position.");
     if (input.secondary && input.secondary === input.primary) err("secondary", "Second position must be different from the primary position.");
-    if (!input.throws) err("throws", "Choose a throwing hand.");
-    if (!input.bats) err("bats", "Choose a batting side.");
+    if (!["R","L"].includes(input.throws)) err("throws", "Choose a throwing hand.");
+    if (!["R","L","S"].includes(input.bats)) err("bats", "Choose a batting side.");
     // Height and weight are required (owner decision, v18) but are context only: they never reach
     // the comparison or the highlight rule.
     if (!isNum(input.heightIn)) err("heightIn", "Enter height (feet and inches).");
@@ -121,8 +122,8 @@
     const meta = input.meta || {};
     if (meta.date) {
       const d = new Date(meta.date + "T12:00:00");
-      if (isNaN(d)) err("date", "Enter a valid measurement date.");
-      else if (d.getTime() > Date.now() + 86400000) err("date", "Measurement date can't be in the future.");
+      if (isNaN(d) || !/^\d{4}-\d{2}-\d{2}$/.test(meta.date) || [d.getFullYear(),String(d.getMonth()+1).padStart(2,"0"),String(d.getDate()).padStart(2,"0")].join("-")!==meta.date) err("date", "Enter a valid measurement date.");
+      else if (meta.date > [new Date().getFullYear(), String(new Date().getMonth()+1).padStart(2,"0"), String(new Date().getDate()).padStart(2,"0")].join("-")) err("date", "Measurement date can't be in the future.");
     }
     if (meta.link && !/^https?:\/\/\S+\.\S+/.test(meta.link)) err("link", "Enter a full link starting with https://, or leave it blank.");
     return { errors, warnings, ok: errors.length === 0 && warnings.length === 0 };
