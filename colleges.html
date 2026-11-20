@@ -16,8 +16,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=22">
-<link rel="stylesheet" href="recruiting/rec.css?v=22">
+<link rel="stylesheet" href="styles.css?v=23">
+<link rel="stylesheet" href="recruiting/rec.css?v=23">
 
 </head>
 <body>
@@ -41,14 +41,20 @@
     </div>
   </div>
   <nav class="mobile-menu" id="mobileMenu" aria-label="Mobile">
-    <a href="players.html">Players</a>
-    <a href="find-my-level.html">Find My Level</a>
-    <a href="colleges.html">Colleges</a>
-    <a href="camps.html">Camps</a>
-    <a href="email-coach.html">Email Coach</a>
-    <a href="my-recruiting.html">My Recruiting</a>
-    <a href="index.html#how">How to order</a>
-    <a href="index.html#faq">FAQ</a>
+    <p class="mm-label" id="mmTools">Recruiting tools</p>
+    <ul class="mm-list" aria-labelledby="mmTools">
+      <li><a href="find-my-level.html">Find My Level</a></li>
+      <li><a href="colleges.html">College Finder</a></li>
+      <li><a href="camps.html">Camp Finder</a></li>
+      <li><a href="my-recruiting.html">My Recruiting</a></li>
+    </ul>
+    <p class="mm-label" id="mmPsr">Peach State</p>
+    <ul class="mm-list" aria-labelledby="mmPsr">
+      <li><a href="index.html#examples">Featured Examples</a></li>
+      <li><a href="players.html">All Players</a></li>
+      <li><a href="index.html#packages">Packages &amp; Prices</a></li>
+      <li><a href="index.html#faq">FAQ</a></li>
+    </ul>
     <a class="btn btn-peach btn-block" href="index.html#packages">Get featured</a>
   </nav>
 </header>
@@ -97,12 +103,12 @@
   </div>
 </footer>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="config.js?v=22"></script>
-<script src="shared.js?v=22"></script>
-<script src="recruiting/logic.js?v=22"></script>
-<script src="recruiting/data.js?v=22"></script>
-<script src="recruiting/ui.js?v=22"></script>
-<script src="recruiting/colleges.js?v=22"></script>
+<script src="config.js?v=23"></script>
+<script src="shared.js?v=23"></script>
+<script src="recruiting/logic.js?v=23"></script>
+<script src="recruiting/data.js?v=23"></script>
+<script src="recruiting/ui.js?v=23"></script>
+<script src="recruiting/colleges.js?v=23"></script>
 <script>document.getElementById("copy").textContent = "\u00a9 " + new Date().getFullYear() + " Peach State Recruits"; try { window.PSR.logoMark(window.PSR_CONFIG || {}); } catch (e) {}</script>
 </body>
 </html>

@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """Writes the HTML shells for the recruiting tools so their header, nav and footer stay identical.
 Run after editing: python3 tools/build_rec_pages.py"""
-import os
+import os, sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from mobile_menu import mobile_menu
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-V = "22"
+V = "23"
 BASE = "https://dawsonjones1010-ux.github.io/peach-state-recruits/"
 
 NAV = [("players.html", "Players"), ("find-my-level.html", "Find My Level"),
@@ -12,7 +14,6 @@ NAV = [("players.html", "Players"), ("find-my-level.html", "Find My Level"),
 
 def page(fname, title, desc, h1, lead, body, scripts, current, robots=False, sub=""):
     nav = "\n      ".join('<a href="{}"{}>{}</a>'.format(h, ' aria-current="page"' if h == current else "", t) for h, t in NAV)
-    mnav = "\n    ".join(f'<a href="{h}">{t}</a>' for h, t in NAV)
     extra_styles = f'<link rel="stylesheet" href="recruiting/email.css?v={V}">' if "recruiting/email-ui.js" in scripts else ""
     js = "\n".join(f'<script src="{s}?v={V}"></script>' for s in scripts)
     return f"""<!DOCTYPE html>
@@ -50,10 +51,7 @@ def page(fname, title, desc, h1, lead, body, scripts, current, robots=False, sub
       <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="mobileMenu" aria-label="Menu"><span></span></button>
     </div>
   </div>
-  <nav class="mobile-menu" id="mobileMenu" aria-label="Mobile">
-    {mnav}
-    <a class="btn btn-peach btn-block" href="index.html#packages">Get featured</a>
-  </nav>
+{mobile_menu()}
 </header>
 <main id="main" class="rc-page">
 <section class="rc-intro">

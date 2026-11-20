@@ -390,9 +390,11 @@ const LEVELS = ["Power D1", "Mid-major D1", "Lower D1", "D2", "D3", "NAIA", "JUC
     ok((await page.$$(".ex")).length === 3, `${tag}: homepage featured examples still render`);
     const homeCard = await page.textContent("#find-my-level p");
     ok(homeCard.trim() === "Enter your exit velo, 60 time, fastball, arm or pop time and see how you compare with published college benchmarks, from D1 to JUCO. Free, about 2 minutes.", `${tag}: homepage Find My Level card text`);
-    const sk = await page.evaluate(() => { const e = document.getElementById("plan-starter"); return e && { t: e.innerText, prev: e.previousElementSibling && e.previousElementSibling.id, btn: e.querySelector("a.btn").textContent }; });
-    ok(sk && /Recruiting Starter Kit/i.test(sk.t) && /\$129/.test(sk.t) && /one time/.test(sk.t) && /Coach-ready highlight video/.test(sk.t) && /Instagram feature/.test(sk.t) && /One-page recruiting resume \(PDF\)/.test(sk.t) && /Summer schedule graphic/.test(sk.t) && sk.prev === "plan-elite" && sk.btn === "Order on Instagram", `${tag}: Recruiting Starter Kit $129 next to Elite with Order on Instagram`);
-    ok((await page.evaluate(() => [...document.querySelectorAll(".plan .price")].map(p => p.textContent).join("|"))) === "$25one time|$49one time|$99one time|$129one time", `${tag}: existing prices unchanged`);
+    // Owner decision (Nov 20, 2026): the $129 Recruiting Starter Kit is retired; Elite now lists a schedule graphic.
+    const plans = await page.evaluate(() => [...document.querySelectorAll("#pricing .plan")].map(e => ({ id: e.id, t: e.innerText })));
+    ok(plans.map(p => p.id).join(",") === "plan-basic,plan-pro,plan-elite" && !plans.some(p => /Starter Kit|\$129/i.test(p.t)), `${tag}: three plans (Basic, Pro, Elite), no Starter Kit`);
+    ok(/Schedule graphic/.test(plans[2].t) && /\$99/.test(plans[2].t), `${tag}: Elite $99 lists Schedule graphic`);
+    ok((await page.evaluate(() => [...document.querySelectorAll(".plan .price")].map(p => p.textContent).join("|"))) === "$25one time|$49one time|$99one time", `${tag}: existing prices unchanged`);
     ok(await page.evaluate(() => { const s = document.getElementById("parents"); return s && s.hidden && s.querySelectorAll(".quote").length === 3 && s.previousElementSibling.id === "examples"; }), `${tag}: "What parents say" section (3 cards) after examples, hidden`);
     await overflow("homepage");
     if (mobile) {
@@ -404,8 +406,8 @@ const LEVELS = ["Power D1", "Mid-major D1", "Lower D1", "D2", "D3", "NAIA", "JUC
       if (SHOTS) await page.screenshot({ path: `${SHOTS}/phone-home-fml-card.png` });
       await page.evaluate(() => { document.getElementById("packages").scrollIntoView(); document.querySelectorAll(".reveal").forEach(e => e.classList.add("in")); }); await page.waitForTimeout(500);
       if (SHOTS) await page.screenshot({ path: `${SHOTS}/phone-packages.png`, fullPage: false });
-      if (SHOTS) await page.evaluate(() => document.getElementById("plan-starter").scrollIntoView({ block: "center" }));
-      if (SHOTS) { await page.waitForTimeout(300); await page.screenshot({ path: `${SHOTS}/phone-packages-starter.png` }); }
+      if (SHOTS) await page.evaluate(() => document.getElementById("plan-elite").scrollIntoView({ block: "center" }));
+      if (SHOTS) { await page.waitForTimeout(300); await page.screenshot({ path: `${SHOTS}/phone-packages-elite.png` }); }
     } else if (SHOTS) {
       await page.screenshot({ path: `${SHOTS}/desktop-home-hero.png` });
       await page.evaluate(() => { document.documentElement.style.scrollBehavior = "auto"; document.getElementById("packages").scrollIntoView(); document.querySelectorAll(".reveal").forEach(e => e.classList.add("in")); }); await page.waitForTimeout(500);

@@ -104,21 +104,8 @@ window.PSR_CONFIG = {
         "Everything in Pro",
         "One-page recruiting profile (PDF)",
         "Coach intro email template",
+        "Schedule graphic",
         "Priority turnaround"
-      ]
-    },
-    {
-      id: "starter",
-      name: "Recruiting Starter Kit",
-      price: 129,
-      unit: "one time",
-      tagline: "Everything you need to start reaching out to college coaches this summer.",
-      clips: "Clips for your video and feature",
-      features: [
-        "Coach-ready highlight video",
-        "Instagram feature",
-        "One-page recruiting resume (PDF)",
-        "Summer schedule graphic"
       ]
     }
   ],
@@ -135,18 +122,18 @@ window.PSR_CONFIG = {
 
   // Package comparison table. true = included, false = not included, or write text.
   compare: [
-    { label: "Instagram feature", basic: true, pro: true, elite: true, starter: true },
+    { label: "Instagram feature", basic: true, pro: true, elite: true },
     { label: "Custom cover graphic", basic: true, pro: true, elite: true },
     { label: "Instagram collab post", basic: true, pro: true, elite: true },
     { label: "Scouting-style write-up", basic: true, pro: true, elite: true },
     { label: "Player profile page", basic: true, pro: true, elite: true },
     { label: "Clips used", basic: "3", pro: "Up to 8", elite: "Up to 10" },
-    { label: "Coach-ready highlight video (60–90 sec)", basic: false, pro: true, elite: true, starter: true },
+    { label: "Coach-ready highlight video (60–90 sec)", basic: false, pro: true, elite: true },
     { label: "Player stat card graphic", basic: false, pro: true, elite: true },
     { label: "HD files to keep", basic: false, pro: true, elite: true },
-    { label: "One-page recruiting PDF", basic: false, pro: false, elite: true, starter: true },
-    { label: "Summer schedule graphic", basic: false, pro: false, elite: false, starter: true },
+    { label: "One-page recruiting PDF", basic: false, pro: false, elite: true },
+    { label: "Schedule graphic", basic: false, pro: false, elite: true },
     { label: "Coach intro email template", basic: false, pro: false, elite: true },
-    { label: "Best for", basic: "Getting seen on social", pro: "Sending film to coaches", elite: "Actively reaching out to colleges", starter: "Starting your summer outreach" }
+    { label: "Best for", basic: "Getting seen on social", pro: "Sending film to coaches", elite: "Actively reaching out to colleges" }
   ]
 };
