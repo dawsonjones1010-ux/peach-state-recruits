@@ -24,16 +24,16 @@ jobs:
       - name: Assemble public files only
         run: |
           set -euo pipefail
-          SITE_FILES="index.html players.html player.html find-my-level.html admin.html account.html 404.html
+          SITE_FILES="index.html players.html player.html find-my-level.html colleges.html camps.html my-recruiting.html admin.html admin-recruiting.html account.html 404.html
             styles.css config.js shared.js portal.js players.json robots.txt sitemap.xml
             favicon.png favicon-16.png favicon.ico"
-          SITE_DIRS="images videos vendor data estimator player"
+          SITE_DIRS="images videos vendor data estimator recruiting player"
           mkdir -p _site
           for f in $SITE_FILES; do cp "$f" "_site/$f"; done
           for d in $SITE_DIRS; do cp -R "$d" "_site/$d"; done
           touch _site/.nojekyll
           # Safety: fail the deploy if a repo-only file slipped in.
-          for x in README.md SETUP.md package.json vercel.json .htaccess tests tools supabase api .github; do
+          for x in README.md SETUP.md README_RECRUITING_UPDATE.md FIXES_AND_GAPS.md CHANGE_MANIFEST.json config.recruiting.example.js package.json package-lock.json node_modules vercel.json .htaccess tests tools supabase api .github; do
             if [ -e "_site/$x" ]; then echo "::error::$x must not be published"; exit 1; fi
           done
           echo "Published files:"; find _site -maxdepth 1 | sort

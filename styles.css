@@ -1490,6 +1490,7 @@ footer .logo .logo-mark{width:56px;height:56px}
 .lvl-next-k{margin:0 0 2px;font-family:'Barlow Condensed',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:13px;color:#8a5a3c}
 .lvl-next-t{margin:0;font-weight:600;font-size:15px;line-height:1.4}
 .lvl-cta2{display:flex;align-items:center;justify-content:space-between;gap:12px;border-radius:14px;padding:12px 14px;margin:0 0 12px;background:linear-gradient(90deg,rgba(255,138,76,.16),rgba(255,138,76,.06))}
+.lvl-explore{border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:0 0 12px;background:#fff}.lvl-explore .lvl-cta2-t{margin:0 0 2px}.lvl-explore .lvl-note-sm{margin:0 0 10px}
 .lvl-cta2 p{margin:0;font-weight:800;font-size:15px;line-height:1.3}
 .lvl-cta2 .btn{flex:none;white-space:nowrap}
 .lvl-share{margin:0 0 16px}

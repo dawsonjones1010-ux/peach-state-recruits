@@ -1,0 +1,392 @@
+Adrian College|Adrian|Michigan|MIAA
+Albertus Magnus College|New Haven|Connecticut|GNAC
+Albion College|Albion|Michigan|MIAA
+Albright College|Reading|Pennsylvania|MAC
+Alfred University|Alfred|New York|AMCC
+Allegheny College|Meadville|Pennsylvania|PAC
+Alma College|Alma|Michigan|MIAA
+Alvernia University|Reading|Pennsylvania|MAC
+Amherst College|Amherst|Massachusetts|NESCAC
+Anderson University (IN)|Anderson|Indiana|HCAC
+Anna Maria College|Paxton|Massachusetts|GNAC
+Arcadia University|Glenside|Pennsylvania|MAC Freedom
+Asbury University|Wilmore|Kentucky|CCS
+Augsburg University|Minneapolis|Minnesota|MIAC
+Augustana College (IL)|Rock Island|Illinois|CCIW
+Aurora University|Aurora|Illinois|NACC
+Austin College|Sherman|Texas|SCAC
+Averett University|Danville|Virginia|ODAC
+Babson College|Wellesley|Massachusetts|NEWMAC
+Baldwin Wallace University|Berea|Ohio|OAC
+Bard College|Annandale-On-Hudson|New York|Liberty League
+Bates College|Lewiston|Maine|NESCAC
+Belhaven University|Jackson|Mississippi|CCS
+Beloit College|Beloit|Wisconsin|MWC
+Benedictine University|Lisle|Illinois|NACC
+Berea College|Berea|Kentucky|HCAC
+Berry College|Mount Berry|Georgia|SAA
+Bethany College (WV)|Bethany|West Virginia|PAC
+Bethany Lutheran College|Mankato|Minnesota|UMAC
+Bethel University (MN)|Saint Paul|Minnesota|MIAC
+Blackburn College|Carlinville|Illinois|SLIAC
+Bluffton University|Bluffton|Ohio|HCAC
+Bob Jones University|Greenville|South Carolina|Independent
+Bowdoin College|Brunswick|Maine|NESCAC
+Brandeis University|Waltham|Massachusetts|UAA
+Brevard College|Brevard|North Carolina|USA South
+Bridgewater College|Bridgewater|Virginia|ODAC
+Bridgewater State University|Bridgewater|Massachusetts|MASCAC
+Buena Vista University|Storm Lake|Iowa|A-R-C
+Baruch College (CUNY)|New York|New York|CUNYAC
+City College of New York (CUNY)|New York|New York|CUNYAC
+John Jay College (CUNY)|New York|New York|CUNYAC
+Lehman College (CUNY)|Bronx|New York|CUNYAC
+Cairn University|Langhorne|Pennsylvania|UEC
+California Institute of Technology|Pasadena|California|SCIAC
+California Lutheran University|Thousand Oaks|California|SCIAC
+Calvin University|Grand Rapids|Michigan|MIAA
+Capital University|Columbus|Ohio|OAC
+Carleton College|Northfield|Minnesota|MIAC
+Carlow University|Pittsburgh|Pennsylvania|AMCC
+Carroll University|Waukesha|Wisconsin|CCIW
+Carthage College|Kenosha|Wisconsin|CCIW
+Case Western Reserve University|Cleveland|Ohio|UAA
+Castleton University|Castleton|Vermont|Little East
+Centenary College of Louisiana|Shreveport|Louisiana|SCAC
+Centenary University|Hackettstown|New Jersey|Atlantic East
+Central College|Pella|Iowa|A-R-C
+Centre College|Danville|Kentucky|SAA
+Chapman University|Orange|California|SCIAC
+Chatham University|Pittsburgh|Pennsylvania|PAC
+Christopher Newport University|Newport News|Virginia|Coast to Coast
+Claremont-Mudd-Scripps|Claremont|California|SCIAC
+Clark University|Worcester|Massachusetts|NEWMAC
+Clarks Summit University|Clarks Summit|Pennsylvania|Colonial States
+Clarkson University|Potsdam|New York|Liberty League
+Coe College|Cedar Rapids|Iowa|A-R-C
+Colby College|Waterville|Maine|NESCAC
+Colby-Sawyer College|New London|New Hampshire|GNAC
+Elms College|Chicopee|Massachusetts|GNAC
+Concordia College (MN)|Moorhead|Minnesota|MIAC
+Concordia University Texas|Austin|Texas|SCAC
+Concordia University Chicago|River Forest|Illinois|NACC
+Concordia University Wisconsin|Mequon|Wisconsin|NACC
+Cornell College|Mount Vernon|Iowa|MWC
+Covenant College|Lookout Mountain|Georgia|CCS
+Crown College|Saint Bonifacius|Minnesota|UMAC
+Curry College|Milton|Massachusetts|CNE
+DePauw University|Greencastle|Indiana|NCAC
+DeSales University|Center Valley|Pennsylvania|MAC Freedom
+Dean College|Franklin|Massachusetts|GNAC
+Delaware Valley University|Doylestown|Pennsylvania|MAC Freedom
+Denison University|Granville|Ohio|NCAC
+Dickinson College|Carlisle|Pennsylvania|Centennial
+Dominican University (IL)|River Forest|Illinois|NACC
+Drew University|Madison|New Jersey|Landmark
+Earlham College|Richmond|Indiana|HCAC
+East Texas Baptist University|Marshall|Texas|ASC
+Eastern Connecticut State University|Willimantic|Connecticut|Little East
+Eastern Mennonite University|Harrisonburg|Virginia|ODAC
+Eastern Nazarene College|Quincy|Massachusetts|NECC
+Eastern University|Saint Davids|Pennsylvania|MAC
+Edgewood University|Madison|Wisconsin|NACC
+Elizabethtown College|Elizabethtown|Pennsylvania|Landmark
+Elmhurst University|Elmhurst|Illinois|CCIW
+Elmira College|Elmira|New York|Empire 8
+Emerson College|Boston|Massachusetts|NEWMAC
+Emory University|Atlanta|Georgia|UAA
+Endicott College|Beverly|Massachusetts|CNE
+Eureka College|Eureka|Illinois|SLIAC
+Fairleigh Dickinson University-Florham|Madison|New Jersey|MAC Freedom
+Farmingdale State College|Farmingdale|New York|Skyline
+Fitchburg State University|Fitchburg|Massachusetts|MASCAC
+Fontbonne University|Saint Louis|Missouri|SLIAC
+Framingham State University|Framingham|Massachusetts|MASCAC
+Franciscan University of Steubenville|Steubenville|Ohio|PAC
+Franklin College|Franklin|Indiana|HCAC
+Franklin & Marshall College|Lancaster|Pennsylvania|Centennial
+Gallaudet University|Washington|District of Columbia|United East
+Geneva College|Beaver Falls|Pennsylvania|PAC
+George Fox University|Newberg|Oregon|NWC
+Gettysburg College|Gettysburg|Pennsylvania|Centennial
+Gordon College|Wenham|Massachusetts|CNE
+Greensboro College|Greensboro|North Carolina|USA South
+Greenville University|Greenville|Illinois|SLIAC
+Grinnell College|Grinnell|Iowa|MWC
+Grove City College|Grove City|Pennsylvania|PAC
+Guilford College|Greensboro|North Carolina|ODAC
+Gustavus Adolphus College|Saint Peter|Minnesota|MIAC
+Gwynedd Mercy University|Gwynedd Valley|Pennsylvania|Atlantic East
+Hamilton College|Clinton|New York|NESCAC
+Hamline University|Saint Paul|Minnesota|MIAC
+Hampden-Sydney College|Hampden-Sydney|Virginia|ODAC
+Hanover College|Hanover|Indiana|HCAC
+Hardin-Simmons University|Abilene|Texas|ASC
+Haverford College|Haverford|Pennsylvania|Centennial
+Heidelberg University|Tiffin|Ohio|OAC
+Hendrix College|Conway|Arkansas|SCAC
+Hilbert College|Hamburg|New York|AMCC
+Hiram College|Hiram|Ohio|PAC
+Hobart College|Geneva|New York|Liberty League
+Hood College|Frederick|Maryland|MAC
+Hope College|Holland|Michigan|MIAA
+Houghton University|Houghton|New York|Empire 8
+Howard Payne University|Brownwood|Texas|ASC
+Huntingdon College|Montgomery|Alabama|CCS
+Husson University|Bangor|Maine|NAC
+Illinois College|Jacksonville|Illinois|MWC
+Illinois Institute of Technology|Chicago|Illinois|NACC
+Illinois Wesleyan University|Bloomington|Illinois|CCIW
+Immaculata University|Immaculata|Pennsylvania|Atlantic East
+Ithaca College|Ithaca|New York|Liberty League
+John Carroll University|University Heights|Ohio|NCAC
+Johns Hopkins University|Baltimore|Maryland|Centennial
+Johnson & Wales University-Charlotte|Charlotte|North Carolina|Coast to Coast
+Johnson & Wales University-Providence|Providence|Rhode Island|CNE
+Juniata College|Huntingdon|Pennsylvania|Landmark
+Kalamazoo College|Kalamazoo|Michigan|MIAA
+Kean University|Union|New Jersey|NJAC
+Keene State College|Keene|New Hampshire|Little East
+Kenyon College|Gambier|Ohio|NCAC
+Keuka College|Keuka Park|New York|Empire 8
+Keystone College|La Plume|Pennsylvania|UEC
+King's College (PA)|Wilkes-Barre|Pennsylvania|MAC Freedom
+Knox College|Galesburg|Illinois|MWC
+La Roche University|Pittsburgh|Pennsylvania|AMCC
+LaGrange College|LaGrange|Georgia|CCS
+Lakeland University|Plymouth|Wisconsin|NACC
+Lancaster Bible College|Lancaster|Pennsylvania|UEC
+Lasell University|Newton|Massachusetts|GNAC
+Lawrence University|Appleton|Wisconsin|MWC
+LeTourneau University|Longview|Texas|SCAC
+Lebanon Valley College|Annville|Pennsylvania|MAC Freedom
+Lesley University|Cambridge|Massachusetts|NAC
+Lewis & Clark College|Portland|Oregon|NWC
+Linfield University|McMinnville|Oregon|NWC
+Loras College|Dubuque|Iowa|A-R-C
+Luther College|Decorah|Iowa|MWC
+Lycoming College|Williamsport|Pennsylvania|Landmark
+Lyon College|Batesville|Arkansas|SLIAC
+Macalester College|Saint Paul|Minnesota|MIAC
+Manchester University|North Manchester|Indiana|HCAC
+Manhattanville University|Purchase|New York|Skyline
+Maranatha Baptist University|Watertown|Wisconsin|Independent
+Marian University (WI)|Fond du Lac|Wisconsin|NACC
+Marietta College|Marietta|Ohio|OAC
+Martin Luther College|New Ulm|Minnesota|UMAC
+Mary Baldwin University|Staunton|Virginia|USA South
+Marymount University|Arlington|Virginia|Atlantic East
+Maryville College|Maryville|Tennessee|SAA
+Marywood University|Scranton|Pennsylvania|MAC
+Massachusetts College of Liberal Arts|North Adams|Massachusetts|MASCAC
+Massachusetts Institute of Technology|Cambridge|Massachusetts|NEWMAC
+Massachusetts Maritime Academy|Buzzards Bay|Massachusetts|MASCAC
+McDaniel College|Westminster|Maryland|Centennial
+McMurry University|Abilene|Texas|ASC
+Medaille University|Buffalo|New York|Empire 8
+Messiah University|Mechanicsburg|Pennsylvania|MAC
+Methodist University|Fayetteville|North Carolina|USA South
+Middlebury College|Middlebury|Vermont|NESCAC
+Millikin University|Decatur|Illinois|CCIW
+Millsaps College|Jackson|Mississippi|SAA
+Milwaukee School of Engineering|Milwaukee|Wisconsin|NACC
+Misericordia University|Dallas|Pennsylvania|MAC Freedom
+Mississippi University for Women|Columbus|Mississippi|SLIAC
+Mitchell College|New London|Connecticut|GNAC
+Monmouth College|Monmouth|Illinois|MWC
+Montclair State University|Montclair|New Jersey|NJAC
+Moravian University|Bethlehem|Pennsylvania|Landmark
+Mount Aloysius College|Cresson|Pennsylvania|AMCC
+Mount Saint Mary College|Newburgh|New York|Skyline
+Mount St. Joseph University|Cincinnati|Ohio|HCAC
+Muhlenberg College|Allentown|Pennsylvania|Centennial
+Muskingum University|New Concord|Ohio|OAC
+Nebraska Wesleyan University|Lincoln|Nebraska|A-R-C
+Neumann University|Aston|Pennsylvania|MAC
+New England College|Henniker|New Hampshire|GNAC
+New Jersey City University|Jersey City|New Jersey|NJAC
+New York University|New York|New York|UAA
+Nichols College|Dudley|Massachusetts|CNE
+North Carolina Wesleyan University|Rocky Mount|North Carolina|USA South
+North Central College|Naperville|Illinois|CCIW
+North Central University|Minneapolis|Minnesota|UMAC
+North Park University|Chicago|Illinois|CCIW
+Northland College|Ashland|Wisconsin|MWC
+Norwich University|Northfield|Vermont|GNAC
+Notre Dame of Maryland University|Baltimore|Maryland|UEC
+Oberlin College|Oberlin|Ohio|NCAC
+Occidental College|Los Angeles|California|SCIAC
+Oglethorpe University|Atlanta|Georgia|SAA
+Ohio Northern University|Ada|Ohio|OAC
+Ohio Wesleyan University|Delaware|Ohio|NCAC
+Otterbein University|Westerville|Ohio|OAC
+Pacific Lutheran University|Tacoma|Washington|NWC
+Pacific University|Forest Grove|Oregon|NWC
+Pennsylvania College of Technology|Williamsport|Pennsylvania|UEC
+Pennsylvania Institute of Technology|Media|Pennsylvania|UEC
+Penn State Abington|Abington|Pennsylvania|UEC
+Penn State Altoona|Altoona|Pennsylvania|AMCC
+Penn State Berks|Reading|Pennsylvania|UEC
+Penn State Brandywine|Media|Pennsylvania|UEC
+Penn State Behrend|Erie|Pennsylvania|AMCC
+Penn State Harrisburg|Middletown|Pennsylvania|UEC
+Pfeiffer University|Misenheimer|North Carolina|USA South
+Piedmont University|Demorest|Georgia|CCS
+Plymouth State University|Plymouth|New Hampshire|Little East
+Pomona-Pitzer|Claremont|California|SCIAC
+Principia College|Elsah|Illinois|SLIAC
+Ramapo College of New Jersey|Mahwah|New Jersey|NJAC
+Randolph-Macon College|Ashland|Virginia|ODAC
+Regent University|Virginia Beach|Virginia|Coast to Coast
+Rensselaer Polytechnic Institute|Troy|New York|Liberty League
+Rhode Island College|Providence|Rhode Island|Little East
+Rhodes College|Memphis|Tennessee|SAA
+Ripon College|Ripon|Wisconsin|MWC
+Rivier University|Nashua|New Hampshire|GNAC
+Roanoke College|Salem|Virginia|ODAC
+Rochester Institute of Technology|Rochester|New York|Liberty League
+Rockford University|Rockford|Illinois|NACC
+Roger Williams University|Bristol|Rhode Island|CNE
+Rose-Hulman Institute of Technology|Terre Haute|Indiana|HCAC
+Rosemont College|Rosemont|Pennsylvania|
+Rowan University|Glassboro|New Jersey|NJAC
+Russell Sage College|Troy|New York|Empire 8
+Rutgers University-Camden|Camden|New Jersey|NJAC
+Rutgers University-Newark|Newark|New Jersey|NJAC
+SUNY Brockport|Brockport|New York|Empire 8
+SUNY Cobleskill|Cobleskill|New York|SUNYAC
+Alfred State College|Alfred|New York|SUNYAC
+SUNY Canton|Canton|New York|SUNYAC
+SUNY Maritime College|Throggs Neck|New York|Skyline
+SUNY Old Westbury|Old Westbury|New York|Skyline
+SUNY Oneonta|Oneonta|New York|SUNYAC
+SUNY Polytechnic Institute|Utica|New York|Empire 8
+SUNY Fredonia|Fredonia|New York|SUNYAC
+Purchase College (SUNY)|Purchase|New York|Skyline
+Saint Elizabeth University|Morristown|New Jersey|Atlantic East
+Saint John's University (MN)|Collegeville|Minnesota|MIAC
+Saint Joseph's College of Maine|Standish|Maine|GNAC
+Saint Mary's University of Minnesota|Winona|Minnesota|MIAC
+St. Norbert College|De Pere|Wisconsin|NACC
+Saint Vincent College|Latrobe|Pennsylvania|PAC
+Salem State University|Salem|Massachusetts|MASCAC
+Salisbury University|Salisbury|Maryland|Coast to Coast
+Salve Regina University|Newport|Rhode Island|NEWMAC
+Schreiner University|Kerrville|Texas|ASC
+Shenandoah University|Winchester|Virginia|ODAC
+Simpson College|Indianola|Iowa|A-R-C
+Skidmore College|Saratoga Springs|New York|Liberty League
+Southern Virginia University|Buena Vista|Virginia|USA South
+Southwestern University|Georgetown|Texas|SAA
+Spalding University|Louisville|Kentucky|SLIAC
+Springfield College|Springfield|Massachusetts|NEWMAC
+St. Lawrence University|Canton|New York|Liberty League
+St. Olaf College|Northfield|Minnesota|MIAC
+St. John Fisher University|Rochester|New York|Empire 8
+St. Joseph's University-New York|Brooklyn|New York|Skyline
+St. Mary's College of Maryland|St. Mary's City|Maryland|UEC
+SUNY Cortland|Cortland|New York|SUNYAC
+SUNY New Paltz|New Paltz|New York|NJAC
+SUNY Oswego|Oswego|New York|SUNYAC
+SUNY Plattsburgh|Plattsburgh|New York|SUNYAC
+Stevens Institute of Technology|Hoboken|New Jersey|MAC Freedom
+Stevenson University|Owings Mills|Maryland|MAC
+Stockton University|Galloway|New Jersey|NJAC
+Suffolk University|Boston|Massachusetts|CNE
+Susquehanna University|Selinsgrove|Pennsylvania|Landmark
+Swarthmore College|Swarthmore|Pennsylvania|Centennial
+Texas Lutheran University|Seguin|Texas|SCAC
+The Catholic University of America|Washington|District of Columbia|Landmark
+The College of New Jersey|Ewing|New Jersey|NJAC
+The College of St. Scholastica|Duluth|Minnesota|MIAC
+The College of Wooster|Wooster|Ohio|NCAC
+The King's University|Southlake|Texas|
+The University of Olivet|Olivet|Michigan|MIAA
+Sewanee: The University of the South|Sewanee|Tennessee|SAA
+Thiel College|Greenville|Pennsylvania|PAC
+Thomas College|Waterville|Maine|NAC
+Transylvania University|Lexington|Kentucky|HCAC
+Trine University|Angola|Indiana|MIAA
+Trinity College (CT)|Hartford|Connecticut|NESCAC
+Trinity University (TX)|San Antonio|Texas|SAA
+Tufts University|Medford|Massachusetts|NESCAC
+Union College (NY)|Schenectady|New York|Liberty League
+United States Coast Guard Academy|New London|Connecticut|NEWMAC
+United States Merchant Marine Academy|Kings Point|New York|Skyline
+University of Chicago|Chicago|Illinois|UAA
+University of Dallas|Irving|Texas|SCAC
+University of Dubuque|Dubuque|Iowa|A-R-C
+University of Hartford|West Hartford|Connecticut|CNE
+University of La Verne|La Verne|California|SCIAC
+University of Lynchburg|Lynchburg|Virginia|ODAC
+University of Maine at Farmington|Farmington|Maine|NAC
+University of Maine at Presque Isle|Presque Isle|Maine|NAC
+University of Mary Hardin-Baylor|Belton|Texas|ASC
+University of Mary Washington|Fredericksburg|Virginia|Coast to Coast
+UMass Boston|Boston|Massachusetts|Little East
+UMass Dartmouth|North Dartmouth|Massachusetts|Little East
+University of Minnesota Morris|Morris|Minnesota|UMAC
+University of Mount Saint Vincent|Bronx|New York|Skyline
+University of Mount Union|Alliance|Ohio|OAC
+University of Northwestern-St. Paul|Saint Paul|Minnesota|UMAC
+Pitt-Bradford|Bradford|Pennsylvania|AMCC
+Pitt-Greensburg|Greensburg|Pennsylvania|AMCC
+University of Puget Sound|Tacoma|Washington|NWC
+University of Redlands|Redlands|California|SCIAC
+University of Rochester|Rochester|New York|UAA
+University of Saint Joseph (CT)|West Hartford|Connecticut|GNAC
+University of Scranton|Scranton|Pennsylvania|Landmark
+University of Southern Maine|Portland|Maine|Little East
+University of St. Thomas (TX)|Houston|Texas|SCAC
+University of Valley Forge|Phoenixville|Pennsylvania|UEC
+UW-Eau Claire|Eau Claire|Wisconsin|WIAC
+UW-La Crosse|La Crosse|Wisconsin|WIAC
+UW-Oshkosh|Oshkosh|Wisconsin|WIAC
+UW-Platteville|Platteville|Wisconsin|WIAC
+UW-River Falls|River Falls|Wisconsin|WIAC
+UW-Stevens Point|Stevens Point|Wisconsin|WIAC
+UW-Stout|Menomonie|Wisconsin|WIAC
+UW-Superior|Superior|Wisconsin|UMAC
+UW-Whitewater|Whitewater|Wisconsin|WIAC
+University of the Ozarks|Clarksville|Arkansas|SCAC
+Ursinus College|Collegeville|Pennsylvania|Centennial
+Utica University|Utica|New York|Empire 8
+Valley Forge Military College|Wayne|Pennsylvania|UEC
+Vassar College|Poughkeepsie|New York|Liberty League
+Vermont State University|Randolph|Vermont|NAC
+Virginia Wesleyan University|Virginia Beach|Virginia|ODAC
+Wabash College|Crawfordsville|Indiana|NCAC
+Wartburg College|Waverly|Iowa|A-R-C
+Washington & Jefferson College|Washington|Pennsylvania|PAC
+Washington College|Chestertown|Maryland|Centennial
+Washington University in St. Louis|St. Louis|Missouri|UAA
+Washington and Lee University|Lexington|Virginia|ODAC
+Waynesburg University|Waynesburg|Pennsylvania|PAC
+Webster University|Saint Louis|Missouri|SLIAC
+Wells College|Aurora|New York|United East
+Wentworth Institute of Technology|Boston|Massachusetts|CNE
+Wesleyan University|Middletown|Connecticut|NESCAC
+Western Connecticut State University|Danbury|Connecticut|Little East
+Western New England University|Springfield|Massachusetts|CNE
+Westfield State University|Westfield|Massachusetts|MASCAC
+Westminster College (MO)|Fulton|Missouri|SLIAC
+Westminster College (PA)|New Wilmington|Pennsylvania|PAC
+Wheaton College (IL)|Wheaton|Illinois|CCIW
+Wheaton College (MA)|Norton|Massachusetts|NEWMAC
+Whitman College|Walla Walla|Washington|NWC
+Whittier College|Whittier|California|SCIAC
+Whitworth University|Spokane|Washington|NWC
+Widener University|Chester|Pennsylvania|MAC
+Wilkes University|Wilkes-Barre|Pennsylvania|Landmark
+Willamette University|Salem|Oregon|NWC
+William Paterson University|Wayne|New Jersey|NJAC
+William Peace University|Raleigh|North Carolina|USA South
+Williams College|Williamstown|Massachusetts|NESCAC
+Wilmington College (OH)|Wilmington|Ohio|OAC
+Wilson College|Chambersburg|Pennsylvania|UEC
+Wisconsin Lutheran College|Milwaukee|Wisconsin|NACC
+Wittenberg University|Springfield|Ohio|NCAC
+Worcester Polytechnic Institute|Worcester|Massachusetts|NEWMAC
+Worcester State University|Worcester|Massachusetts|MASCAC
+Yeshiva University|New York|New York|Skyline
+York College of Pennsylvania|York|Pennsylvania|MAC

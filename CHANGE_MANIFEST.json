@@ -1,0 +1,39 @@
+{
+  "changed": [
+    "admin-recruiting.html",
+    "camps.html",
+    "colleges.html",
+    "data/programs-directory.csv",
+    "data/programs.json",
+    "data/recruiting-seed.json",
+    "my-recruiting.html",
+    "package.json",
+    "recruiting/admin.js",
+    "recruiting/camps.js",
+    "recruiting/colleges.js",
+    "recruiting/data.js",
+    "recruiting/hub.js",
+    "recruiting/logic.js",
+    "recruiting/ui.js",
+    "supabase/migrations/20261120_recruiting_tools.sql",
+    "supabase/seed/programs_seed.sql",
+    "supabase/seed/rules_camps_seed.sql",
+    "tests/recruiting.logic.test.js",
+    "tools/build_programs.py"
+  ],
+  "added": [
+    "FIXES_AND_GAPS.md",
+    "README_RECRUITING_UPDATE.md",
+    "config.recruiting.example.js",
+    "package-lock.json",
+    "supabase/migrations/20261121_recruiting_repairs.sql",
+    "supabase/seed/reviewed_data_repairs.sql",
+    "tests/recruiting.backend.test.js",
+    "tests/recruiting.database.js",
+    "tests/recruiting.dom.js",
+    "tests/recruiting.regressions.test.js",
+    "tests/test_scorecard_import.py",
+    "tools/import_scorecard.py"
+  ],
+  "original_files_preserved": true
+}

@@ -169,7 +169,7 @@ def main():
     for f in os.listdir("images/og"):
         if f.endswith(".jpg") and f[:-4] not in keep:
             os.remove(os.path.join("images/og", f))
-    urls = [f"  <url><loc>{SITE}/</loc></url>", f"  <url><loc>{SITE}/players.html</loc></url>", f"  <url><loc>{SITE}/find-my-level.html</loc></url>"] + [f"  <url><loc>{SITE}/player/{s}/</loc></url>" for s in sorted(keep)]
+    urls = [f"  <url><loc>{SITE}/</loc></url>", f"  <url><loc>{SITE}/players.html</loc></url>", f"  <url><loc>{SITE}/find-my-level.html</loc></url>", f"  <url><loc>{SITE}/colleges.html</loc></url>", f"  <url><loc>{SITE}/camps.html</loc></url>"] + [f"  <url><loc>{SITE}/player/{s}/</loc></url>" for s in sorted(keep)]
     open("sitemap.xml", "w").write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "\n".join(urls) + "\n</urlset>\n")
     print(f"built {len(keep)} player pages:", ", ".join(sorted(keep)))
 

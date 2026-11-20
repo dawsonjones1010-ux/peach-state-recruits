@@ -4,5 +4,7 @@ Disallow: /peach-state-recruits/admin.html
 Disallow: /peach-state-recruits/account.html
 Disallow: /admin.html
 Disallow: /account.html
+Disallow: /peach-state-recruits/admin-recruiting.html
+Disallow: /admin-recruiting.html
 
 Sitemap: https://dawsonjones1010-ux.github.io/peach-state-recruits/sitemap.xml

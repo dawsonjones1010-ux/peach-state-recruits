@@ -3,8 +3,18 @@
   "private": true,
   "description": "Static site. No build step.",
   "scripts": {
-    "test": "node --test tests/estimator.logic.test.js tests/estimator.summary.test.js tests/estimator.v2.test.js tests/estimator.size.test.js",
+    "test": "node --test tests/*.test.js",
+    "test:estimator": "node --test tests/estimator.logic.test.js tests/estimator.summary.test.js tests/estimator.v2.test.js tests/estimator.size.test.js",
     "test:ui": "node tests/estimator.ui.js",
-    "test:potw": "node tests/potw.ui.js"
+    "test:potw": "node tests/potw.ui.js",
+    "test:recruiting": "node tests/recruiting.ui.js",
+    "test:dom": "node tests/recruiting.dom.js",
+    "test:database": "node tests/recruiting.database.js",
+    "test:imports": "python3 -m unittest discover -s tests -p 'test_*.py'"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.3.14",
+    "jsdom": "26.1.0",
+    "playwright": "1.56.1"
   }
 }

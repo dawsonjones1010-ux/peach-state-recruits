@@ -298,6 +298,17 @@
     return `<details class="lvl-sec" data-sec="${id}"><summary><span>${esc(title)}</span><i aria-hidden="true"></i></summary><div class="lvl-sec-b">${body}</div></details>`;
   }
 
+  // Link the comparison to the College Finder by level only (no program-specific fit scores).
+  function exploreHtml(read) {
+    const KEY = { p4: "NCAA D1", mid: "NCAA D1", low: "NCAA D1", d2: "NCAA D2", d3: "NCAA D3", naia: "NAIA", juco: "JUCO" };
+    const lv = U.levels(read).filter(l => l.status === U.ST.MEETS || l.status === U.ST.CLOSE).map(l => KEY[l.key]);
+    const uniq = [...new Set(lv)];
+    const href = "colleges.html?" + (uniq.length ? "levels=" + encodeURIComponent(uniq.join(",")) + "&" : "") + "from=fml";
+    return `<div class="lvl-explore no-print"><p class="lvl-cta2-t">Explore college programs${uniq.length ? ` at ${esc(uniq.join(", "))}` : ""}</p>
+      <p class="lvl-note-sm">Opens the College Finder filtered by level. It doesn't rate how you fit any specific school.</p>
+      <a class="btn btn-line" href="${href}">Open College Finder</a></div>`;
+  }
+
   function readHtml(read, idx) {
     const h = U.headline(read), i = state.input;
     const gapCat = state.gapCat[idx] || (read.categories.find(c => !c.highlighted && c.compared.length) || read.categories[0]).key;
@@ -333,6 +344,7 @@
       </div>
       <div class="lvl-next"><p class="lvl-next-k">Next step</p><p class="lvl-next-t">${esc(nextFor(read))}</p></div>
       <div class="lvl-cta2 no-print"><p class="lvl-cta2-t">Turn these numbers into a coach-ready video</p><a class="btn btn-peach" href="index.html#packages">See packages</a><p class="lvl-cta2-s">${esc(V.ctaSentence(read))}</p></div>
+      ${exploreHtml(read)}
       <div class="lvl-share no-print"><button class="btn btn-line" type="button" data-share="${idx}">Share my result</button><div class="lvl-share-out" id="shareOut${idx}" hidden></div></div>
       <div class="lvl-levels"><h3>Every level</h3>
         <ol class="lvl-lrow">${lv.map(l => `<li class="${ST_CLASS[l.status]}" data-level="${l.key}"><b>${esc(l.label)}</b><span>${esc(l.status)}</span></li>`).join("")}</ol>
