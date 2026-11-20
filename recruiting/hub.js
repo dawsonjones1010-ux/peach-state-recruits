@@ -203,117 +203,12 @@
 
   // ------------------------------------------------------------ EMAILS
   function renderEmails() {
-    const { params } = parseHash();
-    const progId = params.get("program") || (S.saved[0] && S.saved[0].program_id) || "";
-    const kind = L.KINDS[params.get("kind")] ? params.get("kind") : "introduction";
-    const draftId = params.get("draft");
-    let draft = draftId ? S.drafts.find(d => d.id === draftId) : null;
-    const extraProgram = (draft && draft.program_id) || progId;
-    const savedForOptions = S.saved.concat(extraProgram && !S.saved.some(s => s.program_id === extraProgram) ? [{program_id: extraProgram}] : []);
-    const savedOpts = savedForOptions.map(s => [s.program_id, pname(s.program_id)]).sort((a, b) => a[1].localeCompare(b[1]));
-    $("#tab").innerHTML = `
-      <div class="rc-cols rc-cols-side" style="--rc-side:300px">
-        <form class="rc-panel" id="composer" novalidate>
-          <h2>Write to a coach</h2>
-          ${L.profileMissing(S.profile).length ? `<p class="rc-note">Your profile is missing: ${esc(L.profileMissing(S.profile).join(", "))}. <a class="rc-link" href="#profile">Add it</a> and drafts fill in automatically.</p>` : ""}
-          <div class="rc-grid2">
-            <label class="rc-field">School<select class="rc-select" name="program"><option value="">Choose a saved school</option>${savedOpts.map(([id, n]) => `<option value="${esc(id)}"${id === (draft ? draft.program_id : progId) ? " selected" : ""}>${esc(n)}</option>`).join("")}</select></label>
-            <label class="rc-field">Type<select class="rc-select" name="kind">${Object.entries(L.KINDS).map(([k, l]) => `<option value="${k}"${k === (draft ? draft.kind : kind) ? " selected" : ""}>${l}</option>`).join("")}</select></label>
-          </div>
-          <div class="rc-grid2" style="margin-top:10px">
-            <label class="rc-field">Coach name<input class="rc-input" name="coach" maxlength="80"></label>
-            <label class="rc-field">To (coach email)<input class="rc-input" type="email" name="to" maxlength="120" value="${esc(draft ? draft.to_email || "" : "")}"></label>
-          </div>
-          <label class="rc-field" style="margin-top:10px">Why this school / your latest update<input class="rc-input" name="personalNote" maxlength="1500" placeholder="Add a specific reason, new result or event detail"></label>
-          <div id="eventBox" style="margin-top:10px"></div>
-          <label class="rc-field" style="margin-top:10px">Subject<input class="rc-input" name="subject" maxlength="200"></label>
-          <label class="rc-field" style="margin-top:10px">Message<textarea class="rc-textarea" name="body" style="min-height:340px"></textarea></label>
-          <p class="rc-small">Edit anything. Replace every [bracket] before sending. Coach emails come from the school's official staff page. We don't list them.</p>
-          <div class="rc-row" style="margin-top:6px">
-            <button class="rc-btn" type="button" id="regen">Start over from template</button>
-            <button class="rc-btn" type="button" id="copyAll">Copy</button>
-            <a class="rc-btn" id="openMail" href="#">Open in email app</a>
-            <button class="rc-btn" type="button" id="saveDraft">Save draft</button>
-            <button class="rc-btn primary" type="button" id="markSent">I sent it</button>
-          </div>
-        </form>
-        <aside>
-          <section class="rc-panel"><h3>Drafts</h3>
-            ${S.drafts.filter(d => d.status === "draft").map(d => `<div class="rc-spread" style="padding:8px 0;border-bottom:1px solid var(--line)"><a class="rc-link" href="#emails?draft=${esc(d.id)}">${esc(L.KINDS[d.kind])}: ${esc(pname(d.program_id) || "No school")}</a><button class="rc-btn sm danger" data-deldraft="${esc(d.id)}" aria-label="Delete draft">Delete</button></div>`).join("") || `<p class="rc-muted" style="margin:0">No saved drafts.</p>`}
-          </section>
-          <section class="rc-panel"><h3>Tips</h3><ul class="rc-small" style="padding-left:18px;margin:0">
-            <li>One school per email. Say why that school.</li><li>Put grad year, position and video link up top.</li><li>Use "I sent it" so the tracker can remind you to follow up.</li></ul></section>
-        </aside>
-      </div>`;
-    const f = $("#composer");
-    const ss = () => S.saved.find(s => s.program_id === f.elements.namedItem("program").value) || {};
-    function eventBox() {
-      if (f.elements.namedItem("kind").value !== "event_invite") { $("#eventBox").innerHTML = ""; return; }
-      const mine = S.savedCamps.map(sc => S.camps.find(c => c.id === sc.camp_id)).filter(Boolean);
-      $("#eventBox").innerHTML = `<label class="rc-field">Event<select class="rc-select" name="event"><option value="">Type event details below</option>${mine.map(c => `<option value="${esc(c.id)}">${esc(c.title)} · ${esc(L.fmtDate(c.start_date))}</option>`).join("")}</select></label>
-        <div class="rc-grid3" style="margin-top:8px"><label class="rc-field">Event name<input class="rc-input" name="evTitle"></label><label class="rc-field">Date<input class="rc-input" type="date" name="evDate"></label><label class="rc-field">City, state<input class="rc-input" name="evWhere"></label></div>`;
-      f.elements.namedItem("event").onchange = () => { const c = S.camps.find(x => x.id === f.elements.namedItem("event").value); if (c) { f.elements.namedItem("evTitle").value = c.title; f.elements.namedItem("evDate").value = c.start_date; f.elements.namedItem("evWhere").value = [c.city, c.state].filter(Boolean).join(", "); autoFill(); } };
-      ["evTitle", "evDate", "evWhere"].forEach(n => f.elements.namedItem(n).oninput = autoFill);
-    }
-    function ctx() {
-      const prog = S.byId.get(f.elements.namedItem("program").value);
-      const st = L.schoolStatus(f.elements.namedItem("program").value, S.comms);
-      const ev = f.elements.namedItem("evTitle") ? { title: f.elements.namedItem("evTitle").value, start_date: f.elements.namedItem("evDate").value, city: f.elements.namedItem("evWhere").value } : null;
-      return { profile: S.profile, program: prog, coachName: f.elements.namedItem("coach").value, lastSentOn: st.lastSentOn, event: ev, personalNote: f.elements.namedItem("personalNote").value, updateNote: f.elements.namedItem("personalNote").value, followNote: f.elements.namedItem("personalNote").value, eventDetail: f.elements.namedItem("personalNote").value };
-    }
-    let edited = !!draft;
-    function fill() { edited = false; const e = L.buildEmail(f.elements.namedItem("kind").value, ctx()); f.elements.namedItem("subject").value = e.subject; f.elements.namedItem("body").value = e.body; mail(); }
-    function autoFill() { if (!edited) fill(); else U.toast("Template details changed. Your edits are kept; use Start over from template to regenerate."); }
-    function mail() { $("#openMail").href = L.mailtoUrl(f.elements.namedItem("to").value, f.elements.namedItem("subject").value, f.elements.namedItem("body").value); }
-    function syncSchool() { const s = ss(); f.elements.namedItem("coach").value = s.coach_name || ""; if (!draft) f.elements.namedItem("to").value = s.coach_email || ""; }
-    syncSchool(); eventBox();
-    if (f.elements.namedItem("event") && ((draft && draft.camp_id) || params.get("camp"))) {
-      f.elements.namedItem("event").value = (draft && draft.camp_id) || params.get("camp");
-      f.elements.namedItem("event").onchange();
-    }
-    if (draft) { f.elements.namedItem("subject").value = draft.subject || ""; f.elements.namedItem("body").value = draft.body || ""; mail(); } else fill();
-    f.elements.namedItem("program").onchange = () => { syncSchool(); autoFill(); };
-    f.elements.namedItem("kind").onchange = () => { eventBox(); autoFill(); };
-    f.elements.namedItem("coach").oninput = autoFill;
-    f.elements.namedItem("personalNote").onchange = autoFill;
-    f.elements.namedItem("to").oninput = mail;
-    [f.elements.namedItem("subject"), f.elements.namedItem("body")].forEach(i => i.oninput = () => { edited = true; mail(); });
-    $("#regen").onclick = async () => { if (!edited || await U.confirmDialog("Replace your edited message with the template?")) fill(); };
-    $("#copyAll").onclick = () => U.copy(`Subject: ${f.elements.namedItem("subject").value}\n\n${f.elements.namedItem("body").value}`, "Email copied");
-    $("#openMail").onclick = e => { if (!f.elements.namedItem("to").value) { U.toast("No coach email. Your email app will open without one."); } };
-    $("#saveDraft").onclick = async () => {
-      if (!f.reportValidity()) return;
-      const row = { program_id: f.elements.namedItem("program").value || null, kind: f.elements.namedItem("kind").value, camp_id: f.elements.namedItem("event") && f.elements.namedItem("event").value || null, to_email: f.elements.namedItem("to").value || null, subject: f.elements.namedItem("subject").value, body: f.elements.namedItem("body").value, status: "draft" };
-      try {
-        if (draft) { Object.assign(draft, await api.table("email_drafts").update(draft.id, row)); }
-        else { const r = await api.table("email_drafts").insert(row); S.drafts.push(r); draft = r; history.replaceState(null, "", "#emails?draft=" + r.id); }
-        U.toast("Draft saved"); shell();
-      } catch (e) { U.toast(e.message); }
-    };
-    $("#markSent").onclick = () => {
-      if (!f.reportValidity()) return;
-      if (!f.elements.namedItem("program").value) { U.toast("Choose the school first"); return; }
-      const fu = L.toISO(L.addDays(today(), 10));
-      U.openDialog(`<form method="dialog" id="sent"><h2>Log as sent</h2><p class="rc-muted">Only confirm after you've actually sent it from your email.</p>
-        <div class="rc-grid2"><label class="rc-field">Sent on<input class="rc-input" type="date" name="on" value="${today()}" max="${today()}" required></label>
-        <label class="rc-field">Remind me to follow up <small>(optional)</small><input class="rc-input" type="date" name="fu" value="${fu}"></label></div>
-        <div class="rc-dlg-actions"><button class="rc-btn" value="cancel" formnovalidate>Cancel</button><button class="rc-btn primary" value="ok">Log it</button></div></form>`, d => {
-        $("#sent", d).onsubmit = async e => {
-          if (e.submitter && e.submitter.value === "cancel") return; e.preventDefault();
-          try {
-            const button = e.submitter; if (button) button.disabled = true;
-            const drow = { program_id: f.elements.namedItem("program").value, kind: f.elements.namedItem("kind").value, camp_id: f.elements.namedItem("event") && f.elements.namedItem("event").value || null, to_email: f.elements.namedItem("to").value || null, subject: f.elements.namedItem("subject").value, body: f.elements.namedItem("body").value, status: "draft" };
-            if (draft) { draft = await api.table("email_drafts").update(draft.id, drow); }
-            else { draft = await api.table("email_drafts").insert(drow); history.replaceState(null, "", "#emails?draft=" + draft.id); }
-            const result = await api.logEmailSent(draft.id, e.target.elements.namedItem("on").value, e.target.elements.namedItem("fu").value || null, f.elements.namedItem("coach").value || null);
-            draft = result.draft;
-            await loadAll();
-            d.close(); U.toast("Logged in your tracker"); location.hash = "#tracker?program=" + f.elements.namedItem("program").value;
-          } catch (err) { U.toast(err.message); if (e.submitter) e.submitter.disabled = false; }
-        };
-      });
-    };
-    $$("[data-deldraft]").forEach(b => b.onclick = async () => { if (!(await U.confirmDialog("Delete this draft?"))) return; await api.table("email_drafts").remove(b.dataset.deldraft); S.drafts = S.drafts.filter(d => d.id !== b.dataset.deldraft); location.hash = "#emails"; shell(); });
+    const {params}=parseHash();
+    window.PSREmailUI.mount($("#tab"),{
+      profile:S.profile,programs:S.programs,saved:S.saved,drafts:S.drafts,comms:S.comms,camps:S.camps,savedCamps:S.savedCamps,api,params,
+      onSaved:async()=>{S.drafts=await api.table("email_drafts").list();},
+      onSent:async programId=>{await loadAll();location.hash="#tracker?program="+programId;}
+    });
   }
 
   // ------------------------------------------------------------ TRACKER

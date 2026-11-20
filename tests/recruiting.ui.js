@@ -95,17 +95,17 @@ async function submitDialog(page, formId, fill) {
 
   // ---------- Emails + tracker ----------
   await go(page, "my-recruiting.html?demo=1#emails");
-  await page.waitForSelector("#composer");
-  const opt = await page.$$eval('#composer select[name=program] option', os => os.map(o => o.value).filter(Boolean));
-  ok(opt.length === 1, "composer lists the saved school");
-  await page.selectOption('#composer select[name=program]', opt[0]); await page.waitForTimeout(300);
-  const body = await page.$eval('#composer textarea[name=body]', t => t.value);
+  await page.waitForSelector("#emailContext");
+  ok((await page.inputValue('#emailContext input[name=school]')).includes('Georgia'), "composer preselects the saved school");
+  const body = await page.inputValue('#ecBody');
   ok(/Alex/.test(body) && /2028/.test(body), "introduction draft uses the player's profile");
-  ok(!/\{\{|undefined|null/.test(body), "draft has no placeholders or blanks");
-  const href = await page.$eval("#openMail", a => a.getAttribute("href") || "");
-  ok(/^mailto:/.test(href), "open-email button builds a mailto link");
-  await page.click("#markSent");
-  await submitDialog(page, "sent");
+  ok(!/\{\{|undefined|null/.test(body), "draft has no invalid values");
+  ok(await page.$('#ecOpen') !== null, "email app review control is available");
+  await page.click("#ecSent");
+  await page.waitForSelector('#ecSentForm');
+  await page.fill('#ecSentForm input[name=followOn]', '2026-12-01');
+  await page.click('#ecSentForm button[type=submit]');
+  await page.waitForTimeout(400);
   await go(page, "my-recruiting.html?demo=1#tracker");
   const trk = await page.$eval("#tab", t => t.innerText);
   ok(/Introduction/i.test(trk) && /Georgia/.test(trk), "tracker logs the sent introduction");

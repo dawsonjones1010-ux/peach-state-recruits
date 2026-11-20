@@ -1,3 +1,5 @@
+// Legacy v21 visual-contract suite. The v22 report intentionally changes these layouts/copy.
+// Run npm run test:ui for the current v22 real-browser acceptance suite.
 // Playwright UI tests for Find My Level.
 // Run: NODE_PATH=/path/to/node_modules node tests/estimator.ui.js <base-url> [screenshot-dir]
 // e.g. node tests/estimator.ui.js http://127.0.0.1:47613/peach-state-recruits/ /workspace/psr_v13_shots

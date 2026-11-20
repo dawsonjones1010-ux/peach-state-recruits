@@ -1,3 +1,7 @@
+# v22 Find My Level and Email Coach update
+
+Read [START_HERE_V22.md](START_HERE_V22.md) for the current installation and validation handoff.
+
 # Peach State Recruits website
 
 **Auto-posting from Instagram and player logins:** see `SETUP.md`. Without that setup, the site still works from `players.json`, as described below.

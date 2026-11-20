@@ -128,7 +128,7 @@
     today = today || new Date();
     const t = ymd(today.getFullYear(), today.getMonth() + 1, today.getDate());
     const J = gradYear - 2; // junior year starts in the fall of this year
-    if (t >= ymd(gradYear, 7, 1)) return { graduated: true, title: "Your recruiting clock", line: `Class of ${gradYear} has graduated high school. JUCO and NAIA coaches can still contact you at any time.` };
+    if (t >= ymd(gradYear, 7, 1)) return { graduated: true, title: "Your recruiting clock", line: `Class of ${gradYear} has graduated high school. Review transfer, enrollment and signed-aid restrictions with each school before arranging recruiting contact.` };
     const dateFor = (r) => {
       if (/^Aug 1 before junior year/.test(r.when)) return ymd(J, 8, 1);
       if (/^Sept 1 of junior year/.test(r.when)) return ymd(J, 9, 1);

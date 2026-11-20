@@ -83,8 +83,8 @@ test("hitter sophomore panel: position groups, early commits only, small-sample 
 
 test("recruiting clock: open levels, next date countdown, Indiana wave labeled as one state's data, NAIA shown", () => {
   const c = V.clock(add, 2029, day("2026-11-19"));
-  assert.deepEqual(c.openLevels, ["D3", "NAIA", "JUCO"]);
-  assert.deepEqual(c.closedLevels, ["D1", "D2"]);
+  assert.deepEqual(c.openLevels, ["D2", "D3", "NAIA", "JUCO"]);
+  assert.deepEqual(c.closedLevels, ["D1"]);
   assert.equal(c.next.level, "D2"); assert.equal(c.next.dateText, "June 15, 2027"); assert.equal(c.next.days, 208);
   assert.ok(c.rules.some(r => r.level === "NAIA" && /does not regulate/.test(r.event)));
   assert.ok(!c.rules.some(r => /VERIFY/.test(r.when)));

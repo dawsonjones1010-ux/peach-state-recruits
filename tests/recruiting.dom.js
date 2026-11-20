@@ -12,7 +12,7 @@ function create(page,query='?demo=1') {
  w.HTMLDialogElement.prototype.showModal=function(){this.setAttribute('open','');};
  w.HTMLDialogElement.prototype.close=function(){this.removeAttribute('open');this.dispatchEvent(new w.Event('close'));};
  const load=file=>w.eval(fs.readFileSync(path.join(ROOT,file),'utf8'));
- ['recruiting/logic.js','recruiting/data.js','recruiting/ui.js'].forEach(load);
+ ['recruiting/logic.js','recruiting/data.js','recruiting/ui.js','recruiting/research.js','recruiting/email.js','recruiting/email-ui.js'].forEach(load);
  return {w,load,api:w.PSRData.init(),errors,dom};
 }
 function input(w,form,name,value){const e=form.elements.namedItem(name);a.ok(e,'field '+name);e.value=value;return e;}
@@ -24,12 +24,12 @@ function submit(w,form,button){const event=new w.Event('submit',{bubbles:true,ca
  await t.api.table('saved_schools').insert({program_id:p.id,stage:'researching',interest:'high'});
  await t.api.saveProfile({first_name:'Alex',last_name:'Rivera',grad_year:2028,primary_position:'SS',high_school:'Test HS',contact_email:'alex@example.com'});
  t.w.location.hash='#emails';t.load('recruiting/hub.js');await wait();await wait();
- let f=t.w.document.querySelector('#composer');check(!!f,'email composer renders');check(f.elements.namedItem('body').value.includes('Alex'),'draft uses player profile');
- input(t.w,f,'body','My custom message');f.elements.namedItem('body').dispatchEvent(new t.w.Event('input'));
- input(t.w,f,'coach','John Smith');f.elements.namedItem('coach').dispatchEvent(new t.w.Event('input'));
- check(f.elements.namedItem('body').value==='My custom message','coach field does not erase edited message');
- t.w.document.querySelector('#saveDraft').click();await wait();check((await t.api.table('email_drafts').list()).length===1,'draft saves');
- t.w.document.querySelector('#markSent').click();let sf=t.w.document.querySelector('#sent');check(!!sf,'sent confirmation opens');submit(t.w,sf,sf.querySelector('[value=ok]'));await wait();await wait();
+ let f=t.w.document.querySelector('#emailContext');check(!!f,'email composer renders');check(t.w.document.querySelector('#ecBody').value.includes('Alex'),'draft uses player profile');
+ t.w.document.querySelector('#ecBody').value='My custom message';t.w.document.querySelector('#ecBody').dispatchEvent(new t.w.Event('input'));
+ input(t.w,f,'coach','John Smith');f.elements.namedItem('coach').dispatchEvent(new t.w.Event('input',{bubbles:true}));
+ check(t.w.document.querySelector('#ecBody').value==='My custom message','coach field does not erase edited message');
+ t.w.document.querySelector('#ecSave').click();await wait();check((await t.api.table('email_drafts').list()).length===1,'draft saves');
+ t.w.document.querySelector('#ecSent').click();let sf=t.w.document.querySelector('#ecSentForm');check(!!sf,'sent confirmation opens');submit(t.w,sf,sf.querySelector('[type=submit]'));await wait();await wait();
  let comms=await t.api.table('communications').list();check(comms.length===1,'sent confirmation creates one tracker record');check((await t.api.table('saved_schools').list())[0].stage==='contacted','sent confirmation updates saved school stage');
  await t.api.logEmailSent(comms[0].draft_id,'2026-11-20',null,null);check((await t.api.table('communications').list()).length===1,'retry remains idempotent');
  let resolved=false;const promise=t.w.PSRUI.confirmDialog('Confirm?').then(v=>{resolved=true;return v;});t.w.document.querySelector('dialog').close();a.equal(await promise,false);check(resolved,'dialog close settles confirmation as cancel');
