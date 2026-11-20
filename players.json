@@ -1,5 +1,68 @@
 [
   {
+    "slug": "thomas-terravecchia",
+    "active": true,
+    "name": "Thomas Terravecchia",
+    "sport": "Baseball",
+    "position": "RHP",
+    "gradYear": 2029,
+    "school": "Wantagh High School",
+    "team": "Giac Squad",
+    "location": "Wantagh, New York",
+    "coverImage": "images/players/thomas-terravecchia.jpg",
+    "headline": "THOMAS TERRAVECCHIA IS AN ELITE ARM📈",
+    "playerInstagram": [],
+    "measurables": [
+      {
+        "label": "Height",
+        "value": "5'8\""
+      },
+      {
+        "label": "Weight",
+        "value": "138 lb"
+      },
+      {
+        "label": "Position",
+        "value": "RHP"
+      }
+    ],
+    "video": {
+      "youtube": "",
+      "file": ""
+    },
+    "highlights": [],
+    "report": "🔥 Thomas Terravecchia is a promising 2029 right-hander out of Wantagh, New York who has already earned a role on varsity. The Giac Squad arm brings a competitive edge and continues to show real growth.\n\n⚾️ On the mound, Terravecchia attacks hitters with a fastball that tops in the low 80s. As a freshman on varsity, he posted a 3.45 ERA with 31 strikeouts over 42.2 innings, holding his own against older competition. He carried that momentum into the summer, recording a 1.08 ERA with Giac Squad.\n\n⚡️ With a live arm and a strong frame to keep building on, Thomas has the tools to keep climbing as he matures.\n\nBacked by varsity experience and an arm that keeps trending up, Terravecchia is a 2029 New York pitcher to keep tabs on. 👀📈",
+    "stats": null,
+    "academics": [],
+    "links": [],
+    "contactEmail": "",
+    "contactInstagram": "peachstaterecruits",
+    "contactName": "Peach State Recruits",
+    "postUrl": "",
+    "account": "peachstaterecruits",
+    "showOnHome": true,
+    "videos": [
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/thomas-terravecchia/clip1.mp4",
+        "title": "Highlight clip 1"
+      },
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/thomas-terravecchia/clip2.mp4",
+        "title": "Highlight clip 2"
+      },
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/thomas-terravecchia/clip3.mp4",
+        "title": "Highlight clip 3"
+      }
+    ],
+    "coachReport": "Profile: 2029 right-handed pitcher from Wantagh, New York. Wantagh High School; Giac Squad. 5'8\", 138 lb.\nPitching: Fastball that tops in the low 80s. As a freshman on varsity, posted a 3.45 ERA with 31 strikeouts over 42.2 innings. Recorded a 1.08 ERA with Giac Squad in the summer.",
+    "featuredRank": null,
+    "featureDate": "2026-11-20"
+  },
+  {
     "slug": "colin-lopez",
     "active": true,
     "name": "Colin Lopez",
