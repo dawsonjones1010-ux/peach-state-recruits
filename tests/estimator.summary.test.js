@@ -1,7 +1,7 @@
 // Tests for the v13 presentation summary (headline, next step, level statuses).
 const test = require("node:test"), assert = require("node:assert");
 const L = require("../estimator/logic.js"), U = require("../estimator/summary.js"), data = require("../data/level-benchmarks-v1.0.json");
-const run = (o) => L.evaluate(data, Object.assign({ gradYear: 2027, throws: "R", bats: "R", secondary: "", meta: {} }, o));
+const run = (o) => L.evaluate(data, Object.assign({ gradYear: 2027, throws: "R", bats: "R", secondary: "", heightIn: 72, weightLb: 180, meta: {} }, o));
 const row = (rd) => U.levels(rd).map(l => `${l.label}: ${l.status}`).join("|");
 
 test("CF 94 / 6.75 / 88: headline, next step, level row", () => {

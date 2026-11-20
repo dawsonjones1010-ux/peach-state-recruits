@@ -1,0 +1,200 @@
+{
+  "schema_version": "size-1.0",
+  "research_as_of": "2026-11-19",
+  "use": "context_panel_only",
+  "exclude_from_automatic_classification": true,
+  "college_roster_sample": {
+    "source": "Peach State Recruits roster sample, official school roster pages, Nov 2026; raw rows in PSR_College_Roster_Size_Sample_2026.csv",
+    "limitations": "Listed (not measured) heights/weights; college players aged ~18-23; 3 teams per level (2 for JUCO); Southeast-weighted; Emory and Johns Hopkins are high-academic D3; JUCO weight from one team; Lewis-Clark State partial roster.",
+    "levels": {
+      "Power 4": {
+        "teams": 3,
+        "n": 125,
+        "mean_height_in": 74.08,
+        "mean_weight_lb": 206.4,
+        "pct_6_2_plus": 58.4,
+        "pct_under_6_0": 16.0,
+        "pitchers": {
+          "n": 68,
+          "height_in": 74.9,
+          "weight_lb": 208.8
+        },
+        "position": {
+          "n": 57,
+          "height_in": 73.3,
+          "weight_lb": 203.5
+        }
+      },
+      "Mid-major D1": {
+        "teams": 3,
+        "n": 107,
+        "mean_height_in": 72.88,
+        "mean_weight_lb": 197.9,
+        "pct_6_2_plus": 37.4,
+        "pct_under_6_0": 29.0,
+        "pitchers": {
+          "n": 58,
+          "height_in": 73.9,
+          "weight_lb": 201.9
+        },
+        "position": {
+          "n": 49,
+          "height_in": 71.7,
+          "weight_lb": 193.1
+        }
+      },
+      "Lower D1": {
+        "teams": 3,
+        "n": 91,
+        "mean_height_in": 72.63,
+        "mean_weight_lb": 193.0,
+        "pct_6_2_plus": 38.5,
+        "pct_under_6_0": 29.7,
+        "pitchers": {
+          "n": 42,
+          "height_in": 73.0,
+          "weight_lb": 193.9
+        },
+        "position": {
+          "n": 49,
+          "height_in": 72.3,
+          "weight_lb": 192.3
+        }
+      },
+      "D2": {
+        "teams": 3,
+        "n": 124,
+        "mean_height_in": 72.67,
+        "mean_weight_lb": 191.6,
+        "pct_6_2_plus": 35.5,
+        "pct_under_6_0": 26.6,
+        "pitchers": {
+          "n": 61,
+          "height_in": 73.2,
+          "weight_lb": 193.1
+        },
+        "position": {
+          "n": 63,
+          "height_in": 72.2,
+          "weight_lb": 190.0
+        }
+      },
+      "D3": {
+        "teams": 3,
+        "n": 124,
+        "mean_height_in": 72.29,
+        "mean_weight_lb": 191.0,
+        "pct_6_2_plus": 29.8,
+        "pct_under_6_0": 32.3,
+        "pitchers": {
+          "n": 50,
+          "height_in": 73.1,
+          "weight_lb": 192.3
+        },
+        "position": {
+          "n": 74,
+          "height_in": 71.8,
+          "weight_lb": 190.1
+        }
+      },
+      "NAIA": {
+        "teams": 3,
+        "n": 106,
+        "mean_height_in": 72.66,
+        "mean_weight_lb": 193.6,
+        "pct_6_2_plus": 37.7,
+        "pct_under_6_0": 34.9,
+        "pitchers": {
+          "n": 52,
+          "height_in": 73.6,
+          "weight_lb": 197.9
+        },
+        "position": {
+          "n": 54,
+          "height_in": 71.7,
+          "weight_lb": 189.5
+        }
+      },
+      "JUCO": {
+        "teams": 2,
+        "n_height": 74,
+        "n_weight": 35,
+        "mean_height_in": 72.97,
+        "mean_weight_lb": 194.6,
+        "pct_6_2_plus": 41.9,
+        "pct_under_6_0": 21.6,
+        "pitchers": {
+          "n": 39,
+          "height_in": 73.8,
+          "weight_lb": 197.4
+        },
+        "position": {
+          "n": 35,
+          "height_in": 72.1,
+          "weight_lb": 192.1
+        },
+        "note": "Weight from Jones College only"
+      }
+    }
+  },
+  "hs_recruit_sources": [
+    {
+      "source_id": "SL",
+      "group": "Rising seniors, all positions",
+      "height_in": {
+        "Power 4": 73.8,
+        "Mid-major D1": 73.7,
+        "D2": 71.9,
+        "D3": 72.9,
+        "JUCO / NAIA": 71.8
+      },
+      "weight_lb": {
+        "Power 4": 179,
+        "Mid-major D1": 181,
+        "D2": 174,
+        "D3": 173,
+        "JUCO / NAIA": 165
+      }
+    },
+    {
+      "source_id": "FG",
+      "group": "Outfielders, junior HS season+",
+      "height_in": {
+        "D1 (Top 100)": 72.8,
+        "D1 (Mid Tier)": 72.3,
+        "D1 (Lower Tier)": 72.0,
+        "D2": 71.6,
+        "D3": 71.2,
+        "NAIA": 71.3
+      },
+      "weight_lb": {
+        "D1 (Top 100)": 187,
+        "D1 (Mid Tier)": 184,
+        "D1 (Lower Tier)": 183,
+        "D2": 178,
+        "D3": 175,
+        "NAIA": 172
+      }
+    },
+    {
+      "source_id": "PBR_IN_P",
+      "group": "Eventual D1 pitchers as sophomores",
+      "height_weight": {
+        "D1": "6'2\", 184",
+        "Power 4": "6'2\", 188"
+      },
+      "fact": "57.4% of those 6'2\"+ signed Power 4 vs 34% of shorter pitchers."
+    },
+    {
+      "source_id": "PBR_WI_E",
+      "group": "Early commits as sophomores",
+      "height_weight": {
+        "Power 4 hitters": "6'1\", 192",
+        "Mid-major hitters": "6'0\", 180",
+        "Power 4 RHP": "6'2\", 194",
+        "Mid-major RHP": "6'1\", 194"
+      },
+      "use": "hidden_until_owner_review"
+    }
+  ]
+}

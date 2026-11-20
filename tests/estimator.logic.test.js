@@ -6,7 +6,7 @@ const CFG = require("../estimator/config.js");
 const data = require("../data/level-benchmarks-v1.0.json");
 const S = L.S;
 
-const base = (o) => Object.assign({ gradYear: 2027, primary: "SS", secondary: "", throws: "R", bats: "R", heightIn: null, weightLb: null, metrics: {}, meta: {} }, o);
+const base = (o) => Object.assign({ gradYear: 2027, primary: "SS", secondary: "", throws: "R", bats: "R", heightIn: 72, weightLb: 180, metrics: {}, meta: {} }, o);
 const run = (o) => L.evaluate(data, base(o));
 const cat = (read, key) => read.categories.find(c => c.key === key);
 const RANK = { [S.MEETS]: 2, [S.BELOW]: 1 };

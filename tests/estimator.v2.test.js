@@ -6,7 +6,7 @@ const L = require("../estimator/logic.js"), U = require("../estimator/summary.js
 const PG = require("../estimator/progress.js"), CFG = require("../estimator/config.js");
 const data = JSON.parse(fs.readFileSync(path.join(__dirname, "../data/level-benchmarks-v1.0.json"), "utf8"));
 const add = JSON.parse(fs.readFileSync(path.join(__dirname, "../data/level-benchmarks-v1.1-additions.json"), "utf8"));
-const base = (o) => Object.assign({ gradYear: 2027, primary: "CF", secondary: "", throws: "R", bats: "R", heightIn: null, weightLb: null, metrics: {}, methods: {}, meta: {} }, o);
+const base = (o) => Object.assign({ gradYear: 2027, primary: "CF", secondary: "", throws: "R", bats: "R", heightIn: 72, weightLb: 180, metrics: {}, methods: {}, meta: {} }, o);
 const day = (s) => new Date(s + "T12:00:00");
 
 test("additions file is Part 3's JSON, loaded next to v1, and never reaches the highlight rule", () => {

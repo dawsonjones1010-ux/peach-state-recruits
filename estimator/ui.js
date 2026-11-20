@@ -7,7 +7,7 @@
 */
 (function () {
   "use strict";
-  const L = window.PSRLevel, CFG = window.PSRLevelConfig, S = L.S, V = window.PSRLevelV2, PG = window.PSRLevelProgress;
+  const L = window.PSRLevel, CFG = window.PSRLevelConfig, S = L.S, V = window.PSRLevelV2, PG = window.PSRLevelProgress, Z = window.PSRLevelSize;
   const store = (() => { try { const k = "__psr_t"; localStorage.setItem(k, "1"); localStorage.removeItem(k); return localStorage; } catch (e) { return null; } })();
   const app = document.getElementById("lvlApp");
   if (!app || !L) return;
@@ -123,15 +123,15 @@
         ${seg("throws", "Throws", [["R", "Right"], ["L", "Left"]], i.throws, v, true)}
         ${seg("bats", "Bats", [["R", "Right"], ["L", "Left"], ["S", "Switch"]], i.bats, v, true)}
       </div>
-      <details class="lvl-more" ${i.heightIn != null || i.weightLb != null ? "open" : ""}><summary>Height and weight <span class="lvl-opt">optional context</span></summary>
-        <p class="lvl-hint">Shown for context only. Height and weight never change the level comparison.</p>
+      <div class="lvl-hw">
         <div class="lvl-grid">
           <div class="lvl-field${v.errors.some(x => x.field === "heightIn") || v.warnings.some(x => x.field === "heightIn") ? " is-invalid" : ""}" data-wrap="heightIn"><span class="lvl-label" id="hLbl">Height</span><div class="lvl-pair">
-            <select class="select" id="f_heightIn" data-h="ft" aria-labelledby="hLbl">${ft.map(([a, b]) => `<option value="${a}" ${hFt === a ? "selected" : ""}>${b}</option>`).join("")}</select>
+            <select class="select" id="f_heightIn" data-h="ft" aria-labelledby="hLbl" aria-required="true"${v.errors.some(x => x.field === "heightIn") ? ` aria-invalid="true" aria-describedby="err-heightIn"` : ""}>${ft.map(([a, b]) => `<option value="${a}" ${hFt === a ? "selected" : ""}>${b}</option>`).join("")}</select>
             <select class="select" data-h="in" aria-label="Height, inches">${inch.map(([a, b]) => `<option value="${a}" ${hIn === a ? "selected" : ""}>${b}</option>`).join("")}</select></div>${errorsFor("heightIn", v)}</div>
-          <div class="lvl-field${v.errors.some(x => x.field === "weightLb") || v.warnings.some(x => x.field === "weightLb") ? " is-invalid" : ""}" data-wrap="weightLb"><label for="f_weightLb">Weight</label><div class="lvl-input-unit"><input class="input" id="f_weightLb" data-plain="weightLb" inputmode="numeric" autocomplete="off" value="${esc(state.raw.weightLb != null ? state.raw.weightLb : (i.weightLb != null ? i.weightLb : ""))}"><span class="lvl-unit" aria-hidden="true">lb</span></div>${errorsFor("weightLb", v)}</div>
+          <div class="lvl-field${v.errors.some(x => x.field === "weightLb") || v.warnings.some(x => x.field === "weightLb") ? " is-invalid" : ""}" data-wrap="weightLb"><label for="f_weightLb">Weight</label><div class="lvl-input-unit"><input class="input" id="f_weightLb" data-plain="weightLb" inputmode="numeric" autocomplete="off" aria-required="true"${v.errors.some(x => x.field === "weightLb") ? ` aria-invalid="true" aria-describedby="err-weightLb"` : ""} value="${esc(state.raw.weightLb != null ? state.raw.weightLb : (i.weightLb != null ? i.weightLb : ""))}"><span class="lvl-unit" aria-hidden="true">lb</span></div>${errorsFor("weightLb", v)}</div>
         </div>
-      </details>
+        <p class="lvl-hint">Used for the "Your frame" comparison only. Height and weight never change your level.</p>
+      </div>
       <div class="lvl-actions"><span class="lvl-privacy">Nothing leaves your browser unless you tap Send.</span><button class="btn btn-peach btn-lg" type="submit">Next: your numbers</button></div>
     </form>`;
   }
@@ -339,6 +339,7 @@
         <p class="lvl-note-sm">D2, D3, NAIA and JUCO overlap; they are not a strict ladder. "Close" means at least one of your numbers meets that level's published target and at least one is below it.</p></div>
       ${numbersStrip(read)}
       ${youngHtml(read, idx)}
+      ${frameHtml(read, idx)}
       ${sec("levels", "All levels in detail", detail)}
       ${sec("compare", "How you compare with committed players", compare)}
     </section>`;
@@ -347,7 +348,7 @@
   function results() {
     const r = state.result, i = state.input;
     const ctx = [];
-    if (i.heightIn != null) ctx.push(`${Math.floor(i.heightIn / 12)}' ${i.heightIn % 12}"`);
+    if (i.heightIn != null) ctx.push(`${Math.floor(i.heightIn / 12)}'${i.heightIn % 12}"`);
     if (i.weightLb != null) ctx.push(`${i.weightLb} lb`);
     const tab = Math.min(state.tab || 0, r.reads.length - 1);
     const tabs = r.reads.length > 1 ? `<div class="lvl-tabs" role="tablist" aria-label="Results by position">${r.reads.map((rd, k) => `<button type="button" role="tab" id="tab${k}" aria-controls="tp${k}" aria-selected="${k === tab}" tabindex="${k === tab ? 0 : -1}" data-tab="${k}">${esc(U.tabLabel(rd))}</button>`).join("")}</div>` : "";
@@ -368,11 +369,12 @@
       <p class="lvl-note-sm">Benchmark data v${esc(r.dataVersion)}, research as of ${esc(r.researchAsOf)}. ${esc(r.interpretationNote)}</p>
       <ul class="lvl-list">${state.data.sources.filter(s => ["NC", "NS", "BP", "FG", "SL", "PC", "SEC"].includes(s.id)).map(s => `<li><b>${esc(s.publisher)}</b> (${esc(s.evidence_type)}, ${esc(s.publication_or_check)}): ${esc(s.limitation)} <a href="${esc(s.url)}" target="_blank" rel="noopener">Source</a></li>`).join("")}</ul>
       ${addSrc.length ? `<h4>v2 context sources (never change your level)</h4><ul class="lvl-list">${addSrc.map(s => `<li><b>${esc(s.publisher)}</b>, ${esc(s.title)} (${esc(s.evidence_type)}): ${esc(s.limitation)} <a href="${esc(s.url)}" target="_blank" rel="noopener">Source</a></li>`).join("")}</ul>` : ""}
+      ${state.size ? `<h4>Height and weight study (context only)</h4><ul class="lvl-list"><li><b>Peach State Recruits</b>, college roster sample (751 players, 20 rosters, official school roster pages, Nov 2026). ${esc(state.size.college_roster_sample.limitations)} <a href="${esc(CFG.SIZE_CSV_URL)}" download>Download the roster rows (CSV)</a></li><li><b>Slammers</b> and <b>Flatground</b> committed high school player heights and weights, from the reports listed above.</li></ul>` : ""}
       ${state.add && state.add.landscape_facts ? `<h4>The landscape</h4><ul class="lvl-list">${state.add.landscape_facts.map(f => `<li>${esc(f.fact)}${f.url ? ` <a href="${esc(f.url)}" target="_blank" rel="noopener">Source</a>` : ""}</li>`).join("")}</ul>` : ""}
       ${state.add && state.add.measurement_notes ? `<h4>Measurement notes</h4><ul class="lvl-list">${state.add.measurement_notes.map(n => `<li>${esc(n)}</li>`).join("")}</ul>` : ""}
       <p class="lvl-note-sm">"Committed players' best showcase results" is BaseballPath. "Outfielders during or after their junior season" is Flatground. "Rising-senior summer group" is Slammers. College pitchers' fastballs come from Pitching Coach U and an SEC research sample.</p>`;
     return `<div class="lvl-results">
-      <p class="lvl-sub lvl-res-meta">${esc(positions().join(" / "))} · Class of ${esc(i.gradYear)} · Throws ${esc(i.throws)} · Bats ${esc(i.bats)}${ctx.length ? ` · ${esc(ctx.join(", "))} (context only)` : ""}</p>
+      <p class="lvl-sub lvl-res-meta">${esc(positions().join(" / "))} · Class of ${esc(i.gradYear)} · Throws ${esc(i.throws)} · Bats ${esc(i.bats)}${ctx.length ? ` · ${esc(ctx.join(", "))}` : ""}</p>
       ${tabs}
       ${r.reads.map((rd, k) => `<div class="lvl-tabpanel" id="tp${k}"${r.reads.length > 1 ? ` role="tabpanel" aria-labelledby="tab${k}"` : ""}${k === tab ? "" : " hidden"}>${readHtml(rd, k)}</div>`).join("")}
       ${r.twoWay ? `<p class="lvl-note-sm">Two-way player: pitching and position play are compared separately and never blended into one result.</p>` : ""}
@@ -469,6 +471,30 @@
       ${(p.facts || []).map(f => `<p class="lvl-young-fact">${esc(f)}</p>`).join("")}
       ${p.noPositionGroup ? `<p class="lvl-note-sm">${esc(p.noPositionGroup)}</p>` : ""}
       ${p.groups.map(cohortTable).join("")}</section>`;
+  }
+  function frameHtml(read, idx) {
+    if (!Z || !state.size) return "";
+    const g = V ? V.gradeWhenMeasured(state.input).grade : null;
+    const f = Z.frame(state.size, state.input, read, { grade: g, csvUrl: CFG.SIZE_CSV_URL });
+    if (!f) return "";
+    const notes = [...new Set(f.rows.map(r => r.oneTeamNote).concat(f.rows.map(r => r.pooledNote)).filter(Boolean))];
+    const a = f.about;
+    return `<section class="lvl-frame" data-frame="${esc(f.kind)}" aria-labelledby="fr${idx}"><h3 id="fr${idx}">${esc(f.title)} <small>Context only</small></h3>
+      <p class="lvl-frame-head">${esc(f.headline)}</p>
+      <div class="lvl-frame-scroll"><table class="lvl-frame-t"><caption class="sr-only">Your height and weight next to committed high school players and current college rosters, by level</caption>
+        <thead><tr><th scope="col">Level</th><th scope="col">You</th><th scope="col">Committed high school players</th><th scope="col">College rosters now <small>(${esc(f.groupLabel.replace("College ", ""))})</small></th></tr></thead>
+        <tbody>${f.rows.map(r => `<tr data-lv="${esc(r.level)}"><th scope="row">${esc(r.short)}</th><td>${esc(r.you)}</td><td${r.hs.length ? "" : ' class="na"'}>${esc(r.hsText)}</td><td>${esc(r.collegeText)}</td></tr>`).join("")}</tbody></table></div>
+      ${notes.map(n => `<p class="lvl-note-sm">${esc(n)}</p>`).join("")}
+      ${f.fgD1 ? `<p class="lvl-note-sm">${esc(f.fgD1Note)} ${f.fgD1.map(t => `${esc(t.tier)}: ${esc(Z.ht(t.height_in))}, ${esc(t.weight_lb)}`).join(" · ")}.</p>` : ""}
+      <p class="lvl-frame-note">${esc(f.note)}</p>
+      ${f.pitcherFact ? `<p class="lvl-young-fact">${esc(f.pitcherFact)}</p>` : ""}
+      <details class="lvl-about"><summary>About this data</summary>
+        <p class="lvl-note-sm">${esc(a.source)}.</p>
+        <ul class="lvl-list lvl-about-l">${a.levels.map(l => `<li><b>${esc(l.level)}</b>: ${esc(l.teams)} teams, ${esc(l.n)} players${l.nWeight ? ` (${esc(l.nWeight)} with weights)` : ""}; average ${esc(l.height)}, ${esc(l.weight)} lb; ${esc(l.pct62)}% are 6'2" or taller, ${esc(l.pctUnder6)}% under 6'0".${l.note ? ` ${esc(l.note)}.` : ""}</li>`).join("")}</ul>
+        <p class="lvl-note-sm"><b>Limits:</b> ${esc(a.limitations)}</p>
+        <p class="lvl-note-sm">Committed high school players: Slammers (rising seniors, all positions; NAIA and JUCO pooled) and, for outfielders, Flatground (junior season and later). High school players weigh less than the 18–23-year-olds on college rosters.</p>
+        <p class="lvl-note-sm"><a href="${esc(f.csvUrl)}" download>Download the 751 roster rows (CSV)</a>, each with its school roster link.</p>
+      </details></section>`;
   }
   function clockHtml() {
     if (!state.add || !V) return "";
@@ -621,7 +647,7 @@
     openSecs.forEach(k => { const [r, sct] = k.includes(":") ? k.split(":") : [null, k]; const d = app.querySelector(r != null ? `[data-read="${r}"] [data-sec="${sct}"]` : `.lvl-results > [data-sec="${sct}"]`); if (d) d.open = true; });
     const sum = document.getElementById("lvlSummary");
     if (sum) sum.focus();
-    else if (focus) { const h = app.querySelector(state.step === 4 ? ".lvl-tabpanel:not([hidden]) h2" : "h2"); if (h) { h.setAttribute("tabindex", "-1"); h.focus({ preventScroll: true }); } const top = state.step === 4 ? app.querySelector(".lvl-results") : document.querySelector(".lvl-main"); const nav = document.querySelector(".nav"); if (top) window.scrollTo({ top: top.getBoundingClientRect().top + window.scrollY - (nav ? nav.offsetHeight : 64) - 8, behavior: "auto" }); }
+    else if (focus) { const h = app.querySelector(state.step === 4 ? ".lvl-tabpanel:not([hidden]) h2" : "h2"); if (h) { h.setAttribute("tabindex", "-1"); h.focus({ preventScroll: true }); } const top = state.step === 4 ? app.querySelector(".lvl-results") : document.querySelector(".lvl-main"); const nav = document.querySelector(".nav"); if (top) window.scrollTo({ top: top.getBoundingClientRect().top + window.scrollY - (nav ? nav.offsetHeight : 64) - 8, behavior: "instant" }); }
   }
 
   function go(step) { collect(); state.step = step; render(NOV, true); }
@@ -671,8 +697,8 @@
 
   // ---------- Boot ----------
   const getJson = (u) => fetch(u, { cache: "no-cache" }).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); });
-  Promise.all([getJson(CFG.DATA_URL + "?v=1.0"), getJson(CFG.ADDITIONS_URL + "?v=1.1").catch(() => null)]).then(([d, a]) => {
-    state.data = d; state.add = a; render();
+  Promise.all([getJson(CFG.DATA_URL + "?v=1.0"), getJson(CFG.ADDITIONS_URL + "?v=1.1").catch(() => null), getJson(CFG.SIZE_URL + "?v=1").catch(() => null)]).then(([d, a, z]) => {
+    state.data = d; state.add = a; state.size = z; render();
   }).catch(() => { app.innerHTML = `<p class="lvl-card">The benchmark data couldn't load. Please refresh the page.</p>`; });
 
   window.PSRLevelUI = { state }; // for tests only; holds nothing outside this page

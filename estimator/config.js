@@ -18,6 +18,8 @@
   const DATA_URL = "data/level-benchmarks-v1.0.json";
   // v17: context-only additions (sophomore cohorts, recruiting calendar, reference ranges).
   const ADDITIONS_URL = "data/level-benchmarks-v1.1-additions.json";
+  const SIZE_URL = "data/size-benchmarks-v1.json";
+  const SIZE_CSV_URL = "data/PSR_College_Roster_Size_Sample_2026.csv";
 
   // The seven comparison categories, in a fixed display order. The order is for reading only:
   // D2, D3, NAIA and JUCO overlap and are NOT a strict descending talent ladder.
@@ -121,5 +123,5 @@
 
   const NOTE = "This compares your current metrics with published benchmarks. Coaches also evaluate game performance, defense, projection and roster needs. It does not predict an offer.";
 
-  return { DATA_URL, ADDITIONS_URL, CATEGORIES, POSITIONS, POSITION_GROUPS, TOOLS, HIGHLIGHT_RULE, RANGES, NOTE };
+  return { DATA_URL, ADDITIONS_URL, SIZE_URL, SIZE_CSV_URL, CATEGORIES, POSITIONS, POSITION_GROUPS, TOOLS, HIGHLIGHT_RULE, RANGES, NOTE };
 });

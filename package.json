@@ -3,7 +3,7 @@
   "private": true,
   "description": "Static site. No build step.",
   "scripts": {
-    "test": "node --test tests/estimator.logic.test.js tests/estimator.summary.test.js tests/estimator.v2.test.js",
+    "test": "node --test tests/estimator.logic.test.js tests/estimator.summary.test.js tests/estimator.v2.test.js tests/estimator.size.test.js",
     "test:ui": "node tests/estimator.ui.js",
     "test:potw": "node tests/potw.ui.js"
   }

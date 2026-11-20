@@ -13,6 +13,7 @@ async function start(page, s) {
   await page.selectOption("#f_gradYear", String(s.grad || 2027));
   await page.selectOption("#f_primary", s.primary);
   if (s.secondary) await page.selectOption("#f_secondary", s.secondary);
+  if (!s.noHW) { const h = s.h || 72; await page.selectOption("#f_heightIn", String(Math.floor(h / 12))); await page.selectOption('select[data-h="in"]', String(h % 12)); await page.fill("#f_weightLb", String(s.w || 180)); }
   await page.$eval(`input[name=throws][value=${s.throws || "R"}]`, el => { el.checked = true; el.dispatchEvent(new Event("change", { bubbles: true })); });
   await page.$eval(`input[name=bats][value=${s.bats || "R"}]`, el => { el.checked = true; el.dispatchEvent(new Event("change", { bubbles: true })); });
   await page.click("form button[type=submit]");
@@ -211,6 +212,7 @@ const LEVELS = ["Power D1", "Mid-major D1", "Lower D1", "D2", "D3", "NAIA", "JUC
     // ===== v17: Part 4 test players (CF 2027, 2028 RHP 86 + spin, 2029 freshman, two-way SS/P, all blank) =====
     const sel = async (id, v) => { await page.evaluate(() => document.querySelectorAll("details.lvl-more").forEach(d => d.open = true)); await page.selectOption(id, v); };
     const toResults = async () => page.evaluate(() => { document.documentElement.style.scrollBehavior = "auto"; const r = document.querySelector(".lvl-results"); window.scrollTo(0, r.getBoundingClientRect().top + scrollY - document.querySelector(".nav").offsetHeight - 8); });
+    const panelShot = async (sel, file) => { const bb = await page.evaluate((q) => { const r = document.querySelector(q).getBoundingClientRect(); return { x: Math.max(0, r.left - 6), y: r.top + scrollY - 6, width: Math.min(innerWidth, r.width + 12), height: r.height + 12 }; }, sel); await page.screenshot({ path: file, fullPage: true, clip: bb }); };
     const shot = async (name, full) => { if (SHOTS) await page.screenshot({ path: `${SHOTS}/${tag}-${name}.png`, fullPage: !!full }); };
     await page.evaluate(() => { try { localStorage.clear(); } catch (e) {} });
 
@@ -311,6 +313,59 @@ const LEVELS = ["Power D1", "Mid-major D1", "Lower D1", "D2", "D3", "NAIA", "JUC
     ok(await page.isVisible("text=More information needed for an overall range") && (await page.$$(".lvl-cat.is-hl")).length === 0 && !(await page.$(".lvl-nums")), `${tag}: all-blank form gives no level and no invented numbers`);
     await toResults(); await shot("p5-blank-first"); await shot("p5-blank-full", true);
     await overflow("blank results");
+
+    // ===== v18: Your frame (height and weight required, context only) =====
+    await page.goto(BASE + "find-my-level.html", { waitUntil: "networkidle" }); await page.waitForSelector('form[data-step="1"]');
+    await page.evaluate(() => { document.documentElement.style.scrollBehavior = "auto"; });
+    if (SHOTS) { await page.selectOption("#f_gradYear", "2027"); await page.selectOption("#f_primary", "SS"); await page.selectOption("#f_heightIn", "5"); await page.selectOption('select[data-h="in"]', "10"); await page.fill("#f_weightLb", "170");
+      await page.evaluate(() => { const f = document.querySelector('[data-wrap="secondary"]'); window.scrollTo(0, f.getBoundingClientRect().top + scrollY - document.querySelector(".nav").offsetHeight - 8); }); await page.screenshot({ path: `${SHOTS}/${tag}-form-height-weight.png` });
+      await page.goto(BASE + "find-my-level.html", { waitUntil: "networkidle" }); await page.waitForSelector('form[data-step="1"]'); }
+    const hwUi = await page.evaluate(() => { const h = document.querySelector('[data-wrap="heightIn"]'), w = document.querySelector('[data-wrap="weightLb"]'); const vis = (e) => !!e && e.getBoundingClientRect().height > 0 && !e.closest("details:not([open])"); return { vis: vis(h) && vis(w), opt: /optional/i.test(h.textContent + w.textContent) || /optional/i.test((h.closest(".lvl-hw") || h.parentElement).textContent), req: document.querySelector("#f_heightIn").getAttribute("aria-required") === "true" && document.querySelector("#f_weightLb").getAttribute("aria-required") === "true" }; });
+    ok(hwUi.vis && !hwUi.opt && hwUi.req, `${tag}: height and weight shown on step 1 as required (no "optional" label)`);
+    await page.selectOption("#f_gradYear", "2027"); await page.selectOption("#f_primary", "SS");
+    await page.$eval("input[name=throws][value=R]", el => { el.checked = true; el.dispatchEvent(new Event("change", { bubbles: true })); });
+    await page.$eval("input[name=bats][value=R]", el => { el.checked = true; el.dispatchEvent(new Event("change", { bubbles: true })); });
+    await page.click("form button[type=submit]"); await page.waitForTimeout(150);
+    const hwErr = await page.textContent('form[data-step="1"]');
+    ok(!!(await page.$('form[data-step="1"]')) && hwErr.includes("Enter height (feet and inches).") && hwErr.includes("Enter weight in pounds."), `${tag}: blank height and weight block step 1 with friendly errors`);
+    if (SHOTS) { await page.evaluate(() => { document.documentElement.style.scrollBehavior = "auto"; document.querySelector('[data-wrap="heightIn"]').scrollIntoView({ block: "center" }); }); await page.screenshot({ path: `${SHOTS}/${tag}-form-height-weight-errors.png` }); }
+    await page.selectOption("#f_heightIn", "5"); await page.selectOption('select[data-h="in"]', "10"); await page.fill("#f_weightLb", "170");
+    await page.click("form button[type=submit]"); await page.waitForSelector('form[data-step="2"]');
+    await numbers(page, { maxEv: 90, sixty: 6.9, ifVelo: 84 }); await next(page); await evidence(page, {});
+    const hlSS = await hlCats(page, 0);
+    const fr = await page.textContent("#tp0 .lvl-frame");
+    ok(/Your frame/.test(fr) && fr.includes("At 5'10\", 170 you're about 2 inches under the average college position player below Power 4.") && !/too (small|big)/i.test(fr), `${tag}: 5'10" 170 SS frame headline`);
+    ok(fr.includes("College averages come from listed roster heights and weights of players aged 18–23. They show the bodies players grow into, not a requirement. About 1 in 3 college players below Power 4 is under 6'0\".") && /About this data/.test(fr) && !(await page.$eval("#tp0 .lvl-about", d => d.open)), `${tag}: frame note always shown, "About this data" collapsed`);
+    ok((await page.$$eval("#tp0 .lvl-frame-t tbody tr", t => t.map(r => r.querySelector("th").textContent))).join("|") === "Power 4|Mid-major D1|Lower D1|D2|D3|NAIA|JUCO" && /one team \(Jones College\)/.test(fr), `${tag}: frame table lists all 7 levels, JUCO weight one-team note`);
+    ok((await page.$$eval("#tp0 .lvl-frame-t thead th", t => t.map(x => x.childNodes[0].textContent.trim()))).join("|") === "Level|You|Committed high school players|College rosters now", `${tag}: frame columns`);
+    ok(/PSR_College_Roster_Size_Sample_2026\.csv/.test(await page.innerHTML('[data-sec="sources"]')), `${tag}: roster CSV linked from Sources`);
+    if (SHOTS) { await page.evaluate(() => { document.documentElement.style.scrollBehavior = "auto"; const e = document.querySelector("#tp0 .lvl-frame"); window.scrollTo(0, e.getBoundingClientRect().top + scrollY - document.querySelector(".nav").offsetHeight - 8); }); await page.screenshot({ path: `${SHOTS}/${tag}-frame-ss-5-10-170.png` }); await panelShot("#tp0 .lvl-frame", `${SHOTS}/${tag}-frame-ss-5-10-170-panel.png`); }
+    // Same numbers, different body: level result identical
+    await page.click("text=Update my numbers"); await page.waitForSelector('form[data-step="1"]');
+    await page.selectOption("#f_heightIn", "6"); await page.selectOption('select[data-h="in"]', "5"); await page.fill("#f_weightLb", "240");
+    await next(page); await next(page); await evidence(page, {});
+    ok(JSON.stringify(await hlCats(page, 0)) === JSON.stringify(hlSS) && hlSS.length > 0, `${tag}: changing height and weight never changes the highlighted levels (${hlSS.join(",")})`);
+    for (const [h, w, nm, re] of [[75, 205, "rhp-6-3-205", /At 6'3", 205 you're right around the Power 4 roster average for a pitcher\./], [76, 215, "rhp-6-4-215", /At 6'4", 215 you're taller than the average college pitcher at every level, Power 4 included\./]]) {
+      await start(page, { primary: "P", throws: "R", grad: 2028, h, w });
+      await numbers(page, { maxFb: 86 }); await next(page);
+      await page.selectOption("#f_grade", "10"); await evidence(page, {});
+      const f = await page.textContent("#tp0 .lvl-frame");
+      ok(re.test(f) && /College rosters now\s*\(pitchers\)/.test(f) && f.includes(`6'2.9", 209`), `${tag}: ${nm} frame uses the college pitcher rows`);
+      ok(/57\.4% of eventual D1 pitchers who were 6'2" or taller as sophomores signed Power 4, vs 34% of shorter ones/.test(f) && /velocity and spin mattered more/.test(f), `${tag}: ${nm} sophomore pitcher sees the PBR Indiana height fact`);
+      ok(JSON.stringify(await hlCats(page, 0)) === JSON.stringify(["low", "d2", "d3", "naia", "juco"]), `${tag}: ${nm} highlight unchanged by size`);
+      if (SHOTS) { await page.evaluate(() => { document.documentElement.style.scrollBehavior = "auto"; const e = document.querySelector("#tp0 .lvl-frame"); window.scrollTo(0, e.getBoundingClientRect().top + scrollY - document.querySelector(".nav").offsetHeight - 8); }); await page.screenshot({ path: `${SHOTS}/${tag}-frame-${nm}.png` }); await panelShot("#tp0 .lvl-frame", `${SHOTS}/${tag}-frame-${nm}-panel.png`);
+        if (nm === "rhp-6-3-205") { await page.evaluate(() => { document.querySelector("#tp0 .lvl-about").open = true; }); await panelShot("#tp0 .lvl-frame", `${SHOTS}/${tag}-frame-${nm}-panel-about-open.png`); await page.evaluate(() => { document.querySelector("#tp0 .lvl-about").open = false; }); } }
+      await overflow(`frame ${nm}`);
+    }
+    // Outfielder: Flatground column, D1 tiers kept separate
+    await start(page, { primary: "CF", h: 72, w: 180 });
+    await numbers(page, { maxEv: 94, sixty: 6.75, ofVelo: 88 }); await next(page); await evidence(page, {});
+    const fcf = await page.textContent("#tp0 .lvl-frame");
+    ok(/\(OF\)/.test(fcf) && /outfielder report's D1 tiers/.test(fcf) && fcf.includes("At 6'0\", 180 you're right around the Mid-major D1–JUCO roster average for a position player."), `${tag}: outfielder gets Flatground next to Slammers`);
+    // Two-way: position rows on the SS tab, pitcher rows on the P tab
+    await start(page, { primary: "SS", secondary: "P", h: 73, w: 185 });
+    await numbers(page, { maxFb: 86, maxEv: 90, sixty: 6.9, ifVelo: 84 }); await next(page); await evidence(page, {});
+    ok(/\(position players\)/.test(await page.textContent("#tp0 .lvl-frame")) && /\(pitchers\)/.test(await page.$eval("#tp1 .lvl-frame", e => e.textContent)), `${tag}: two-way uses position rows and pitcher rows per tab`);
 
     // Screens of the form steps (phone)
     if (SHOTS && mobile) {

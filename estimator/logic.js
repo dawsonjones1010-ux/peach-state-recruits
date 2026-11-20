@@ -97,8 +97,12 @@
     if (input.secondary && input.secondary === input.primary) err("secondary", "Second position must be different from the primary position.");
     if (!input.throws) err("throws", "Choose a throwing hand.");
     if (!input.bats) err("bats", "Choose a batting side.");
-    range("heightIn", input.heightIn, "heightIn", "Height");
-    range("weightLb", input.weightLb, "weightLb", "Weight");
+    // Height and weight are required (owner decision, v18) but are context only: they never reach
+    // the comparison or the highlight rule.
+    if (!isNum(input.heightIn)) err("heightIn", "Enter height (feet and inches).");
+    else range("heightIn", input.heightIn, "heightIn", "Height");
+    if (!isNum(input.weightLb)) err("weightLb", "Enter weight in pounds.");
+    else range("weightLb", input.weightLb, "weightLb", "Weight");
 
     const L = {
       maxFb: "Max fastball", typFb: "Typical game fastball", maxEv: "Max exit velocity", avgEv: "Average exit velocity",
