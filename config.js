@@ -69,7 +69,7 @@ window.PSR_CONFIG = {
       price: 25,
       unit: "one time",
       tagline: "A professional Instagram feature that gets you seen.",
-      clips: "3 clips",
+      clips: "Up to 3 clips",
       features: [
         "Custom cover graphic",
         "3-clip highlight edit",
@@ -98,7 +98,7 @@ window.PSR_CONFIG = {
       price: 99,
       unit: "one time",
       tagline: "Your video, stats and contact information in one shareable link.",
-      clips: "Up to 10 clips",
+      clips: "Unlimited clips",
       highlight: true,
       features: [
         "Everything in Pro",
@@ -127,7 +127,7 @@ window.PSR_CONFIG = {
     { label: "Instagram collab post", basic: true, pro: true, elite: true },
     { label: "Scouting-style write-up", basic: true, pro: true, elite: true },
     { label: "Player profile page", basic: true, pro: true, elite: true },
-    { label: "Clips used", basic: "3", pro: "Up to 8", elite: "Up to 10" },
+    { label: "Clips used", basic: "Up to 3", pro: "Up to 8", elite: "Unlimited" },
     { label: "Coach-ready highlight video (60–90 sec)", basic: false, pro: true, elite: true },
     { label: "Player stat card graphic", basic: false, pro: true, elite: true },
     { label: "HD files to keep", basic: false, pro: true, elite: true },
