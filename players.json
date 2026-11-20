@@ -1,5 +1,68 @@
 [
   {
+    "slug": "titus-marasco",
+    "active": true,
+    "name": "Titus Marasco",
+    "sport": "Baseball",
+    "position": "SS/2B/OF",
+    "gradYear": 2029,
+    "school": "Blue Valley Southwest High School",
+    "team": "Kansas City Royals Scout Team",
+    "location": "Olathe, Kansas",
+    "coverImage": "images/players/titus-marasco.jpg",
+    "headline": "TITUS MARASCO",
+    "playerInstagram": [],
+    "measurables": [
+      {
+        "label": "Height",
+        "value": "6'0\""
+      },
+      {
+        "label": "Weight",
+        "value": "165 lb"
+      },
+      {
+        "label": "Position",
+        "value": "SS/2B/OF"
+      }
+    ],
+    "video": {
+      "youtube": "",
+      "file": ""
+    },
+    "highlights": [],
+    "report": "🔥 Titus Marasco is a talented 2029 prospect out of Olathe, Kansas who pairs a productive left-handed bat with real versatility. The Kansas City Royals Scout Team standout has become a key bat in the heart of the order.\n\n💥 At the plate, Marasco takes a direct path to the baseball and looks to do damage to his pull side. That intent showed up all summer, as he hit .507 with a .619 on-base percentage and a 1.303 OPS. His mix of contact and pop makes him a tough out.\n\n⚡️ Defensively, Marasco offers the flexibility to handle shortstop, second base and the outfield for his team.\n\nWith a dangerous lefty bat and the ability to play all over the diamond, Marasco is a 2029 Kansas prospect who belongs on every follow list. 👀📈",
+    "stats": null,
+    "academics": [],
+    "links": [],
+    "contactEmail": "",
+    "contactInstagram": "peachstaterecruits",
+    "contactName": "Peach State Recruits",
+    "postUrl": "",
+    "account": "peachstaterecruits",
+    "showOnHome": true,
+    "videos": [
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/titus-marasco/clip1.mp4",
+        "title": "Highlight clip 1"
+      },
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/titus-marasco/clip2.mp4",
+        "title": "Highlight clip 2"
+      },
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/titus-marasco/clip3.mp4",
+        "title": "Highlight clip 3"
+      }
+    ],
+    "coachReport": "Profile: 2029 shortstop, second baseman and outfielder from Olathe, Kansas. Blue Valley Southwest High School; Kansas City Royals Scout Team. 6'0\", 165 lb.\nHitting: Left-handed bat. Direct path to the baseball and looks to do damage to his pull side. Hit .507 with a .619 on-base percentage and a 1.303 OPS in the summer.\nDefense: Handles shortstop, second base and the outfield.",
+    "featuredRank": null,
+    "featureDate": "2026-11-20"
+  },
+  {
     "slug": "thomas-terravecchia",
     "active": true,
     "name": "Thomas Terravecchia",
