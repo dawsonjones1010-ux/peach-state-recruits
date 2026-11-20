@@ -470,10 +470,9 @@ WHERE player_id = (SELECT id FROM public.players WHERE slug = {dollar(slug)})
         videos = e.get("videos") or []
         if videos:
             values = []
-            # Insert clip N first so clip 1 is newest (site sorts by created_at desc).
-            total = len(videos)
+            # Clip 1 gets the newest created_at (site sorts by created_at desc).
             for i, v in enumerate(videos):
-                ago = total - 1 - i
+                ago = i
                 values.append(
                     f"((SELECT id FROM public.players WHERE slug = {dollar(slug)}), "
                     f"{dollar(v.get('kind') or 'file')}, {dollar(v['url'])}, "
