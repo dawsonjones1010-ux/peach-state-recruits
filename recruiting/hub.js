@@ -335,9 +335,9 @@
           ${inp("gpa", "GPA", p.gpa, "number", 'step="0.01" min="0" max="5"')}${inp("sat", "SAT", p.sat, "number", 'min="400" max="1600"')}${inp("act", "ACT", p.act, "number", 'min="1" max="36"')}
           ${inp("intended_major", "Planned major", p.intended_major, "text", 'maxlength="80"')}
         </div></fieldset>
-        <fieldset class="rc-fs"><legend>Numbers <small class="rc-small">(only what you've actually measured)</small></legend><div class="rc-grid3">
+        <fieldset class="rc-fs"><legend>Metrics <small class="rc-small">(only what you've actually measured)</small></legend><div class="rc-grid3">
           ${[["fb_velo", "Max fastball (mph)"], ["exit_velo", "Max exit velo (mph)"], ["sixty", "60-yard (sec)"], ["if_velo", "Infield velo (mph)"], ["of_velo", "Outfield velo (mph)"], ["c_velo", "Catcher velo (mph)"], ["pop", "Pop time (sec)"]].map(([k, l]) => `<label class="rc-field">${l}<input class="rc-input" type="number" step="0.01" min="0" data-m="${k}" value="${esc(m[k] == null ? "" : m[k])}"></label>`).join("")}
-        </div><button class="rc-btn sm" type="button" id="fmlImport" style="margin-top:10px">Use my latest Find My Level numbers</button></fieldset>
+        </div><button class="rc-btn sm" type="button" id="fmlImport" style="margin-top:10px">Use my latest Find My Level metrics</button></fieldset>
         <fieldset class="rc-fs"><legend>Contact and links</legend><div class="rc-grid2">
           ${inp("contact_email", "Email for coaches", p.contact_email, "email", 'maxlength="120" autocomplete="email"')}${inp("phone", "Phone", p.phone, "tel", 'maxlength="30" autocomplete="tel"')}
           ${inp("video_url", "Highlight video link", p.video_url, "url", 'maxlength="300" placeholder="https://"')}${inp("profile_url", "Online profile link", p.profile_url, "url", 'maxlength="300" placeholder="https://"')}
@@ -354,7 +354,7 @@
       Object.entries(map).forEach(([a, b]) => { if (last.metrics && last.metrics[a] != null) $(`[data-m="${b}"]`, f).value = last.metrics[a]; });
       if (last.gradYear && !f.elements.namedItem("grad_year").value) f.elements.namedItem("grad_year").value = last.gradYear;
       if (last.primary && !f.elements.namedItem("primary_position").value) f.elements.namedItem("primary_position").value = last.primary;
-      U.toast("Numbers filled in. Review, then Save profile.");
+      U.toast("Metrics filled in. Review, then Save profile.");
     };
     f.onsubmit = async e => {
       e.preventDefault();

@@ -160,7 +160,7 @@
       return Object.assign(base, { status: S.REF_ONLY, value: isNum(value) ? value : null, reason: row.review_note || "Shown as a source reference only; not used for automatic comparison." });
     }
     const t = row.provisional_comparison_threshold;
-    if (!isNum(value)) return Object.assign(base, { status: S.NO_INPUT, threshold: t, reason: "You didn't enter this number." });
+    if (!isNum(value)) return Object.assign(base, { status: S.NO_INPUT, threshold: t, reason: "You didn't enter this metric." });
     const higher = row.direction === "higher_is_better";
     const meets = higher ? value >= t - EPS : value <= t + EPS;
     const gap = meets ? 0 : round(higher ? t - value : value - t, row.unit === "seconds" ? 2 : 1);
@@ -253,7 +253,7 @@
       const row = { metric: rec.metric, label, unit: rec.unit, value: isNum(value) ? value : null, direction: dir, caveats: [] };
       if (opts.notComparable) { row.notComparable = opts.notComparable; row.cells = cols.map(([k, l]) => ({ col: l, mean: rec.means[k] })); rows.push(row); return; }
       row.cells = cols.map(([k, l]) => Object.assign({ col: l }, compareMean(value, rec.means[k], rec.unit, dir)));
-      if (env && env !== "showcase") row.caveats.push("BaseballPath used best PBR showcase results; your number is from a different setting.");
+      if (env && env !== "showcase") row.caveats.push("BaseballPath used best PBR showcase results; your metric is from a different setting.");
       if (opts.caveat) row.caveats.push(opts.caveat);
       rows.push(row);
     };
@@ -415,13 +415,13 @@
 
   function evidence(input) {
     const meta = input.meta || {}, out = [];
-    out.push({ key: "verified", text: "Verification: none. This tool doesn't verify numbers, so nothing here is marked verified." });
-    if (meta.source === "self") out.push({ key: "source", text: "Self-reported numbers. That lowers evidence quality but doesn't change your numbers or the comparison." });
+    out.push({ key: "verified", text: "Verification: none. This tool doesn't verify metrics, so nothing here is marked verified." });
+    if (meta.source === "self") out.push({ key: "source", text: "Self-reported metrics. That lowers evidence quality but doesn't change your metrics or the comparison." });
     else if (meta.source === "event") out.push({ key: "source", text: "From an event or showcase result." });
     else if (meta.source === "device") out.push({ key: "source", text: "From a device report (radar, sensor or timing system)." });
     else out.push({ key: "source", text: "Evidence source unknown. Treat the comparison as provisional." });
-    if (meta.link) out.push({ key: "link", text: "Result link saved as a reference only. A link alone doesn't verify the numbers." });
-    out.push({ key: "date", text: meta.date ? `Measured ${meta.date}.` : "Measurement date unknown. We can't check how current the numbers are or whether your class stage matches each source's cohort." });
+    if (meta.link) out.push({ key: "link", text: "Result link saved as a reference only. A link alone doesn't verify the metrics." });
+    out.push({ key: "date", text: meta.date ? `Measured ${meta.date}.` : "Measurement date unknown. We can't check how current the metrics are or whether your class stage matches each source's cohort." });
     out.push({ key: "env", text: meta.environment ? `Testing environment: ${envLabel(meta.environment)}.` : "Testing environment unknown. Comparisons with sources that used a specific setting (showcase, facility) are provisional." });
     out.push({ key: "method", text: meta.method ? `Measurement method: ${methodLabel(meta.method)}.` + (meta.method === "hand" ? " Hand timing and electronic timing aren't interchangeable; times are not adjusted." : "") : "Measurement method unknown. Sources often don't state theirs either, so method-matched comparison isn't possible." });
     return out;

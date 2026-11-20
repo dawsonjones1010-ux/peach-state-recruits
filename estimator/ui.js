@@ -64,7 +64,7 @@
   // ---------- Rendering helpers ----------
   function errorsFor(field, v) {
     const e = v.errors.filter(x => x.field === field).map(x => `<p class="lvl-err" id="err-${field}">${esc(x.msg)}</p>`);
-    const w = v.warnings.filter(x => x.field === field).map(x => `<div class="lvl-warn" id="err-${field}"><p>${esc(x.msg)}</p><label class="lvl-check"><input type="checkbox" data-confirm="${field}"> This number is correct</label></div>`);
+    const w = v.warnings.filter(x => x.field === field).map(x => `<div class="lvl-warn" id="err-${field}"><p>${esc(x.msg)}</p><label class="lvl-check"><input type="checkbox" data-confirm="${field}"> This metric is correct</label></div>`);
     return e.join("") + w.join("");
   }
   const NOV = { errors: [], warnings: [] };
@@ -112,7 +112,7 @@
     const hFt = i.heightIn != null ? String(Math.floor(i.heightIn / 12)) : (state.raw.hFt || ""), hIn = i.heightIn != null ? String(i.heightIn % 12) : (state.raw.hIn || "");
     return `<form class="lvl-card lvl-form" data-step="1" novalidate>
       <h2>About the player</h2>
-      <p class="lvl-sub">Position decides which numbers we ask for next. A second position gets its own separate read.</p>
+      <p class="lvl-sub">Position decides which metrics we ask for next. A second position gets its own separate read.</p>
       ${summary(v, STEP1)}
       <div class="lvl-grid">
         ${select("gradYear", "Graduation year", years, i.gradYear != null ? i.gradYear : "", v)}
@@ -132,7 +132,7 @@
         </div>
         <p class="lvl-hint">Used for the "Your frame" comparison only. Height and weight never change your level.</p>
       </div>
-      <div class="lvl-actions"><span class="lvl-privacy">Nothing leaves your browser unless you tap Send.</span><button class="btn btn-peach btn-lg" type="submit">Next: your numbers</button></div>
+      <div class="lvl-actions"><span class="lvl-privacy">Nothing leaves your browser unless you tap Send.</span><button class="btn btn-peach btn-lg" type="submit">Next: your metrics</button></div>
     </form>`;
   }
 
@@ -171,19 +171,19 @@
       </fieldset>`);
     }
     return `<form class="lvl-card lvl-form" data-step="2" novalidate>
-      <h2>Your current numbers</h2>
+      <h2>Your current metrics</h2>
       <p class="lvl-sub">Enter what you know. Leave a box blank or tick "I don't know" if you don't have it. Blank is treated as unknown, never as zero.</p>
       ${summary(v, fs)}
       ${parts.join("")}
       <details class="lvl-more lvl-methods"${Object.values(state.input.methods).some(Boolean) ? " open" : ""}><summary>How were these measured? <span class="lvl-opt">optional</span></summary>
-        <p class="lvl-hint">Shown as a chip next to each number. We never convert one method into another.</p>
+        <p class="lvl-hint">Shown as a chip next to each metric. We never convert one method into another.</p>
         <div class="lvl-grid">
           ${hasField() ? select("m_sixty", "60-yard timed by", SIXTY_M, state.input.methods.sixty, v, { optional: true }) : ""}
           ${hasField() ? select("m_ev", "Exit velocity hit off", EV_M, state.input.methods.ev, v, { optional: true }) : ""}
           ${hasField() ? select("m_evDevice", "Exit velocity device", EV_DEV, state.input.methods.evDevice, v, { optional: true }) : ""}
           ${select("m_veloDevice", hasP() && hasField() ? "Velocity device (fastball and throws)" : hasP() ? "Fastball velocity device" : "Throwing velocity device", VELO_DEV, state.input.methods.veloDevice, v, { optional: true })}
         </div></details>
-      <div class="lvl-actions"><button class="btn btn-line btn-lg" type="button" data-go="1">Back</button><button class="btn btn-peach btn-lg" type="submit">Next: about the numbers</button></div>
+      <div class="lvl-actions"><button class="btn btn-line btn-lg" type="button" data-go="1">Back</button><button class="btn btn-peach btn-lg" type="submit">Next: about the metrics</button></div>
     </form>`;
   }
 
@@ -191,8 +191,8 @@
   function step3(v) {
     const m = state.input.meta, unkDate = state.unknown.has("date");
     return `<form class="lvl-card lvl-form" data-step="3" novalidate>
-      <h2>About these numbers</h2>
-      <p class="lvl-sub">This tells us how comparable your numbers are. "I don't know" is fine; we'll explain what it means for the result.</p>
+      <h2>About these metrics</h2>
+      <p class="lvl-sub">This tells us how comparable your metrics are. "I don't know" is fine; we'll explain what it means for the result.</p>
       ${summary(v, STEP3)}
       <div class="lvl-grid">
         <div class="lvl-field${v.errors.some(x => x.field === "date") ? " is-invalid" : ""}" data-wrap="date"><label for="f_date">When were they measured?</label>
@@ -200,12 +200,12 @@
           <label class="lvl-check"><input type="checkbox" data-unknown="date" ${unkDate ? "checked" : ""}> I don't know</label>${errorsFor("date", v)}</div>
         ${select("environment", "Testing environment", ENV, m.environment, v)}
         ${select("method", "Measured with", METHOD, m.method, v)}
-        ${select("grade", "What grade were you in when you got these numbers?", GRADES, m.grade, v, { optional: true, hint: "Used only for the same-age comparison. It never changes your level." })}
+        ${select("grade", "What grade were you in when you got these metrics?", GRADES, m.grade, v, { optional: true, hint: "Used only for the same-age comparison. It never changes your level." })}
       </div>
-      ${seg("source", "Where do the numbers come from?", SOURCE, m.source, v, true)}
+      ${seg("source", "Where do the metrics come from?", SOURCE, m.source, v, true)}
       <div class="lvl-field${v.errors.some(x => x.field === "link") ? " is-invalid" : ""}" data-wrap="link"><label for="f_link">Result link <span class="lvl-opt">optional</span></label>
         <input class="input" type="url" id="f_link" data-meta="link" inputmode="url" placeholder="https://" value="${esc(m.link)}" autocomplete="off">
-        <p class="lvl-hint">Saved as a reference on your result only. A link alone doesn't verify the numbers, and we don't open or analyze it.</p>${errorsFor("link", v)}</div>
+        <p class="lvl-hint">Saved as a reference on your result only. A link alone doesn't verify the metrics, and we don't open or analyze it.</p>${errorsFor("link", v)}</div>
       <div class="lvl-actions"><button class="btn btn-line btn-lg" type="button" data-go="2">Back</button><button class="btn btn-peach btn-lg" type="submit">See my results</button></div>
     </form>`;
   }
@@ -217,7 +217,7 @@
   const R = window.PSRLevelReport, Research = window.PSRResearch;
   const U = window.PSRLevelSummary, ds = (s) => esc(U.deSource(s));
   const statusText = (st) => st === S.NO_BENCH ? "No published target" : st;
-  const ST_CLASS = { "Meets targets": "ok", "Close": "close", "Below targets": "below", "Needs more numbers": "none", "No published target": "na" };
+  const ST_CLASS = { "Meets targets": "ok", "Close": "close", "Below targets": "below", "Needs more metrics": "none", "No published target": "na" };
 
   function toolRow(k, t) {
     const val = t.value != null ? `<span class="lvl-you">You: ${esc(fmtV(t.value, t.unit))}</span>` : "";
@@ -247,7 +247,7 @@
         <span class="lvl-mini">${read.toolKeys.map(k => `<span><b>${esc(TOOL_LABEL[k])}</b> <i class="lvl-pill ${pillClass(c.tools[k].status)}">${esc(statusText(c.tools[k].status))}</i></span>`).join("")}</span>
         <span class="lvl-more-k" aria-hidden="true">Details</span></summary>
       <p class="lvl-src"><span class="lvl-kind guide">Published target</span> Category: ${esc(c.ncLabel)}</p>
-      ${noData ? `<p class="lvl-note-sm"><b>This source has no separate lower D1 targets for position players.</b> This is a data gap, not a negative result. Nothing is borrowed from mid-major or other D1 numbers.</p>` : ""}
+      ${noData ? `<p class="lvl-note-sm"><b>This source has no separate lower D1 targets for position players.</b> This is a data gap, not a negative result. Nothing is borrowed from mid-major or other D1 metrics.</p>` : ""}
       <ul class="lvl-tools">${read.toolKeys.map(k => toolRow(k, c.tools[k])).join("")}</ul>
       <p class="lvl-cov"><b>Compared:</b> ${comp.length ? esc(comp.join(", ")) : "none"}${noTgt.length ? ` · <b>No published target:</b> ${esc(noTgt.join(", "))}` : ""}${notIn.length ? ` · <b>Not entered:</b> ${esc(notIn.join(", "))}` : ""}</p>
       ${ns}
@@ -291,8 +291,8 @@
     const n = U.nextStep(read);
     if (n) return n.text;
     const notIn = [...new Set(read.categories.flatMap(c => c.missing.filter(x => x.status === S.NO_INPUT).map(x => x.tool)))];
-    if (notIn.length) return `Next step: add your ${notIn.map(k => ({ hitting: "max exit velocity", running: "60-yard dash", throwing: "throwing numbers", pitching: "fastball velocity" })[k]).join(" and ")} to compare more levels.`;
-    return "Next step: get your full set of numbers and film in front of coaches. A published-target comparison can only go so far for this position.";
+    if (notIn.length) return `Next step: add your ${notIn.map(k => ({ hitting: "max exit velocity", running: "60-yard dash", throwing: "throwing metrics", pitching: "fastball velocity" })[k]).join(" and ")} to compare more levels.`;
+    return "Next step: get your full set of metrics and film in front of coaches. A published-target comparison can only go so far for this position.";
   }
 
   function sec(id, title, body) {
@@ -316,9 +316,9 @@
     ${evidence.issues.length?`<details class="pro-context"><summary>Make this comparison more useful <span>${evidence.issues.length} context notes</span></summary><ul>${evidence.issues.map(t=>`<li>${esc(t)}</li>`).join('')}</ul><p>These notes affect how you interpret the result. They never add or subtract athletic points.</p></details>`:''}`;
   }
   function crossCheckHtml(read){const rows=R.crossCheck(state.data,state.input,read);return `<section class="pro-crosscheck"><div class="pro-section-head"><div><p class="pro-eyebrow">A SEPARATE REFERENCE</p><h3>NCSA guideline cross-check</h3></div><a href="https://www.ncsasports.org/baseball/recruiting-guidelines" target="_blank" rel="noopener">Read the source</a></div><p class="lvl-note-sm">NCSA groups all D1 together and combines D3 with NAIA. It cannot separate Power, mid-major and lower D1. Guidelines describe tools; they do not assign a player to a school.</p><div class="pro-cross-grid">${rows.map(r=>`<article><h4>${esc(r.level)}</h4>${r.tools.length?r.tools.map(t=>`<div><b>${esc(t.label)}</b><span>${esc(t.target)}</span><strong class="${t.met===null?'neutral':t.met?'positive':'attention'}">${t.value==null?'Add this measurement':esc(t.value+(t.unit==='s'?' s':' mph'))+' · '+(t.met?'Numerically meets':'Below guideline')}</strong><small>${esc(t.note)}</small></div>`).join(''):'<p>No usable numeric guideline for this position in our checked records. Review the source with your coach.</p>'}</article>`).join('')}</div></section>`;}
-  function workbenchRows(read,key){const r=R.rows(read,key);return r.tools.map(t=>`<article class="pro-tool"><div><span>${esc(t.label)}</span><strong>${t.value==null?'Not entered':esc(fmtV(t.value,t.unit))}</strong></div><div><span>Published target</span><b>${t.target?esc(t.target):'Not published for this tool/category'}</b><small>${esc(statusText(t.status))}</small></div><div><span>What this tells you</span><p>${t.gap!=null?esc((t.unit==='seconds'?t.gap.toFixed(2)+' s':t.gap+' mph')+' from the listed edge.'):t.status===S.MEETS?'This number reaches the listed edge. Keep game performance and consistency in the evaluation.':esc(t.note||'Add the relevant measurement or discuss the missing benchmark with your coach.')}${t.narrow?' <b>Small numerical gap: retest under the same protocol before treating this as a meaningful difference.</b>':''}</p></div></article>`).join('');}
+  function workbenchRows(read,key){const r=R.rows(read,key);return r.tools.map(t=>`<article class="pro-tool"><div><span>${esc(t.label)}</span><strong>${t.value==null?'Not entered':esc(fmtV(t.value,t.unit))}</strong></div><div><span>Published target</span><b>${t.target?esc(t.target):'Not published for this tool/category'}</b><small>${esc(statusText(t.status))}</small></div><div><span>What this tells you</span><p>${t.gap!=null?esc((t.unit==='seconds'?t.gap.toFixed(2)+' s':t.gap+' mph')+' from the listed edge.'):t.status===S.MEETS?'This metric reaches the listed edge. Keep game performance and consistency in the evaluation.':esc(t.note||'Add the relevant measurement or discuss the missing benchmark with your coach.')}${t.narrow?' <b>Small numerical gap: retest under the same protocol before treating this as a meaningful difference.</b>':''}</p></div></article>`).join('');}
   function workbenchHtml(read,idx){const chosen=state.gapCat[idx]||(read.categories.find(c=>c.highlighted)||read.categories[0]).key;return `<section class="pro-workbench" id="target-workbench${idx}"><div class="pro-section-head"><div><p class="pro-eyebrow">KNOW WHAT TO WORK ON</p><h3>Your target comparison</h3></div><label>Compare against<select class="select" data-target="${idx}" aria-label="Target category for ${esc(read.position)}">${read.categories.map(c=>`<option value="${c.key}" ${c.key===chosen?'selected':''}>${esc(c.label)}</option>`).join('')}</select></label></div><div id="workbenchRows${idx}">${workbenchRows(read,chosen)}</div><p class="lvl-note-sm">Targets from NextCommit. Exact differences are arithmetic, not evidence of a meaningful performance gap or a training prescription.</p></section>`;}
-  function scenarioHtml(read,idx){return `<details class="pro-scenario no-print"><summary>What if my numbers change?</summary><p>Try hypothetical measurements. Your actual result and saved history stay unchanged. This does not forecast development.</p><div class="pro-scenario-inputs">${R.fields(read).map(([k,l,u])=>`<label>${esc(l)} (${esc(u)})<input class="input" type="number" inputmode="decimal" step="0.01" data-scenario="${idx}:${k}" value="${state.input.metrics[k]??''}" min="${CFG.RANGES[k].hard[0]}" max="${CFG.RANGES[k].hard[1]}"></label>`).join('')}</div><button class="btn btn-line" type="button" data-run-scenario="${idx}">Compare hypothetical numbers</button><p id="scenarioResult${idx}" role="status"></p></details>`;}
+  function scenarioHtml(read,idx){return `<details class="pro-scenario no-print"><summary>What if my metrics change?</summary><p>Try hypothetical measurements. Your actual result and saved history stay unchanged. This does not forecast development.</p><div class="pro-scenario-inputs">${R.fields(read).map(([k,l,u])=>`<label>${esc(l)} (${esc(u)})<input class="input" type="number" inputmode="decimal" step="0.01" data-scenario="${idx}:${k}" value="${state.input.metrics[k]??''}" min="${CFG.RANGES[k].hard[0]}" max="${CFG.RANGES[k].hard[1]}"></label>`).join('')}</div><button class="btn btn-line" type="button" data-run-scenario="${idx}">Compare hypothetical metrics</button><p id="scenarioResult${idx}" role="status"></p></details>`;}
   function runScenario(idx){const patch={};const output=document.getElementById('scenarioResult'+idx);app.querySelectorAll(`[data-scenario^="${idx}:"]`).forEach(el=>{if(el.value!=='')patch[el.dataset.scenario.split(':')[1]]=Number(el.value);});try{const r=R.scenario(state.data,state.input,state.result.reads[idx],patch);const met=r.read.categories.filter(c=>c.highlighted);output.textContent='Hypothetical only: '+(met.length?'reaches the listed targets for '+met.map(c=>c.label).join(', '):'does not fully reach a listed category with these inputs')+'. Actual result unchanged.';}catch(error){output.textContent=error.message;}}
   function nextMovesHtml(read){return `<section class="pro-actions"><p class="pro-eyebrow">TURN A RESULT INTO ACTION</p><h3>Your next three moves</h3><ol>${R.actionPlan(state.input,read).map((a,k)=>`<li><span>${k+1}</span><div><h4>${esc(a.title)}</h4><p>${esc(a.detail)}</p>${a.href==='#edit-evidence'?'<button class="pro-text-button" type="button" data-edit-evidence>Edit measurement context</button>':a.href==='#target-workbench'?'<p class="lvl-note-sm">Use the target comparison above.</p>':`<a href="${esc(a.href)}">${a.href.includes('email')?'Open Email Coach':'Find colleges'}</a>`}</div></li>`).join('')}</ol><div class="pro-snapshot"><button type="button" class="btn btn-line" data-copy-snapshot="${state.result.reads.indexOf(read)}">Copy coach snapshot</button><textarea class="input" id="snapshotText${state.result.reads.indexOf(read)}" hidden readonly aria-label="Coach snapshot text"></textarea><p>No assigned-level claim is added to your email. Coaches see your actual measurements.</p></div></section>`;}
 
@@ -333,7 +333,7 @@
     });
     const m = i.metrics, yours = yoursFor(read);
     const lv = U.levels(read);
-    const detail = `<div class="lvl-yours"><h4>Your numbers</h4><ul>${yours.map(([l, v, u]) => `<li><span>${esc(l)}</span><b>${v != null ? esc(fmtV(v, u)) : '<em>Not entered</em>'}</b></li>`).join("")}</ul>
+    const detail = `<div class="lvl-yours"><h4>Your metrics</h4><ul>${yours.map(([l, v, u]) => `<li><span>${esc(l)}</span><b>${v != null ? esc(fmtV(v, u)) : '<em>Not entered</em>'}</b></li>`).join("")}</ul>
         ${read.kind === "pitching" && (m.repertoire || []).length ? `<p class="lvl-note-sm">Repertoire: ${esc(m.repertoire.join(", "))}. Needs evaluation on video; no numeric targets exist.</p>` : ""}</div>
       <p class="lvl-note-sm">"Meets listed target" uses the edge of each published band as a provisional threshold. That is our implementation choice, not a researched average or an official cutoff. Testing context for these targets is unspecified.</p>
       <div class="lvl-cats">${read.categories.map(c => catCard(read, c)).join("")}</div>
@@ -357,7 +357,7 @@
       </div>
       ${reportOverview(read, idx)}
       <div class="lvl-next"><p class="lvl-next-k">A benchmark to discuss</p><p class="lvl-next-t">${esc(nextFor(read))}</p></div>
-      <div class="lvl-cta2 no-print"><div><p class="lvl-cta2-t">Make your next move.</p><p class="lvl-cta2-s">Use your actual numbers in a personal coach email.</p></div><button class="btn btn-peach" type="button" data-email-handoff="${idx}">Build my coach email</button></div>
+      <div class="lvl-cta2 no-print"><div><p class="lvl-cta2-t">Make your next move.</p><p class="lvl-cta2-s">Use your actual metrics in a personal coach email.</p></div><button class="btn btn-peach" type="button" data-email-handoff="${idx}">Build my coach email</button></div>
       ${crossCheckHtml(read)}
       ${workbenchHtml(read, idx)}
       ${scenarioHtml(read, idx)}
@@ -366,7 +366,7 @@
       <div class="lvl-share no-print"><button class="btn btn-line" type="button" data-share="${idx}">Share my result</button><div class="lvl-share-out" id="shareOut${idx}" hidden></div></div>
       <div class="lvl-levels"><h3>Every level</h3>
         <ol class="lvl-lrow">${lv.map(l => `<li class="${ST_CLASS[l.status]}" data-level="${l.key}"><b>${esc(l.label)}</b><span>${esc(l.status)}</span></li>`).join("")}</ol>
-        <p class="lvl-note-sm">D2, D3, NAIA and JUCO overlap; they are not a strict ladder. "Close" means at least one of your numbers meets that level's published target and at least one is below it.</p></div>
+        <p class="lvl-note-sm">D2, D3, NAIA and JUCO overlap; they are not a strict ladder. "Close" means at least one of your metrics meets that level's published target and at least one is below it.</p></div>
       ${numbersStrip(read)}
       ${sec("age-frame", "Same-grade, height and weight context", youngHtml(read, idx) + frameHtml(read, idx))}
       ${sec("levels", "All levels in detail", detail)}
@@ -382,16 +382,16 @@
     const tab = Math.min(state.tab || 0, r.reads.length - 1);
     const tabs = r.reads.length > 1 ? `<div class="lvl-tabs" role="tablist" aria-label="Results by position">${r.reads.map((rd, k) => `<button type="button" role="tab" id="tab${k}" aria-controls="tp${k}" aria-selected="${k === tab}" tabindex="${k === tab ? 0 : -1}" data-tab="${k}">${esc(U.tabLabel(rd))}</button>`).join("")}</div>` : "";
     const rule = `A level shows "Meets targets" only when at least ${CFG.HIGHLIGHT_RULE.minDistinctCoreTools} different core tools have published targets there and every compared tool meets its target. For pitchers, it's when your fastball meets the listed velocity target. This is a product rule, not a validated prediction.`;
-    const how = `<p><b>Evidence policy:</b> NCAA rules are used for timing, MLB for definitions, NCSA for a separate guideline check, and the named original publishers for their own targets and samples. No offer odds, percentiles or growth forecasts are calculated.</p><p>We compare each number you enter with the published recruiting targets for your position at each level, using the edge of each published band as a provisional line. Averages of researched groups and college-player numbers are shown separately and never change a level's status.</p>
+    const how = `<p><b>Evidence policy:</b> NCAA rules are used for timing, MLB for definitions, NCSA for a separate guideline check, and the named original publishers for their own targets and samples. No offer odds, percentiles or growth forecasts are calculated.</p><p>We compare each metric you enter with the published recruiting targets for your position at each level, using the edge of each published band as a provisional line. Averages of researched groups and college-player metrics are shown separately and never change a level's status.</p>
       <p><b>The rule used.</b> ${esc(rule)}</p>
-      <ul class="lvl-list"><li><b>Meets targets:</b> passes the rule above.</li><li><b>Close:</b> at least one of your compared numbers meets that level's target and at least one is below it.</li><li><b>Below targets:</b> your compared numbers are all below that level's targets.</li><li><b>Needs more numbers:</b> targets exist, but too few of your numbers could be compared there.</li><li><b>No published target:</b> the source publishes no target for your position at that level.</li></ul>
-      <p><b>Your headline</b> is the first level in the list that shows "Meets targets". <b>Next step</b> is the nearest level above it with a number below target, showing only that level's smallest gap relative to its target.</p>
+      <ul class="lvl-list"><li><b>Meets targets:</b> passes the rule above.</li><li><b>Close:</b> at least one of your compared metrics meets that level's target and at least one is below it.</li><li><b>Below targets:</b> your compared metrics are all below that level's targets.</li><li><b>Needs more metrics:</b> targets exist, but too few of your metrics could be compared there.</li><li><b>No published target:</b> the source publishes no target for your position at that level.</li></ul>
+      <p><b>Your headline</b> is the first level in the list that shows "Meets targets". <b>Next step</b> is the nearest level above it with a metric below target, showing only that level's smallest gap relative to its target.</p>
       <h4>Notes on your results</h4><ul class="lvl-list">${r.reads.map(rd => rd.highlight.explain.map(e => `<li>${ds(e)}</li>`).join("")).join("")}</ul>
       <h4>Limitations</h4>
       <p>${esc(r.note)}</p>
       <ul class="lvl-list">${r.evidence.map(e => `<li>${ds(e.text)}</li>`).join("")}${r.stage.map(s => `<li>${ds(s)}</li>`).join("")}</ul>
       <h4>Missing information</h4>
-      ${r.missing.length ? `<p><b>Not entered:</b> ${esc(r.missing.join(", "))}. Adding these can make the comparison more complete.</p>` : `<p>All core numbers for your position${r.reads.length > 1 ? "s" : ""} were entered.</p>`}
+      ${r.missing.length ? `<p><b>Not entered:</b> ${esc(r.missing.join(", "))}. Adding these can make the comparison more complete.</p>` : `<p>All core metrics for your position${r.reads.length > 1 ? "s" : ""} were entered.</p>`}
       ${i.meta.link ? `<p class="lvl-note-sm">Reference link: <span class="lvl-link">${esc(i.meta.link)}</span></p>` : ""}`;
     const addSrc = (state.add && state.add.sources || []).filter(s => s.id !== "PBR_WI_E");
     const sources = `<div class="lvl-legend" aria-label="Legend"><span class="lvl-kind guide">Published target</span> NextCommit recruiting guideline (used for level status) <span class="lvl-kind ref">Second source</span> NCSA guideline, shown for reference <span class="lvl-kind mean">Average</span> sample mean of a researched group <span class="lvl-kind ctx">College players</span> college norms, context only</div>
@@ -411,7 +411,7 @@
       ${clockHtml()}
       ${progressHtml()}
       ${reviewHtml()}
-      <div class="lvl-res-actions no-print"><button class="btn btn-line" type="button" data-go="1">Update my numbers</button><button class="btn btn-line" type="button" data-print>Print</button><button class="btn btn-line" type="button" data-reset>Start over</button></div>
+      <div class="lvl-res-actions no-print"><button class="btn btn-line" type="button" data-go="1">Update my metrics</button><button class="btn btn-line" type="button" data-print>Print</button><button class="btn btn-line" type="button" data-reset>Start over</button></div>
       ${sec("sources", "Sources", sources)}
       ${sec("how", "How this works", how)}
       ${printHtml()}
@@ -451,7 +451,7 @@
       x.fillStyle = "#c9d2e3"; x.font = "600 34px Inter, sans-serif"; x.fillText(unit, bx + bw / 2, y0 + 262);
     });
     x.fillStyle = "#c9d2e3"; x.font = "600 44px Inter, sans-serif";
-    x.fillText(h.level ? (read.kind === "pitching" ? "FASTBALL MEETS THE LISTED" : "NUMBERS MEET THE LISTED") : "WORKING TOWARD", W / 2, 1260);
+    x.fillText(h.level ? (read.kind === "pitching" ? "FASTBALL MEETS THE LISTED" : "METRICS MEET THE LISTED") : "WORKING TOWARD", W / 2, 1260);
     x.fillStyle = "#fff"; x.font = "128px Anton, Impact, sans-serif";
     const big = h.level ? (U.LONG[h.level] + (read.kind === "pitching" ? " velocity target" : " targets")).toUpperCase() : "THE PUBLISHED TARGETS";
     wrap(x, big, 960).slice(0, 3).forEach((ln, k) => x.fillText(ln, W / 2, 1400 + k * 136));
@@ -479,7 +479,7 @@
   function numbersStrip(read) {
     const ys = yoursFor(read).filter(([, v]) => v != null);
     if (!ys.length) return "";
-    return `<div class="lvl-nums"><h3>Your numbers</h3><ul>${ys.map(([l, v, u]) => `<li><span>${esc(l)}</span><b>${esc(fmtV(v, u))}</b>${chipHtml(KEY_OF[l])}</li>`).join("")}</ul></div>`;
+    return `<div class="lvl-nums"><h3>Your metrics</h3><ul>${ys.map(([l, v, u]) => `<li><span>${esc(l)}</span><b>${esc(fmtV(v, u))}</b>${chipHtml(KEY_OF[l])}</li>`).join("")}</ul></div>`;
   }
   function cohortTable(g) {
     const head = `<p class="lvl-note-sm"><b>${esc(g.title)}.</b> ${esc(g.region)}, classes ${esc(g.classes)}, ${typeof g.n === "object" ? Object.keys(g.n).map(k => `${esc(k)} n ${esc(g.n[k])}`).join(", ") : `n ${esc(g.n)}`}${g.earlyOnly ? ". Early commits only" : ""}.${g.source ? ` <a href="${esc(g.source.url)}" target="_blank" rel="noopener">PBR</a>` : ""}</p>
@@ -574,12 +574,12 @@
     const done = state.reviewSent;
     return `<section class="lvl-review no-print" aria-labelledby="revT"><h3 id="revT">Want a free look from Peach State?</h3>
       ${done ? `<p class="lvl-review-ok" role="status">Sent. We'll take a look and reply on Instagram to @${esc(done)}.</p>` : `
-      <p>We'll look at your numbers and reply on Instagram. Free, no obligation.</p>
-      <button class="btn btn-peach" type="button" data-review-open>Send my numbers to Peach State for a free look</button>
+      <p>We'll look at your metrics and reply on Instagram. Free, no obligation.</p>
+      <button class="btn btn-peach" type="button" data-review-open>Send my metrics to Peach State for a free look</button>
       <div id="lvlReviewForm" class="lvl-review-form" hidden>
         <label for="f_igHandle">Your Instagram handle</label>
         <div class="lvl-review-row"><input class="input" id="f_igHandle" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="@yourhandle" maxlength="31"><button class="btn btn-peach" type="button" data-review-send>Send</button></div>
-        <p class="lvl-note-sm">We'll send your handle, class, position, numbers, how they were measured and your headline result. Nothing else.</p>
+        <p class="lvl-note-sm">We'll send your handle, class, position, metrics, how they were measured and your headline result. Nothing else.</p>
         <p class="lvl-err" id="reviewErr" hidden></p>
       </div>`}
       <p class="lvl-privacy">Nothing leaves your browser unless you tap Send.</p></section>`;
@@ -612,7 +612,7 @@
       <p class="pr-meta">${esc(positions().join(" / "))} · Class of ${esc(i.gradYear)} · Throws ${esc(i.throws)} · Bats ${esc(i.bats)}</p>
       ${reads}
       ${c && !c.graduated ? `<p><b>Recruiting clock:</b> ${esc(c.openLevels.join(", "))} communication may be available; verify the rules with the school.${c.next ? ` Next key date: ${esc(c.next.dateText)} (${esc(c.next.level)}).` : ""}</p>` : ""}
-      <p class="pr-cav">${esc(U.CAVEAT)} Benchmark data v${esc(r.dataVersion)}. Sources: NextCommit, NCSA, BaseballPath, Flatground, Slammers, Pitching Coach U, PBR. Numbers are self-reported.</p>
+      <p class="pr-cav">${esc(U.CAVEAT)} Benchmark data v${esc(r.dataVersion)}. Sources: NextCommit, NCSA, BaseballPath, Flatground, Slammers, Pitching Coach U, PBR. Metrics are self-reported.</p>
       <p class="pr-foot">peachstaterecruits on Instagram · dawsonjones1010-ux.github.io/peach-state-recruits/find-my-level.html</p></div>`;
   }
 
@@ -695,7 +695,7 @@
   });
   app.addEventListener("click", (e) => {
     const eh = e.target.closest("[data-email-handoff]");
-    if(eh){try{sessionStorage.setItem("psr_email_handoff_v2",JSON.stringify(R.handoff(state.input,state.result.reads[+eh.dataset.emailHandoff])));location.href="email-coach.html?from=level";}catch(error){if(window.PSR)window.PSR.toast("This browser cannot transfer your numbers. Open Email Coach and enter them there.");}return;}
+    if(eh){try{sessionStorage.setItem("psr_email_handoff_v2",JSON.stringify(R.handoff(state.input,state.result.reads[+eh.dataset.emailHandoff])));location.href="email-coach.html?from=level";}catch(error){if(window.PSR)window.PSR.toast("This browser cannot transfer your metrics. Open Email Coach and enter them there.");}return;}
     const cp=e.target.closest("[data-copy-snapshot]");if(cp){const text=R.snapshot(state.input,state.result.reads[+cp.dataset.copySnapshot]);Promise.resolve().then(()=>navigator.clipboard.writeText(text)).then(()=>window.PSR&&window.PSR.toast("Coach snapshot copied")).catch(()=>{const out=document.getElementById("snapshotText"+cp.dataset.copySnapshot);out.hidden=false;out.value=text;out.focus();out.select();});return;}
     const sc=e.target.closest("[data-run-scenario]");if(sc){runScenario(+sc.dataset.runScenario);return;}
     const edit=e.target.closest('[data-edit-evidence]');if(edit){go(3);return;}

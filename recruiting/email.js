@@ -58,7 +58,7 @@
   if(subject.length>75)warn.push('Subject exceeds 75 characters; it may be truncated on a phone.');
   if(words>220)warn.push('This draft is over 220 words. Consider trimming details already on your profile. This is an editing suggestion, not a proven reply-rate threshold.');
   if(/\b(?:attached|attachment)\b/i.test(text))warn.push('You mention an attachment. This tool attaches no files; add it yourself or use a link.');
-  if(/\b(?:guaranteed|d1[- ]caliber|power[- ]5[- ]caliber|verified)\b/i.test(text))warn.push('Review ability or verification claims. This tool has not independently verified your numbers.');
+  if(/\b(?:guaranteed|d1[- ]caliber|power[- ]5[- ]caliber|verified)\b/i.test(text))warn.push('Review ability or verification claims. This tool has not independently verified your metrics.');
   if(!ctx.measurement?.date&&metricLines(p).length)warn.push('Your measurements have no date. Add measurement context or avoid implying they are current.');
   const others=(ctx.otherPrograms||[]).filter(x=>x.name&&x.name!==ctx.program?.name&&x.name.length>6&&text.toLowerCase().includes(x.name.toLowerCase()));
   if(others.length)check('wrong_school','No other school name in the message',false,true);

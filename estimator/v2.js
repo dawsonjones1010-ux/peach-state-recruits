@@ -107,16 +107,16 @@
         { label: "Bat speed", unit: "mph", you: isNum(m.batSpeed) ? m.batSpeed : null, cols: LV.map(k => Object.assign({ col: k }, cmp(m.batSpeed, ho[k].bat_speed_mph, "mph"))) }
       ] });
     const facts = E.context_facts.slice();
-    return { kind: "position", title: U.tabLabel(read), groups, facts, noPositionGroup: !grp ? `PBR published no ${read.position} group, so only the all-hitters numbers are shown.` : null };
+    return { kind: "position", title: U.tabLabel(read), groups, facts, noPositionGroup: !grp ? `PBR published no ${read.position} group, so only the all-hitters metrics are shown.` : null };
   }
   function youngPanel(add, input, reads) {
     const g = gradeWhenMeasured(input);
-    if (g.grade == null) return { status: "unknown", grade: null, line: "Tell us what grade you were in when you got these numbers (step 3) to see how eventual D1 players measured at the same age." };
+    if (g.grade == null) return { status: "unknown", grade: null, line: "Tell us what grade you were in when you got these metrics (step 3) to see how eventual D1 players measured at the same age." };
     if (g.grade <= 9) return { status: "freshman", grade: g.grade, line: "No freshman-year data has been published for eventual college players, so there's no same-age comparison yet." };
     if (g.grade !== 10) return { status: "none", grade: g.grade, line: null };
     const out = reads.map(r => r.kind === "pitching" ? pitcherAge(add, input, r) : hitterAge(add, input, r)).filter(Boolean);
     return { status: "panel", grade: 10, gradeFrom: g.from, reads: out,
-      intro: "Your numbers are from your sophomore year, so here is how players who went on to D1 measured at the same age. Context only: it doesn't change your level, and we don't project growth." };
+      intro: "Your metrics are from your sophomore year, so here is how players who went on to D1 measured at the same age. Context only: it doesn't change your level, and we don't project growth." };
   }
 
   // ---------- Recruiting clock ----------
@@ -187,7 +187,7 @@
     }
     if (pr && isNum(m.ivb)) {
       const pc = data.college_four_seam_average_dataset;
-      rows.push({ key: "ivb", label: "Induced vertical break", unit: "in", you: m.ivb, cols: pc.records.filter(r => !pr.hand || r.hand === pr.hand).map(r => Object.assign({ col: `College ${r.level} ${r.hand}` }, cmp(m.ivb, r.mean_ivb_inches, "in"))), note: "College pitchers' four-seam averages (Pitching Coach U, v1 data). Not high school recruit numbers." });
+      rows.push({ key: "ivb", label: "Induced vertical break", unit: "in", you: m.ivb, cols: pc.records.filter(r => !pr.hand || r.hand === pr.hand).map(r => Object.assign({ col: `College ${r.level} ${r.hand}` }, cmp(m.ivb, r.mean_ivb_inches, "in"))), note: "College pitchers' four-seam averages (Pitching Coach U, v1 data). Not high school recruit metrics." });
     }
     if (pr && isNum(m.extension)) rows.push({ key: "extension", label: "Extension", unit: "ft", you: m.extension, cols: [], note: "Recorded with your result. No published level comparison exists." });
     if (reads.some(r => r.kind === "position") && isNum(m.batSpeed)) {
@@ -195,7 +195,7 @@
       if (B) rows.push({ key: "batSpeed", label: "Bat speed (Blast)", unit: "mph", you: m.batSpeed, ranges: Object.keys(B.ranges).map(k => { const [lo, hi] = B.ranges[k]; return { col: k, lo, hi, where: m.batSpeed < lo ? "Below this range" : m.batSpeed > hi ? "Above this range" : "Within this range" }; }), cols: [], note: "Vendor reference ranges, not level cutoffs." });
     }
     if (!rows.length) return null;
-    return { title: "Advanced numbers (context only)", note: "These never change your level. Spin, IVB, extension and bat speed depend on the device.", rows, sources: [src(add, "PBR_IN_P"), src(add, "BLAST")].filter(Boolean) };
+    return { title: "Advanced metrics (context only)", note: "These never change your level. Spin, IVB, extension and bat speed depend on the device.", rows, sources: [src(add, "PBR_IN_P"), src(add, "BLAST")].filter(Boolean) };
   }
 
   // ---------- Result sentence for the CTA ----------
@@ -209,8 +209,8 @@
       return read.kind === "pitching" ? `Your fastball already meets the listed ${U.LONG[h.level]} velocity target. Coaches still need to see you pitch on film.`
         : `Your ${list} already meet${tools.length === 1 ? "s" : ""} the listed ${U.LONG[h.level]} targets. Coaches still need to see them on film.`;
     }
-    if (read.categories.some(c => c.compared.length)) return "Numbers are only part of it. Coaches still need to see your game on film.";
-    return "Add your numbers, then put your film in front of coaches.";
+    if (read.categories.some(c => c.compared.length)) return "Metrics are only part of it. Coaches still need to see your game on film.";
+    return "Add your metrics, then put your film in front of coaches.";
   }
 
   // ---------- Opt-in review payload ----------

@@ -163,7 +163,7 @@
         g, "",
         `My name is ${name}, a ${gy} ${pos}${p.high_school ? ` at ${p.high_school}` : ""}${p.hs_city ? ` in ${p.hs_city}${p.hs_state ? `, ${p.hs_state}` : ""}` : ""}. I'm very interested in ${school} and wanted to introduce myself.`,
         "",
-        [size ? `Size: ${size}` : "", metrics ? `Numbers: ${metrics}` : "", acad ? `Academics: ${acad}` : "", p.intended_major ? `Planned major: ${p.intended_major}` : ""].filter(Boolean).join("\n") || "[Add your size, numbers and academics]",
+        [size ? `Size: ${size}` : "", metrics ? `Metrics: ${metrics}` : "", acad ? `Academics: ${acad}` : "", p.intended_major ? `Planned major: ${p.intended_major}` : ""].filter(Boolean).join("\n") || "[Add your size, metrics and academics]",
         "",
         p.video_url ? `Here is my video: ${p.video_url}` : "[Add a link to your highlight video]",
         "",
@@ -177,7 +177,7 @@
       body = [
         g, "",
         `I wanted to send a quick update since I last reached out about ${school}.`, "",
-        ctx.updateNote || (metrics ? `My latest numbers: ${metrics}.` : "[What's new: new numbers, stats, video, grades, or upcoming events.]"),
+        ctx.updateNote || (metrics ? `My latest metrics: ${metrics}.` : "[What's new: new metrics, stats, video, grades, or upcoming events.]"),
         "",
         p.video_url ? `Updated video: ${p.video_url}` : "",
         "",
@@ -204,7 +204,7 @@
       body = [
         g, "",
         `I reached out on ${last} about ${school} and wanted to follow up.`, "",
-        ctx.followNote || "[One new thing since your last message: a new number, game result, or upcoming event.]",
+        ctx.followNote || "[One new thing since your last message: a new metric, game result, or upcoming event.]",
         "",
         `I'm still very interested in ${school}, and I'd appreciate any feedback on what you'd need to see from me.`,
         p.video_url ? `\nVideo: ${p.video_url}` : "",
@@ -307,7 +307,7 @@
           return st.lastSentOn && daysBetween(st.lastSentOn, c.today) >= 60 && ["contacted", "talking"].includes(s.stage);
         });
         if (!stale.length) return null;
-        return { title: `Send an update to ${c.programName(stale[0].program_id)}`, detail: "It has been 60+ days since your last message. Share something new: numbers, stats, grades or your schedule.", why: "Last logged message is 60+ days old.", action: { label: "Draft update", href: `#emails?kind=update&program=${stale[0].program_id}` }, subkey: stale.map(s => s.program_id + ":" + schoolStatus(s.program_id, c.comms).lastSentOn).join(",") };
+        return { title: `Send an update to ${c.programName(stale[0].program_id)}`, detail: "It has been 60+ days since your last message. Share something new: metrics, stats, grades or your schedule.", why: "Last logged message is 60+ days old.", action: { label: "Draft update", href: `#emails?kind=update&program=${stale[0].program_id}` }, subkey: stale.map(s => s.program_id + ":" + schoolStatus(s.program_id, c.comms).lastSentOn).join(",") };
       }
     },
     {

@@ -22,7 +22,7 @@
   if (typeof module === "object" && module.exports) module.exports = api; else root.PSRLevelSummary = api;
 })(typeof self !== "undefined" ? self : this, function (L) {
   const S = L.S;
-  const ST = { MEETS: "Meets targets", CLOSE: "Close", BELOW: "Below targets", NEED: "Needs more numbers", NONE: "No published target" };
+  const ST = { MEETS: "Meets targets", CLOSE: "Close", BELOW: "Below targets", NEED: "Needs more metrics", NONE: "No published target" };
   const SHORT = { p4: "Power D1", mid: "Mid-major D1", low: "Lower D1", d2: "D2", d3: "D3", naia: "NAIA", juco: "JUCO" };
   const LONG = { p4: "Power conference D1", mid: "mid-major D1", low: "lower D1", d2: "D2", d3: "D3", naia: "NAIA", juco: "JUCO" };
   const NEXT = { p4: "Power conference D1", mid: "Mid-major D1", low: "Lower D1", d2: "D2", d3: "D3", naia: "NAIA", juco: "JUCO" };
@@ -53,17 +53,17 @@
     if (first) {
       const parts = first.compared.map(k => `${noun(first.tools[k], k)} (${fmt(first.tools[k])})`);
       return { level: first.key, levelName: LONG[first.key],
-        text: pitch ? `Your fastball meets the listed ${LONG[first.key]} velocity target.` : `Your numbers meet the listed ${LONG[first.key]} targets.`,
+        text: pitch ? `Your fastball meets the listed ${LONG[first.key]} velocity target.` : `Your metrics meet the listed ${LONG[first.key]} targets.`,
         support: pitch ? `Based on your ${read.basis} (${fmt(first.tools.pitching)}) only. Velocity is one part of a pitcher evaluation.` : `Supported by your ${andList(parts)}.` };
     }
     const cmpAny = read.categories.some(c => c.compared.some(k => c.tools[k].status === S.BELOW));
     if (cmpAny) return { level: null, levelName: null,
-      text: pitch ? "Your fastball is below the listed velocity targets we could compare." : "Your numbers don't fully meet any level's listed targets yet.",
-      support: "That's a snapshot of today's numbers, not a ceiling. The closest gap is below." };
+      text: pitch ? "Your fastball is below the listed velocity targets we could compare." : "Your metrics don't fully meet any level's listed targets yet.",
+      support: "That's a snapshot of today's metrics, not a ceiling. The closest gap is below." };
     const most = Math.max(0, ...read.categories.map(c => c.compared.length));
     return { level: null, levelName: null, text: "More information needed for an overall range.",
       support: pitch ? "Add your fastball velocity and throwing hand to compare it with the published targets."
-        : most ? `Only ${most} of your numbers has a published target at the same level for a ${POS[read.position]}, and a level needs at least 2.` : "Add your core numbers to compare them with the published targets." };
+        : most ? `Only ${most} of your metrics has a published target at the same level for a ${POS[read.position]}, and a level needs at least 2.` : "Add your core metrics to compare them with the published targets." };
   }
 
   function gapLine(c, read) {
@@ -81,7 +81,7 @@
     if (h.level) {
       const i = cats.findIndex(c => c.key === h.level);
       for (let j = i - 1; j >= 0 && !target; j--) if (gapLine(cats[j], read)) target = cats[j];
-      if (!target) return i === 0 ? { level: null, text: "You meet the highest listed level. Keep your numbers current and get them in front of coaches." } : null;
+      if (!target) return i === 0 ? { level: null, text: "You meet the highest listed level. Keep your metrics current and get them in front of coaches." } : null;
     } else {
       let best = null;
       cats.forEach(c => { const g = gapLine(c, read); if (!g) return; const n = g.more + 1; if (!best || n <= best.n) best = { c, n }; });
@@ -90,7 +90,7 @@
     if (!target) return null;
     const g = gapLine(target, read);
     return { level: target.key, tool: g.tool, more: g.more,
-      text: `Next benchmark: ${NEXT[target.key]}. ${g.text}${g.more ? ` ${g.more === 1 ? "One other number is" : g.more + " other numbers are"} also below this target.` : ""}` };
+      text: `Next benchmark: ${NEXT[target.key]}. ${g.text}${g.more ? ` ${g.more === 1 ? "One other metric is" : g.more + " other metrics are"} also below this target.` : ""}` };
   }
 
   function title(read) { return `Your results as a ${POS[read.position] || read.position}.`; }
@@ -102,7 +102,7 @@
     [/the separate NCSA reference/g, "the second published target"], [/NCSA lists all of D1 as one group/g, "This second source lists all of D1 as one group"],
     [/NCSA combines/g, "This second source combines"], [/combined NextCommit targets/g, "combined published targets"],
     [/NextCommit doesn't say whether its targets are/g, "The published targets don't say whether they're"], [/NextCommit's listed/g, "the listed"],
-    [/BaseballPath used best PBR showcase results/g, "This group's numbers are best showcase results"], [/BaseballPath reports/g, "This group reports"],
+    [/BaseballPath used best PBR showcase results/g, "This group's metrics are best showcase results"], [/BaseballPath reports/g, "This group reports"],
     [/BaseballPath publishes no/g, "This group has no published"], [/Slammers measured/g, "This group was measured"], [/Slammers used/g, "This group used"],
     [/and Slammers used/g, "and this group used"], [/ \(Flatground:[^)]*\)/g, ""],
     [/NextCommit/g, "the published targets"], [/NCSA/g, "the second target source"], [/BaseballPath/g, "the committed-player group"],

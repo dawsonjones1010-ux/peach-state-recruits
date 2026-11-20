@@ -60,7 +60,7 @@
         college: { n: g.n, height_in: g.height_in, weight_lb: g.weight_lb, group: grp },
         collegeText: isNum(g.height_in) ? `${ht(g.height_in)}, ${lb(g.weight_lb)}${oneTeam ? "*" : ""}` : "Not published",
         oneTeam, oneTeamNote: oneTeam ? "* JUCO weight comes from one team (Jones College); San Jacinto lists no weights." : null,
-        pooledNote: SL_KEY[k] === "JUCO / NAIA" ? "The all-positions high school group pools NAIA and JUCO, so both rows show the same numbers." : null
+        pooledNote: SL_KEY[k] === "JUCO / NAIA" ? "The all-positions high school group pools NAIA and JUCO, so both rows show the same metrics." : null
       };
     });
     const fgD1 = FG ? FG_D1.map(t => ({ tier: t, height_in: FG.height_in[t], weight_lb: FG.weight_lb[t] })) : null;

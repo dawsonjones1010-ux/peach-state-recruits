@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;1,800&family=Inter:wght@400;500;600;700;800&family=Kaushan+Script&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=24">
+<link rel="stylesheet" href="styles.css?v=25">
 </head>
 <body class="admin-body">
 <header class="nav">
@@ -184,7 +184,7 @@
           <button class="btn btn-line btn-sm" id="lrRefresh" type="button">Refresh</button>
         </div>
       </div>
-      <p class="muted small">Sent from Find My Level only when a player taps "Send my numbers to Peach State for a free look". Reply to them on Instagram.</p>
+      <p class="muted small">Sent from Find My Level only when a player taps "Send my metrics to Peach State for a free look". Reply to them on Instagram.</p>
       <div id="lrList" class="order-list lr-list"></div>
     </div>
   </section>
@@ -281,9 +281,9 @@
 
 <div class="toast"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="config.js?v=24"></script>
-<script src="shared.js?v=24"></script>
-<script src="portal.js?v=24"></script>
+<script src="config.js?v=25"></script>
+<script src="shared.js?v=25"></script>
+<script src="portal.js?v=25"></script>
 <script>
 (async function () {
   const P = window.PORTAL, C = window.PSR_CONFIG, esc = P.esc, $ = (id) => document.getElementById(id);
@@ -450,7 +450,7 @@
         <div class="row-between"><div><b><a href="https://instagram.com/${esc(r.ig_handle)}" target="_blank" rel="noopener">@${esc(r.ig_handle)}</a></b> <span class="muted small">${esc(r.positions || "")}${r.grad_year ? ` · ${esc(r.grad_year)}` : ""}${r.throws ? ` · T ${esc(r.throws)}` : ""}${r.bats ? ` B ${esc(r.bats)}` : ""} · ${esc(when)}</span></div>
           <select class="mini-select" data-lr-status="${esc(r.id)}" aria-label="Status for @${esc(r.ig_handle)}">${["new", "contacted", "done"].map(s => `<option value="${s}" ${r.status === s ? "selected" : ""}>${s[0].toUpperCase() + s.slice(1)}</option>`).join("")}</select></div>
         ${r.headline ? `<p class="lr-head">${esc(r.headline)}</p>` : ""}
-        <div class="lr-nums">${nums || '<span class="muted small">No numbers entered</span>'}</div>
+        <div class="lr-nums">${nums || '<span class="muted small">No metrics entered</span>'}</div>
         ${how ? `<p class="muted small">${how}</p>` : ""}
         ${r.data_version ? `<p class="muted small">Benchmark data v${esc(r.data_version)}</p>` : ""}
       </article>`;

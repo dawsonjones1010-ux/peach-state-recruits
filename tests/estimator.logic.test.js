@@ -266,7 +266,7 @@ test("context and evidence quality never change the athletic comparison", () => 
   const ev = b.evidence.map(e => e.text).join(" ");
   assert.match(ev, /Verification: none/);
   assert.match(ev, /link alone doesn't verify/i);
-  assert.match(ev, /doesn't change your numbers/);
+  assert.match(ev, /doesn't change your metrics/);
   assert.doesNotMatch(JSON.stringify(b), /"verified":\s*true/);
 });
 

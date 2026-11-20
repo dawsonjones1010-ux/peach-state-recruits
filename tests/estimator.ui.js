@@ -72,7 +72,7 @@ const LEVELS = ["Power D1", "Mid-major D1", "Lower D1", "D2", "D3", "NAIA", "JUC
     // 0. Hero
     await page.goto(BASE + "find-my-level.html", { waitUntil: "networkidle" }); await page.waitForSelector('form[data-step="1"]');
     const hero = await page.evaluate(() => ({ h1: document.querySelector(".lvl-intro h1").textContent, lead: document.querySelector(".lvl-intro .lead").textContent, meta: document.querySelector(".lvl-meta").textContent, pills: document.querySelectorAll(".lvl-promise").length, heroBottom: document.querySelector(".lvl-intro").getBoundingClientRect().bottom, formTop: document.querySelector('form[data-step="1"]').getBoundingClientRect().top, firstField: document.querySelector("#f_gradYear").getBoundingClientRect().bottom, vh: innerHeight }));
-    ok(hero.h1 === "Find My Level" && hero.lead === "Enter your numbers and see how they compare with published college baseball benchmarks." && hero.meta === "Free · About 2 minutes · No sign-up" && hero.pills === 0, `${tag}: hero title, line and small line; pill badges removed`);
+    ok(hero.h1 === "Find My Level" && hero.lead === "Enter your metrics and see how they compare with published college baseball benchmarks." && hero.meta === "Free · About 2 minutes · No sign-up" && hero.pills === 0, `${tag}: hero title, line and small line; pill badges removed`);
     ok(hero.heroBottom < hero.vh, `${tag}: hero fits in under one screen (${Math.round(hero.heroBottom)}px of ${hero.vh})`);
     ok(hero.formTop < hero.vh && hero.firstField <= hero.vh, `${tag}: step 1 visible on the first screen (first field ends at ${Math.round(hero.firstField)}px)`);
     if (SHOTS && mobile) await page.screenshot({ path: `${SHOTS}/phone-hero-step1.png` });
@@ -112,8 +112,8 @@ const LEVELS = ["Power D1", "Mid-major D1", "Lower D1", "D2", "D3", "NAIA", "JUC
     ok(!/probability|percentile|fit score|% chance/i.test(resMain), `${tag}: no fabricated scores or probabilities (the Sources list may name published studies)`);
     if (SHOTS) await page.screenshot({ path: `${SHOTS}/${tag}-results-ss.png`, fullPage: !mobile ? false : false });
     // Update my numbers keeps values
-    await page.click("text=Update my numbers"); await page.waitForSelector('form[data-step="1"]');
-    ok((await page.inputValue("#f_gradYear")) === "2027" && !(await page.$("#f_age")) && (await page.inputValue("#f_primary")) === "SS", `${tag}: "Update my numbers" keeps entries`);
+    await page.click("text=Update my metrics"); await page.waitForSelector('form[data-step="1"]');
+    ok((await page.inputValue("#f_gradYear")) === "2027" && !(await page.$("#f_age")) && (await page.inputValue("#f_primary")) === "SS", `${tag}: "Update my metrics" keeps entries`);
     await next(page); ok((await page.inputValue("#f_maxEv")) === "93", `${tag}: step 2 values kept after update`);
 
     // 3. Outfielders: LF -> Corner OF, CF -> CF
@@ -124,7 +124,7 @@ const LEVELS = ["Power D1", "Mid-major D1", "Lower D1", "D2", "D3", "NAIA", "JUC
       if (pos === "CF") {
         const cfMain = await mainText(page, 0), cfLv = await levelRow(page, 0);
         console.log("      CF main: " + JSON.stringify(cfMain) + "\n      CF levels: " + cfLv.join(" · "));
-        ok(cfMain[0] === "Your results as a center fielder." && cfMain[1] === "Your numbers meet the listed mid-major D1 targets." && cfMain[2] === "Supported by your max exit velocity (94 mph) and 60-yard dash (6.75 s)." && cfMain[3] === "A benchmark comparison, not a prediction. Coaches also weigh game performance and roster needs.", `${tag}: CF title, headline, support and caveat`);
+        ok(cfMain[0] === "Your results as a center fielder." && cfMain[1] === "Your metrics meet the listed mid-major D1 targets." && cfMain[2] === "Supported by your max exit velocity (94 mph) and 60-yard dash (6.75 s)." && cfMain[3] === "A benchmark comparison, not a prediction. Coaches also weigh game performance and roster needs.", `${tag}: CF title, headline, support and caveat`);
         ok(cfMain[4] === "Next benchmark: Power conference D1. Your 60 is 0.05 s slower than the listed 6.70 s.", `${tag}: CF next step shows only the closest gap`);
         ok(cfLv.join("|") === "Power D1: Close|Mid-major D1: Meets targets|Lower D1: No published target|D2: Meets targets|D3: Meets targets|NAIA: Meets targets|JUCO: Meets targets", `${tag}: CF level row lists all seven levels in order`);
         ok(await fitsFirst(), `${tag}: CF headline, next step and CTA fit the first results screen`);
@@ -172,7 +172,7 @@ const LEVELS = ["Power D1", "Mid-major D1", "Lower D1", "D2", "D3", "NAIA", "JUC
     ok(JSON.stringify(tabs) === JSON.stringify(["Shortstop:true", "Pitcher:false"]) && await page.isVisible("#tp0") && !(await page.isVisible("#tp1")), `${tag}: two-way shows Shortstop / Pitcher tabs, one panel at a time`);
     const ssMain = await mainText(page, 0), ssLv = await levelRow(page, 0);
     console.log("      SS main: " + JSON.stringify(ssMain) + "\n      SS levels: " + ssLv.join(" · "));
-    ok(ssMain[1] === "Your numbers meet the listed mid-major D1 targets." && ssMain[4] === "Next benchmark: Power conference D1. Your exit velocity is 1 mph short of the listed 91 mph. One other number is also below this target.", `${tag}: SS headline and next step`);
+    ok(ssMain[1] === "Your metrics meet the listed mid-major D1 targets." && ssMain[4] === "Next benchmark: Power conference D1. Your exit velocity is 1 mph short of the listed 91 mph. One other metric is also below this target.", `${tag}: SS headline and next step`);
     ok(ssLv.join("|") === "Power D1: Below targets|Mid-major D1: Meets targets|Lower D1: No published target|D2: Meets targets|D3: Meets targets|NAIA: Meets targets|JUCO: Meets targets", `${tag}: SS level row`);
     ok(await fitsFirst(), `${tag}: SS headline, next step and CTA fit the first results screen`);
     if (SHOTS && mobile) await page.screenshot({ path: `${SHOTS}/phone-twoway-ss-first.png` });
@@ -224,7 +224,7 @@ const LEVELS = ["Power D1", "Mid-major D1", "Lower D1", "D2", "D3", "NAIA", "JUC
     await numbers(page, { maxEv: 94, sixty: 6.75, ofVelo: 88 });
     await sel("#f_m_sixty", "laser"); await sel("#f_m_ev", "game"); await sel("#f_m_evDevice", "trackman"); await sel("#f_m_veloDevice", "pocket");
     await next(page);
-    ok(await page.isVisible("#f_grade") && (await page.textContent('label[for="f_grade"]')).includes("What grade were you in when you got these numbers?"), `${tag}: step 3 asks the grade question`);
+    ok(await page.isVisible("#f_grade") && (await page.textContent('label[for="f_grade"]')).includes("What grade were you in when you got these metrics?"), `${tag}: step 3 asks the grade question`);
     await evidence(page, { date: "2026-07-20", environment: "showcase", method: "electronic", source: "event" });
     let tx = await page.textContent("#tp0");
     ok(/Laser/.test(await page.textContent("#tp0 .lvl-nums")) && /TrackMan/.test(await page.textContent("#tp0 .lvl-nums")) && /Game/.test(await page.textContent("#tp0 .lvl-nums")), `${tag}: method chips shown next to each number`);
@@ -238,7 +238,7 @@ const LEVELS = ["Power D1", "Mid-major D1", "Lower D1", "D2", "D3", "NAIA", "JUC
     ok(await fitsFirst(), `${tag}: CF 2027 headline, next step and CTA fit the first results screen`);
     await toResults(); await shot("p1-cf2027-first"); await shot("p1-cf2027-full", true);
     // Progress on return
-    await page.click("text=Update my numbers"); await page.waitForSelector('form[data-step="1"]'); await next(page);
+    await page.click("text=Update my metrics"); await page.waitForSelector('form[data-step="1"]'); await next(page);
     await page.fill("#f_maxEv", "96"); await next(page); await evidence(page, {});
     const pr = await page.textContent(".lvl-prog");
     ok(/Since last time/.test(pr) && /\+2 mph max exit velocity since/.test(pr) && (await page.$$(".lvl-prog svg.lvl-spark")).length >= 1, `${tag}: "Since last time" change and sparkline on return`);
@@ -343,7 +343,7 @@ const LEVELS = ["Power D1", "Mid-major D1", "Lower D1", "D2", "D3", "NAIA", "JUC
     ok(/PSR_College_Roster_Size_Sample_2026\.csv/.test(await page.innerHTML('[data-sec="sources"]')), `${tag}: roster CSV linked from Sources`);
     if (SHOTS) { await page.evaluate(() => { document.documentElement.style.scrollBehavior = "auto"; const e = document.querySelector("#tp0 .lvl-frame"); window.scrollTo(0, e.getBoundingClientRect().top + scrollY - document.querySelector(".nav").offsetHeight - 8); }); await page.screenshot({ path: `${SHOTS}/${tag}-frame-ss-5-10-170.png` }); await panelShot("#tp0 .lvl-frame", `${SHOTS}/${tag}-frame-ss-5-10-170-panel.png`); }
     // Same numbers, different body: level result identical
-    await page.click("text=Update my numbers"); await page.waitForSelector('form[data-step="1"]');
+    await page.click("text=Update my metrics"); await page.waitForSelector('form[data-step="1"]');
     await page.selectOption("#f_heightIn", "6"); await page.selectOption('select[data-h="in"]', "5"); await page.fill("#f_weightLb", "240");
     await next(page); await next(page); await evidence(page, {});
     ok(JSON.stringify(await hlCats(page, 0)) === JSON.stringify(hlSS) && hlSS.length > 0, `${tag}: changing height and weight never changes the highlighted levels (${hlSS.join(",")})`);
