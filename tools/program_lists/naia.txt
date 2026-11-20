@@ -1,0 +1,195 @@
+Abraham Baldwin Agricultural College|Tifton|Georgia|SSAC
+Alice Lloyd College|Pippa Passes|Kentucky|Continental
+Andrew College|Cuthbert|Georgia|SSAC
+Aquinas College|Grand Rapids|Michigan|WHAC
+Arizona Christian University|Glendale|Arizona|GSAC
+Arkansas Baptist College|Little Rock|Arkansas|Continental
+Ave Maria University|Ave Maria|Florida|Sun Conference
+Avila University|Kansas City|Missouri|KCAC
+Baker University|Baldwin City|Kansas|Heart of America
+Bellevue University|Bellevue|Nebraska|Frontier
+Benedictine College|Atchison|Kansas|Heart of America
+Bethany College (KS)|Lindsborg|Kansas|KCAC
+Bethel University (IN)|Mishawaka|Indiana|Crossroads
+Bethel University (TN)|McKenzie|Tennessee|Mid-South
+Bismarck State College|Bismarck|North Dakota|Frontier
+Blue Mountain Christian University|Blue Mountain|Mississippi|SSAC
+Bluefield University|Bluefield|Virginia|Appalachian
+Brescia University|Owensboro|Kentucky|River States
+Brewton-Parker Christian University|Mount Vernon|Georgia|SSAC
+Briar Cliff University|Sioux City|Iowa|GPAC
+Bryan College|Dayton|Tennessee|Appalachian
+Bushnell University|Eugene|Oregon|Cascade
+CUNY York College|Jamaica|New York|
+Calumet College of St. Joseph|Whiting|Indiana|CCAC
+Campbellsville University|Campbellsville|Kentucky|Mid-South
+Carolina University|Winston-Salem|North Carolina|Continental
+Central Baptist College|Conway|Arkansas|American Midwest
+Central Christian College of Kansas|McPherson|Kansas|Sooner
+Central Methodist University|Fayette|Missouri|Heart of America
+Clarke University|Dubuque|Iowa|Heart of America
+Cleary University|Howell|Michigan|WHAC
+College of the Ozarks|Point Lookout|Missouri|Sooner
+Columbia College (MO)|Columbia|Missouri|American Midwest
+Columbia International University|Columbia|South Carolina|Appalachian
+Concordia University Ann Arbor|Ann Arbor|Michigan|WHAC
+Concordia University Nebraska|Seward|Nebraska|GPAC
+Corban University|Salem|Oregon|Cascade
+Cornerstone University|Grand Rapids|Michigan|WHAC
+Crowley's Ridge College|Paragould|Arkansas|American Midwest
+Culver-Stockton College|Canton|Missouri|Heart of America
+Cumberland University|Lebanon|Tennessee|Mid-South
+Dakota State University|Madison|South Dakota|Frontier
+Dakota Wesleyan University|Mitchell|South Dakota|GPAC
+Defiance College|Defiance|Ohio|WHAC
+Dickinson State University|Dickinson|North Dakota|Frontier
+Dillard University|New Orleans|Louisiana|HBCUAC
+Doane University|Crete|Nebraska|GPAC
+Dordt University|Sioux Center|Iowa|GPAC
+Eastern Oregon University|La Grande|Oregon|Cascade
+Embry-Riddle Aeronautical University-Prescott|Prescott|Arizona|GSAC
+Evangel University|Springfield|Missouri|KCAC
+Faulkner University|Montgomery|Alabama|SSAC
+Fisher College|Boston|Massachusetts|Independent
+Florida Memorial University|Miami Gardens|Florida|Sun Conference
+Florida National University|Hialeah|Florida|Independent
+Florida Polytechnic University|Lakeland|Florida|Sun Conference
+Freed-Hardeman University|Henderson|Tennessee|Mid-South
+Friends University|Wichita|Kansas|KCAC
+Georgetown College|Georgetown|Kentucky|Mid-South
+Georgia Gwinnett College|Lawrenceville|Georgia|Continental
+Goshen College|Goshen|Indiana|Crossroads
+Grace College|Winona Lake|Indiana|Crossroads
+Graceland University|Lamoni|Iowa|Heart of America
+Grand View University|Des Moines|Iowa|Heart of America
+Hannibal-LaGrange University|Hannibal|Missouri|American Midwest
+Harris-Stowe State University|Saint Louis|Missouri|American Midwest
+Hastings College|Hastings|Nebraska|GPAC
+Hesston College|Hesston|Kansas|Continental
+Hope International University|Fullerton|California|GSAC
+Huntington University|Huntington|Indiana|Crossroads
+Huston-Tillotson University|Austin|Texas|HBCUAC
+Indiana Tech|Fort Wayne|Indiana|WHAC
+Indiana University Kokomo|Kokomo|Indiana|River States
+Indiana University South Bend|South Bend|Indiana|CCAC
+Indiana University Southeast|New Albany|Indiana|River States
+Indiana Wesleyan University|Marion|Indiana|Crossroads
+Jarvis Christian University|Hawkins|Texas|HBCUAC
+Johnson University|Knoxville|Tennessee|Appalachian
+Judson University|Elgin|Illinois|CCAC
+Kansas Wesleyan University|Salina|Kansas|KCAC
+Keiser University|West Palm Beach|Florida|Sun Conference
+Kentucky Christian University|Grayson|Kentucky|River States
+La Sierra University|Riverside|California|GSAC
+Lawrence Technological University|Southfield|Michigan|WHAC
+Lewis-Clark State College|Lewiston|Idaho|Cascade
+Lindsey Wilson University|Columbia|Kentucky|Mid-South
+Louisiana Christian University|Pineville|Louisiana|Red River
+LSU Alexandria|Alexandria|Louisiana|Red River
+LSU Shreveport|Shreveport|Louisiana|Red River
+Lourdes University|Sylvania|Ohio|WHAC
+Loyola University New Orleans|New Orleans|Louisiana|SSAC
+Madonna University|Livonia|Michigan|WHAC
+Marian University (IN)|Indianapolis|Indiana|Crossroads
+Mayville State University|Mayville|North Dakota|Frontier
+McPherson College|McPherson|Kansas|KCAC
+Mid-America Christian University|Oklahoma City|Oklahoma|Sooner
+MidAmerica Nazarene University|Olathe|Kansas|Heart of America
+Midland University|Fremont|Nebraska|GPAC
+Midway University|Midway|Kentucky|River States
+Milligan University|Milligan|Tennessee|Appalachian
+Mission University|Springfield|Missouri|American Midwest
+Missouri Baptist University|Saint Louis|Missouri|Heart of America
+Missouri Valley College|Marshall|Missouri|Heart of America
+Montreat College|Montreat|North Carolina|Appalachian
+Morningside University|Sioux City|Iowa|GPAC
+Morris College|Sumter|South Carolina|Independent
+Mount Marty University|Yankton|South Dakota|GPAC
+Mount Mercy University|Cedar Rapids|Iowa|Heart of America
+Mount Vernon Nazarene University|Mount Vernon|Ohio|Crossroads
+Nelson University|Waxahachie|Texas|Sooner
+New College of Florida|Sarasota|Florida|Sun Conference
+Northwestern College (IA)|Orange City|Iowa|GPAC
+Oakland City University|Oakland City|Indiana|
+Oakwood University|Huntsville|Alabama|HBCUAC
+Ohio Christian University|Circleville|Ohio|River States
+Oklahoma City University|Oklahoma City|Oklahoma|Sooner
+Oklahoma Panhandle State University|Goodwell|Oklahoma|Sooner
+Oklahoma Wesleyan University|Bartlesville|Oklahoma|KCAC
+Olivet Nazarene University|Bourbonnais|Illinois|CCAC
+Oregon Institute of Technology|Klamath Falls|Oregon|Cascade
+Ottawa University|Ottawa|Kansas|KCAC
+Ottawa University Arizona|Surprise|Arizona|GSAC
+Our Lady of the Lake University|San Antonio|Texas|Red River
+Park University|Parkville|Missouri|Heart of America
+Penn State Schuylkill|Schuylkill Haven|Pennsylvania|Independent
+Peru State College|Peru|Nebraska|Heart of America
+Philander Smith University|Little Rock|Arkansas|HBCUAC
+Point University|West Point|Georgia|SSAC
+Providence Christian College|Pasadena|California|Cal Pac
+Purdue Polytechnic Columbus|Columbus|Indiana|River States
+Reinhardt University|Waleska|Georgia|Appalachian
+Rochester Christian University|Rochester Hills|Michigan|WHAC
+Rust College|Holly Springs|Mississippi|HBCUAC
+St. Ambrose University|Davenport|Iowa|Heart of America
+Saint Xavier University|Chicago|Illinois|CCAC
+Shawnee State University|Portsmouth|Ohio|
+Siena Heights University|Adrian|Michigan|
+Simpson University|Redding|California|Cal Pac
+Southeastern University|Lakeland|Florida|Sun Conference
+Southern University at New Orleans|New Orleans|Louisiana|
+Southwestern Christian University|Bethany|Oklahoma|Sooner
+Southwestern College (KS)|Winfield|Kansas|KCAC
+Spartanburg Methodist College|Spartanburg|South Carolina|Appalachian
+Spring Arbor University|Spring Arbor|Michigan|Crossroads
+St. Thomas University (FL)|Miami Gardens|Florida|Sun Conference
+Sterling College|Sterling|Kansas|KCAC
+Stillman College|Tuscaloosa|Alabama|HBCUAC
+Tabor College|Hillsboro|Kansas|KCAC
+Talladega College|Talladega|Alabama|HBCUAC
+Taylor University|Upland|Indiana|Crossroads
+Tennessee Wesleyan University|Athens|Tennessee|Appalachian
+Texas A&M University-Texarkana|Texarkana|Texas|Red River
+Texas A&M University-Victoria|Victoria|Texas|Red River
+Texas College|Tyler|Texas|Red River
+Texas Wesleyan University|Fort Worth|Texas|Sooner
+The College of Idaho|Caldwell|Idaho|Cascade
+The Master's University|Santa Clarita|California|GSAC
+University of Tennessee Southern|Pulaski|Tennessee|SSAC
+Thomas University|Thomasville|Georgia|SSAC
+Tougaloo College|Tougaloo|Mississippi|HBCUAC
+Trinity Christian College|Palos Heights|Illinois|CCAC
+Truett McConnell University|Cleveland|Georgia|Appalachian
+Union Commonwealth University|Barbourville|Kentucky|Appalachian
+University of Antelope Valley|Lancaster|California|Cal Pac
+University of Health Sciences and Pharmacy in St. Louis|Saint Louis|Missouri|American Midwest
+University of Michigan-Dearborn|Dearborn|Michigan|WHAC
+University of Mobile|Mobile|Alabama|SSAC
+University of Northwestern Ohio|Lima|Ohio|WHAC
+University of Pikeville|Pikeville|Kentucky|Appalachian
+University of Rio Grande|Rio Grande|Ohio|River States
+University of Saint Francis (IN)|Fort Wayne|Indiana|Crossroads
+University of Saint Katherine|San Marcos|California|Cal Pac
+University of Saint Mary|Leavenworth|Kansas|KCAC
+University of Science and Arts of Oklahoma|Chickasha|Oklahoma|Sooner
+University of St. Francis (IL)|Joliet|Illinois|CCAC
+University of the Cumberlands|Williamsburg|Kentucky|Mid-South
+University of the Southwest|Hobbs|New Mexico|Red River
+Valley City State University|Valley City|North Dakota|Frontier
+Viterbo University|La Crosse|Wisconsin|CCAC
+Voorhees University|Denmark|South Carolina|HBCUAC
+Waldorf University|Forest City|Iowa|GPAC
+Warner Pacific University|Portland|Oregon|Cascade
+Warner University|Lake Wales|Florida|Sun Conference
+Wayland Baptist University|Plainview|Texas|Sooner
+Webber International University|Babson Park|Florida|Sun Conference
+WVU Tech|Beckley|West Virginia|River States
+Westcliff University|Irvine|California|Cal Pac
+Wilberforce University|Wilberforce|Ohio|HBCUAC
+Wiley University|Marshall|Texas|HBCUAC
+William Carey University|Hattiesburg|Mississippi|SSAC
+William Penn University|Oskaloosa|Iowa|Heart of America
+William Woods University|Fulton|Missouri|Heart of America
+Williams Baptist University|Walnut Ridge|Arkansas|American Midwest
+Xavier University of Louisiana|New Orleans|Louisiana|SSAC
+York University (NE)|York|Nebraska|KCAC

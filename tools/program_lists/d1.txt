@@ -1,0 +1,309 @@
+University at Albany||New York|America East
+Binghamton University||New York|America East
+Bryant University||Rhode Island|America East
+University of Maine||Maine|America East
+New Jersey Institute of Technology||New Jersey|America East
+University of Massachusetts Lowell||Massachusetts|America East
+University of Maryland, Baltimore County||Maryland|America East
+University of North Carolina at Charlotte||North Carolina|American
+East Carolina University||North Carolina|American
+Florida Atlantic University||Florida|American
+University of Memphis||Tennessee|American
+Rice University||Texas|American
+University of South Florida||Florida|American
+Tulane University||Louisiana|American
+University of Alabama at Birmingham||Alabama|American
+University of Texas at San Antonio||Texas|American
+Wichita State University||Kansas|American
+Boston College||Massachusetts|Atlantic Coast
+University of California, Berkeley||California|Atlantic Coast
+Clemson University||South Carolina|Atlantic Coast
+Duke University||North Carolina|Atlantic Coast
+Florida State University||Florida|Atlantic Coast
+Georgia Institute of Technology||Georgia|Atlantic Coast
+University of Louisville||Kentucky|Atlantic Coast
+University of Miami||Florida|Atlantic Coast
+University of North Carolina at Chapel Hill||North Carolina|Atlantic Coast
+North Carolina State University||North Carolina|Atlantic Coast
+University of Notre Dame||Indiana|Atlantic Coast
+University of Pittsburgh||Pennsylvania|Atlantic Coast
+Stanford University||California|Atlantic Coast
+University of Virginia||Virginia|Atlantic Coast
+Virginia Tech||Virginia|Atlantic Coast
+Wake Forest University||North Carolina|Atlantic Coast
+Bellarmine University||Kentucky|ASUN
+Florida Gulf Coast University||Florida|ASUN
+Jacksonville University||Florida|ASUN
+Lipscomb University||Tennessee|ASUN
+University of North Florida||Florida|ASUN
+Queens University of Charlotte||North Carolina|ASUN
+Stetson University||Florida|ASUN
+Davidson College||North Carolina|Atlantic 10
+University of Dayton||Ohio|Atlantic 10
+Fordham University||New York|Atlantic 10
+George Mason University||Virginia|Atlantic 10
+George Washington University||District of Columbia|Atlantic 10
+La Salle University||Pennsylvania|Atlantic 10
+University of Rhode Island||Rhode Island|Atlantic 10
+University of Richmond||Virginia|Atlantic 10
+St. Bonaventure University||New York|Atlantic 10
+Saint Joseph's University||Pennsylvania|Atlantic 10
+Saint Louis University||Missouri|Atlantic 10
+Virginia Commonwealth University||Virginia|Atlantic 10
+Butler University||Indiana|Big East
+Creighton University||Nebraska|Big East
+Georgetown University||District of Columbia|Big East
+St. John's University||New York|Big East
+Seton Hall University||New Jersey|Big East
+University of Connecticut||Connecticut|Big East
+Villanova University||Pennsylvania|Big East
+Xavier University||Ohio|Big East
+Charleston Southern University||South Carolina|Big South
+Gardner-Webb University||North Carolina|Big South
+High Point University||North Carolina|Big South
+Longwood University||Virginia|Big South
+Presbyterian College||South Carolina|Big South
+Radford University||Virginia|Big South
+University of North Carolina at Asheville||North Carolina|Big South
+University of South Carolina Upstate||South Carolina|Big South
+Winthrop University||South Carolina|Big South
+University of Illinois Urbana-Champaign||Illinois|Big Ten
+Indiana University Bloomington||Indiana|Big Ten
+University of Iowa||Iowa|Big Ten
+University of Maryland, College Park||Maryland|Big Ten
+University of Michigan||Michigan|Big Ten
+Michigan State University||Michigan|Big Ten
+University of Minnesota||Minnesota|Big Ten
+University of Nebraska-Lincoln||Nebraska|Big Ten
+Northwestern University||Illinois|Big Ten
+Ohio State University||Ohio|Big Ten
+University of Oregon||Oregon|Big Ten
+Penn State University||Pennsylvania|Big Ten
+Purdue University||Indiana|Big Ten
+Rutgers University||New Jersey|Big Ten
+University of California, Los Angeles||California|Big Ten
+University of Southern California||California|Big Ten
+University of Washington||Washington|Big Ten
+University of Arizona||Arizona|Big 12
+Arizona State University||Arizona|Big 12
+Baylor University||Texas|Big 12
+Brigham Young University||Utah|Big 12
+University of Cincinnati||Ohio|Big 12
+University of Houston||Texas|Big 12
+University of Kansas||Kansas|Big 12
+Kansas State University||Kansas|Big 12
+Oklahoma State University||Oklahoma|Big 12
+Texas Christian University||Texas|Big 12
+Texas Tech University||Texas|Big 12
+University of Central Florida||Florida|Big 12
+University of Utah||Utah|Big 12
+West Virginia University||West Virginia|Big 12
+California Baptist University||California|Big West
+Cal Poly San Luis Obispo||California|Big West
+Cal State Fullerton||California|Big West
+Cal State Northridge||California|Big West
+Cal State Bakersfield||California|Big West
+Long Beach State||California|Big West
+Sacramento State||California|Big West
+UC Irvine||California|Big West
+UC Riverside||California|Big West
+UC San Diego||California|Big West
+UC Santa Barbara||California|Big West
+Utah Valley University||Utah|Big West
+Campbell University||North Carolina|Coastal Athletic
+College of Charleston||South Carolina|Coastal Athletic
+Elon University||North Carolina|Coastal Athletic
+Hofstra University||New York|Coastal Athletic
+Monmouth University||New Jersey|Coastal Athletic
+North Carolina A&T State University||North Carolina|Coastal Athletic
+Northeastern University||Massachusetts|Coastal Athletic
+Stony Brook University||New York|Coastal Athletic
+Towson University||Maryland|Coastal Athletic
+UNC Wilmington||North Carolina|Coastal Athletic
+William & Mary||Virginia|Coastal Athletic
+University of Delaware||Delaware|Conference USA
+Florida International University||Florida|Conference USA
+Jacksonville State University||Alabama|Conference USA
+Kennesaw State University||Georgia|Conference USA
+Liberty University||Virginia|Conference USA
+Middle Tennessee State University||Tennessee|Conference USA
+Missouri State University||Missouri|Conference USA
+New Mexico State University||New Mexico|Conference USA
+Sam Houston State University||Texas|Conference USA
+Western Kentucky University||Kentucky|Conference USA
+University of Wisconsin-Milwaukee||Wisconsin|Horizon League
+Northern Illinois University||Illinois|Horizon League
+Northern Kentucky University||Kentucky|Horizon League
+Oakland University||Michigan|Horizon League
+Wright State University||Ohio|Horizon League
+Youngstown State University||Ohio|Horizon League
+Brown University||Rhode Island|Ivy League
+Columbia University||New York|Ivy League
+Cornell University||New York|Ivy League
+Dartmouth College||New Hampshire|Ivy League
+Harvard University||Massachusetts|Ivy League
+University of Pennsylvania||Pennsylvania|Ivy League
+Princeton University||New Jersey|Ivy League
+Yale University||Connecticut|Ivy League
+Canisius University||New York|Metro Atlantic
+Fairfield University||Connecticut|Metro Atlantic
+Iona University||New York|Metro Atlantic
+Manhattan University||New York|Metro Atlantic
+Marist University||New York|Metro Atlantic
+Merrimack College||Massachusetts|Metro Atlantic
+Mount St. Mary's University||Maryland|Metro Atlantic
+Niagara University||New York|Metro Atlantic
+Quinnipiac University||Connecticut|Metro Atlantic
+Rider University||New Jersey|Metro Atlantic
+Sacred Heart University||Connecticut|Metro Atlantic
+Saint Peter's University||New Jersey|Metro Atlantic
+Siena University||New York|Metro Atlantic
+University of Akron||Ohio|Mid-American
+Ball State University||Indiana|Mid-American
+Bowling Green State University||Ohio|Mid-American
+Central Michigan University||Michigan|Mid-American
+Eastern Michigan University||Michigan|Mid-American
+Kent State University||Ohio|Mid-American
+University of Massachusetts Amherst||Massachusetts|Mid-American
+Miami University||Ohio|Mid-American
+Ohio University||Ohio|Mid-American
+University of Toledo||Ohio|Mid-American
+Western Michigan University||Michigan|Mid-American
+Belmont University||Tennessee|Missouri Valley
+Bradley University||Illinois|Missouri Valley
+University of Evansville||Indiana|Missouri Valley
+Illinois State University||Illinois|Missouri Valley
+Indiana State University||Indiana|Missouri Valley
+Murray State University||Kentucky|Missouri Valley
+Southern Illinois University Carbondale||Illinois|Missouri Valley
+University of Illinois Chicago||Illinois|Missouri Valley
+Valparaiso University||Indiana|Missouri Valley
+United States Air Force Academy||Colorado|Mountain West
+Grand Canyon University||Arizona|Mountain West
+University of Hawaii at Manoa||Hawaii|Mountain West
+University of Nevada, Reno||Nevada|Mountain West
+University of New Mexico||New Mexico|Mountain West
+San Jose State University||California|Mountain West
+UC Davis||California|Mountain West
+University of Nevada, Las Vegas||Nevada|Mountain West
+Utah Tech University||Utah|Mountain West
+Central Connecticut State University||Connecticut|Northeast
+Coppin State University||Maryland|Northeast
+Delaware State University||Delaware|Northeast
+Fairleigh Dickinson University||New Jersey|Northeast
+Le Moyne College||New York|Northeast
+Long Island University||New York|Northeast
+University of Maryland Eastern Shore||Maryland|Northeast
+Norfolk State University||Virginia|Northeast
+Stonehill College||Massachusetts|Northeast
+Wagner College||New York|Northeast
+Eastern Illinois University||Illinois|Ohio Valley
+Lindenwood University||Missouri|Ohio Valley
+Morehead State University||Kentucky|Ohio Valley
+Southeast Missouri State University||Missouri|Ohio Valley
+Southern Illinois University Edwardsville||Illinois|Ohio Valley
+University of Southern Indiana||Indiana|Ohio Valley
+University of Tennessee at Martin||Tennessee|Ohio Valley
+Western Illinois University||Illinois|Ohio Valley
+Dallas Baptist University||Texas|Pac-12
+Fresno State||California|Pac-12
+Gonzaga University||Washington|Pac-12
+Oregon State University||Oregon|Pac-12
+San Diego State University||California|Pac-12
+Texas State University||Texas|Pac-12
+Washington State University||Washington|Pac-12
+United States Military Academy||New York|Patriot League
+Bucknell University||Pennsylvania|Patriot League
+College of the Holy Cross||Massachusetts|Patriot League
+Lafayette College||Pennsylvania|Patriot League
+Lehigh University||Pennsylvania|Patriot League
+United States Naval Academy||Maryland|Patriot League
+University of Alabama||Alabama|Southeastern
+University of Arkansas||Arkansas|Southeastern
+Auburn University||Alabama|Southeastern
+University of Florida||Florida|Southeastern
+University of Georgia||Georgia|Southeastern
+University of Kentucky||Kentucky|Southeastern
+Louisiana State University||Louisiana|Southeastern
+University of Mississippi||Mississippi|Southeastern
+Mississippi State University||Mississippi|Southeastern
+University of Missouri||Missouri|Southeastern
+University of Oklahoma||Oklahoma|Southeastern
+University of South Carolina||South Carolina|Southeastern
+University of Tennessee||Tennessee|Southeastern
+University of Texas at Austin||Texas|Southeastern
+Texas A&M University||Texas|Southeastern
+Vanderbilt University||Tennessee|Southeastern
+The Citadel||South Carolina|Southern
+East Tennessee State University||Tennessee|Southern
+Mercer University||Georgia|Southern
+Samford University||Alabama|Southern
+Tennessee Tech University||Tennessee|Southern
+UNC Greensboro||North Carolina|Southern
+Virginia Military Institute||Virginia|Southern
+Western Carolina University||North Carolina|Southern
+Wofford College||South Carolina|Southern
+Houston Christian University||Texas|Southland
+University of the Incarnate Word||Texas|Southland
+Lamar University||Texas|Southland
+University of New Orleans||Louisiana|Southland
+McNeese State University||Louisiana|Southland
+Nicholls State University||Louisiana|Southland
+Northwestern State University||Louisiana|Southland
+Southeastern Louisiana University||Louisiana|Southland
+Stephen F. Austin State University||Texas|Southland
+Texas A&M University-Corpus Christi||Texas|Southland
+University of Texas Rio Grande Valley||Texas|Southland
+Alabama A&M University||Alabama|SWAC
+Alabama State University||Alabama|SWAC
+Alcorn State University||Mississippi|SWAC
+University of Arkansas at Pine Bluff||Arkansas|SWAC
+Bethune-Cookman University||Florida|SWAC
+Florida A&M University||Florida|SWAC
+Grambling State University||Louisiana|SWAC
+Jackson State University||Mississippi|SWAC
+Mississippi Valley State University||Mississippi|SWAC
+Prairie View A&M University||Texas|SWAC
+Southern University||Louisiana|SWAC
+Texas Southern University||Texas|SWAC
+North Dakota State University||North Dakota|Summit League
+University of Northern Colorado||Colorado|Summit League
+University of Nebraska Omaha||Nebraska|Summit League
+Oral Roberts University||Oklahoma|Summit League
+University of St. Thomas||Minnesota|Summit League
+South Dakota State University||South Dakota|Summit League
+Appalachian State University||North Carolina|Sun Belt
+Arkansas State University||Arkansas|Sun Belt
+Coastal Carolina University||South Carolina|Sun Belt
+Georgia Southern University||Georgia|Sun Belt
+Georgia State University||Georgia|Sun Belt
+James Madison University||Virginia|Sun Belt
+University of Louisiana at Lafayette||Louisiana|Sun Belt
+University of Louisiana at Monroe||Louisiana|Sun Belt
+Louisiana Tech University||Louisiana|Sun Belt
+Marshall University||West Virginia|Sun Belt
+Old Dominion University||Virginia|Sun Belt
+University of South Alabama||Alabama|Sun Belt
+University of Southern Mississippi||Mississippi|Sun Belt
+Troy University||Alabama|Sun Belt
+Abilene Christian University||Texas|United Athletic
+Austin Peay State University||Tennessee|United Athletic
+University of Central Arkansas||Arkansas|United Athletic
+Eastern Kentucky University||Kentucky|United Athletic
+University of Arkansas at Little Rock||Arkansas|United Athletic
+University of North Alabama||Alabama|United Athletic
+Tarleton State University||Texas|United Athletic
+University of Texas at Arlington||Texas|United Athletic
+Loyola Marymount University||California|West Coast
+University of the Pacific||California|West Coast
+Pepperdine University||California|West Coast
+University of Portland||Oregon|West Coast
+Saint Mary's College of California||California|West Coast
+University of San Diego||California|West Coast
+University of San Francisco||California|West Coast
+Santa Clara University||California|West Coast
+Seattle University||Washington|West Coast
+Mercyhurst University||Pennsylvania|Northeast
+University of New Haven||Connecticut|Northeast
+University of West Florida|Pensacola|Florida|ASUN
+University of West Georgia||Georgia|United Athletic

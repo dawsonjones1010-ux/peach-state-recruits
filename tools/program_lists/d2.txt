@@ -1,0 +1,253 @@
+Adams State|Alamosa|Colorado|RMAC
+Adelphi|Garden City|New York|NE-10
+Alabama-Huntsville|Huntsville|Alabama|Gulf South
+Albany State|Albany|Georgia|SIAC
+American International|Springfield|Massachusetts|NE-10
+Anderson (SC)|Anderson|South Carolina|SAC
+Angelo State|San Angelo|Texas|Lone Star
+Arkansas Tech|Russellville|Arkansas|GAC
+Arkansas-Fort Smith|Fort Smith|Arkansas|MIAA
+Arkansas-Monticello|Monticello|Arkansas|GAC
+Ashland|Ashland|Ohio|G-MAC
+Assumption|Worcester|Massachusetts|NE-10
+Auburn Montgomery|Montgomery|Alabama|Gulf South
+Augusta|Augusta|Georgia|Peach Belt
+Augustana (SD)|Sioux Falls|South Dakota|NSIC
+Azusa Pacific|Azusa|California|PacWest
+Barry|Miami Shores|Florida|SSC
+Barton|Wilson|North Carolina|Conference Carolinas
+Belmont Abbey|Belmont|North Carolina|Conference Carolinas
+Bemidji State|Bemidji|Minnesota|NSIC
+Benedict|Columbia|South Carolina|SIAC
+Bentley|Waltham|Massachusetts|NE-10
+Biola|La Mirada|California|PacWest
+Bloomsburg|Bloomsburg|Pennsylvania|PSAC
+Bluefield State|Bluefield|West Virginia|Independent
+Bridgeport|Bridgeport|Connecticut|CACC
+Caldwell|Caldwell|New Jersey|CACC
+Cal Poly Pomona|Pomona|California|CCAA
+Cal State Dominguez Hills|Carson|California|CCAA
+Cal State East Bay|Hayward|California|CCAA
+Cal State Los Angeles|Los Angeles|California|CCAA
+Cal State Monterey Bay|Seaside|California|CCAA
+Cal State San Bernardino|San Bernardino|California|CCAA
+Cal State San Marcos|San Marcos|California|CCAA
+Cal State Stanislaus|Turlock|California|CCAA
+California (PA)|California|Pennsylvania|PSAC
+Cameron|Lawton|Oklahoma|Lone Star
+Carson-Newman|Jefferson City|Tennessee|SAC
+Catawba|Salisbury|North Carolina|SAC
+Cedarville|Cedarville|Ohio|G-MAC
+Central Missouri|Warrensburg|Missouri|MIAA
+Central Oklahoma|Edmond|Oklahoma|MIAA
+Central Washington|Ellensburg|Washington|GNAC
+Chaminade|Honolulu|Hawaii|PacWest
+Charleston (WV)|Charleston|West Virginia|MEC
+Chestnut Hill|Philadelphia|Pennsylvania|CACC
+Chico State|Chico|California|CCAA
+Chowan|Murfreesboro|North Carolina|Conference Carolinas
+Christian Brothers|Memphis|Tennessee|Gulf South
+Claflin|Orangeburg|South Carolina|Peach Belt
+Clark Atlanta|Atlanta|Georgia|SIAC
+Clarion|Clarion|Pennsylvania|PSAC
+Colorado Christian|Lakewood|Colorado|RMAC
+Colorado Mesa|Grand Junction|Colorado|RMAC
+Colorado Mines|Golden|Colorado|RMAC
+Columbus State|Columbus|Georgia|Peach Belt
+Concord|Athens|West Virginia|MEC
+Concordia-Irvine|Irvine|California|PacWest
+Concordia-St. Paul|Saint Paul|Minnesota|NSIC
+Coker|Hartsville|South Carolina|SAC
+CSU Pueblo|Pueblo|Colorado|RMAC
+Davenport|Grand Rapids|Michigan|GLIAC
+Davis & Elkins|Elkins|West Virginia|MEC
+Delta State|Cleveland|Mississippi|Gulf South
+Dominican (NY)|Orangeburg|New York|CACC
+Drury|Springfield|Missouri|GLVC
+D'Youville|Buffalo|New York|ECC
+East Central|Ada|Oklahoma|GAC
+East Stroudsburg|East Stroudsburg|Pennsylvania|PSAC
+Eastern New Mexico|Portales|New Mexico|Lone Star
+Eckerd|St. Petersburg|Florida|SSC
+Edward Waters|Jacksonville|Florida|SIAC
+Embry-Riddle|Daytona Beach|Florida|SSC
+Emmanuel (GA)|Franklin Springs|Georgia|Conference Carolinas
+Emory & Henry|Emory|Virginia|SAC
+Emporia State|Emporia|Kansas|MIAA
+Erskine|Due West|South Carolina|Conference Carolinas
+Fairmont State|Fairmont|West Virginia|MEC
+Felician|Lodi|New Jersey|CACC
+Ferrum|Ferrum|Virginia|Conference Carolinas
+Findlay|Findlay|Ohio|G-MAC
+Flagler|St. Augustine|Florida|Peach Belt
+Florida Southern|Lakeland|Florida|SSC
+Florida Tech|Melbourne|Florida|SSC
+Fort Hays State|Hays|Kansas|MIAA
+Francis Marion|Florence|South Carolina|Conference Carolinas
+Franklin Pierce|Rindge|New Hampshire|NE-10
+Fresno Pacific|Fresno|California|PacWest
+Frostburg State|Frostburg|Maryland|MEC
+Gannon|Erie|Pennsylvania|PSAC
+Georgia College|Milledgeville|Georgia|Peach Belt
+Georgia Southwestern State|Americus|Georgia|Peach Belt
+Georgian Court|Lakewood|New Jersey|CACC
+Glenville State|Glenville|West Virginia|MEC
+Goldey-Beacom|Pike Creek Valley|Delaware|CACC
+Grand Valley State|Allendale|Michigan|GLIAC
+Harding|Searcy|Arkansas|GAC
+Hawaii-Hilo|Hilo|Hawaii|PacWest
+Hawaii Pacific|Honolulu|Hawaii|PacWest
+Henderson State|Arkadelphia|Arkansas|GAC
+Hillsdale|Hillsdale|Michigan|G-MAC
+Holy Family|Philadelphia|Pennsylvania|CACC
+Indianapolis|Indianapolis|Indiana|GLVC
+Indiana University of Pennsylvania|Indiana|Pennsylvania|PSAC
+Jamestown|Jamestown|North Dakota|NSIC
+Jefferson|Philadelphia|Pennsylvania|CACC
+Jessup|Rocklin|California|PacWest
+Kentucky State|Frankfort|Kentucky|SIAC
+Kentucky Wesleyan|Owensboro|Kentucky|G-MAC
+King (TN)|Bristol|Tennessee|Conference Carolinas
+Kutztown|Kutztown|Pennsylvania|PSAC
+Lander|Greenwood|South Carolina|Peach Belt
+Lane|Jackson|Tennessee|SIAC
+Lake Erie|Painesville|Ohio|G-MAC
+Lee|Cleveland|Tennessee|Gulf South
+LeMoyne-Owen|Memphis|Tennessee|SIAC
+Lenoir-Rhyne|Hickory|North Carolina|SAC
+Lewis|Romeoville|Illinois|GLVC
+Lincoln (MO)|Jefferson City|Missouri|GLVC
+Lincoln (PA)|Oxford|Pennsylvania|CACC
+Lincoln Memorial|Harrogate|Tennessee|SAC
+Lock Haven|Lock Haven|Pennsylvania|PSAC
+Lubbock Christian|Lubbock|Texas|Lone Star
+Lynn|Boca Raton|Florida|SSC
+Malone|Canton|Ohio|G-MAC
+Mansfield|Mansfield|Pennsylvania|PSAC
+Mars Hill|Mars Hill|North Carolina|SAC
+Mary|Bismarck|North Dakota|NSIC
+Maryville (MO)|Town and Country|Missouri|GLVC
+McKendree|Lebanon|Illinois|GLVC
+Menlo|Atherton|California|PacWest
+Mercy|Dobbs Ferry|New York|ECC
+Metropolitan State (CO)|Denver|Colorado|RMAC
+Middle Georgia State|Cochran|Georgia|Peach Belt
+Miles|Fairfield|Alabama|SIAC
+Millersville|Millersville|Pennsylvania|PSAC
+Minnesota State|Mankato|Minnesota|NSIC
+Minnesota-Crookston|Crookston|Minnesota|NSIC
+Minnesota-Duluth|Duluth|Minnesota|NSIC
+Minot State|Minot|North Dakota|NSIC
+Mississippi Christian University|Clinton|Mississippi|Gulf South
+Missouri Southern|Joplin|Missouri|MIAA
+Missouri S&T|Rolla|Missouri|GLVC
+Missouri Western|St. Joseph|Missouri|MIAA
+Molloy|Rockville Centre|New York|ECC
+Montana State Billings|Billings|Montana|GNAC
+Montevallo|Montevallo|Alabama|Gulf South
+Morehouse|Atlanta|Georgia|SIAC
+Mount Olive|Mount Olive|North Carolina|Conference Carolinas
+New Mexico Highlands|Las Vegas|New Mexico|RMAC
+Newberry|Newberry|South Carolina|SAC
+Newman|Wichita|Kansas|MIAA
+North Georgia|Dahlonega|Georgia|Peach Belt
+North Greenville|Tigerville|South Carolina|Conference Carolinas
+Northeastern State|Tahlequah|Oklahoma|MIAA
+Northern State|Aberdeen|South Dakota|NSIC
+Northwest Missouri State|Maryville|Missouri|MIAA
+Northwest Nazarene|Nampa|Idaho|GNAC
+Northwestern Oklahoma State|Alva|Oklahoma|GAC
+Northwood|Midland|Michigan|G-MAC
+Nova Southeastern|Davie|Florida|SSC
+Ohio Dominican|Columbus|Ohio|G-MAC
+Oklahoma Baptist|Shawnee|Oklahoma|GAC
+Oklahoma Christian|Oklahoma City|Oklahoma|Lone Star
+Ouachita Baptist|Arkadelphia|Arkansas|GAC
+Pace|Pleasantville|New York|NE-10
+Palm Beach Atlantic|West Palm Beach|Florida|SSC
+Wisconsin-Parkside|Somers|Wisconsin|GLIAC
+Pittsburg State|Pittsburg|Kansas|MIAA
+Pitt-Johnstown|Johnstown|Pennsylvania|PSAC
+Point Loma Nazarene|San Diego|California|PacWest
+Point Park|Pittsburgh|Pennsylvania|MEC
+Post|Waterbury|Connecticut|CACC
+Purdue Northwest|Hammond|Indiana|GLIAC
+Queens College (NY)|Queens|New York|ECC
+Quincy|Quincy|Illinois|GLVC
+Regis|Denver|Colorado|RMAC
+Rockhurst|Kansas City|Missouri|GLVC
+Rogers State|Claremore|Oklahoma|MIAA
+Rollins|Winter Park|Florida|SSC
+Roosevelt|Chicago|Illinois|GLIAC
+Saginaw Valley State|University Center|Michigan|GLIAC
+Saint Anselm|Goffstown|New Hampshire|NE-10
+St. Cloud State|St. Cloud|Minnesota|NSIC
+St. Edward's|Austin|Texas|Lone Star
+Saint Leo|St. Leo|Florida|SSC
+Saint Martin's|Lacey|Washington|GNAC
+St. Mary's (TX)|San Antonio|Texas|Lone Star
+Saint Michael's|Colchester|Vermont|NE-10
+St. Thomas Aquinas|Sparkill|New York|ECC
+Salem (WV)|Salem|West Virginia|Independent
+San Francisco State|San Francisco|California|CCAA
+Savannah State|Savannah|Georgia|SIAC
+Seton Hill|Greensburg|Pennsylvania|PSAC
+Shepherd|Shepherdstown|West Virginia|PSAC
+Shippensburg|Shippensburg|Pennsylvania|PSAC
+Shorter|Rome|Georgia|Conference Carolinas
+Sioux Falls|Sioux Falls|South Dakota|NSIC
+Slippery Rock|Slippery Rock|Pennsylvania|PSAC
+Southeastern Oklahoma State|Durant|Oklahoma|GAC
+Southern Arkansas|Magnolia|Arkansas|GAC
+Southern Connecticut State|New Haven|Connecticut|NE-10
+Southern Nazarene|Bethany|Oklahoma|GAC
+Southern New Hampshire|Manchester|New Hampshire|NE-10
+Southern Wesleyan|Central|South Carolina|Conference Carolinas
+Southwest Baptist|Bolivar|Missouri|GLVC
+Southwest Minnesota State|Marshall|Minnesota|NSIC
+Southwestern Oklahoma State|Weatherford|Oklahoma|GAC
+Spring Hill|Mobile|Alabama|SIAC
+Staten Island|Staten Island|New York|ECC
+Sul Ross State|Alpine|Texas|Lone Star
+Tampa|Tampa|Florida|SSC
+Texas A&M International|Laredo|Texas|Lone Star
+Texas A&M-Kingsville|Kingsville|Texas|Lone Star
+Thomas More|Crestview Hills|Kentucky|G-MAC
+Tiffin|Tiffin|Ohio|G-MAC
+Trevecca Nazarene|Nashville|Tennessee|Gulf South
+Truman State|Kirksville|Missouri|GLVC
+Tusculum|Tusculum|Tennessee|SAC
+Tuskegee|Tuskegee|Alabama|SIAC
+UCCS|Colorado Springs|Colorado|RMAC
+Illinois Springfield|Springfield|Illinois|GLVC
+UMSL|St. Louis|Missouri|GLVC
+UNC Pembroke|Pembroke|North Carolina|Conference Carolinas
+Union (TN)|Jackson|Tennessee|Gulf South
+Upper Iowa|Fayette|Iowa|GLVC
+USC Aiken|Aiken|South Carolina|Peach Belt
+USC Beaufort|Bluffton|South Carolina|Peach Belt
+UT Dallas|Richardson|Texas|Lone Star
+UT Permian Basin|Odessa|Texas|Lone Star
+UT Tyler|Tyler|Texas|Lone Star
+UVA Wise|Wise|Virginia|SAC
+Valdosta State|Valdosta|Georgia|Gulf South
+Vanguard|Costa Mesa|California|PacWest
+Virginia State|Ettrick|Virginia|Independent
+Walsh|North Canton|Ohio|G-MAC
+Washburn|Topeka|Kansas|MIAA
+Wayne State (MI)|Detroit|Michigan|GLIAC
+Wayne State (NE)|Wayne|Nebraska|NSIC
+West Alabama|Livingston|Alabama|Gulf South
+West Chester|West Chester|Pennsylvania|PSAC
+West Liberty|West Liberty|West Virginia|MEC
+West Texas A&M|Canyon|Texas|Lone Star
+West Virginia State|Institute|West Virginia|MEC
+West Virginia Wesleyan|Buckhannon|West Virginia|MEC
+Western Oregon|Monmouth|Oregon|GNAC
+Westmont|Santa Barbara|California|PacWest
+Wheeling|Wheeling|West Virginia|MEC
+William Jewell|Liberty|Missouri|GLVC
+Wilmington (DE)|New Castle|Delaware|CACC
+Wingate|Wingate|North Carolina|SAC
+Winona State|Winona|Minnesota|NSIC
+Young Harris|Young Harris|Georgia|Conference Carolinas
