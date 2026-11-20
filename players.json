@@ -1,5 +1,68 @@
 [
   {
+    "slug": "colin-lopez",
+    "active": true,
+    "name": "Colin Lopez",
+    "sport": "Baseball",
+    "position": "C/3B",
+    "gradYear": 2030,
+    "school": "Lemont High School",
+    "team": "Bolingbrook Rampage",
+    "location": "Lemont, Illinois",
+    "coverImage": "images/players/colin-lopez.jpg",
+    "headline": "COLIN LOPEZ IS A STUD📈",
+    "playerInstagram": [],
+    "measurables": [
+      {
+        "label": "Height",
+        "value": "5'6\""
+      },
+      {
+        "label": "Weight",
+        "value": "150 lb"
+      },
+      {
+        "label": "Position",
+        "value": "C/3B"
+      }
+    ],
+    "video": {
+      "youtube": "",
+      "file": ""
+    },
+    "highlights": [],
+    "report": "🔥 Colin Lopez is a hard-working 2030 prospect from Lemont, Illinois who brings energy and a team-first mindset to every game. The Bolingbrook Rampage standout continues to sharpen his tools against quality competition.\n\n💥 In the batter's box, Lopez competes with a steady, aggressive approach and looks to put the ball in play with authority, wrapping up his fall with a .444 average. As he adds strength to his frame, there is plenty of offensive upside still to unlock.\n\n⚡️ Behind the plate and at the hot corner, Colin gives his team valuable flexibility. Handling both catcher and third base shows a willingness to take on demanding spots on the field.\n\nWith two-position value and a frame that is still developing, Lopez is a 2030 Illinois name to follow.",
+    "stats": null,
+    "academics": [],
+    "links": [],
+    "contactEmail": "",
+    "contactInstagram": "peachstaterecruits",
+    "contactName": "Peach State Recruits",
+    "postUrl": "",
+    "account": "peachstaterecruits",
+    "showOnHome": true,
+    "videos": [
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/colin-lopez/clip1.mp4",
+        "title": "Highlight clip 1"
+      },
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/colin-lopez/clip2.mp4",
+        "title": "Highlight clip 2"
+      },
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/colin-lopez/clip3.mp4",
+        "title": "Highlight clip 3"
+      }
+    ],
+    "coachReport": "Profile: 2030 catcher and third baseman from Lemont, Illinois. Lemont High School; Bolingbrook Rampage. 5'6\", 150 lb, developing frame.\nHitting: Steady, aggressive approach. Looks to put the ball in play with authority. Wrapped up his fall with a .444 average.\nDefense: Plays catcher and third base, giving his team two-position flexibility.",
+    "featuredRank": null,
+    "featureDate": "2026-11-20"
+  },
+  {
     "slug": "noah-baskin",
     "active": true,
     "name": "Noah Baskin",
