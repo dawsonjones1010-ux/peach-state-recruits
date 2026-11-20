@@ -1733,3 +1733,31 @@ html,body{overflow-x:clip}
   .compare tfoot .btn{padding:8px 8px;font-size:12.5px;white-space:normal;line-height:1.2}
   .yes{width:20px;height:20px;background-size:20px}
 }
+
+/* Find My Level v26: what moves you up, one-tap next steps, players like you */
+.lvl-moves .lvl-next-t{font-size:17px}
+.lvl-move-list{list-style:none;margin:10px 0 4px;padding:0;display:grid;gap:6px}
+.lvl-move-list li{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;padding:8px 10px;border-radius:10px;background:var(--paper,#f6f2ea)}
+.lvl-move-list b{flex:1 1 220px;font-size:15px}
+.lvl-move-list span{font-size:13.5px;color:var(--text-2)}
+.lvl-move-gap{font-weight:700;color:var(--peach-ink,#9a4a17)!important}
+.lvl-moves .lvl-note-sm{margin:6px 0 0}
+.lvl-onetap{border-radius:14px;padding:12px 14px;margin:0 0 12px;background:linear-gradient(90deg,rgba(255,138,76,.16),rgba(255,138,76,.06))}
+.lvl-onetap .lvl-cta2-t{margin:0 0 8px}
+.lvl-onetap-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.lvl-tap{display:grid;gap:2px;text-align:left;padding:12px;border-radius:12px;border:1px solid var(--line,#dfe3ea);background:#fff;color:var(--text);text-decoration:none;font:inherit;cursor:pointer;min-height:64px}
+.lvl-tap b{font-size:15px}
+.lvl-tap span{font-size:12.5px;color:var(--text-2);line-height:1.35}
+.lvl-tap:hover,.lvl-tap:focus-visible{border-color:var(--peach,#ff8a4c)}
+.lvl-tap-main{background:var(--ink,#0a1120);border-color:var(--ink,#0a1120);color:#fff}
+.lvl-tap-main span{color:rgba(255,255,255,.75)}
+.lvl-onetap .lvl-note-sm{margin:8px 0 0}
+.lvl-likeyou{border:1px solid var(--line,#dfe3ea);border-radius:14px;padding:12px 14px;margin:0 0 12px;background:#fff}
+.lvl-likeyou .lvl-cta2-t{margin:0 0 2px}
+.lvl-like-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:10px 0 6px}
+.lvl-like{display:flex;gap:10px;align-items:center;padding:8px;border-radius:12px;background:var(--paper,#f6f2ea);text-decoration:none;color:var(--text);min-width:0}
+.lvl-like img{width:48px;height:48px;border-radius:10px;object-fit:cover;flex:none}
+.lvl-like span{display:grid;min-width:0}
+.lvl-like b{font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lvl-like small{font-size:12.5px;color:var(--text-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (max-width:760px){.lvl-onetap-grid{grid-template-columns:1fr 1fr}.lvl-like-grid{grid-template-columns:1fr}}

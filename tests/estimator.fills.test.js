@@ -70,3 +70,43 @@ test("faster or stronger never hurts with fill targets", () => {
     }));
   }
 });
+
+// ---- v26 "What moves you up" ----
+const U = require("../estimator/summary.js");
+const mv = (o) => U.movesUp(L.evaluate(data, base(o)).reads[0]);
+
+test("what moves you up: one change names the highest level it reaches", () => {
+  const cf = mv({ primary: "CF", metrics: { maxEv: 94, sixty: 6.75, ofVelo: 88 } });
+  assert.equal(cf.text, "Run a 6.70 or faster 60 to reach the listed Power conference D1 targets.");
+  assert.equal(cf.next.steps[0].change, "0.05 s faster");
+  const ss = mv({ primary: "SS", metrics: { maxEv: 90, sixty: 6.9, ifVelo: 84 } });
+  assert.equal(ss.next.level, "mid", "86 mph clears Lower and Mid-major D1 together");
+  assert.equal(ss.text, "Throw 86 mph across the infield to reach the listed Mid-major D1 targets.");
+});
+
+test("what moves you up: several changes are all listed; top level and missing metrics are handled", () => {
+  const c = mv({ primary: "C", metrics: { maxEv: 84, sixty: 7.6, pop: 2.12 } });
+  assert.equal(c.next.steps.length, 2);
+  assert.ok(/^To reach D2: run a 7.50 or faster 60 and pop 2.10 or faster to second\.$/.test(c.text), c.text);
+  const top = mv({ primary: "SS", metrics: { maxEv: 93, sixty: 6.8, ifVelo: 86 } });
+  assert.equal(top.top, true);
+  const thin = mv({ primary: "SS", metrics: { maxEv: 88 } });
+  assert.equal(thin.next, null);
+  assert.ok(/Add your 60-yard dash and throw/.test(thin.text));
+  const p = mv({ primary: "P", metrics: { maxFb: 86 } });
+  assert.equal(p.text, "Get your fastball to 88 mph to reach the listed Mid-major D1 targets.");
+  assert.equal(p.jump, null, "pitchers get no 'one change goes further' line");
+});
+
+test("what moves you up: following the advice really reaches that level", () => {
+  const cases = [["CF", { maxEv: 94, sixty: 6.75, ofVelo: 88 }], ["SS", { maxEv: 84, sixty: 7.0, ifVelo: 80 }], ["C", { maxEv: 84, sixty: 7.6, pop: 2.12 }], ["1B", { maxEv: 86, sixty: 7.4, ifVelo: 70 }], ["LF", { maxEv: 92, sixty: 7.05, ofVelo: 90 }]];
+  const KEY = { hitting: "maxEv", running: "sixty", pitching: "maxFb" };
+  for (const [pos, m] of cases) {
+    const r = L.evaluate(data, base({ primary: pos, metrics: m })).reads[0], res = U.movesUp(r);
+    if (!res.next) continue;
+    const m2 = Object.assign({}, m);
+    res.next.steps.forEach(s => { const k = KEY[s.tool] || (pos === "C" ? "pop" : /F$/.test(pos) ? "ofVelo" : "ifVelo"); m2[k] = s.threshold; });
+    const after = L.evaluate(data, base({ primary: pos, metrics: m2 })).reads[0];
+    assert.ok(after.categories.find(c => c.key === res.next.level).highlighted, `${pos}: ${res.text}`);
+  }
+});

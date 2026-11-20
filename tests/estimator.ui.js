@@ -59,7 +59,7 @@ const LEVELS = ["Power D1", "Mid-major D1", "Lower D1", "D2", "D3", "NAIA", "JUC
     let sendTapped = false; const reviewBodies = [];
     await ctx.route("**/rest/v1/level_reviews*", (route) => { reviewBodies.push({ tapped: sendTapped, body: route.request().postData(), prefer: route.request().headers()["prefer"] }); route.fulfill({ status: 201, body: "" }); });
     page.on("request", r => { if (!/find-my-level/.test(page.url())) return; if (sendTapped && /\/rest\/v1\/level_reviews/.test(r.url()) && r.method() === "POST") return; const same = r.url().startsWith(BASE) || r.url().startsWith("blob:") || /fonts\.(googleapis|gstatic)\.com/.test(r.url()); if (r.method() !== "GET" || !same) posts.push(r.method() + " " + r.url()); });
-    const fitsFirst = () => page.evaluate(() => { const p = document.querySelector(".lvl-tabpanel:not([hidden])"); const b = p.querySelector(".lvl-cta2").getBoundingClientRect(); const t = p.querySelector(".lvl-head-card").getBoundingClientRect(); return t.top >= 0 && b.bottom <= innerHeight; });
+    const fitsFirst = () => page.evaluate(() => { const p = document.querySelector(".lvl-tabpanel:not([hidden])"); const b = p.querySelector(".lvl-moves").getBoundingClientRect(); const t = p.querySelector(".lvl-head-card").getBoundingClientRect(); return t.top >= 0 && b.bottom <= innerHeight; });
     const story = async (idx, file) => {
       await page.click(`[data-share="${idx}"]`); await page.waitForSelector(`#shareOut${idx} img`);
       const info = await page.evaluate(async () => { const b = window.PSRLevelUI.state.share.blob; const bm = await createImageBitmap(b); const buf = new Uint8Array(await b.arrayBuffer()); let s = ""; for (let i = 0; i < buf.length; i += 0x8000) s += String.fromCharCode.apply(null, buf.subarray(i, i + 0x8000)); return { w: bm.width, h: bm.height, type: b.type, b64: btoa(s) }; });
@@ -125,9 +125,9 @@ const LEVELS = ["Power D1", "Mid-major D1", "Lower D1", "D2", "D3", "NAIA", "JUC
         const cfMain = await mainText(page, 0), cfLv = await levelRow(page, 0);
         console.log("      CF main: " + JSON.stringify(cfMain) + "\n      CF levels: " + cfLv.join(" · "));
         ok(cfMain[0] === "Your results as a center fielder." && cfMain[1] === "Your metrics meet the listed mid-major D1 targets." && cfMain[2] === "Supported by your max exit velocity (94 mph), 60-yard dash (6.75 s) and throw (88 mph)." && cfMain[3] === "A benchmark comparison, not a prediction. Coaches also weigh game performance and roster needs.", `${tag}: CF title, headline, support and caveat`);
-        ok(cfMain[4] === "Next benchmark: Power conference D1. Your 60 is 0.05 s slower than the listed 6.70 s.", `${tag}: CF next step shows only the closest gap`);
+        ok(cfMain[4] === "Run a 6.70 or faster 60 to reach the listed Power conference D1 targets.", `${tag}: CF "what moves you up" names the one change and the level`);
         ok(cfLv.join("|") === "Power D1: Close|Mid-major D1: Meets targets|Lower D1: Meets targets|D2: Meets targets|D3: Meets targets|NAIA: Meets targets|JUCO: Meets targets", `${tag}: CF level row lists all seven levels in order`);
-        ok(await fitsFirst(), `${tag}: CF headline, next step and CTA fit the first results screen`);
+        ok(await fitsFirst(), `${tag}: CF headline and "what moves you up" fit the first results screen`);
         const mainV = await page.evaluate(() => { const p = document.querySelector(".lvl-read"); const c = p.cloneNode(true); c.querySelectorAll("details").forEach(d => d.remove()); return c.textContent; });
         ok(!/NextCommit|NCSA|BaseballPath|Flatground|Slammers|guideline|Position read|Missing/i.test(mainV), `${tag}: main view names no sources and never says "missing"`);
         ok((await page.$$("details.lvl-sec")).length === 4 && (await page.$$("details.lvl-sec[open]")).length === 0, `${tag}: four detail sections, all closed by default`);
@@ -172,15 +172,15 @@ const LEVELS = ["Power D1", "Mid-major D1", "Lower D1", "D2", "D3", "NAIA", "JUC
     ok(JSON.stringify(tabs) === JSON.stringify(["Shortstop:true", "Pitcher:false"]) && await page.isVisible("#tp0") && !(await page.isVisible("#tp1")), `${tag}: two-way shows Shortstop / Pitcher tabs, one panel at a time`);
     const ssMain = await mainText(page, 0), ssLv = await levelRow(page, 0);
     console.log("      SS main: " + JSON.stringify(ssMain) + "\n      SS levels: " + ssLv.join(" · "));
-    ok(ssMain[1] === "Your metrics meet the listed D2 targets." && ssMain[4] === "Next benchmark: Lower D1. Your throw is 2 mph short of the listed 86 mph.", `${tag}: SS headline and next step`);
+    ok(ssMain[1] === "Your metrics meet the listed D2 targets." && ssMain[4] === "Throw 86 mph across the infield to reach the listed Mid-major D1 targets.", `${tag}: SS headline and next step`);
     ok(ssLv.join("|") === "Power D1: Below targets|Mid-major D1: Close|Lower D1: Close|D2: Meets targets|D3: Meets targets|NAIA: Meets targets|JUCO: Meets targets", `${tag}: SS level row`);
-    ok(await fitsFirst(), `${tag}: SS headline, next step and CTA fit the first results screen`);
+    ok(await fitsFirst(), `${tag}: SS headline and "what moves you up" fit the first results screen`);
     if (SHOTS && mobile) await page.screenshot({ path: `${SHOTS}/phone-twoway-ss-first.png` });
     await page.click("#tab1");
     ok(await page.isVisible("#tp1") && !(await page.isVisible("#tp0")), `${tag}: Pitcher tab switches panels`);
     const pMain = await mainText(page, 1), pLv = await levelRow(page, 1);
     console.log("      P main: " + JSON.stringify(pMain) + "\n      P levels: " + pLv.join(" · "));
-    ok(pMain[1] === "Your fastball meets the listed lower D1 velocity target." && pMain[4] === "Next benchmark: Mid-major D1. Your fastball is 2 mph short of the listed 88 mph.", `${tag}: P headline and next step`);
+    ok(pMain[1] === "Your fastball meets the listed lower D1 velocity target." && pMain[4] === "Get your fastball to 88 mph to reach the listed Mid-major D1 targets.", `${tag}: P headline and next step`);
     ok(pLv.join("|") === "Power D1: Below targets|Mid-major D1: Below targets|Lower D1: Meets targets|D2: Meets targets|D3: Meets targets|NAIA: Meets targets|JUCO: Meets targets", `${tag}: P level row`);
     if (SHOTS && mobile) {
       await page.evaluate(() => { document.documentElement.style.scrollBehavior = "auto"; const r = document.querySelector(".lvl-results"); window.scrollTo(0, r.getBoundingClientRect().top + scrollY - document.querySelector(".nav").offsetHeight - 8); });
@@ -228,14 +228,14 @@ const LEVELS = ["Power D1", "Mid-major D1", "Lower D1", "D2", "D3", "NAIA", "JUC
     await evidence(page, { date: "2026-07-20", environment: "showcase", method: "electronic", source: "event" });
     let tx = await page.textContent("#tp0");
     ok(/Laser/.test(await page.textContent("#tp0 .lvl-nums")) && /TrackMan/.test(await page.textContent("#tp0 .lvl-nums")) && /Game/.test(await page.textContent("#tp0 .lvl-nums")), `${tag}: method chips shown next to each number`);
-    ok((await page.textContent(".lvl-cta2-s")) === "Your bat and speed already meet the listed mid-major D1 targets. Coaches still need to see them on film." && (await page.getAttribute(".lvl-cta2 a", "href")) === "index.html#packages", `${tag}: CTA sentence chosen by the result, links to packages`);
+    ok(!!(await page.$("#tp0 .lvl-onetap [data-email-handoff]")) && !!(await page.$('#tp0 .lvl-onetap a[href^="camps.html"]')), `${tag}: one-tap next steps shown (coach email, schools, camps, save)`);
     ok(await page.isVisible(".lvl-cta"), `${tag}: bottom CTA kept`);
     const clk = await page.textContent(".lvl-clock");
     ok(/Your recruiting clock/.test(clk) && /D1, D2, D3, NAIA and JUCO coaches can contact you now/.test(clk) && /one state's data/.test(clk) && /NAIA/.test(clk) && /does not regulate/.test(clk), `${tag}: recruiting clock (2027: all levels open, NAIA rule shown, wave labeled as one state)`);
     ok(!(await page.$(".lvl-young")) , `${tag}: no sophomore panel for junior-year numbers`);
     ok(/First saved result/.test(await page.textContent(".lvl-prog")) && await page.isVisible("text=Clear my saved results"), `${tag}: progress saved, clear button shown`);
     ok((await page.$$eval(".lvl-privacy", e => e.map(x => x.textContent))).some(t => t.startsWith("Your numbers stay on this device unless you tap Send.")), `${tag}: privacy line`);
-    ok(await fitsFirst(), `${tag}: CF 2027 headline, next step and CTA fit the first results screen`);
+    ok(await fitsFirst(), `${tag}: CF 2027 headline and "what moves you up" fit the first results screen`);
     await toResults(); await shot("p1-cf2027-first"); await shot("p1-cf2027-full", true);
     // Progress on return
     await page.click("text=Update my metrics"); await page.waitForSelector('form[data-step="1"]'); await next(page);

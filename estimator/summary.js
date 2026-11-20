@@ -110,6 +110,56 @@
   ];
   const deSource = (s) => SWAPS.reduce((a, [re, to]) => a.replace(re, to), String(s == null ? "" : s));
 
-  return { ST, SHORT, LONG, POS, levelStatus, levels, headline, nextStep, title, tabLabel, deSource,
+
+  // "What moves you up" (v26): the exact targets that move this read up from where it is now.
+  // Only arithmetic against the listed targets; it never predicts improvement or an offer.
+  //   next: the nearest level above the current one, with every below-target metric to fix there
+  //   jump: if fixing ONE metric reaches an even higher level, that single change
+  //   add:  metrics not entered that would add a comparison
+  const ACTION = {
+    hitting: (t) => `Hit ${t.threshold} mph max exit velocity`,
+    running: (t) => `Run a ${t.threshold.toFixed(2)} or faster 60`,
+    pitching: (t) => `Get your fastball to ${t.threshold} mph`,
+    throwing: (t) => /pop/i.test(t.metric || "") ? `Pop ${t.threshold.toFixed(2)} or faster to second` : `Throw ${t.threshold} mph ${/outfield/i.test(t.positionLabel || "") || t.positionLabel === "OF" ? "from the outfield" : "across the infield"}`
+  };
+  function step(k, t) {
+    const gap = t.unit === "seconds" ? `${t.gap.toFixed(2)} s faster` : `+${t.gap} mph`;
+    return { tool: k, threshold: t.threshold, value: t.value, gap: t.gap, unit: t.unit, estimated: !!t.estimated,
+      action: ACTION[k](t), you: fmt(t), change: gap };
+  }
+  function movesUp(read) {
+    const order = read.categories;
+    const cur = order.findIndex(c => c.highlighted);
+    const add = [...new Set(order.flatMap(c => c.missing.filter(x => x.status === S.NO_INPUT).map(x => x.tool)))];
+    if (cur === 0) return { top: true, add, text: "You meet the highest listed level. Keep your numbers current and get them in front of coaches." };
+    const above = (cur === -1 ? order : order.slice(0, cur)).slice().reverse(); // nearest level first
+    const minTools = read.kind === "pitching" ? 1 : 2;
+    const reachable = above.filter(c => c.compared.length >= minTools);
+    if (!reachable.length) return { top: false, next: null, jump: null, add, text: add.length ? `Add your ${add.map(k => NOUN[k]).join(" and ")} to see exactly what moves you up.` : "Add more metrics to see exactly what moves you up." };
+    const fix = (c) => c.compared.filter(k => c.tools[k].status === S.BELOW).map(k => step(k, c.tools[k]));
+    // The highest level that a set of changes reaches (every compared metric there meets its target).
+    const reach = (steps) => {
+      const val = (k, t) => { const s = steps.find(x => x.tool === k); return s && (t.direction === "higher_is_better" ? s.threshold > t.value : s.threshold < t.value) ? s.threshold : t.value; };
+      const ok = (c) => c.compared.length >= minTools && c.compared.every(k => { const t = c.tools[k], v = val(k, t); return t.direction === "higher_is_better" ? v >= t.threshold - 1e-9 : v <= t.threshold + 1e-9; });
+      return order.find(c => ok(c)) || null;
+    };
+    const nextCat = reachable[0], nextSteps = fix(nextCat);
+    const landed = reach(nextSteps) || nextCat;
+    const next = { level: landed.key, label: NEXT[landed.key], steps: nextSteps };
+    // One single change that goes higher still (position players only)
+    let jump = null;
+    if (read.kind !== "pitching") {
+      for (const c of order) {
+        if (order.indexOf(c) >= order.indexOf(landed)) break;
+        const f = fix(c);
+        if (f.length === 1 && c.compared.length >= minTools) { const to = reach(f); if (to && order.indexOf(to) < order.indexOf(landed)) { jump = { level: to.key, label: NEXT[to.key], steps: f }; break; } }
+      }
+    }
+    const one = next.steps.length === 1;
+    const text = one ? `${next.steps[0].action} to reach the listed ${NEXT[next.level]} targets.` : `To reach ${NEXT[next.level]}: ${andList(next.steps.map(x => x.action.charAt(0).toLowerCase() + x.action.slice(1)))}.`;
+    return { top: false, next, jump, add, text: text.charAt(0).toUpperCase() + text.slice(1) };
+  }
+
+  return { ST, SHORT, LONG, POS, levelStatus, levels, headline, nextStep, movesUp, title, tabLabel, deSource,
     CAVEAT: "A benchmark comparison, not a prediction. Coaches also weigh game performance and roster needs." };
 });

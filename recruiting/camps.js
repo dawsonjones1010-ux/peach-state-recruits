@@ -5,6 +5,12 @@
   const api = window.PSRData.init();
   let camps = [], user = null, saved = new Map();
   const f = { q: "", states: [], levels: [], gradYear: "", maxPrice: "", from: "", to: "" };
+  // Links from Find My Level: camps.html?levels=NCAA%20D1,NCAA%20D2&grad=2028&from=fml
+  try {
+    const qs = new URLSearchParams(location.search);
+    if (qs.get("levels")) f.levels = qs.get("levels").split(",").map(x => x.trim()).filter(x => L.LEVELS.includes(x));
+    if (/^20\d\d$/.test(qs.get("grad") || "")) f.gradYear = qs.get("grad");
+  } catch (e) {}
 
   async function refreshSaved() {
     user = await api.getUser(); saved = new Map();

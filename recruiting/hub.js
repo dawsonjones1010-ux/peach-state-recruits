@@ -361,6 +361,11 @@
       if (last.primary && !f.elements.namedItem("primary_position").value) f.elements.namedItem("primary_position").value = last.primary;
       U.toast("Metrics filled in. Review, then Save profile.");
     };
+    // Opened from Find My Level's "Save to My Recruiting": fill the metrics once, then drop the flag from the URL.
+    try {
+      const qs = new URLSearchParams(location.search);
+      if (qs.get("from") === "fml") { qs.delete("from"); history.replaceState(null, "", location.pathname + (qs.toString() ? "?" + qs : "") + location.hash); $("#fmlImport").click(); }
+    } catch (e) {}
     $("#delMine").onclick = async () => {
       const ok = await U.confirmDialog("Delete your profile, saved schools, email drafts, message history, plan and saved camps? This can't be undone.", { confirmLabel: "Delete everything" });
       if (!ok) return;

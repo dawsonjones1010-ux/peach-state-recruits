@@ -311,6 +311,66 @@
       <a class="btn btn-line" href="${href}">Open College Finder</a></div>`;
   }
 
+  // ---- v26: what moves you up, one-tap next steps, Peach State players like you ----
+  const LEVEL_KEY = { p4: "NCAA D1", mid: "NCAA D1", low: "NCAA D1", d2: "NCAA D2", d3: "NCAA D3", naia: "NAIA", juco: "JUCO" };
+  function movesHtml(read) {
+    const mv = U.movesUp(read);
+    const steps = mv.next ? mv.next.steps : [];
+    const add = mv.add.map(k => ({ hitting: "max exit velocity", running: "60-yard dash", throwing: read.family === "C" ? "pop time" : "throw", pitching: "fastball" })[k]);
+    return `<section class="lvl-next lvl-moves" aria-label="What moves you up">
+      <p class="lvl-next-k">What moves you up</p>
+      <p class="lvl-next-t">${esc(mv.text)}</p>
+      ${steps.length ? `<ul class="lvl-move-list">${steps.map(x => `<li>${steps.length > 1 ? `<b>${esc(x.action)}</b>` : ""}<span>You: ${esc(x.you)}</span><span>${x.estimated ? "Estimated target" : "Target"}: ${esc(x.unit === "seconds" ? x.threshold.toFixed(2) + " s" : x.threshold + " mph")}</span><span class="lvl-move-gap">${esc(x.change)}</span></li>`).join("")}</ul>` : ""}
+      ${mv.jump ? `<p class="lvl-note-sm"><b>One change goes further:</b> ${esc(mv.jump.steps[0].action.charAt(0).toLowerCase() + mv.jump.steps[0].action.slice(1))} (${esc(mv.jump.steps[0].change)}) reaches the listed ${esc(mv.jump.label)} targets.</p>` : ""}
+      ${add.length && (mv.next || mv.top) ? `<p class="lvl-note-sm">Not entered: ${esc(add.join(" and "))}. Add ${add.length > 1 ? "them" : "it"} for a fuller answer.</p>` : ""}
+      <p class="lvl-note-sm">Based on the listed targets, not a prediction. Retest the same way you measured before.</p>
+    </section>`;
+  }
+  function levelsFor(read) {
+    const lv = U.levels(read).filter(l => l.status === U.ST.MEETS || l.status === U.ST.CLOSE).map(l => LEVEL_KEY[l.key]);
+    return [...new Set(lv)];
+  }
+  function oneTapHtml(read, idx) {
+    const lv = levelsFor(read), q = lv.length ? "levels=" + encodeURIComponent(lv.join(",")) + "&" : "";
+    const grad = state.input.gradYear ? "grad=" + encodeURIComponent(state.input.gradYear) + "&" : "";
+    const where = lv.length ? lv.map(x => x.replace("NCAA ", "")).join(" · ") : "Every level's";
+    return `<section class="lvl-onetap no-print" aria-label="Your next steps">
+      <p class="lvl-cta2-t">Your next steps</p>
+      <div class="lvl-onetap-grid">
+        <button class="lvl-tap lvl-tap-main" type="button" data-email-handoff="${idx}"><b>Email a coach</b><span>A personal email with your real numbers</span></button>
+        <a class="lvl-tap" href="colleges.html?${q}from=fml"><b>Schools at your level</b><span>${esc(where)} programs</span></a>
+        <a class="lvl-tap" href="camps.html?${q}${grad}from=fml"><b>Camps for your level</b><span>Upcoming college camps</span></a>
+        <a class="lvl-tap" href="my-recruiting.html?from=fml#profile"><b>Save to My Recruiting</b><span>Your numbers, schools and follow-ups</span></a>
+      </div>
+      <p class="lvl-note-sm">School and camp lists are filtered by level only. They don't rate how you fit any specific school.</p>
+    </section>`;
+  }
+  const FAMILY_TOKENS = { P: ["P", "RHP", "LHP"], C: ["C"], IF: ["1B", "2B", "SS", "3B", "MIF", "IF", "INF", "UTL"], OF: ["OF", "LF", "CF", "RF"] };
+  const famOf = (pos) => { const t = String(pos || "").toUpperCase().split(/[^A-Z0-9]+/).filter(Boolean); return Object.keys(FAMILY_TOKENS).filter(f => t.some(x => FAMILY_TOKENS[f].includes(x))); };
+  const inchesOf = (h) => { const m = String(h || "").match(/(\d)\s*'\s*(\d{1,2})?/); return m ? +m[1] * 12 + (+m[2] || 0) : null; };
+  function likeYou(players, read) {
+    const fam = read.kind === "pitching" ? "P" : read.family, gy = +state.input.gradYear, hi = +state.input.heightIn;
+    return players.filter(p => p.slug && famOf(p.position).includes(fam) && p.gradYear && Math.abs(+p.gradYear - gy) <= 1)
+      .map(p => { const h = inchesOf((p.measurables || []).find(m => /height/i.test(m.label)) ? (p.measurables.find(m => /height/i.test(m.label)) || {}).value : ""); return { p, score: Math.abs(+p.gradYear - gy) * 10 + (h && hi ? Math.abs(h - hi) : 5) }; })
+      .sort((a, b) => a.score - b.score).slice(0, 3).map(x => x.p);
+  }
+  let playersPromise = null;
+  function fillLikeYou() {
+    const boxes = [...app.querySelectorAll("[data-likeyou]")];
+    if (!boxes.length) return;
+    // Same-site copy of the public player list, so this page never contacts another server.
+    playersPromise = playersPromise || fetch("players.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : []).then(list => (list || []).filter(p => p && p.active !== false && /baseball/i.test(p.sport || "baseball"))).catch(() => []);
+    playersPromise.then(players => boxes.forEach(box => {
+      const read = state.result && state.result.reads[+box.dataset.likeyou]; if (!read || !box.isConnected) return;
+      const list = likeYou(players || [], read); if (!list.length) return;
+      box.innerHTML = `<p class="lvl-cta2-t">Peach State players like you</p>
+        <p class="lvl-note-sm">Featured players in your position group and a similar class. See how they show their film and numbers to coaches.</p>
+        <div class="lvl-like-grid">${list.map(p => `<a class="lvl-like" href="player/${encodeURIComponent(p.slug)}/">${p.coverImage ? `<img src="${esc(String(p.coverImage).replace(/(images\/players\/[\w-]+)\.jpg$/, "$1-640.jpg"))}" alt="" loading="lazy" decoding="async" onerror="this.remove()">` : ""}<span><b>${esc(p.name)}</b><small>${esc([p.position, p.gradYear ? "Class of " + p.gradYear : "", p.school || p.team].filter(Boolean).join(" · "))}</small></span></a>`).join("")}</div>
+        <p class="lvl-note-sm"><a href="index.html#packages">Get a profile like this</a></p>`;
+      box.hidden = false;
+    }));
+  }
+
   function reportOverview(read,idx){
     const evidence=R.evidence(state.input,read), met=read.categories.filter(c=>c.highlighted), max=Math.max(0,...read.categories.map(c=>c.compared.length));
     return `<div class="pro-overview"><div><span>TOOLS COMPARED</span><strong>${max}<small> / ${read.toolKeys.length}</small></strong><p>${read.kind==='pitching'?'Fastball only; not a complete pitching evaluation.':'Distinct tools with targets in one category. Missing tools stay unknown.'}</p></div><div><span>CATEGORIES TO EXPLORE</span><strong>${met.length}</strong><p>${met.length?'Publisher targets met; several levels can overlap.':'More data or development may help. There is no ceiling assigned.'}</p></div><div><span>MEASUREMENT CONTEXT</span><strong class="pro-small-value">${esc(evidence.label)}</strong><p>${esc(evidence.sourceLabel)}.</p><button class="pro-text-button" type="button" data-edit-evidence>Review test details</button></div></div>
@@ -357,13 +417,13 @@
         <p class="lvl-head-cav">${esc(U.CAVEAT)}</p><p class="pro-source-note">Seven-category targets: <a href="https://www.nextcommit.ai/downloads/college-baseball-recruiting-standards-by-division.pdf" target="_blank" rel="noopener">NextCommit</a>. These publisher targets are one reference; the NCSA cross-check below stays separate.</p>
       </div>
       ${reportOverview(read, idx)}
-      <div class="lvl-next"><p class="lvl-next-k">A benchmark to discuss</p><p class="lvl-next-t">${esc(nextFor(read))}</p></div>
-      <div class="lvl-cta2 no-print"><div><p class="lvl-cta2-t">Make your next move.</p><p class="lvl-cta2-s">Use your actual metrics in a personal coach email.</p></div><button class="btn btn-peach" type="button" data-email-handoff="${idx}">Build my coach email</button></div>
+      ${movesHtml(read)}
+      ${oneTapHtml(read, idx)}
+      <div class="lvl-likeyou no-print" data-likeyou="${idx}" hidden></div>
       ${crossCheckHtml(read)}
       ${workbenchHtml(read, idx)}
       ${scenarioHtml(read, idx)}
       ${nextMovesHtml(read)}
-      ${exploreHtml(read)}
       <div class="lvl-share no-print"><button class="btn btn-line" type="button" data-share="${idx}">Share my result</button><div class="lvl-share-out" id="shareOut${idx}" hidden></div></div>
       <div class="lvl-levels"><h3>Every level</h3>
         <ol class="lvl-lrow">${lv.map(l => `<li class="${ST_CLASS[l.status]}" data-level="${l.key}"><b>${esc(l.label)}</b><span>${esc(l.status)}</span></li>`).join("")}</ol>
@@ -677,6 +737,7 @@
     });
     const openSecs = state.step === 4 ? [...app.querySelectorAll("details[open][data-sec]")].map(d => d.closest("[data-read]") ? d.closest("[data-read]").dataset.read + ":" + d.dataset.sec : d.dataset.sec) : [];
     app.innerHTML = state.step === 1 ? step1(v) : state.step === 2 ? step2(v) : state.step === 3 ? step3(v) : results();
+    if (state.step === 4) fillLikeYou();
     openSecs.forEach(k => { const [r, sct] = k.includes(":") ? k.split(":") : [null, k]; const d = app.querySelector(r != null ? `[data-read="${r}"] [data-sec="${sct}"]` : `.lvl-results > [data-sec="${sct}"]`); if (d) d.open = true; });
     const sum = document.getElementById("lvlSummary");
     if (sum) sum.focus();
