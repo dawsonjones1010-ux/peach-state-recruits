@@ -101,13 +101,13 @@ const LEVELS = ["Power D1", "Mid-major D1", "Lower D1", "D2", "D3", "NAIA", "JUC
     ok(await page.isVisible(".lvl-warn"), `${tag}: unusual 60 time asks for confirmation`);
     await page.fill("#f_sixty", "6.80"); await next(page);
     await evidence(page, { date: "idk", source: "" });
-    ok(JSON.stringify(await hlCats(page, 0)) === JSON.stringify(["p4", "mid", "d2", "d3", "naia", "juco"]), `${tag}: SS 93/6.80 highlights Power through JUCO (Lower D1 has no targets)`);
+    ok(JSON.stringify(await hlCats(page, 0)) === JSON.stringify(["p4", "mid", "low", "d2", "d3", "naia", "juco"]), `${tag}: SS 93/6.80/86 highlights every level, Lower D1 included`);
     const lowTxt = await catText(page, 0, "low");
-    ok(lowTxt.includes("No published target") && !lowTxt.includes("No published benchmark") && lowTxt.includes("data gap"), `${tag}: Lower D1 shown as "No published target", not a negative`);
+    ok(lowTxt.includes("Estimated target") && lowTxt.includes("Mid-major D1 (88 mph) and D2 (85 mph)") && !lowTxt.includes("No published target"), `${tag}: Lower D1 exit velo uses a labeled estimate, never "No published target"`);
     ok((await catText(page, 0, "p4")).toLowerCase().includes("second source"), `${tag}: second published source shown separately`);
     const resTxt = await page.textContent(".lvl-results");
     ok(resTxt.includes("Measurement date unknown"), `${tag}: unknown metadata consequence labeled`);
-    ok(resTxt.includes("count as one piece of evidence"), `${tag}: NAIA/JUCO pooled targets flagged as one piece of evidence`);
+    ok(resTxt.includes("The source combines D3, NAIA and JUCO."), `${tag}: combined-level throwing targets are flagged`);
     const resMain = await page.evaluate(() => { const c = document.querySelector(".lvl-results").cloneNode(true); c.querySelectorAll('[data-sec="sources"], .lvl-print').forEach(e => e.remove()); return c.textContent; });
     ok(!/probability|percentile|fit score|% chance/i.test(resMain), `${tag}: no fabricated scores or probabilities (the Sources list may name published studies)`);
     if (SHOTS) await page.screenshot({ path: `${SHOTS}/${tag}-results-ss.png`, fullPage: !mobile ? false : false });
@@ -124,9 +124,9 @@ const LEVELS = ["Power D1", "Mid-major D1", "Lower D1", "D2", "D3", "NAIA", "JUC
       if (pos === "CF") {
         const cfMain = await mainText(page, 0), cfLv = await levelRow(page, 0);
         console.log("      CF main: " + JSON.stringify(cfMain) + "\n      CF levels: " + cfLv.join(" · "));
-        ok(cfMain[0] === "Your results as a center fielder." && cfMain[1] === "Your metrics meet the listed mid-major D1 targets." && cfMain[2] === "Supported by your max exit velocity (94 mph) and 60-yard dash (6.75 s)." && cfMain[3] === "A benchmark comparison, not a prediction. Coaches also weigh game performance and roster needs.", `${tag}: CF title, headline, support and caveat`);
+        ok(cfMain[0] === "Your results as a center fielder." && cfMain[1] === "Your metrics meet the listed mid-major D1 targets." && cfMain[2] === "Supported by your max exit velocity (94 mph), 60-yard dash (6.75 s) and throw (88 mph)." && cfMain[3] === "A benchmark comparison, not a prediction. Coaches also weigh game performance and roster needs.", `${tag}: CF title, headline, support and caveat`);
         ok(cfMain[4] === "Next benchmark: Power conference D1. Your 60 is 0.05 s slower than the listed 6.70 s.", `${tag}: CF next step shows only the closest gap`);
-        ok(cfLv.join("|") === "Power D1: Close|Mid-major D1: Meets targets|Lower D1: No published target|D2: Meets targets|D3: Meets targets|NAIA: Meets targets|JUCO: Meets targets", `${tag}: CF level row lists all seven levels in order`);
+        ok(cfLv.join("|") === "Power D1: Close|Mid-major D1: Meets targets|Lower D1: Meets targets|D2: Meets targets|D3: Meets targets|NAIA: Meets targets|JUCO: Meets targets", `${tag}: CF level row lists all seven levels in order`);
         ok(await fitsFirst(), `${tag}: CF headline, next step and CTA fit the first results screen`);
         const mainV = await page.evaluate(() => { const p = document.querySelector(".lvl-read"); const c = p.cloneNode(true); c.querySelectorAll("details").forEach(d => d.remove()); return c.textContent; });
         ok(!/NextCommit|NCSA|BaseballPath|Flatground|Slammers|guideline|Position read|Missing/i.test(mainV), `${tag}: main view names no sources and never says "missing"`);
@@ -157,8 +157,8 @@ const LEVELS = ["Power D1", "Mid-major D1", "Lower D1", "D2", "D3", "NAIA", "JUC
     await numbers(page, { maxEv: 91, sixty: 7.2, cVelo: 80, pop: 1.95 }); await next(page);
     await evidence(page, { date: "2026-07-20", environment: "showcase", method: "electronic", source: "event", link: "https://example.com/result" });
     const d3 = await catText(page, 0, "d3");
-    ok(d3.includes("Source reference only") && d3.includes("2.1 s+"), `${tag}: D3 2.10+ pop row is reference only`);
-    ok(JSON.stringify(await hlCats(page, 0)) === JSON.stringify(["p4", "mid", "d2", "d3", "naia", "juco"]), `${tag}: catcher 91/7.2/1.95 highlights where every compared tool meets`);
+    ok(d3.includes("Meets listed target") && d3.includes("2–2.15 s"), `${tag}: D3 pop time compared with the published 2.00–2.15 s band`);
+    ok(JSON.stringify(await hlCats(page, 0)) === JSON.stringify(["p4", "mid", "low", "d2", "d3", "naia", "juco"]), `${tag}: catcher 91/7.2/1.95 highlights where every compared tool meets`);
     const ct = await page.textContent(".lvl-results");
     ok(ct.includes("A link alone doesn't verify") && !/\bverified\b(?! *\.)/.test(ct.replace(/marked verified|doesn't verify|not verified/g, "")), `${tag}: link recorded but not marked verified`);
 
@@ -172,8 +172,8 @@ const LEVELS = ["Power D1", "Mid-major D1", "Lower D1", "D2", "D3", "NAIA", "JUC
     ok(JSON.stringify(tabs) === JSON.stringify(["Shortstop:true", "Pitcher:false"]) && await page.isVisible("#tp0") && !(await page.isVisible("#tp1")), `${tag}: two-way shows Shortstop / Pitcher tabs, one panel at a time`);
     const ssMain = await mainText(page, 0), ssLv = await levelRow(page, 0);
     console.log("      SS main: " + JSON.stringify(ssMain) + "\n      SS levels: " + ssLv.join(" · "));
-    ok(ssMain[1] === "Your metrics meet the listed mid-major D1 targets." && ssMain[4] === "Next benchmark: Power conference D1. Your exit velocity is 1 mph short of the listed 91 mph. One other metric is also below this target.", `${tag}: SS headline and next step`);
-    ok(ssLv.join("|") === "Power D1: Below targets|Mid-major D1: Meets targets|Lower D1: No published target|D2: Meets targets|D3: Meets targets|NAIA: Meets targets|JUCO: Meets targets", `${tag}: SS level row`);
+    ok(ssMain[1] === "Your metrics meet the listed D2 targets." && ssMain[4] === "Next benchmark: Lower D1. Your throw is 2 mph short of the listed 86 mph.", `${tag}: SS headline and next step`);
+    ok(ssLv.join("|") === "Power D1: Below targets|Mid-major D1: Close|Lower D1: Close|D2: Meets targets|D3: Meets targets|NAIA: Meets targets|JUCO: Meets targets", `${tag}: SS level row`);
     ok(await fitsFirst(), `${tag}: SS headline, next step and CTA fit the first results screen`);
     if (SHOTS && mobile) await page.screenshot({ path: `${SHOTS}/phone-twoway-ss-first.png` });
     await page.click("#tab1");
@@ -197,8 +197,8 @@ const LEVELS = ["Power D1", "Mid-major D1", "Lower D1", "D2", "D3", "NAIA", "JUC
     // 6. Missing benchmarks: 1B with elite numbers still needs more info
     await start(page, { primary: "1B" });
     await numbers(page, { maxEv: 100, sixty: 6.6, ifVelo: 88 }); await next(page); await evidence(page, {});
-    ok(await page.isVisible("text=More information needed for an overall range"), `${tag}: 1B shows "More information needed" (no corner-IF running targets)`);
-    ok((await catText(page, 0, "p4")).includes("No published target"), `${tag}: 1B running shows "No published target"`);
+    ok(await page.isVisible("text=Your metrics meet the listed Power conference D1 targets."), `${tag}: 1B 100/6.6/88 gets a full answer (1B running and throwing targets filled)`);
+    ok((await catText(page, 0, "p4")).includes("6.9–7.2") && !(await catText(page, 0, "p4")).includes("No published target"), `${tag}: 1B running uses the published 6.9–7.2 s D1 band`);
 
     // 7. Contradiction: typical > max
     await start(page, { primary: "P", throws: "L" });
@@ -234,7 +234,7 @@ const LEVELS = ["Power D1", "Mid-major D1", "Lower D1", "D2", "D3", "NAIA", "JUC
     ok(/Your recruiting clock/.test(clk) && /D1, D2, D3, NAIA and JUCO coaches can contact you now/.test(clk) && /one state's data/.test(clk) && /NAIA/.test(clk) && /does not regulate/.test(clk), `${tag}: recruiting clock (2027: all levels open, NAIA rule shown, wave labeled as one state)`);
     ok(!(await page.$(".lvl-young")) , `${tag}: no sophomore panel for junior-year numbers`);
     ok(/First saved result/.test(await page.textContent(".lvl-prog")) && await page.isVisible("text=Clear my saved results"), `${tag}: progress saved, clear button shown`);
-    ok((await page.$$eval(".lvl-privacy", e => e.map(x => x.textContent))).includes("Nothing leaves your browser unless you tap Send."), `${tag}: privacy line`);
+    ok((await page.$$eval(".lvl-privacy", e => e.map(x => x.textContent))).some(t => t.startsWith("Your numbers stay on this device unless you tap Send.")), `${tag}: privacy line`);
     ok(await fitsFirst(), `${tag}: CF 2027 headline, next step and CTA fit the first results screen`);
     await toResults(); await shot("p1-cf2027-first"); await shot("p1-cf2027-full", true);
     // Progress on return

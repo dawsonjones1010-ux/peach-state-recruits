@@ -141,3 +141,15 @@ dialog.rc-dialog::backdrop{background:rgba(7,11,20,.55)}
 @media (max-width:560px){.rc-est{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .rc-total{font-family:var(--display);font-size:40px;line-height:1}
 .rc-note{border-left:3px solid var(--line);padding:2px 0 2px 12px;color:var(--text-2);font-size:14px;margin:10px 0}
+
+.rc-consent{align-items:flex-start;gap:8px;font-size:14px;line-height:1.45;color:var(--text-2)}
+.rc-consent input{margin-top:3px;flex:none}
+.rc-danger-zone{margin-top:18px;border-color:rgba(190,40,40,.25)}
+.rc-danger-zone h2{font-size:20px}
+
+.legal-doc{max-width:760px;line-height:1.65}
+.legal-doc h2{font-size:22px;margin:26px 0 8px}
+.legal-doc h3{font-size:17px;margin:18px 0 6px;text-transform:none}
+.legal-doc p,.legal-doc li{font-size:16px;color:var(--text)}
+.legal-doc ul{padding-left:20px;display:grid;gap:6px;margin:8px 0}
+.legal-doc code{font-size:14px}

@@ -134,6 +134,23 @@
     if (!level || !pos) return null;
     return data.recruit_target_records.find(r => r.source_id === src && r.source_level_label === level && r.source_position_label === pos && r.metric === metric) || null;
   }
+  // v1.2: targets that fill the main guideline source's blanks (data/level-benchmarks-v1.2-fills.json).
+  // Published values from other sources first; the few estimates carry their method.
+  function fillRow(data, catKey, pos, tool) {
+    const f = (data.fill_records || []).find(r => r.categories.includes(catKey) && r.positions.includes(pos) && r.tool === tool);
+    if (!f) return null;
+    return {
+      id: f.id, source_id: f.source_id, source_level_label: f.source_level_label, source_position_label: f.source_position_label,
+      metric: f.metric, unit: f.unit, direction: f.direction, published_lower: f.published_lower, published_upper: f.published_upper,
+      qualifier: f.estimate_method ? "Estimated target" : "Published band", measurement_or_grouping: "Testing context unspecified",
+      availability: "published", provisional_comparison_threshold: f.threshold, threshold_is_implementation_interpretation: true,
+      exclude_from_automatic_classification: false, same_source_pooled_group: null, review_note: null,
+      fill: true, estimated: !!f.estimate_method, estimateMethod: f.estimate_method || null, pooledNote: f.pooled_note || null
+    };
+  }
+  // The main row when it can be compared, otherwise the fill row, otherwise the main row (its reason is kept).
+  function usable(row) { return row && row.availability === "published" && !row.exclude_from_automatic_classification && row.provisional_comparison_threshold != null; }
+  function pick(mainRow, fill) { return usable(mainRow) ? mainRow : (fill || mainRow); }
   function source(data, id) { return data.sources.find(s => s.id === id); }
   function avgDataset(data, id) { return data.recruit_average_datasets.find(d => d.id === id); }
 
@@ -160,14 +177,15 @@
       return Object.assign(base, { status: S.REF_ONLY, value: isNum(value) ? value : null, reason: row.review_note || "Shown as a source reference only; not used for automatic comparison." });
     }
     const t = row.provisional_comparison_threshold;
-    if (!isNum(value)) return Object.assign(base, { status: S.NO_INPUT, threshold: t, reason: "You didn't enter this metric." });
+    if (!isNum(value)) return Object.assign(base, row.fill ? { fill: true, estimated: row.estimated, estimateMethod: row.estimateMethod, pooledNote: row.pooledNote } : {}, { status: S.NO_INPUT, threshold: t, reason: "You didn't enter this metric." });
     const higher = row.direction === "higher_is_better";
     const meets = higher ? value >= t - EPS : value <= t + EPS;
     const gap = meets ? 0 : round(higher ? t - value : value - t, row.unit === "seconds" ? 2 : 1);
     let note = "";
     if (higher && row.published_upper != null && value > row.published_upper) note = `Above the top of the published band (${row.published_upper} ${row.unit}). That's favorable, not a mismatch.`;
     if (!higher && row.published_lower != null && value < row.published_lower) note = `Faster than the fast end of the published band (${row.published_lower} s). That's favorable, not a mismatch.`;
-    return Object.assign(base, { status: meets ? S.MEETS : S.BELOW, value, threshold: t, thresholdIsInterpretation: !!row.threshold_is_implementation_interpretation, gap, note });
+    const fillInfo = row.fill ? { fill: true, estimated: row.estimated, estimateMethod: row.estimateMethod, pooledNote: row.pooledNote } : {};
+    return Object.assign(base, fillInfo, { status: meets ? S.MEETS : S.BELOW, value, threshold: t, thresholdIsInterpretation: !!row.threshold_is_implementation_interpretation, gap, note });
   }
 
   // Compare with an observed sample mean. Never pass/fail.
@@ -203,11 +221,14 @@
     const fam = g.family;
     const categories = CFG.CATEGORIES.map(cat => {
       const tools = {};
-      tools.hitting = compareGuideline(targetRow(data, "NC", cat.nc, g.ncEv, "Exit velocity"), m.maxEv);
-      tools.running = g.ncRun ? compareGuideline(targetRow(data, "NC", cat.nc, g.ncRun, "60-yard dash"), m.sixty)
+      tools.hitting = compareGuideline(pick(targetRow(data, "NC", cat.nc, g.ncEv, "Exit velocity"), fillRow(data, cat.key, pos, "hitting")), m.maxEv);
+      const runFill = fillRow(data, cat.key, pos, "running");
+      tools.running = g.ncRun || runFill ? compareGuideline(pick(g.ncRun ? targetRow(data, "NC", cat.nc, g.ncRun, "60-yard dash") : null, runFill), m.sixty)
         : compareGuideline(null, m.sixty, `NextCommit publishes no 60-yard target for ${pos === "1B" || pos === "3B" ? "corner infielders (1B/3B)" : pos}. Not borrowed from another position.`);
-      if (fam === "C") tools.throwing = compareGuideline(targetRow(data, "NC", cat.nc, "C", "Pop time to 2B"), m.pop);
-      else tools.throwing = compareGuideline(null, m[THROW_INPUT[g.throwTest]], "NextCommit publishes no throwing-velocity targets. See the separate NCSA reference.");
+      const throwFill = fillRow(data, cat.key, pos, "throwing");
+      if (fam === "C") tools.throwing = compareGuideline(pick(targetRow(data, "NC", cat.nc, "C", "Pop time to 2B"), throwFill), m.pop);
+      else tools.throwing = throwFill ? compareGuideline(throwFill, m[THROW_INPUT[g.throwTest]])
+        : compareGuideline(null, m[THROW_INPUT[g.throwTest]], "NextCommit publishes no throwing-velocity targets. See the separate NCSA reference.");
       // NCSA reference (separate guideline family; not part of the highlight rule)
       let nsRef;
       if (fam === "C") nsRef = { tool: "throwing", label: "Pop time to 2B", cmp: compareGuideline(targetRow(data, "NS", cat.ns, "C", "Pop time to 2B"), m.pop, "NCSA publishes no pop-time target for this group.") };
@@ -468,5 +489,12 @@
     };
   }
 
-  return { S, parseEntry, validate, evaluate, readsFor, positionRead, pitchingRead, compareGuideline, compareMean, targetRow, gapsTo, gradeAt, bandText, fmt, envLabel, methodLabel, CFG };
+  // Merge the v1.2 fill file into the v1.0 benchmark data (a new object; inputs are not changed).
+  function withFills(data, fills) {
+    if (!fills || !Array.isArray(fills.fill_records)) return data;
+    const ids = new Set(data.sources.map(s => s.id));
+    return Object.assign({}, data, { fill_records: fills.fill_records, fills_version: fills.schema_version, sources: data.sources.concat((fills.sources || []).filter(s => !ids.has(s.id))) });
+  }
+
+  return { S, withFills, fillRow, parseEntry, validate, evaluate, readsFor, positionRead, pitchingRead, compareGuideline, compareMean, targetRow, gapsTo, gradeAt, bandText, fmt, envLabel, methodLabel, CFG };
 });

@@ -35,6 +35,7 @@
         <form id="rcGateForm" class="rc-row" style="margin-top:14px" novalidate>
           <label class="rc-field" style="flex:1 1 240px">Email<input class="rc-input" type="email" name="email" autocomplete="email" required></label>
           <button class="rc-btn primary" type="submit" style="align-self:flex-end">${api.mode === "demo" ? "Sign in" : "Email me a sign-in link"}</button>
+          <label class="rc-check rc-consent" style="flex:1 1 100%"><input type="checkbox" name="consent" required> <span>I'm 13 or older. If I'm under 18, my parent or guardian knows I'm using this. I agree to the <a class="rc-link" href="terms.html" target="_blank" rel="noopener">Terms</a> and <a class="rc-link" href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a>.</span></label>
         </form>
         <p class="rc-small" id="rcGateMsg" role="status" style="margin-top:10px"></p>
         ${api.mode === "demo" ? `<p class="rc-small">Preview: any email works and creates a separate test account.</p>` : `<p class="rc-small">No password. We email you a link each time you sign in.</p>`}

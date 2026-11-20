@@ -80,6 +80,7 @@
       async listSavedCamps(ids) { const d = await directory(); return attachLevels(d.camps.filter(c => ids.includes(c.id) && c.record_status !== "hidden"), d.programs); },
       async getProfile() { const u = me(); if (!u) return null; return read().users[u.id].profile || { user_id: u.id, contact_email: u.email, metrics: {}, prep: {}, levels_of_interest: [], regions: [] }; },
       async saveProfile(p) { const { s, u } = bucket("_"); s.users[u].profile = Object.assign({}, s.users[u].profile || {}, p, { user_id: u, updated_at: new Date().toISOString() }); write(s); return s.users[u].profile; },
+      async deleteMyData() { const s = read(); const u = s.session; if (!u) throw new Error("Sign in first."); const email = s.users[u] && s.users[u].email; s.users[u] = { email }; write(s); },
       async logEmailSent(draftId, occurredOn, followUpOn, coachName) {
         const { s, u } = bucket("email_drafts"); const owner = s.users[u];
         const draft = (owner.email_drafts || []).find(d => d.id === draftId);
@@ -166,6 +167,11 @@
         return must(sb.from("recruit_profiles").upsert(row).select().single());
       },
       table,
+      // Deletes everything this player saved in the recruiting tools. Row-level security limits each delete to their own rows.
+      async deleteMyData() {
+        const u = await this.getUser(); if (!u) throw new Error("Sign in first.");
+        for (const t of ["communications", "email_drafts", "plan_tasks", "saved_camps", "saved_schools", "recruit_profiles"]) await must(sb.from(t).delete().eq("user_id", u.id));
+      },
       async logEmailSent(draftId, occurredOn, followUpOn, coachName) {
         return must(sb.rpc("log_recruiting_email_sent", { p_draft_id: draftId, p_occurred_on: occurredOn, p_follow_up_on: followUpOn || null, p_coach_name: coachName || null }));
       },
@@ -189,7 +195,7 @@
       async listPrograms() { return (await loadFallback()).programs.filter(p => p.record_status !== "hidden"); },
       async listCamps() { const d = await loadFallback(); return attachLevels(d.camps.filter(c => c.record_status !== "hidden"), d.programs); },
       async listRules() { return (await loadFallback()).rules.filter(r => r.record_status !== "hidden"); },
-      getProfile: async () => null, saveProfile: blocked,
+      getProfile: async () => null, saveProfile: blocked, deleteMyData: blocked,
       table: () => ({ list: async () => [], insert: blocked, update: blocked, remove: blocked }),
       listProgramsAdmin: blocked, adminSaveProgram: blocked, adminImportPrograms: blocked,
       adminSaveCamp: blocked, adminDeleteCamp: blocked, adminSaveRule: blocked, adminStats: blocked

@@ -1,0 +1,676 @@
+{
+ "schema_version": "1.2-fills",
+ "research_as_of": "2026-11-20",
+ "note": "Fills every position-player target the main guideline source (NextCommit) leaves blank. Published values from other sources are used first; the only estimates are Lower D1 exit velocity for non-catchers and Lower D1 catcher 60, each labeled with its method.",
+ "sources": [
+  {
+   "id": "NCC",
+   "publisher": "NextCommit (catcher page)",
+   "publication_or_check": "2026-11-20",
+   "evidence_type": "Published recruiting guideline",
+   "url": "https://www.nextcommit.ai/baseball/catcher-recruiting",
+   "limitation": "Catcher-only division sections, including a D1 Low-Major tier. The same page's comparison table differs slightly from its division sections; the division sections are used."
+  },
+  {
+   "id": "GB",
+   "publisher": "GoBig Recruiting",
+   "publication_or_check": "2026-11-20",
+   "evidence_type": "Published recruiting guideline",
+   "url": "https://www.gobigrecruiting.com/recruiting101/baseball/positional_guidelines/middle_infielder",
+   "limitation": "One tier covers Lower D1, high D2, NAIA and lower JUCO together. Used only for Lower D1 60-yard targets. Undated."
+  },
+  {
+   "id": "UU",
+   "publisher": "Uncommitted University",
+   "publication_or_check": "2026-09-13",
+   "evidence_type": "Measured bands (496 showcase 60s)",
+   "url": "https://uncommittedu.com/60-yard-dash-benchmarks-by-level/",
+   "limitation": "496 timed 60s from 34 public Prep Baseball event write-ups, summer 2026, nine states. D1 is one band; D2 is combined with NAIA and D3 with JUCO. Called reference bands, not hard cutoffs."
+  },
+  {
+   "id": "TP",
+   "publisher": "TP College Showcase",
+   "publication_or_check": "2026-11-20",
+   "evidence_type": "Published evaluation guideline",
+   "url": "https://www.tpcollegeshowcase.com/evaluation-reference-information.html",
+   "limitation": "Undated. DI, DII and one combined DIII/NAIA/JUCO tier. Its DI outfield throwing value appears mislabeled, so NCSA's DI outfield value is used instead."
+  },
+  {
+   "id": "EST",
+   "publisher": "Peach State Recruits estimate",
+   "publication_or_check": "2026-11-20",
+   "evidence_type": "Estimate from neighboring published targets",
+   "url": "https://www.nextcommit.ai/baseball-recruiting",
+   "limitation": "No source publishes this target. It is set halfway between the published Mid-major D1 and D2 targets for the same position group."
+  }
+ ],
+ "fill_records": [
+  {
+   "id": "fill_001",
+   "categories": [
+    "low"
+   ],
+   "positions": [
+    "2B",
+    "SS"
+   ],
+   "tool": "hitting",
+   "metric": "Exit velocity",
+   "unit": "mph",
+   "direction": "higher_is_better",
+   "published_lower": 86.5,
+   "published_upper": null,
+   "threshold": 86.5,
+   "source_id": "EST",
+   "source_level_label": "Lower D1",
+   "source_position_label": "SS/2B",
+   "pooled_note": null,
+   "estimate_method": "Halfway between the published Mid-major D1 (88 mph) and D2 (85 mph) targets for this position group."
+  },
+  {
+   "id": "fill_002",
+   "categories": [
+    "low"
+   ],
+   "positions": [
+    "1B",
+    "3B"
+   ],
+   "tool": "hitting",
+   "metric": "Exit velocity",
+   "unit": "mph",
+   "direction": "higher_is_better",
+   "published_lower": 86.5,
+   "published_upper": null,
+   "threshold": 86.5,
+   "source_id": "EST",
+   "source_level_label": "Lower D1",
+   "source_position_label": "1B/3B",
+   "pooled_note": null,
+   "estimate_method": "Halfway between the published Mid-major D1 (88 mph) and D2 (85 mph) targets for this position group."
+  },
+  {
+   "id": "fill_003",
+   "categories": [
+    "low"
+   ],
+   "positions": [
+    "LF",
+    "CF",
+    "RF"
+   ],
+   "tool": "hitting",
+   "metric": "Exit velocity",
+   "unit": "mph",
+   "direction": "higher_is_better",
+   "published_lower": 86.5,
+   "published_upper": null,
+   "threshold": 86.5,
+   "source_id": "EST",
+   "source_level_label": "Lower D1",
+   "source_position_label": "OF",
+   "pooled_note": null,
+   "estimate_method": "Halfway between the published Mid-major D1 (88 mph) and D2 (85 mph) targets for this position group."
+  },
+  {
+   "id": "fill_004",
+   "categories": [
+    "low"
+   ],
+   "positions": [
+    "C"
+   ],
+   "tool": "hitting",
+   "metric": "Exit velocity",
+   "unit": "mph",
+   "direction": "higher_is_better",
+   "published_lower": 85,
+   "published_upper": null,
+   "threshold": 85,
+   "source_id": "NCC",
+   "source_level_label": "D1 (Low-Major)",
+   "source_position_label": "C",
+   "pooled_note": null,
+   "estimate_method": null
+  },
+  {
+   "id": "fill_005",
+   "categories": [
+    "low"
+   ],
+   "positions": [
+    "2B",
+    "SS"
+   ],
+   "tool": "running",
+   "metric": "60-yard dash",
+   "unit": "seconds",
+   "direction": "lower_is_better",
+   "published_lower": null,
+   "published_upper": 6.9,
+   "threshold": 6.9,
+   "source_id": "GB",
+   "source_level_label": "Lower D1 / high D2 / NAIA",
+   "source_position_label": "Middle infield",
+   "pooled_note": "This target comes from one tier that covers Lower D1, high D2 and NAIA.",
+   "estimate_method": null
+  },
+  {
+   "id": "fill_006",
+   "categories": [
+    "low"
+   ],
+   "positions": [
+    "LF",
+    "RF"
+   ],
+   "tool": "running",
+   "metric": "60-yard dash",
+   "unit": "seconds",
+   "direction": "lower_is_better",
+   "published_lower": null,
+   "published_upper": 7.0,
+   "threshold": 7.0,
+   "source_id": "GB",
+   "source_level_label": "Lower D1 / high D2 / NAIA",
+   "source_position_label": "Corner OF",
+   "pooled_note": "This target comes from one tier that covers Lower D1, high D2 and NAIA.",
+   "estimate_method": null
+  },
+  {
+   "id": "fill_007",
+   "categories": [
+    "low"
+   ],
+   "positions": [
+    "CF"
+   ],
+   "tool": "running",
+   "metric": "60-yard dash",
+   "unit": "seconds",
+   "direction": "lower_is_better",
+   "published_lower": null,
+   "published_upper": 6.9,
+   "threshold": 6.9,
+   "source_id": "GB",
+   "source_level_label": "Lower D1 / high D2 / NAIA",
+   "source_position_label": "CF",
+   "pooled_note": "This target comes from one tier that covers Lower D1, high D2 and NAIA.",
+   "estimate_method": null
+  },
+  {
+   "id": "fill_008",
+   "categories": [
+    "low"
+   ],
+   "positions": [
+    "C"
+   ],
+   "tool": "running",
+   "metric": "60-yard dash",
+   "unit": "seconds",
+   "direction": "lower_is_better",
+   "published_lower": 7.0,
+   "published_upper": 7.5,
+   "threshold": 7.5,
+   "source_id": "EST",
+   "source_level_label": "Lower D1",
+   "source_position_label": "C",
+   "pooled_note": null,
+   "estimate_method": "The published Mid-major D1 and D2 catcher targets are both 7.5 s, so Lower D1 uses 7.5 s."
+  },
+  {
+   "id": "fill_009",
+   "categories": [
+    "p4",
+    "mid",
+    "low"
+   ],
+   "positions": [
+    "1B"
+   ],
+   "tool": "running",
+   "metric": "60-yard dash",
+   "unit": "seconds",
+   "direction": "lower_is_better",
+   "published_lower": 6.9,
+   "published_upper": 7.2,
+   "threshold": 7.2,
+   "source_id": "UU",
+   "source_level_label": "D1",
+   "source_position_label": "First base / catcher",
+   "pooled_note": "The source uses one band for all of D1.",
+   "estimate_method": null
+  },
+  {
+   "id": "fill_010",
+   "categories": [
+    "p4",
+    "mid",
+    "low"
+   ],
+   "positions": [
+    "3B"
+   ],
+   "tool": "running",
+   "metric": "60-yard dash",
+   "unit": "seconds",
+   "direction": "lower_is_better",
+   "published_lower": 6.7,
+   "published_upper": 7.0,
+   "threshold": 7.0,
+   "source_id": "UU",
+   "source_level_label": "D1",
+   "source_position_label": "Third base / corner OF",
+   "pooled_note": "The source uses one band for all of D1.",
+   "estimate_method": null
+  },
+  {
+   "id": "fill_011",
+   "categories": [
+    "d2",
+    "naia"
+   ],
+   "positions": [
+    "1B"
+   ],
+   "tool": "running",
+   "metric": "60-yard dash",
+   "unit": "seconds",
+   "direction": "lower_is_better",
+   "published_lower": 7.1,
+   "published_upper": 7.3,
+   "threshold": 7.3,
+   "source_id": "UU",
+   "source_level_label": "D2 / NAIA",
+   "source_position_label": "First base / catcher",
+   "pooled_note": "The source combines D2 and NAIA.",
+   "estimate_method": null
+  },
+  {
+   "id": "fill_012",
+   "categories": [
+    "d2",
+    "naia"
+   ],
+   "positions": [
+    "3B"
+   ],
+   "tool": "running",
+   "metric": "60-yard dash",
+   "unit": "seconds",
+   "direction": "lower_is_better",
+   "published_lower": 7.0,
+   "published_upper": 7.2,
+   "threshold": 7.2,
+   "source_id": "UU",
+   "source_level_label": "D2 / NAIA",
+   "source_position_label": "Third base / corner OF",
+   "pooled_note": "The source combines D2 and NAIA.",
+   "estimate_method": null
+  },
+  {
+   "id": "fill_013",
+   "categories": [
+    "d3",
+    "juco"
+   ],
+   "positions": [
+    "1B"
+   ],
+   "tool": "running",
+   "metric": "60-yard dash",
+   "unit": "seconds",
+   "direction": "lower_is_better",
+   "published_lower": 7.3,
+   "published_upper": 7.6,
+   "threshold": 7.6,
+   "source_id": "UU",
+   "source_level_label": "D3 / JUCO",
+   "source_position_label": "First base / catcher",
+   "pooled_note": "The source combines D3 and JUCO.",
+   "estimate_method": null
+  },
+  {
+   "id": "fill_014",
+   "categories": [
+    "d3",
+    "juco"
+   ],
+   "positions": [
+    "3B"
+   ],
+   "tool": "running",
+   "metric": "60-yard dash",
+   "unit": "seconds",
+   "direction": "lower_is_better",
+   "published_lower": 7.2,
+   "published_upper": 7.4,
+   "threshold": 7.4,
+   "source_id": "UU",
+   "source_level_label": "D3 / JUCO",
+   "source_position_label": "Third base / corner OF",
+   "pooled_note": "The source combines D3 and JUCO.",
+   "estimate_method": null
+  },
+  {
+   "id": "fill_015",
+   "categories": [
+    "low"
+   ],
+   "positions": [
+    "C"
+   ],
+   "tool": "throwing",
+   "metric": "Pop time to 2B",
+   "unit": "seconds",
+   "direction": "lower_is_better",
+   "published_lower": 1.95,
+   "published_upper": 2.05,
+   "threshold": 2.05,
+   "source_id": "NCC",
+   "source_level_label": "D1 (Low-Major)",
+   "source_position_label": "C",
+   "pooled_note": null,
+   "estimate_method": null
+  },
+  {
+   "id": "fill_016",
+   "categories": [
+    "d3"
+   ],
+   "positions": [
+    "C"
+   ],
+   "tool": "throwing",
+   "metric": "Pop time to 2B",
+   "unit": "seconds",
+   "direction": "lower_is_better",
+   "published_lower": 2.0,
+   "published_upper": 2.15,
+   "threshold": 2.15,
+   "source_id": "NCC",
+   "source_level_label": "D3",
+   "source_position_label": "C",
+   "pooled_note": null,
+   "estimate_method": null
+  },
+  {
+   "id": "fill_017",
+   "categories": [
+    "p4",
+    "mid",
+    "low"
+   ],
+   "positions": [
+    "1B"
+   ],
+   "tool": "throwing",
+   "metric": "Throwing velocity",
+   "unit": "mph",
+   "direction": "higher_is_better",
+   "published_lower": 75,
+   "published_upper": null,
+   "threshold": 75,
+   "source_id": "TP",
+   "source_level_label": "DI",
+   "source_position_label": "1B",
+   "pooled_note": "The source uses one target for all of D1.",
+   "estimate_method": null
+  },
+  {
+   "id": "fill_018",
+   "categories": [
+    "d2"
+   ],
+   "positions": [
+    "1B"
+   ],
+   "tool": "throwing",
+   "metric": "Throwing velocity",
+   "unit": "mph",
+   "direction": "higher_is_better",
+   "published_lower": 75,
+   "published_upper": null,
+   "threshold": 75,
+   "source_id": "TP",
+   "source_level_label": "DII",
+   "source_position_label": "1B",
+   "pooled_note": null,
+   "estimate_method": null
+  },
+  {
+   "id": "fill_019",
+   "categories": [
+    "d3",
+    "naia",
+    "juco"
+   ],
+   "positions": [
+    "1B"
+   ],
+   "tool": "throwing",
+   "metric": "Throwing velocity",
+   "unit": "mph",
+   "direction": "higher_is_better",
+   "published_lower": 75,
+   "published_upper": null,
+   "threshold": 75,
+   "source_id": "TP",
+   "source_level_label": "DIII / NAIA / JUCO",
+   "source_position_label": "1B",
+   "pooled_note": "The source combines D3, NAIA and JUCO.",
+   "estimate_method": null
+  },
+  {
+   "id": "fill_020",
+   "categories": [
+    "p4",
+    "mid",
+    "low"
+   ],
+   "positions": [
+    "3B"
+   ],
+   "tool": "throwing",
+   "metric": "Throwing velocity",
+   "unit": "mph",
+   "direction": "higher_is_better",
+   "published_lower": 86,
+   "published_upper": null,
+   "threshold": 86,
+   "source_id": "TP",
+   "source_level_label": "DI",
+   "source_position_label": "3B",
+   "pooled_note": "The source uses one target for all of D1.",
+   "estimate_method": null
+  },
+  {
+   "id": "fill_021",
+   "categories": [
+    "d2"
+   ],
+   "positions": [
+    "3B"
+   ],
+   "tool": "throwing",
+   "metric": "Throwing velocity",
+   "unit": "mph",
+   "direction": "higher_is_better",
+   "published_lower": 82,
+   "published_upper": null,
+   "threshold": 82,
+   "source_id": "TP",
+   "source_level_label": "DII",
+   "source_position_label": "3B",
+   "pooled_note": null,
+   "estimate_method": null
+  },
+  {
+   "id": "fill_022",
+   "categories": [
+    "d3",
+    "naia",
+    "juco"
+   ],
+   "positions": [
+    "3B"
+   ],
+   "tool": "throwing",
+   "metric": "Throwing velocity",
+   "unit": "mph",
+   "direction": "higher_is_better",
+   "published_lower": 82,
+   "published_upper": null,
+   "threshold": 82,
+   "source_id": "TP",
+   "source_level_label": "DIII / NAIA / JUCO",
+   "source_position_label": "3B",
+   "pooled_note": "The source combines D3, NAIA and JUCO.",
+   "estimate_method": null
+  },
+  {
+   "id": "fill_023",
+   "categories": [
+    "p4",
+    "mid",
+    "low"
+   ],
+   "positions": [
+    "2B",
+    "SS"
+   ],
+   "tool": "throwing",
+   "metric": "Throwing velocity",
+   "unit": "mph",
+   "direction": "higher_is_better",
+   "published_lower": 86,
+   "published_upper": null,
+   "threshold": 86,
+   "source_id": "TP",
+   "source_level_label": "DI",
+   "source_position_label": "Middle infield",
+   "pooled_note": "The source uses one target for all of D1.",
+   "estimate_method": null
+  },
+  {
+   "id": "fill_024",
+   "categories": [
+    "d2"
+   ],
+   "positions": [
+    "2B",
+    "SS"
+   ],
+   "tool": "throwing",
+   "metric": "Throwing velocity",
+   "unit": "mph",
+   "direction": "higher_is_better",
+   "published_lower": 82,
+   "published_upper": null,
+   "threshold": 82,
+   "source_id": "TP",
+   "source_level_label": "DII",
+   "source_position_label": "Middle infield",
+   "pooled_note": null,
+   "estimate_method": null
+  },
+  {
+   "id": "fill_025",
+   "categories": [
+    "d3",
+    "naia",
+    "juco"
+   ],
+   "positions": [
+    "2B",
+    "SS"
+   ],
+   "tool": "throwing",
+   "metric": "Throwing velocity",
+   "unit": "mph",
+   "direction": "higher_is_better",
+   "published_lower": 78,
+   "published_upper": null,
+   "threshold": 78,
+   "source_id": "TP",
+   "source_level_label": "DIII / NAIA / JUCO",
+   "source_position_label": "Middle infield",
+   "pooled_note": "The source combines D3, NAIA and JUCO.",
+   "estimate_method": null
+  },
+  {
+   "id": "fill_026",
+   "categories": [
+    "p4",
+    "mid",
+    "low"
+   ],
+   "positions": [
+    "LF",
+    "CF",
+    "RF"
+   ],
+   "tool": "throwing",
+   "metric": "Throwing velocity",
+   "unit": "mph",
+   "direction": "higher_is_better",
+   "published_lower": 87,
+   "published_upper": null,
+   "threshold": 87,
+   "source_id": "NS",
+   "source_level_label": "D1 (all)",
+   "source_position_label": "OF",
+   "pooled_note": "The source uses one target for all of D1.",
+   "estimate_method": null
+  },
+  {
+   "id": "fill_027",
+   "categories": [
+    "d2"
+   ],
+   "positions": [
+    "LF",
+    "CF",
+    "RF"
+   ],
+   "tool": "throwing",
+   "metric": "Throwing velocity",
+   "unit": "mph",
+   "direction": "higher_is_better",
+   "published_lower": 82,
+   "published_upper": null,
+   "threshold": 82,
+   "source_id": "TP",
+   "source_level_label": "DII",
+   "source_position_label": "OF",
+   "pooled_note": null,
+   "estimate_method": null
+  },
+  {
+   "id": "fill_028",
+   "categories": [
+    "d3",
+    "naia",
+    "juco"
+   ],
+   "positions": [
+    "LF",
+    "CF",
+    "RF"
+   ],
+   "tool": "throwing",
+   "metric": "Throwing velocity",
+   "unit": "mph",
+   "direction": "higher_is_better",
+   "published_lower": 80,
+   "published_upper": null,
+   "threshold": 80,
+   "source_id": "TP",
+   "source_level_label": "DIII / NAIA / JUCO",
+   "source_position_label": "OF",
+   "pooled_note": "The source combines D3, NAIA and JUCO.",
+   "estimate_method": null
+  }
+ ]
+}

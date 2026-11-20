@@ -344,7 +344,12 @@
         </div></fieldset>
         <fieldset class="rc-fs"><legend>Levels you're interested in</legend><div class="rc-row">${L.LEVELS.map(l => `<label class="rc-check"><input type="checkbox" name="lvl" value="${esc(l)}"${(p.levels_of_interest || []).includes(l) ? " checked" : ""}>${esc(l)}</label>`).join("")}</div></fieldset>
         <div class="rc-row"><button class="rc-btn primary">Save profile</button><span class="rc-small" id="profMsg" role="status"></span></div>
-      </form>`;
+      </form>
+      <section class="rc-panel rc-danger-zone" aria-labelledby="delHead">
+        <h2 id="delHead">Delete my recruiting data</h2>
+        <p class="rc-muted">Permanently deletes your profile, saved schools, email drafts, message history, plan and saved camps from My Recruiting. It can't be undone. To also close your sign-in account or remove a featured profile, email <a class="rc-link" href="mailto:peachstaterecruitshq@gmail.com">peachstaterecruitshq@gmail.com</a>. See our <a class="rc-link" href="privacy.html">Privacy Policy</a>.</p>
+        <button class="rc-btn danger" type="button" id="delMine">Delete my recruiting data</button>
+      </section>`;
     const f = $("#prof");
     $("#fmlImport").onclick = () => {
       let h = []; try { h = JSON.parse(localStorage.getItem("psr_fml_history_v1") || "[]"); } catch (e) {}
@@ -355,6 +360,12 @@
       if (last.gradYear && !f.elements.namedItem("grad_year").value) f.elements.namedItem("grad_year").value = last.gradYear;
       if (last.primary && !f.elements.namedItem("primary_position").value) f.elements.namedItem("primary_position").value = last.primary;
       U.toast("Metrics filled in. Review, then Save profile.");
+    };
+    $("#delMine").onclick = async () => {
+      const ok = await U.confirmDialog("Delete your profile, saved schools, email drafts, message history, plan and saved camps? This can't be undone.", { confirmLabel: "Delete everything" });
+      if (!ok) return;
+      try { await api.deleteMyData(); U.toast("Your recruiting data was deleted"); await api.signOut(); start(); }
+      catch (err) { U.toast("Couldn't delete: " + err.message); }
     };
     f.onsubmit = async e => {
       e.preventDefault();

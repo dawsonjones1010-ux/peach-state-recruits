@@ -1,6 +1,6 @@
 /*
   College Baseball Level Estimator: interface. Uses PSRLevel (logic) and PSRLevelConfig (config).
-  Nothing leaves the browser unless the player taps Send (the opt-in free review). No analytics.
+  Metrics never leave the browser unless the player taps Send (the opt-in free review). The site's cookie-free page counter (shared.js) records only that the page was visited.
   The only network calls are the two static benchmark files and, after Send, one insert into
   level_reviews. Completed results are saved in this browser's localStorage (progress), and the
   player can clear them.
@@ -132,7 +132,7 @@
         </div>
         <p class="lvl-hint">Used for the "Your frame" comparison only. Height and weight never change your level.</p>
       </div>
-      <div class="lvl-actions"><span class="lvl-privacy">Nothing leaves your browser unless you tap Send.</span><button class="btn btn-peach btn-lg" type="submit">Next: your metrics</button></div>
+      <div class="lvl-actions"><span class="lvl-privacy">Your numbers stay on this device unless you tap Send. <a href="privacy.html">Privacy</a></span><button class="btn btn-peach btn-lg" type="submit">Next: your metrics</button></div>
     </form>`;
   }
 
@@ -221,14 +221,15 @@
 
   function toolRow(k, t) {
     const val = t.value != null ? `<span class="lvl-you">You: ${esc(fmtV(t.value, t.unit))}</span>` : "";
-    const tgt = t.band && t.status !== S.NO_BENCH ? `<span class="lvl-tgt">Target: ${esc(t.band)}${t.qualifier && /open|least|single|says/i.test(t.qualifier) ? ` <small>(${esc(t.qualifier)})</small>` : ""}</span>` : "";
+    const tgt = t.band && t.status !== S.NO_BENCH ? `<span class="lvl-tgt">${t.estimated ? "Estimated target" : "Target"}: ${esc(t.band)}${t.qualifier && /open|least|single|says/i.test(t.qualifier) ? ` <small>(${esc(t.qualifier)})</small>` : ""}</span>` : "";
     const extra = t.status === S.BELOW ? `<span class="lvl-gap">${t.unit === "seconds" ? esc(t.gap.toFixed(2)) + " s slower than" : esc(t.gap) + " mph short of"} the listed ${t.unit === "seconds" ? esc(t.threshold.toFixed(2)) + " s" : esc(t.threshold) + " mph"} mark</span>` : "";
     return `<li class="lvl-tool">
       <div class="lvl-tool-top"><b>${esc(TOOL_LABEL[k])}</b><span class="lvl-pill ${pillClass(t.status)}">${esc(statusText(t.status))}</span></div>
       <div class="lvl-tool-meta">${val}${tgt}${extra}</div>
       ${t.note ? `<p class="lvl-note-sm">${ds(t.note)}</p>` : ""}
       ${(t.status === S.NO_BENCH || t.status === S.REF_ONLY || t.status === S.NOT_COMP) && t.reason ? `<p class="lvl-note-sm">${ds(t.reason)}${t.status === S.REF_ONLY && t.band ? ` Source value: ${esc(t.band)}.` : ""}</p>` : ""}
-      ${t.pooledGroup ? `<p class="lvl-note-sm">The source combines NAIA and JUCO for this target.</p>` : ""}
+      ${t.estimated && t.estimateMethod ? `<p class="lvl-note-sm"><b>Estimated target.</b> ${esc(t.estimateMethod)}</p>` : ""}
+      ${t.pooledNote ? `<p class="lvl-note-sm">${esc(t.pooledNote)}</p>` : t.pooledGroup ? `<p class="lvl-note-sm">The source combines NAIA and JUCO for this target.</p>` : ""}
     </li>`;
   }
 
@@ -238,7 +239,7 @@
     const noTgt = c.missing.filter(x => x.status !== S.NO_INPUT).map(x => TOOL_LABEL[x.tool]);
     const st = U.levelStatus(read, c);
     const noData = read.kind === "position" && c.key === "low";
-    const ns = c.nsRef ? `<div class="lvl-ns"><span class="lvl-kind ref">Second source</span> <b>${esc(c.nsRef.label)}</b> <small>(its group: ${esc(c.nsRef.sourceLevel)})</small>
+    const ns = c.nsRef && c.nsRef.cmp.status !== S.NO_BENCH ? `<div class="lvl-ns"><span class="lvl-kind ref">Second source</span> <b>${esc(c.nsRef.label)}</b> <small>(its group: ${esc(c.nsRef.sourceLevel)})</small>
       <div class="lvl-tool-meta"><span class="lvl-pill ${pillClass(c.nsRef.cmp.status)}">${esc(statusText(c.nsRef.cmp.status))}</span>${c.nsRef.cmp.band && c.nsRef.cmp.status !== S.NO_BENCH ? `<span class="lvl-tgt">Target: ${esc(c.nsRef.cmp.band)}</span>` : ""}</div>
       ${c.nsRef.cmp.status === S.NO_BENCH ? `<p class="lvl-note-sm">${ds(c.nsRef.cmp.reason)}</p>` : ""}${c.nsRef.pooledNote ? `<p class="lvl-note-sm">${ds(c.nsRef.pooledNote)}</p>` : ""}
       <p class="lvl-note-sm">A separate published target. Shown for reference; not used for the level status.</p></div>` : "";
@@ -247,7 +248,7 @@
         <span class="lvl-mini">${read.toolKeys.map(k => `<span><b>${esc(TOOL_LABEL[k])}</b> <i class="lvl-pill ${pillClass(c.tools[k].status)}">${esc(statusText(c.tools[k].status))}</i></span>`).join("")}</span>
         <span class="lvl-more-k" aria-hidden="true">Details</span></summary>
       <p class="lvl-src"><span class="lvl-kind guide">Published target</span> Category: ${esc(c.ncLabel)}</p>
-      ${noData ? `<p class="lvl-note-sm"><b>This source has no separate lower D1 targets for position players.</b> This is a data gap, not a negative result. Nothing is borrowed from mid-major or other D1 metrics.</p>` : ""}
+      ${noData ? (Object.values(c.tools).some(t => t.fill) ? `<p class="lvl-note-sm"><b>The main target source has no separate Lower D1 targets for position players.</b> These come from other published sources; any target with no published value anywhere is marked as an estimate and says how it was set.</p>` : `<p class="lvl-note-sm"><b>This source has no separate lower D1 targets for position players.</b> This is a data gap, not a negative result. Nothing is borrowed from mid-major or other D1 metrics.</p>`) : ""}
       <ul class="lvl-tools">${read.toolKeys.map(k => toolRow(k, c.tools[k])).join("")}</ul>
       <p class="lvl-cov"><b>Compared:</b> ${comp.length ? esc(comp.join(", ")) : "none"}${noTgt.length ? ` · <b>No published target:</b> ${esc(noTgt.join(", "))}` : ""}${notIn.length ? ` · <b>Not entered:</b> ${esc(notIn.join(", "))}` : ""}</p>
       ${ns}
@@ -384,7 +385,7 @@
     const rule = `A level shows "Meets targets" only when at least ${CFG.HIGHLIGHT_RULE.minDistinctCoreTools} different core tools have published targets there and every compared tool meets its target. For pitchers, it's when your fastball meets the listed velocity target. This is a product rule, not a validated prediction.`;
     const how = `<p><b>Evidence policy:</b> NCAA rules are used for timing, MLB for definitions, NCSA for a separate guideline check, and the named original publishers for their own targets and samples. No offer odds, percentiles or growth forecasts are calculated.</p><p>We compare each metric you enter with the published recruiting targets for your position at each level, using the edge of each published band as a provisional line. Averages of researched groups and college-player metrics are shown separately and never change a level's status.</p>
       <p><b>The rule used.</b> ${esc(rule)}</p>
-      <ul class="lvl-list"><li><b>Meets targets:</b> passes the rule above.</li><li><b>Close:</b> at least one of your compared metrics meets that level's target and at least one is below it.</li><li><b>Below targets:</b> your compared metrics are all below that level's targets.</li><li><b>Needs more metrics:</b> targets exist, but too few of your metrics could be compared there.</li><li><b>No published target:</b> the source publishes no target for your position at that level.</li></ul>
+      <ul class="lvl-list"><li><b>Meets targets:</b> passes the rule above.</li><li><b>Close:</b> at least one of your compared metrics meets that level's target and at least one is below it.</li><li><b>Below targets:</b> your compared metrics are all below that level's targets.</li><li><b>Needs more metrics:</b> targets exist, but too few of your metrics could be compared there.</li><li><b>Estimated target:</b> no source publishes this one, so it's set from the published targets right around it. The card says exactly how.</li></ul>
       <p><b>Your headline</b> is the first level in the list that shows "Meets targets". <b>Next step</b> is the nearest level above it with a metric below target, showing only that level's smallest gap relative to its target.</p>
       <h4>Notes on your results</h4><ul class="lvl-list">${r.reads.map(rd => rd.highlight.explain.map(e => `<li>${ds(e)}</li>`).join("")).join("")}</ul>
       <h4>Limitations</h4>
@@ -394,10 +395,10 @@
       ${r.missing.length ? `<p><b>Not entered:</b> ${esc(r.missing.join(", "))}. Adding these can make the comparison more complete.</p>` : `<p>All core metrics for your position${r.reads.length > 1 ? "s" : ""} were entered.</p>`}
       ${i.meta.link ? `<p class="lvl-note-sm">Reference link: <span class="lvl-link">${esc(i.meta.link)}</span></p>` : ""}`;
     const addSrc = (state.add && state.add.sources || []).filter(s => s.id !== "PBR_WI_E");
-    const sources = `<div class="lvl-legend" aria-label="Legend"><span class="lvl-kind guide">Published target</span> NextCommit recruiting guideline (used for level status) <span class="lvl-kind ref">Second source</span> NCSA guideline, shown for reference <span class="lvl-kind mean">Average</span> sample mean of a researched group <span class="lvl-kind ctx">College players</span> college norms, context only</div>
+    const sources = `<div class="lvl-legend" aria-label="Legend"><span class="lvl-kind guide">Published target</span> NextCommit recruiting guideline (used for level status). Where NextCommit lists no target, a published target from NextCommit's catcher page, TP College Showcase, Uncommitted University, GoBig Recruiting or NCSA fills it; the few with no published value anywhere are marked "Estimated target" with how they were set <span class="lvl-kind ref">Second source</span> NCSA guideline, shown for reference <span class="lvl-kind mean">Average</span> sample mean of a researched group <span class="lvl-kind ctx">College players</span> college norms, context only</div>
       <p class="lvl-note-sm">Benchmark data v${esc(r.dataVersion)}, research as of ${esc(r.researchAsOf)}. ${esc(r.interpretationNote)}</p>
       <h4>Rules, definitions and recruiting education</h4><ul class="lvl-list">${Research.sources.map(x => `<li><a href="${esc(x.url)}" target="_blank" rel="noopener"><b>${esc(x.name)}</b></a> · ${esc(x.kind)}. ${esc(x.use)} <span>${esc(x.limit)}</span></li>`).join("")}</ul><p class="lvl-note-sm">Research checked ${esc(Research.checked)}. A linked source does not endorse this tool.</p>
-      <h4>Original benchmark publishers</h4><ul class="lvl-list">${state.data.sources.filter(s => ["NC", "NS", "BP", "FG", "SL", "PC", "SEC"].includes(s.id)).map(s => `<li><b>${esc(s.publisher)}</b> (${esc(s.evidence_type)}, ${esc(s.publication_or_check)}): ${esc(s.limitation)} <a href="${esc(s.url)}" target="_blank" rel="noopener">Source</a></li>`).join("")}</ul>
+      <h4>Original benchmark publishers</h4><ul class="lvl-list">${state.data.sources.filter(s => ["NC", "NCC", "NS", "TP", "UU", "GB", "EST", "BP", "FG", "SL", "PC", "SEC"].includes(s.id)).map(s => `<li><b>${esc(s.publisher)}</b> (${esc(s.evidence_type)}, ${esc(s.publication_or_check)}): ${esc(s.limitation)} <a href="${esc(s.url)}" target="_blank" rel="noopener">Source</a></li>`).join("")}</ul>
       ${addSrc.length ? `<h4>v2 context sources (never change your level)</h4><ul class="lvl-list">${addSrc.map(s => `<li><b>${esc(s.publisher)}</b>, ${esc(s.title)} (${esc(s.evidence_type)}): ${esc(s.limitation)} <a href="${esc(s.url)}" target="_blank" rel="noopener">Source</a></li>`).join("")}</ul>` : ""}
       ${state.size ? `<h4>Height and weight study (context only)</h4><ul class="lvl-list"><li><b>Peach State Recruits</b>, college roster sample (751 players, 20 rosters, official school roster pages, Nov 2026). ${esc(state.size.college_roster_sample.limitations)} <a href="${esc(CFG.SIZE_CSV_URL)}" download>Download the roster rows (CSV)</a></li><li><b>Slammers</b> and <b>Flatground</b> committed high school player heights and weights, from the reports listed above.</li></ul>` : ""}
       ${state.add && state.add.landscape_facts ? `<h4>The landscape</h4><ul class="lvl-list">${state.add.landscape_facts.map(f => `<li>${esc(f.fact)}${f.url ? ` <a href="${esc(f.url)}" target="_blank" rel="noopener">Source</a>` : ""}</li>`).join("")}</ul>` : ""}
@@ -579,10 +580,10 @@
       <div id="lvlReviewForm" class="lvl-review-form" hidden>
         <label for="f_igHandle">Your Instagram handle</label>
         <div class="lvl-review-row"><input class="input" id="f_igHandle" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="@yourhandle" maxlength="31"><button class="btn btn-peach" type="button" data-review-send>Send</button></div>
-        <p class="lvl-note-sm">We'll send your handle, class, position, metrics, how they were measured and your headline result. Nothing else.</p>
+        <p class="lvl-note-sm">We'll send your handle, class, position, metrics, how they were measured and your headline result. Nothing else. If you're under 18, check with a parent first. <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a></p>
         <p class="lvl-err" id="reviewErr" hidden></p>
       </div>`}
-      <p class="lvl-privacy">Nothing leaves your browser unless you tap Send.</p></section>`;
+      <p class="lvl-privacy">Your numbers stay on this device unless you tap Send.</p></section>`;
   }
   async function sendReview() {
     const h = document.getElementById("f_igHandle"), er = document.getElementById("reviewErr"), btn = app.querySelector("[data-review-send]");
@@ -737,8 +738,8 @@
 
   // ---------- Boot ----------
   const getJson = (u) => fetch(u, { cache: "no-cache" }).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); });
-  Promise.all([getJson(CFG.DATA_URL + "?v=1.0"), getJson(CFG.ADDITIONS_URL + "?v=1.1").catch(() => null), getJson(CFG.SIZE_URL + "?v=1").catch(() => null)]).then(([d, a, z]) => {
-    state.data = d; state.add = a; state.size = z; render();
+  Promise.all([getJson(CFG.DATA_URL + "?v=1.0"), getJson(CFG.ADDITIONS_URL + "?v=1.1").catch(() => null), getJson(CFG.SIZE_URL + "?v=1").catch(() => null), getJson(CFG.FILLS_URL + "?v=1.2").catch(() => null)]).then(([d, a, z, f]) => {
+    state.data = L.withFills(d, f); state.add = a; state.size = z; render();
   }).catch(() => { app.innerHTML = `<p class="lvl-card">The benchmark data couldn't load. Please refresh the page.</p>`; });
 
   window.PSRLevelUI = { state }; // for tests only; holds nothing outside this page

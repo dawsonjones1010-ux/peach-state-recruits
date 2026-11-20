@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;1,800&family=Inter:wght@400;500;600;700;800&family=Kaushan+Script&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=25">
+<link rel="stylesheet" href="styles.css?v=26">
 </head>
 <body class="admin-body">
 <header class="nav">
@@ -81,7 +81,7 @@
     </div>
 
     <nav class="dash-tabs" aria-label="Dashboard sections">
-      <a href="#overview" class="on">Overview</a><a href="#orders">Orders</a><a href="#playersSec">Players</a><a href="#instagram">Instagram</a><a href="#levelReviews">Level reviews</a>
+      <a href="#overview" class="on">Overview</a><a href="#orders">Orders</a><a href="#playersSec">Players</a><a href="#instagram">Instagram</a><a href="#levelReviews">Level reviews</a><a href="#visitors">Visitors</a>
     </nav>
 
     <!-- Overview -->
@@ -187,6 +187,27 @@
       <p class="muted small">Sent from Find My Level only when a player taps "Send my metrics to Peach State for a free look". Reply to them on Instagram.</p>
       <div id="lrList" class="order-list lr-list"></div>
     </div>
+    <!-- Visitors (cookie-free page counts from shared.js) -->
+    <div id="visitors" class="panel-box dash-sec">
+      <div class="row-between">
+        <h2>Visitors</h2>
+        <div class="portal-actions">
+          <select id="visDays" class="mini-select" aria-label="Time range">
+            <option value="7">Last 7 days</option><option value="30" selected>Last 30 days</option><option value="90">Last 90 days</option>
+          </select>
+          <button class="btn btn-line btn-sm" id="visRefresh" type="button">Refresh</button>
+        </div>
+      </div>
+      <p class="muted small">Counted without cookies or personal data. A visit is someone's first page in a browser session. Your own dashboard pages aren't counted. To see which post or story sent people, add tags to your links, e.g. <code>?utm_source=instagram&amp;utm_campaign=bio</code>.</p>
+      <div class="kpis vis-kpis" id="visKpis"></div>
+      <div class="vis-chart" id="visChart" aria-label="Visits per day"></div>
+      <div class="dash-grid">
+        <div class="panel-box"><h3>Top pages</h3><div class="bars" id="visPages"></div></div>
+        <div class="panel-box"><h3>Where visits came from</h3><div class="bars" id="visSources"></div></div>
+        <div class="panel-box"><h3>Campaign tags</h3><div class="bars" id="visCampaigns"></div></div>
+        <div class="panel-box"><h3>Devices</h3><div class="bars" id="visDevices"></div></div>
+      </div>
+    </div>
   </section>
 </main>
 
@@ -281,9 +302,9 @@
 
 <div class="toast"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="config.js?v=25"></script>
-<script src="shared.js?v=25"></script>
-<script src="portal.js?v=25"></script>
+<script src="config.js?v=26"></script>
+<script src="shared.js?v=26"></script>
+<script src="portal.js?v=26"></script>
 <script>
 (async function () {
   const P = window.PORTAL, C = window.PSR_CONFIG, esc = P.esc, $ = (id) => document.getElementById(id);
@@ -369,6 +390,7 @@
     $("greet").textContent = h < 12 ? "Good morning" : h < 18 ? "Good afternoon" : "Good evening";
     $("todayLine").textContent = new Date().toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" });
     await Promise.all([loadPlayers(), loadOrders(), loadViews(), loadPotw(), loadReviews()]);
+    loadVisitors();
     renderOverview();
     loadAccounts();
   }
@@ -426,6 +448,37 @@
     const { data } = await sb.from("profile_views").select("slug,viewed_at").gte("viewed_at", since).limit(10000);
     views = data || [];
   }
+  // ---------- Visitors ----------
+  const PAGE_NAMES = { "/index.html": "Home", "/find-my-level.html": "Find My Level", "/players.html": "All players", "/player.html": "Player profile", "/colleges.html": "College Finder", "/camps.html": "Camp Finder", "/my-recruiting.html": "My Recruiting", "/email-coach.html": "Email Coach", "/privacy.html": "Privacy", "/terms.html": "Terms" };
+  const pageName = (p) => PAGE_NAMES[p] || (/^\/player\/([^/]+)\/$/.test(p) ? "Profile: " + p.split("/")[2].replace(/-/g, " ") : p);
+  function visBars(el, rows, label, val) {
+    if (!rows.length) { $(el).innerHTML = `<p class="muted small">Nothing yet.</p>`; return; }
+    const max = Math.max(...rows.map(val), 1);
+    $(el).innerHTML = rows.map(r => `<div class="bar"><span title="${esc(label(r))}">${esc(label(r))}</span><div><i style="width:${Math.max(3, Math.round(val(r) / max * 100))}%"></i></div><b>${val(r)}</b></div>`).join("");
+  }
+  async function loadVisitors() {
+    const days = Number($("visDays").value) || 30;
+    const { data, error } = await sb.rpc("site_stats", { p_days: days });
+    if (error || !data) { $("visKpis").innerHTML = `<p class="form-msg err">${esc(error ? error.message : "Visitor counts aren't set up in the database yet.")}</p>`; return; }
+    const kpi = (label, v, sub) => `<div class="kpi"><span>${esc(label)}</span><b>${v}</b><small>${esc(sub)}</small></div>`;
+    const dev = data.devices || {}, devTotal = Object.values(dev).reduce((a, b) => a + b, 0) || 1;
+    $("visKpis").innerHTML = [
+      kpi("Visits", data.visits, `last ${data.days} days`),
+      kpi("Page views", data.views, `${data.visits ? (data.views / data.visits).toFixed(1) : 0} pages per visit`),
+      kpi("Today", data.views_today, "page views"),
+      kpi("On phones", Math.round((dev.phone || 0) / devTotal * 100) + "%", "of visits")
+    ].join("");
+    const byDay = new Map((data.daily || []).map(d => [d.day, d.visits]));
+    const pts = []; for (let i = data.days - 1; i >= 0; i--) { const d = new Date(Date.now() - i * 864e5); const k = d.toLocaleDateString("en-CA", { timeZone: "America/New_York" }); pts.push([k, byDay.get(k) || 0]); }
+    const max = Math.max(...pts.map(p => p[1]), 1), W = 100 / pts.length;
+    $("visChart").innerHTML = `<svg viewBox="0 0 100 32" preserveAspectRatio="none" role="img" aria-label="Visits per day, last ${data.days} days">${pts.map((p, i) => `<rect x="${(i * W + W * 0.15).toFixed(2)}" y="${(32 - Math.max(0.6, p[1] / max * 30)).toFixed(2)}" width="${(W * 0.7).toFixed(2)}" height="${Math.max(0.6, p[1] / max * 30).toFixed(2)}" rx="0.4"><title>${p[0]}: ${p[1]} visits</title></rect>`).join("")}</svg><div class="vis-axis"><span>${pts[0][0]}</span><span>peak ${max}/day</span><span>today</span></div>`;
+    visBars("visPages", data.pages || [], r => pageName(r.path), r => r.views);
+    visBars("visSources", data.sources || [], r => r.source, r => r.visits);
+    visBars("visCampaigns", data.campaigns || [], r => r.campaign, r => r.visits);
+    visBars("visDevices", Object.entries(dev).map(([k, v]) => ({ k, v })).sort((a, b) => b.v - a.v), r => r.k[0].toUpperCase() + r.k.slice(1), r => r.v);
+  }
+  $("visDays").addEventListener("change", loadVisitors);
+  $("visRefresh").addEventListener("click", loadVisitors);
   // ---------- Level reviews ----------
   let reviews = [];
   const LR_LABEL = { maxFb: "Max FB", typFb: "Typical FB", maxEv: "Max EV", avgEv: "Avg EV", sixty: "60", ifVelo: "IF velo", ofVelo: "OF velo", cVelo: "C velo", pop: "Pop", fbSpin: "FB spin", bbSpin: "BB spin", extension: "Ext", ivb: "IVB", batSpeed: "Bat speed", thirty: "30", strikePct: "Strike %", era: "ERA", whip: "WHIP", avg: "AVG", obp: "OBP", slg: "SLG", heightIn: "Height (in)", weightLb: "Weight" };

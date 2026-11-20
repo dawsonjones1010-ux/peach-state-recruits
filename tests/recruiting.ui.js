@@ -23,6 +23,7 @@ const shot = async (page, name) => { if (SHOTS) await page.screenshot({ path: `$
 async function signIn(page, email) {
   await page.waitForSelector("#rcGateForm");
   await page.fill('#rcGateForm input[name=email]', email);
+  const consent = await page.$('#rcGateForm input[name=consent]'); if (consent) await consent.check();
   await page.click('#rcGateForm button[type=submit]');
   await page.waitForTimeout(600);
 }
