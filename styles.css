@@ -237,7 +237,7 @@ section{padding:var(--sec) 0}
 .addon .p{font-family:var(--display);font-weight:800;font-size:30px;line-height:1;color:var(--text)}
 
 .compare-wrap{margin-top:clamp(40px,5vw,64px)}
-.compare-wrap > summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 22px;border-radius:var(--r);background:var(--card);border:1px solid var(--line);font-family:var(--display);font-weight:800;font-size:24px;text-transform:uppercase;font-style:italic}
+.compare-wrap > summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 22px;border-radius:var(--r);background:var(--card);border:1px solid var(--line);font-family:var(--display);font-weight:800;font-size:24px;line-height:1.15;text-transform:uppercase;font-style:italic;text-wrap:balance}
 .compare-wrap > summary::-webkit-details-marker{display:none}
 .compare-wrap > summary::after{content:"+";font-family:var(--body);font-style:normal;font-weight:500;font-size:26px;color:var(--text-3)}
 .compare-wrap[open] > summary::after{content:"–"}
@@ -1723,6 +1723,7 @@ html,body{overflow-x:clip}
 .nowrap{white-space:nowrap}
 /* Packages compare table: all three packages fit on a phone, no sideways scroll */
 @media (max-width:600px){
+  .compare-wrap > summary{font-size:22px;padding:16px 18px}
   .compare{min-width:0;font-size:13.5px;table-layout:fixed}
   .compare th,.compare td{padding:10px 6px}
   .compare th:first-child,.compare td:first-child{min-width:0;width:40%;padding-left:12px;position:static}

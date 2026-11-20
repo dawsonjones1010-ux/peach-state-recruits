@@ -24,7 +24,7 @@ jobs:
       - name: Assemble public files only
         run: |
           set -euo pipefail
-          SITE_FILES="index.html players.html player.html find-my-level.html email-coach.html colleges.html camps.html my-recruiting.html admin.html admin-recruiting.html account.html 404.html
+          SITE_FILES="index.html players.html player.html find-my-level.html email-coach.html colleges.html camps.html my-recruiting.html admin.html admin-recruiting.html account.html 404.html privacy.html terms.html
             styles.css config.js shared.js portal.js players.json robots.txt sitemap.xml
             favicon.png favicon-16.png favicon.ico"
           SITE_DIRS="images videos vendor data estimator recruiting player"

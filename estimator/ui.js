@@ -132,7 +132,7 @@
         </div>
         <p class="lvl-hint">Used for the "Your frame" comparison only. Height and weight never change your level.</p>
       </div>
-      <div class="lvl-actions"><span class="lvl-privacy">Your numbers stay on this device unless you tap Send. <a href="privacy.html">Privacy</a></span><button class="btn btn-peach btn-lg" type="submit">Next: your metrics</button></div>
+      <div class="lvl-actions"><span class="lvl-privacy">Your metrics stay on this device unless you tap Send. <a href="privacy.html">Privacy</a></span><button class="btn btn-peach btn-lg" type="submit">Next: your metrics</button></div>
     </form>`;
   }
 
@@ -302,17 +302,14 @@
 
   // Link the comparison to the College Finder by level only (no program-specific fit scores).
   function exploreHtml(read) {
-    const KEY = { p4: "NCAA D1", mid: "NCAA D1", low: "NCAA D1", d2: "NCAA D2", d3: "NCAA D3", naia: "NAIA", juco: "JUCO" };
-    const lv = U.levels(read).filter(l => l.status === U.ST.MEETS || l.status === U.ST.CLOSE).map(l => KEY[l.key]);
-    const uniq = [...new Set(lv)];
-    const href = "colleges.html?" + (uniq.length ? "levels=" + encodeURIComponent(uniq.join(",")) + "&" : "") + "from=fml";
-    return `<div class="lvl-explore no-print"><p class="lvl-cta2-t">Explore college programs${uniq.length ? ` at ${esc(uniq.join(", "))}` : ""}</p>
+    const at = U.schoolsAtLevel(read);
+    const href = "colleges.html?" + (at.filters.length ? "levels=" + encodeURIComponent(at.filters.join(",")) + "&" : "") + "from=fml";
+    return `<div class="lvl-explore no-print"><p class="lvl-cta2-t">Explore college programs${at.atLevel ? ` at ${esc(at.labels.join(", "))}` : ""}</p>
       <p class="lvl-note-sm">Opens the College Finder filtered by level. It doesn't rate how you fit any specific school.</p>
       <a class="btn btn-line" href="${href}">Open College Finder</a></div>`;
   }
 
   // ---- v26: what moves you up, one-tap next steps, Peach State players like you ----
-  const LEVEL_KEY = { p4: "NCAA D1", mid: "NCAA D1", low: "NCAA D1", d2: "NCAA D2", d3: "NCAA D3", naia: "NAIA", juco: "JUCO" };
   function movesHtml(read) {
     const mv = U.movesUp(read);
     const steps = mv.next ? mv.next.steps : [];
@@ -327,20 +324,22 @@
     </section>`;
   }
   function levelsFor(read) {
-    const lv = U.levels(read).filter(l => l.status === U.ST.MEETS || l.status === U.ST.CLOSE).map(l => LEVEL_KEY[l.key]);
-    return [...new Set(lv)];
+    return U.schoolsAtLevel(read).filters;
   }
   function oneTapHtml(read, idx) {
-    const lv = levelsFor(read), q = lv.length ? "levels=" + encodeURIComponent(lv.join(",")) + "&" : "";
+    const at = U.schoolsAtLevel(read);
+    const q = at.filters.length ? "levels=" + encodeURIComponent(at.filters.join(",")) + "&" : "";
     const grad = state.input.gradYear ? "grad=" + encodeURIComponent(state.input.gradYear) + "&" : "";
-    const where = lv.length ? lv.map(x => x.replace("NCAA ", "")).join(" · ") : "Every level's";
+    const where = at.atLevel ? at.labels.join(" · ") : "Every level's";
+    const schoolTitle = at.atLevel ? "Schools at your level" : "Explore schools";
+    const campTitle = at.atLevel ? "Camps for your level" : "Explore camps";
     return `<section class="lvl-onetap no-print" aria-label="Your next steps">
       <p class="lvl-cta2-t">Your next steps</p>
       <div class="lvl-onetap-grid">
-        <button class="lvl-tap lvl-tap-main" type="button" data-email-handoff="${idx}"><b>Email a coach</b><span>A personal email with your real numbers</span></button>
-        <a class="lvl-tap" href="colleges.html?${q}from=fml"><b>Schools at your level</b><span>${esc(where)} programs</span></a>
-        <a class="lvl-tap" href="camps.html?${q}${grad}from=fml"><b>Camps for your level</b><span>Upcoming college camps</span></a>
-        <a class="lvl-tap" href="my-recruiting.html?from=fml#profile"><b>Save to My Recruiting</b><span>Your numbers, schools and follow-ups</span></a>
+        <button class="lvl-tap lvl-tap-main" type="button" data-email-handoff="${idx}"><b>Email a coach</b><span>A personal email with your real metrics</span></button>
+        <a class="lvl-tap" href="colleges.html?${q}from=fml"><b>${schoolTitle}</b><span>${esc(where)} programs</span></a>
+        <a class="lvl-tap" href="camps.html?${q}${grad}from=fml"><b>${campTitle}</b><span>Upcoming college camps</span></a>
+        <a class="lvl-tap" href="my-recruiting.html?from=fml#profile"><b>Save to My Recruiting</b><span>Your metrics, schools and follow-ups</span></a>
       </div>
       <p class="lvl-note-sm">School and camp lists are filtered by level only. They don't rate how you fit any specific school.</p>
     </section>`;
@@ -364,7 +363,7 @@
       const read = state.result && state.result.reads[+box.dataset.likeyou]; if (!read || !box.isConnected) return;
       const list = likeYou(players || [], read); if (!list.length) return;
       box.innerHTML = `<p class="lvl-cta2-t">Peach State players like you</p>
-        <p class="lvl-note-sm">Featured players in your position group and a similar class. See how they show their film and numbers to coaches.</p>
+        <p class="lvl-note-sm">Featured players in your position group and a similar class. See how they show their film and metrics to coaches.</p>
         <div class="lvl-like-grid">${list.map(p => `<a class="lvl-like" href="player/${encodeURIComponent(p.slug)}/">${p.coverImage ? `<img src="${esc(String(p.coverImage).replace(/(images\/players\/[\w-]+)\.jpg$/, "$1-640.jpg"))}" alt="" loading="lazy" decoding="async" onerror="this.remove()">` : ""}<span><b>${esc(p.name)}</b><small>${esc([p.position, p.gradYear ? "Class of " + p.gradYear : "", p.school || p.team].filter(Boolean).join(" · "))}</small></span></a>`).join("")}</div>
         <p class="lvl-note-sm"><a href="index.html#packages">Get a profile like this</a></p>`;
       box.hidden = false;
@@ -643,7 +642,7 @@
         <p class="lvl-note-sm">We'll send your handle, class, position, metrics, how they were measured and your headline result. Nothing else. If you're under 18, check with a parent first. <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a></p>
         <p class="lvl-err" id="reviewErr" hidden></p>
       </div>`}
-      <p class="lvl-privacy">Your numbers stay on this device unless you tap Send.</p></section>`;
+      <p class="lvl-privacy">Your metrics stay on this device unless you tap Send.</p></section>`;
   }
   async function sendReview() {
     const h = document.getElementById("f_igHandle"), er = document.getElementById("reviewErr"), btn = app.querySelector("[data-review-send]");

@@ -5,7 +5,7 @@ import os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from mobile_menu import mobile_menu
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-V = "27"
+V = "28"
 BASE = "https://dawsonjones1010-ux.github.io/peach-state-recruits/"
 
 NAV = [("players.html", "Players"), ("find-my-level.html", "Find My Level"),
@@ -115,7 +115,7 @@ PRIVACY_BODY = r'''  <article class="rc-panel legal-doc">
 
     <h2>What we collect and why</h2>
     <h3>Find My Level</h3>
-    <p>The numbers you enter stay on your device (in your browser's storage) so you can see your history. They're sent to us only if you tap <b>Send</b> to ask for a free look. Then we receive your Instagram handle, class, positions, bats/throws, the numbers you entered, how they were measured and your result, so we can reply to you on Instagram.</p>
+    <p>The metrics you enter stay on your device (in your browser's storage) so you can see your history. They're sent to us only if you tap <b>Send</b> to ask for a free look. Then we receive your Instagram handle, class, positions, bats/throws, the metrics you entered, how they were measured and your result, so we can reply to you on Instagram.</p>
     <h3>My Recruiting, College Finder and Camp Finder accounts</h3>
     <p>To sign in, you give us your email address and we email you a sign-in link. Anything you save is stored in your private account: your recruiting profile (name, class, school, team, position, size, academics, metrics, contact details and links), saved schools and notes, coach names and emails you enter, email drafts, the messages you log, your plan and saved camps. Only you can see this information. As the site owner, we see only totals (for example, how many schools have been saved), not your details.</p>
     <h3>Featured player profiles</h3>
@@ -164,7 +164,7 @@ TERMS_BODY = r'''  <article class="rc-panel legal-doc">
 
     <h2>Our tools are guides, not promises</h2>
     <ul>
-      <li><b>Find My Level</b> compares the numbers you enter with published benchmarks. It's an estimate, not an evaluation by a coach, and it doesn't predict where you'll play.</li>
+      <li><b>Find My Level</b> compares the metrics you enter with published benchmarks. It's an estimate, not an evaluation by a coach, and it doesn't predict where you'll play.</li>
       <li><b>College Finder and Camp Finder</b> come from public listings and official pages. Programs, rosters, dates, prices and rules change. Always confirm on the school's or event's official page before you act or pay.</li>
       <li><b>Recruiting rules and dates</b> are summaries with links to their sources. You and your family are responsible for following NCAA, NAIA and NJCAA rules. Check with the official source or a school's compliance office.</li>
       <li><b>Email Coach and My Recruiting</b> help you write and track messages. You choose what to send and are responsible for what you send.</li>
@@ -235,7 +235,7 @@ PAGES = [
      ["recruiting/admin.js"], "", True),
     ("privacy.html",
      "Privacy Policy | Peach State Recruits",
-     "What Peach State Recruits collects, why, and how to delete it. No advertising cookies; Find My Level numbers stay on your device unless you send them.",
+     "What Peach State Recruits collects, why, and how to delete it. No advertising cookies; Find My Level metrics stay on your device unless you send them.",
      "Privacy Policy",
      "What we collect, why, and how to delete it. In short: we don't sell your information, your recruiting account is private to you, and visitor counts use no cookies.",
      PRIVACY_BODY, [], "", False),

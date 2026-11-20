@@ -131,7 +131,7 @@
     const order = read.categories;
     const cur = order.findIndex(c => c.highlighted);
     const add = [...new Set(order.flatMap(c => c.missing.filter(x => x.status === S.NO_INPUT).map(x => x.tool)))];
-    if (cur === 0) return { top: true, add, text: "You meet the highest listed level. Keep your numbers current and get them in front of coaches." };
+    if (cur === 0) return { top: true, add, text: "You meet the highest listed level. Keep your metrics current and get them in front of coaches." };
     const above = (cur === -1 ? order : order.slice(0, cur)).slice().reverse(); // nearest level first
     const minTools = read.kind === "pitching" ? 1 : 2;
     const reachable = above.filter(c => c.compared.length >= minTools);
@@ -160,6 +160,23 @@
     return { top: false, next, jump, add, text: text.charAt(0).toUpperCase() + text.slice(1) };
   }
 
-  return { ST, SHORT, LONG, POS, levelStatus, levels, headline, nextStep, movesUp, title, tabLabel, deSource,
+
+  // Schools and camps linked from the result: the headline (meets-targets) level and below.
+  // CLOSE is not a match. Finder filters use directory labels (all of D1 is "NCAA D1");
+  // the visible label keeps the actual tier, so Power/mid-major are not named unless met.
+  const FINDER = { p4: "NCAA D1", mid: "NCAA D1", low: "NCAA D1", d2: "NCAA D2", d3: "NCAA D3", naia: "NAIA", juco: "JUCO" };
+  const TIER = { p4: "Power D1", mid: "Mid-major D1", low: "Lower D1", d2: "D2", d3: "D3", naia: "NAIA", juco: "JUCO" };
+  const ORDER = ["p4", "mid", "low", "d2", "d3", "naia", "juco"];
+  function schoolsAtLevel(read) {
+    const h = headline(read);
+    if (!h.level) return { atLevel: false, filters: [], labels: [] };
+    const keys = ORDER.slice(ORDER.indexOf(h.level));
+    const filters = [...new Set(keys.map(k => FINDER[k]))];
+    const topLabel = TIER[h.level];
+    const labels = keys.length > 1 ? [topLabel + " and below"] : [topLabel];
+    return { atLevel: true, filters, labels, top: h.level };
+  }
+
+  return { ST, SHORT, LONG, POS, levelStatus, levels, headline, nextStep, movesUp, schoolsAtLevel, title, tabLabel, deSource,
     CAVEAT: "A benchmark comparison, not a prediction. Coaches also weigh game performance and roster needs." };
 });

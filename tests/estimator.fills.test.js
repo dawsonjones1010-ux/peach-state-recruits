@@ -110,3 +110,41 @@ test("what moves you up: following the advice really reaches that level", () => 
     assert.ok(after.categories.find(c => c.key === res.next.level).highlighted, `${pos}: ${res.text}`);
   }
 });
+
+// ---- v28 schools at the headline level and below (CLOSE is not a match) ----
+const at = (o) => U.schoolsAtLevel(L.evaluate(data, base(o)).reads[0]);
+
+test("schools at your level: D2 headline does not include Power, mid-major or NCAA D1", () => {
+  const s = at({ primary: "C", metrics: { maxEv: 85, sixty: 7.30, cVelo: 74, pop: 2.10 } });
+  assert.equal(s.atLevel, true);
+  assert.equal(s.top, "d2");
+  assert.deepEqual(s.filters, ["NCAA D2", "NCAA D3", "NAIA", "JUCO"]);
+  assert.deepEqual(s.labels, ["D2 and below"]);
+  assert.ok(!s.filters.includes("NCAA D1") && !s.labels.some(x => /Power|Mid-major/i.test(x)));
+});
+
+test("schools at your level: CLOSE to a higher tier is not treated as a match", () => {
+  const s = at({ primary: "SS", metrics: { maxEv: 90, sixty: 6.9, ifVelo: 84 } });
+  assert.equal(s.top, "d2");
+  assert.ok(!s.filters.includes("NCAA D1"), "mid-major CLOSE must not add NCAA D1");
+});
+
+test("schools at your level: Lower D1 names that tier, not Power or mid-major", () => {
+  const s = at({ primary: "C", metrics: { maxEv: 85, sixty: 7.30, cVelo: 74, pop: 2.05 } });
+  assert.equal(s.top, "low");
+  assert.deepEqual(s.filters, ["NCAA D1", "NCAA D2", "NCAA D3", "NAIA", "JUCO"]);
+  assert.deepEqual(s.labels, ["Lower D1 and below"]);
+  assert.ok(!s.labels.some(x => /Power|Mid-major/i.test(x)));
+});
+
+test("schools at your level: Power D1 includes every finder level; no headline explores every level", () => {
+  const top = at({ primary: "SS", metrics: { maxEv: 93, sixty: 6.8, ifVelo: 86 } });
+  assert.equal(top.top, "p4");
+  assert.deepEqual(top.filters, ["NCAA D1", "NCAA D2", "NCAA D3", "NAIA", "JUCO"]);
+  assert.deepEqual(top.labels, ["Power D1 and below"]);
+  const none = at({ primary: "SS", metrics: { maxEv: 88 } });
+  assert.equal(none.atLevel, false);
+  assert.deepEqual(none.filters, []);
+  assert.deepEqual(none.labels, []);
+});
+

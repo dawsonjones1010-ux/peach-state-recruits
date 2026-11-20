@@ -234,7 +234,7 @@ const LEVELS = ["Power D1", "Mid-major D1", "Lower D1", "D2", "D3", "NAIA", "JUC
     ok(/Your recruiting clock/.test(clk) && /D1, D2, D3, NAIA and JUCO coaches can contact you now/.test(clk) && /one state's data/.test(clk) && /NAIA/.test(clk) && /does not regulate/.test(clk), `${tag}: recruiting clock (2027: all levels open, NAIA rule shown, wave labeled as one state)`);
     ok(!(await page.$(".lvl-young")) , `${tag}: no sophomore panel for junior-year numbers`);
     ok(/First saved result/.test(await page.textContent(".lvl-prog")) && await page.isVisible("text=Clear my saved results"), `${tag}: progress saved, clear button shown`);
-    ok((await page.$$eval(".lvl-privacy", e => e.map(x => x.textContent))).some(t => t.startsWith("Your numbers stay on this device unless you tap Send.")), `${tag}: privacy line`);
+    ok((await page.$$eval(".lvl-privacy", e => e.map(x => x.textContent))).some(t => t.startsWith("Your metrics stay on this device unless you tap Send.")), `${tag}: privacy line`);
     ok(await fitsFirst(), `${tag}: CF 2027 headline and "what moves you up" fit the first results screen`);
     await toResults(); await shot("p1-cf2027-first"); await shot("p1-cf2027-full", true);
     // Progress on return
