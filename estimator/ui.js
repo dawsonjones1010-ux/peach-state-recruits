@@ -368,7 +368,7 @@
         <ol class="lvl-lrow">${lv.map(l => `<li class="${ST_CLASS[l.status]}" data-level="${l.key}"><b>${esc(l.label)}</b><span>${esc(l.status)}</span></li>`).join("")}</ol>
         <p class="lvl-note-sm">D2, D3, NAIA and JUCO overlap; they are not a strict ladder. "Close" means at least one of your numbers meets that level's published target and at least one is below it.</p></div>
       ${numbersStrip(read)}
-      ${sec("age-frame", "Age, height and weight context", youngHtml(read, idx) + frameHtml(read, idx))}
+      ${sec("age-frame", "Same-grade, height and weight context", youngHtml(read, idx) + frameHtml(read, idx))}
       ${sec("levels", "All levels in detail", detail)}
       ${sec("compare", "How you compare with committed players", compare)}
     </section>`;
