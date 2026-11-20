@@ -7,7 +7,8 @@ V = "22"
 BASE = "https://dawsonjones1010-ux.github.io/peach-state-recruits/"
 
 NAV = [("players.html", "Players"), ("find-my-level.html", "Find My Level"),
-       ("colleges.html", "Colleges"), ("camps.html", "Camps"), ("email-coach.html", "Email Coach"), ("my-recruiting.html", "My Recruiting")]
+       ("colleges.html", "Colleges"), ("camps.html", "Camps"), ("email-coach.html", "Email Coach"), ("my-recruiting.html", "My Recruiting"),
+       ("index.html#how", "How to order"), ("index.html#faq", "FAQ")]
 
 def page(fname, title, desc, h1, lead, body, scripts, current, robots=False, sub=""):
     nav = "\n      ".join('<a href="{}"{}>{}</a>'.format(h, ' aria-current="page"' if h == current else "", t) for h, t in NAV)
