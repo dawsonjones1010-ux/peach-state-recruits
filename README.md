@@ -33,7 +33,9 @@ Until a link is pasted in, that button says "Order on Instagram" and opens a DM 
 
 ## 2. Add a player profile
 
-Copy one block in `players.json`, change the details and save. The key fields:
+**Preferred:** put the owner-approved cover, clips and write-up in `players-in/<slug>/` and run `bin/add-player.sh <slug>` (see [docs/PUBLISH_PLAYER.md](docs/PUBLISH_PLAYER.md)). That compresses media, rebuilds the share page from `tools/build_stubs.py`, updates `players.json` / the sitemap, and emits the Supabase SQL. Use `--dry-run` first. Do not hand-copy another player's page.
+
+To add a profile by hand, copy one block in `players.json`, change the details and save. The key fields:
 
 - `slug`: the end of their link, e.g. `marcus-reed`, which becomes `yoursite.com/player/marcus-reed`. Use lowercase with dashes.
 - `sample`: set to `false` (or delete it) for real players. Samples show a "not a real athlete" banner.
@@ -143,6 +145,7 @@ responses for the "set" cases, so it never writes to the live database).
 
 GitHub Pages is built by `.github/workflows/pages.yml` (Pages source: "GitHub Actions"), which publishes
 an allowlist of site files only. README, SETUP, package.json, vercel.json, .htaccess, tests/, tools/,
-supabase/, api/ and .github/ stay in the repo but are not served. If you add a new top-level page, file or
+supabase/, api/, .github/, bin/, docs/, players-in/, .media-cache/ and .publish-staging/ stay in the
+repo but are not served. If you add a new top-level page, file or
 folder, add it to `SITE_FILES` or `SITE_DIRS` in that workflow, or it won't go live. To roll back, set
 Pages back to "Deploy from a branch" (main, /) in the repo settings.

@@ -15,8 +15,10 @@ Players come from Supabase (published only) or players.json if the database is u
 import html, json, os, re, shutil, sys, urllib.request
 from io import BytesIO
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DEFAULT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ROOT = os.path.abspath(os.environ.get("PSR_ROOT") or DEFAULT_ROOT)
 SITE = "https://dawsonjones1010-ux.github.io/peach-state-recruits"
+FROM_JSON = os.environ.get("PSR_PLAYERS_FROM", "").lower() in {"json", "players.json", "1", "true"}
 os.chdir(ROOT)
 
 def cfg(key):
@@ -25,7 +27,7 @@ def cfg(key):
 
 def load_players():
     url, key = cfg("supabaseUrl"), cfg("supabaseAnonKey")
-    if url and key:
+    if (not FROM_JSON) and url and key:
         try:
             req = urllib.request.Request(f"{url}/rest/v1/players?published=eq.true&select=*&order=posted_at.desc.nullslast",
                                          headers={"apikey": key, "Authorization": f"Bearer {key}"})
@@ -173,5 +175,21 @@ def main():
     open("sitemap.xml", "w").write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "\n".join(urls) + "\n</urlset>\n")
     print(f"built {len(keep)} player pages:", ", ".join(sorted(keep)))
 
+def _configure_from_argv(argv=None):
+    """Optional --root and --from-json; defaults keep the previous behavior."""
+    import argparse
+    global ROOT, FROM_JSON
+    ap = argparse.ArgumentParser(add_help=True)
+    ap.add_argument("--root", default=None, help="Site root (default: repo root, or $PSR_ROOT)")
+    ap.add_argument("--from-json", action="store_true", help="Build from players.json even if Supabase is configured")
+    args = ap.parse_args(argv)
+    if args.root:
+        ROOT = os.path.abspath(args.root)
+        os.chdir(ROOT)
+    if args.from_json:
+        FROM_JSON = True
+    return args
+
 if __name__ == "__main__":
+    _configure_from_argv()
     main()

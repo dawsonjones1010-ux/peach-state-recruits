@@ -4,7 +4,13 @@ Run from the repo root: python3 tools/build_share.py [slug slug slug]"""
 import sys, os
 from PIL import Image, ImageDraw, ImageFilter, ImageFont, ImageEnhance
 W, H = 1200, 630
-slugs = sys.argv[1:] or ["eduardo-vazquez", "chase-doyle", "cole-corey"]
+# --root <dir> (or $PSR_ROOT) selects the site root; remaining args are slugs.
+argv = sys.argv[1:]
+if argv and argv[0] == "--root" and len(argv) >= 2:
+    os.chdir(os.path.abspath(argv[1])); argv = argv[2:]
+elif os.environ.get("PSR_ROOT"):
+    os.chdir(os.path.abspath(os.environ["PSR_ROOT"]))
+slugs = argv or ["eduardo-vazquez", "chase-doyle", "cole-corey"]
 covers = [Image.open(f"images/players/{s}.jpg").convert("RGB") for s in slugs if os.path.exists(f"images/players/{s}.jpg")]
 A = lambda n: ImageFont.truetype("tools/fonts/Anton.ttf", n)
 B = lambda n: ImageFont.truetype("tools/fonts/Barlow.ttf", n)
