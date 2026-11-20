@@ -1,5 +1,68 @@
 [
   {
+    "slug": "noah-baskin",
+    "active": true,
+    "name": "Noah Baskin",
+    "sport": "Baseball",
+    "position": "RHP/OF",
+    "gradYear": 2030,
+    "school": "Edmond North High School",
+    "team": "Performance Baseball - Riley",
+    "location": "Edmond, Oklahoma",
+    "coverImage": "images/players/noah-baskin.jpg",
+    "headline": "NOAH BASKIN IS A MOUND PRESENCE🔥📈",
+    "playerInstagram": [],
+    "measurables": [
+      {
+        "label": "Height",
+        "value": "5'11\""
+      },
+      {
+        "label": "Weight",
+        "value": "190 lb"
+      },
+      {
+        "label": "Position",
+        "value": "RHP/OF"
+      }
+    ],
+    "video": {
+      "youtube": "",
+      "file": ""
+    },
+    "highlights": [],
+    "report": "🔥 Noah Baskin is a strong 2030 right-handed arm out of Edmond, Oklahoma who brings a physical, mature frame and a competitive edge every time he takes the ball. The Performance Baseball - Riley arm is an exciting young prospect with plenty of room to keep developing.\n\n⚾️ On the mound, Baskin works with a confident, aggressive approach and attacks hitters without fear. His sturdy build gives him a strong foundation to keep adding to his stuff, and his steady presence on the rubber makes him a reliable option every time he's handed the ball.\n\n💥 Noah also brings value in the box, showing the ability to barrel the ball and give his lineup another threat.\n\n⚡️ When he's not on the mound, Baskin gives his team another option in the outfield. That two-way versatility gives him more ways to help his team as he continues to grow.\n\nWith a physical frame, a competitive mentality and plenty of upside ahead, Baskin is a 2030 Oklahoma arm worth keeping an eye on! 👀📈",
+    "stats": null,
+    "academics": [],
+    "links": [],
+    "contactEmail": "",
+    "contactInstagram": "peachstaterecruits",
+    "contactName": "Peach State Recruits",
+    "postUrl": "",
+    "account": "peachstaterecruits",
+    "showOnHome": true,
+    "videos": [
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/noah-baskin/clip1.mp4",
+        "title": "Highlight clip 1"
+      },
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/noah-baskin/clip2.mp4",
+        "title": "Highlight clip 2"
+      },
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/noah-baskin/clip3.mp4",
+        "title": "Highlight clip 3"
+      }
+    ],
+    "coachReport": "Profile: 2030 right-handed pitcher and outfielder from Edmond, Oklahoma. Edmond North High School; Performance Baseball - Riley. 5'11\", 190 lb, physical, mature frame.\nPitching: Confident, aggressive approach on the mound. Attacks hitters without fear. Sturdy build and a steady presence on the rubber.\nHitting: Has shown the ability to barrel the ball and give his lineup another threat.\nDefense: Also plays the outfield, giving his team two-way versatility.",
+    "featuredRank": null,
+    "featureDate": "2026-11-19"
+  },
+  {
     "slug": "eduardo-vazquez",
     "active": true,
     "name": "Eduardo Vázquez",
