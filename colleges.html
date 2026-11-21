@@ -16,8 +16,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=28">
-<link rel="stylesheet" href="recruiting/rec.css?v=28">
+<link rel="stylesheet" href="styles.css?v=29">
+<link rel="stylesheet" href="recruiting/rec.css?v=29">
 
 </head>
 <body>
@@ -27,13 +27,11 @@
     <a class="logo" href="index.html" id="logo" aria-label="Peach State Recruits home"><img class="logo-mark" src="images/logo-160.png" alt="" width="44" height="44" decoding="async"><span class="logo-text"><b>Peach State</b> Recruits</span></a>
     <nav class="nav-links" aria-label="Main">
       <a href="players.html">Players</a>
-      <a href="find-my-level.html">Find My Level</a>
+      <a href="recruiting-roadmap.html">Start Here</a>
+      <a href="find-my-level.html" class="nav-level">Find My Level</a>
       <a href="colleges.html" aria-current="page">Colleges</a>
-      <a href="camps.html">Camps</a>
       <a href="email-coach.html">Email Coach</a>
       <a href="my-recruiting.html">My Recruiting</a>
-      <a href="index.html#how">How to order</a>
-      <a href="index.html#faq">FAQ</a>
     </nav>
     <div class="nav-right">
       <a class="btn btn-peach btn-sm" href="index.html#packages">Get featured</a>
@@ -43,9 +41,11 @@
   <nav class="mobile-menu" id="mobileMenu" aria-label="Mobile">
     <p class="mm-label" id="mmTools">Recruiting tools</p>
     <ul class="mm-list" aria-labelledby="mmTools">
+      <li><a href="recruiting-roadmap.html">Start Here</a></li>
       <li><a href="find-my-level.html">Find My Level</a></li>
       <li><a href="colleges.html">College Finder</a></li>
       <li><a href="camps.html">Camp Finder</a></li>
+      <li><a href="email-coach.html">Email Coach</a></li>
       <li><a href="my-recruiting.html">My Recruiting</a></li>
     </ul>
     <p class="mm-label" id="mmPsr">Peach State</p>
@@ -68,6 +68,7 @@
 </section>
 <div class="rc-wrap rc-body">
   <div id="demo"></div>
+  <div id="coverage"></div>
   <div id="finder" class="rc-cols">
     <aside id="side"></aside>
     <section id="results" aria-live="polite"><div class="rc-empty">Loading programs…</div></section>
@@ -83,6 +84,7 @@
     </div>
     <div>
       <h5>Recruiting tools</h5>
+      <a href="recruiting-roadmap.html">Start Here</a>
       <a href="colleges.html">College Finder</a>
       <a href="camps.html">Camp Finder</a>
       <a href="email-coach.html">Email Coach</a>
@@ -104,12 +106,13 @@
   </div>
 </footer>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="config.js?v=28"></script>
-<script src="shared.js?v=28"></script>
-<script src="recruiting/logic.js?v=28"></script>
-<script src="recruiting/data.js?v=28"></script>
-<script src="recruiting/ui.js?v=28"></script>
-<script src="recruiting/colleges.js?v=28"></script>
+<script src="config.js?v=29"></script>
+<script src="shared.js?v=29"></script>
+<script src="recruiting/logic.js?v=29"></script>
+<script src="recruiting/data.js?v=29"></script>
+<script src="recruiting/ui.js?v=29"></script>
+<script src="recruiting/roadmap.js?v=29"></script>
+<script src="recruiting/colleges.js?v=29"></script>
 <script>document.getElementById("copy").textContent = "\u00a9 " + new Date().getFullYear() + " Peach State Recruits"; try { window.PSR.logoMark(window.PSR_CONFIG || {}); } catch (e) {}</script>
 </body>
 </html>

@@ -28,6 +28,8 @@
 .rc-grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
 @media (max-width:640px){.rc-grid2,.rc-grid3{grid-template-columns:minmax(0,1fr)}}
 .rc-hide{display:none!important}
+.rc-coverage{margin:0 0 20px;padding:16px 18px;border:1px solid #c9d7e6;border-radius:10px;background:#eaf0f7;color:var(--text)}
+.rc-coverage summary{font-weight:700;font-size:15px;cursor:pointer}.rc-coverage p{font-size:15px;line-height:1.7;margin:12px 0 0}
 
 /* form controls */
 .rc-field{display:flex;flex-direction:column;gap:5px;font-size:14px;font-weight:600;color:var(--text-2);min-width:0}

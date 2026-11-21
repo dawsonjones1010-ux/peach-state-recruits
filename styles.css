@@ -1679,6 +1679,21 @@ html,body{overflow-x:clip}
 .mobile-menu .mm-list a:not(.btn){font-size:22px;line-height:1.1;padding:12px 2px}
 .mobile-menu .btn{margin-top:20px}
 
+/* Research-led public tools: a clear entry point alongside media packages. */
+.home-tools{background:#f5f6f8;border-bottom:1px solid #dce1e8;padding:64px 0}
+.home-tools-grid{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:64px;align-items:center}
+.home-tools-intro h2{font-size:clamp(38px,4.5vw,62px);line-height:1.04;margin:12px 0 20px}
+.home-tools-intro p{font-size:17px;line-height:1.7;color:var(--text-2);max-width:46ch;margin-bottom:24px}
+.home-tools-note{display:block;color:var(--text-3);font-size:14px;line-height:1.5;margin-top:14px}
+.home-tools-links{border-top:1px solid #cbd2dd}
+.home-tools-links>a{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:22px 0;border-bottom:1px solid #cbd2dd;text-decoration:none}
+.home-tools-links b{display:block;font-size:18px;line-height:1.5}.home-tools-links small{display:block;font-size:15px;line-height:1.6;margin-top:5px;color:var(--text-2)}
+.home-tools-links>a:hover b{text-decoration:underline;text-underline-offset:4px}.home-tool-tag{flex:none;font-size:14px;font-weight:700;color:var(--peach-ink)}
+.nav-links a[aria-current="page"]{color:#fff;background:rgba(255,255,255,.09)}
+@media(min-width:1100px){header.nav .logo-text{font-size:17px}header.nav .nav-links a{font-size:16px}}
+@media(max-width:900px){.home-tools-grid{grid-template-columns:1fr;gap:28px}.home-tools{padding:44px 0}}
+@media(max-width:560px){.home-tools-links>a{align-items:flex-start;flex-direction:column;gap:12px}.home-tool-tag{font-size:14px}}
+
 /* Owner dashboard: Visitors */
 .vis-kpis{grid-template-columns:repeat(4,1fr)}
 .vis-chart{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px 16px 10px;margin-bottom:20px}

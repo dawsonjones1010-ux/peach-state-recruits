@@ -1,3 +1,5 @@
+> Current upgrade: read **START_HERE_V24.md** and **WEBSITE_RESEARCH_V24.md** first. This source includes the public Recruiting Roadmap and reviewed 2026–27 DI calendar context. Earlier version notes below are historical.
+
 # v22 Find My Level and Email Coach update
 
 Read [START_HERE_V22.md](START_HERE_V22.md) for the current installation and validation handoff.

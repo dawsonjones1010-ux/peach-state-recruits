@@ -280,7 +280,7 @@
         const d = keyDates(c.profile.grad_year).d1Contact;
         const days = daysBetween(c.today, d);
         if (days < 0 || days > 75) return null;
-        return { title: `Get ready for ${fmtDate(d)}`, detail: `NCAA Division I baseball coaches can begin recruiting communication with your class on ${fmtDate(d)}. Have your video, profile and target list ready before then.`, why: `D1 contact date is ${days} days away.`, ruleRef: "d1_contact_start", action: { label: "Review saved schools", href: "#saved" } };
+        return { title: `Get ready for ${fmtDate(d)}`, detail: `The general U.S. high-school D1 baseball class-year communication boundary is ${fmtDate(d)}. Prepare your video, profile and school list, then confirm the current recruiting calendar and any exceptions with school compliance.`, why: `General D1 class-year boundary is ${days} days away.`, ruleRef: "d1_contact_start", action: { label: "Review saved schools", href: "#saved" } };
       }
     },
     {

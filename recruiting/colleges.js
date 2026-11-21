@@ -43,6 +43,7 @@
 
   function filtersHtml() {
     const confs = [...new Set(programs.filter(p => !state.levels.length || state.levels.includes(p.level)).map(p => p.conference).filter(Boolean))].sort();
+    const coverage = window.PSRRoadmap.coverage(programs);
     return `
       <form class="rc-panel rc-filters" id="filters" aria-label="Filters">
         <label class="rc-field">Search<input class="rc-input" id="fQ" type="search" placeholder="School, city or conference" value="${esc(state.q)}"></label>
@@ -51,9 +52,9 @@
         </div></fieldset>
         <label class="rc-field">State<select class="rc-select" id="fState">${U.stateOptions(state.states[0])}</select></label>
         <label class="rc-field" style="margin-top:12px">Conference<select class="rc-select" id="fConf"><option value="">Any conference</option>${confs.map(c => `<option${c === state.conference ? " selected" : ""}>${esc(c)}</option>`).join("")}</select></label>
-        <label class="rc-field" style="margin-top:12px">Max average net price ($/year)<input class="rc-input" type="number" id="fBudget" min="0" value="${esc(state.maxNetPrice)}"><small>Only includes schools with sourced cost data. Average net price is not your financial aid offer.</small></label>
+        <label class="rc-field" style="margin-top:12px">Max average net price ($/year)<input class="rc-input" type="number" id="fBudget" min="0" value="${esc(state.maxNetPrice)}"${!coverage.cost && state.maxNetPrice === '' ? ' disabled' : ''}><small>${coverage.cost ? 'Only includes schools with sourced cost data.' : 'No source-labeled average net prices loaded yet.'} Average net price is not your financial aid offer.</small></label>
         <label class="rc-check" style="margin-top:12px"><input type="checkbox" id="fAcad"${state.hasAcademics ? " checked" : ""}>Only schools with loaded academic or cost data</label>
-        <p class="rc-small">${programs.filter(p => p.avg_net_price != null || p.admission_rate != null).length.toLocaleString()} schools currently have academic or cost data loaded.</p>
+        <p class="rc-small">${coverage.academics.toLocaleString()} schools currently have source-labeled academic or cost data. <a class="rc-link" href="recruiting-roadmap.html#cost">Compare your own college costs</a>.</p>
         <label class="rc-check" style="margin-top:12px"><input type="checkbox" id="fVer"${state.verifiedOnly ? " checked" : ""}>Only schools with checked official links</label>
         <label class="rc-field" style="margin-top:12px">Sort<select class="rc-select" id="fSort">
           <option value="name"${state.sort === "name" ? " selected" : ""}>Name</option>
@@ -216,6 +217,8 @@
     try { programs = await api.listPrograms(); } catch (e) { $("#results").innerHTML = `<div class="rc-empty">Couldn't load the directory. ${esc(e.message)}</div>`; return; }
     try { await refreshSaved(); } catch (e) { U.toast("Your saved schools could not be loaded: " + e.message); }
     $("#total").textContent = programs.length.toLocaleString();
+    const c = window.PSRRoadmap.coverage(programs);
+    $("#coverage").innerHTML = `<details class="rc-coverage"><summary>Directory coverage: ${c.checked.toLocaleString()} of ${c.total.toLocaleString()} listings marked checked</summary><p>${c.staff.toLocaleString()} listings include a baseball staff link; ${c.academics.toLocaleString()} include source-labeled academic or cost data. Most entries are starting points for research. A checked label reflects the record’s stored check date, not a verified roster opening, current coach interest or a fresh review of every field.</p><p>Use the school’s current official staff, roster, major catalog and net-price calculator before reaching out or paying for an event. <a class="rc-link" href="recruiting-roadmap.html#plan">Build your recruiting plan</a>.</p></details>`;
     renderAll(); route();
     window.addEventListener("hashchange", route);
     document.addEventListener("click", e => { const b = e.target.closest("[data-save]"); if (b) { e.preventDefault(); toggleSave(b.dataset.save, b); } });

@@ -67,8 +67,14 @@
   if(notes.videoChecked!==true)warn.push('Open the video in a signed-out browser yourself to check access; the tool cannot verify a video is public.');
   return {checks,warnings:warn,words,subjectCharacters:subject.length,blocking:checks.filter(c=>!c.ok&&c.blocking),ready:checks.every(c=>c.ok||!c.blocking),passed:checks.filter(c=>c.ok).length};
  }
- function communication(level,grad,today){const date=new Date(today||Date.now());const year=Number(grad);const target=Number.isInteger(year)?`${year-2}-08-01`:null;const now=[date.getFullYear(),String(date.getMonth()+1).padStart(2,'0'),String(date.getDate()).padStart(2,'0')].join('-');
-  if(/D1/.test(level||''))return {restricted:!!target&&now<target,date:target,text:!target?'Add your grad year to see the D1 response date.':now<target?`You can send an introduction now. D1 baseball recruiting calls and electronic communication generally begin August 1 before junior year (${target}); do not interpret silence before then as rejection.`:'Your class is past the general D1 baseball communication start date. Visits and off-campus contact follow separate rules.',source:'NCAA_DI'};
+ function communication(level,grad,today){const date=new Date(today||Date.now());const year=Number(grad);const target=Number.isInteger(year)&&year>=2000&&year<=2100?`${year-2}-08-01`:null;const now=typeof today==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(today)?today:[date.getFullYear(),String(date.getMonth()+1).padStart(2,'0'),String(date.getDate()).padStart(2,'0')].join('-');
+  if(/D1/.test(level||'')){
+   const calendar=typeof module==='object'&&module.exports?require('./calendar'):typeof window!=='undefined'?window.PSRCalendar:null;
+   const period=calendar?calendar.status(now):{type:'unknown',known:false,text:'Check the current official calendar before contacting staff.'};
+   const base=!target?'Add your grad year for general U.S. high-school timing.':now<target?`D1 baseball recruiting calls and electronic communication generally begin August 1 before junior year (${target}). Do not interpret silence before then as rejection.`:'Your class is past the general D1 baseball communication start date. Visits and off-campus contact have separate restrictions.';
+   const text=period.type==='shutdown'?`${period.label} (${period.start}–${period.end}). ${period.text} ${base}`:base+' '+(period.known?`${period.label}: ${period.text}`:period.text);
+   return {restricted:(!!target&&now<target)||period.type==='shutdown',date:target,text,source:'NCAA_DI',calendar:period};
+  }
   return {restricted:false,date:null,text:/D2/.test(level||'')?'D2 recruiting communication is generally permitted at any time. Off-campus contact and official visits have separate dates.':'Check the school’s current recruiting and eligibility rules. Transfers and signed athletics aid can change whether staff may communicate with you.',source:/D2/.test(level||'')?'NCAA_DII':'NCAA_RECRUIT'};
  }
  function mailto(draft){return 'mailto:'+encodeURIComponent(clean(draft.to)).replace(/%40/g,'@')+'?subject='+encodeURIComponent(clean(draft.subject).replace(/[\r\n]+/g,' '))+'&body='+encodeURIComponent(draft.body||'');}

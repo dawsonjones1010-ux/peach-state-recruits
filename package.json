@@ -8,9 +8,10 @@
     "test:ui": "node tests/eleven.ui.js",
     "test:potw": "node tests/potw.ui.js",
     "test:recruiting": "node tests/recruiting.ui.js",
-    "test:dom": "node tests/recruiting.dom.js && node tests/eleven.dom.js",
+    "test:dom": "node tests/recruiting.dom.js && node tests/eleven.dom.js && node tests/roadmap.dom.js",
     "test:database": "node tests/recruiting.database.js",
-    "test:imports": "python3 -m unittest discover -s tests -p 'test_*.py'"
+    "test:imports": "python3 -m unittest discover -s tests -p 'test_*.py'",
+    "test:roadmap": "node --test tests/roadmap.test.js && node tests/roadmap.dom.js"
   },
   "devDependencies": {
     "@electric-sql/pglite": "0.3.14",

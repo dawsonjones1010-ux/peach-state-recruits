@@ -5,16 +5,17 @@ import os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from mobile_menu import mobile_menu
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-V = "28"
+V = "29"
 BASE = "https://dawsonjones1010-ux.github.io/peach-state-recruits/"
 
-NAV = [("players.html", "Players"), ("find-my-level.html", "Find My Level"),
-       ("colleges.html", "Colleges"), ("camps.html", "Camps"), ("email-coach.html", "Email Coach"), ("my-recruiting.html", "My Recruiting"),
-       ("index.html#how", "How to order"), ("index.html#faq", "FAQ")]
+NAV = [('players.html', 'Players'), ('recruiting-roadmap.html', 'Start Here'), ('find-my-level.html', 'Find My Level'), ('colleges.html', 'Colleges'), ('email-coach.html', 'Email Coach'), ('my-recruiting.html', 'My Recruiting')]
 
 def page(fname, title, desc, h1, lead, body, scripts, current, robots=False, sub=""):
     nav = "\n      ".join('<a href="{}"{}>{}</a>'.format(h, ' aria-current="page"' if h == current else "", t) for h, t in NAV)
     extra_styles = f'<link rel="stylesheet" href="recruiting/email.css?v={V}">' if "recruiting/email-ui.js" in scripts else ""
+    scripts = list(scripts)
+    if "recruiting/colleges.js" in scripts: scripts.insert(0, "recruiting/roadmap.js")
+    if "recruiting/email.js" in scripts: scripts.insert(0, "recruiting/calendar.js")
     js = "\n".join(f'<script src="{s}?v={V}"></script>' for s in scripts)
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -63,6 +64,7 @@ def page(fname, title, desc, h1, lead, body, scripts, current, robots=False, sub
 </section>
 <div class="rc-wrap rc-body">
   <div id="demo"></div>
+  <div id="coverage"></div>
 {body}
 </div>
 </main>
@@ -74,6 +76,7 @@ def page(fname, title, desc, h1, lead, body, scripts, current, robots=False, sub
     </div>
     <div>
       <h5>Recruiting tools</h5>
+      <a href="recruiting-roadmap.html">Start Here</a>
       <a href="colleges.html">College Finder</a>
       <a href="camps.html">Camp Finder</a>
       <a href="email-coach.html">Email Coach</a>
@@ -124,6 +127,8 @@ PRIVACY_BODY = r'''  <article class="rc-panel legal-doc">
     <p>Orders happen through Instagram messages. We keep a record of the order: buyer and player name, how to contact you, the package, the price and whether it's paid and delivered.</p>
     <h3>Visitor counts</h3>
     <p>We count page visits without cookies. For each page view we store only the page, the name of the website that sent you (for example instagram.com), any campaign tag in the link (like <code>utm_source</code>) and whether you're on a phone, tablet or computer. We don't store your IP address or any identifier, and we can't tell who you are. If your browser sends Do Not Track or Global Privacy Control, we don't count your visit. Player profile pages also count views the same anonymous way.</p>
+    <h3>Recruiting Roadmap worksheets</h3>
+    <p>Your plan, camp and cost entries stay in this page unless you choose to keep them on this device. The saved worksheet is separate from My Recruiting and can be opened by someone using the same browser. Use Clear worksheet or clear browser site data to remove it.</p>
     <h3>Your browser's storage</h3>
     <p>We use your browser's local storage to remember things on your device, like your Find My Level history, email drafts and whether you've already been counted this visit. We don't use advertising cookies or tracking pixels.</p>
 

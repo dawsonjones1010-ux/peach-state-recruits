@@ -10,7 +10,7 @@
     profile_basics: "Shows when your name, grad year, position, high school or email is missing.",
     followups_due: "Shows when a follow-up date you set on a logged message has arrived.",
     reply_waiting: "Shows when the latest message you logged for a school came from the coach.",
-    d1_contact_window: "Shows in the 75 days before Aug 1 before your junior year, if you're interested in D1 (or haven't picked levels).",
+    d1_contact_window: "Shows in the 75 days before the general U.S. high-school Aug 1 class-year boundary, if you're interested in D1 (or haven't picked levels). Calendar periods and exceptions still apply.",
     video: "Shows until your profile has a video link or you check 'Highlight video ready'.",
     first_intros: "Shows when saved schools have no logged message and your profile is complete.",
     updates_due: "Shows when a school you've contacted hasn't heard from you in 60+ days.",
@@ -104,8 +104,9 @@
         <aside>
           <section class="rc-panel">
             <h3>Your timeline</h3>
+            ${window.PSRCalendar ? (() => { const c=window.PSRCalendar.status(); return `<p class="rc-note"><b>NCAA D1 baseball: ${esc(c.label)}</b><br>${esc(c.text)} <a class="rc-link" href="${esc(c.source)}" target="_blank" rel="noopener">${esc(c.season)} official calendar</a></p>`; })() : ""}
             ${p.grad_year ? `<dl class="rc-dl"><dt>Class</dt><dd>${esc(p.grad_year)} (${esc(cy.label)})</dd>
-              <dt>D1 contact</dt><dd>${esc(L.fmtDate(kd.d1Contact))}<br>${ruleLink("d1_contact_start")}</dd>
+              <dt>D1 class-year communication boundary</dt><dd>${esc(L.fmtDate(kd.d1Contact))}<br>${ruleLink("d1_contact_start")}<br><small>General U.S. high-school timeline. Calendar periods and individual exceptions still apply.</small></dd>
               <dt>D2 off-campus contact / official visits</dt><dd>${esc(L.fmtDate(kd.d2Contact))}<br>${ruleLink("d2_contact_start") || ""}${(S.rules.find(r => r.rule_key === "d2_contact_start") || {}).record_status === "needs_review" ? ' <span class="rc-badge warn">Source under review</span>' : ""}</dd></dl>`
               : `<p class="rc-muted" style="margin:0">Add your grad year in <a class="rc-link" href="#profile">Profile</a> to see your key dates.</p>`}
           </section>

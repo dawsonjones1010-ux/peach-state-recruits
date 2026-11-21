@@ -125,6 +125,17 @@ def main():
     if missing:
         print("VERIFIED entries not found in lists:", missing, file=sys.stderr); sys.exit(1)
 
+    # Reviewed field-level enrichment survives regeneration without certifying whole records.
+    staff_path = os.path.join(ROOT, "data", "reviewed-staff-links-v24.json")
+    staff_links = {}
+    if os.path.exists(staff_path):
+        with open(staff_path) as f:
+            staff_links = {x["slug"]: x["url"] for x in json.load(f)["records"] if x.get("field") == "staff_url"}
+    for r in rows:
+        r.setdefault("staff_url", "")
+        if not r["staff_url"] and r["slug"] in staff_links:
+            r["staff_url"] = staff_links[r["slug"]]
+
     os.makedirs(os.path.join(ROOT, "data"), exist_ok=True)
     with open(os.path.join(ROOT, "data", "programs.json"), "w") as f:
         sources = {lv: {"name": n, "url": u} for _, lv, n, u in LISTS}

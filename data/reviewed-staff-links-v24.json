@@ -1,0 +1,68 @@
+{
+  "checked": "2026-11-20",
+  "records": [
+    {
+      "slug": "university-of-georgia",
+      "field": "staff_url",
+      "url": "https://georgiadogs.com/sports/baseball/coaches/1000",
+      "checked": "2026-11-20",
+      "scope": "Official staff link only; readable baseball staff section. No roster, position-opening, classification or other field certification."
+    },
+    {
+      "slug": "kennesaw-state-university",
+      "field": "staff_url",
+      "url": "https://ksuowls.com/sports/baseball/coaches",
+      "checked": "2026-11-20",
+      "scope": "Official staff link only; readable baseball staff section. No roster, position-opening, classification or other field certification."
+    },
+    {
+      "slug": "university-of-scranton",
+      "field": "staff_url",
+      "url": "https://athletics.scranton.edu/sports/baseball/coaches",
+      "checked": "2026-11-20",
+      "scope": "Official staff link only; readable baseball staff section. No roster, position-opening, classification or other field certification."
+    },
+    {
+      "slug": "tampa",
+      "field": "staff_url",
+      "url": "https://tampaspartans.com/information/directory/index",
+      "checked": "2026-11-20",
+      "scope": "Official staff link only; readable baseball staff section. No roster, position-opening, classification or other field certification."
+    },
+    {
+      "slug": "california-lutheran-university",
+      "field": "staff_url",
+      "url": "https://clusports.com/sports/baseball/coaches",
+      "checked": "2026-11-20",
+      "scope": "Official staff link only; readable baseball staff section. No roster, position-opening, classification or other field certification."
+    },
+    {
+      "slug": "georgia-gwinnett-college",
+      "field": "staff_url",
+      "url": "https://ggcathletics.com/staff-directory",
+      "checked": "2026-11-20",
+      "scope": "Official staff link only; readable baseball staff section. No roster, position-opening, classification or other field certification."
+    },
+    {
+      "slug": "reinhardt-university",
+      "field": "staff_url",
+      "url": "https://reinhardteagles.com/information/directory/index",
+      "checked": "2026-11-20",
+      "scope": "Official staff link only; readable baseball staff section. No roster, position-opening, classification or other field certification."
+    },
+    {
+      "slug": "walters-state-community-college",
+      "field": "staff_url",
+      "url": "https://wsccathletics.com/information/directory/index",
+      "checked": "2026-11-20",
+      "scope": "Official staff link only; readable baseball staff section. No roster, position-opening, classification or other field certification."
+    },
+    {
+      "slug": "georgia-highlands-college",
+      "field": "staff_url",
+      "url": "https://ghcchargers.com/information/directory/index",
+      "checked": "2026-11-20",
+      "scope": "Official staff link only; readable baseball staff section. No roster, position-opening, classification or other field certification."
+    }
+  ]
+}

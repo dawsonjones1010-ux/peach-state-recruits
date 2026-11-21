@@ -12,7 +12,7 @@ function create(page,query='?demo=1') {
  w.HTMLDialogElement.prototype.showModal=function(){this.setAttribute('open','');};
  w.HTMLDialogElement.prototype.close=function(){this.removeAttribute('open');this.dispatchEvent(new w.Event('close'));};
  const load=file=>w.eval(fs.readFileSync(path.join(ROOT,file),'utf8'));
- ['recruiting/logic.js','recruiting/data.js','recruiting/ui.js','recruiting/research.js','recruiting/email.js','recruiting/email-ui.js'].forEach(load);
+ ['recruiting/logic.js','recruiting/calendar.js','recruiting/roadmap.js','recruiting/data.js','recruiting/ui.js','recruiting/research.js','recruiting/email.js','recruiting/email-ui.js'].forEach(load);
  return {w,load,api:w.PSRData.init(),errors,dom};
 }
 function input(w,form,name,value){const e=form.elements.namedItem(name);a.ok(e,'field '+name);e.value=value;return e;}

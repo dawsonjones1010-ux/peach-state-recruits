@@ -11,8 +11,8 @@ import os, re
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 GROUPS = [
-    ("mmTools", "Recruiting tools", [("find-my-level.html", "Find My Level"), ("colleges.html", "College Finder"),
-                                     ("camps.html", "Camp Finder"), ("my-recruiting.html", "My Recruiting")]),
+    ("mmTools", "Recruiting tools", [("recruiting-roadmap.html", "Start Here"), ("find-my-level.html", "Find My Level"), ("colleges.html", "College Finder"),
+                                     ("camps.html", "Camp Finder"), ("email-coach.html", "Email Coach"), ("my-recruiting.html", "My Recruiting")]),
     ("mmPsr", "Peach State", [("#examples", "Featured Examples"), ("players.html", "All Players"),
                               ("#packages", "Packages &amp; Prices"), ("#faq", "FAQ")]),
 ]
