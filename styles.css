@@ -1777,3 +1777,36 @@ html,body{overflow-x:clip}
 .lvl-like b{font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .lvl-like small{font-size:12.5px;color:var(--text-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 @media (max-width:760px){.lvl-onetap-grid{grid-template-columns:1fr 1fr}.lvl-like-grid{grid-template-columns:1fr}}
+
+/* v31: ordering steps folded into Packages (styled like Compare packages) */
+.pkg-how{margin-top:12px}
+.pkg-how>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;padding:18px 22px;border-radius:var(--r);background:var(--card);border:1px solid var(--line)}
+.pkg-how>summary::-webkit-details-marker{display:none}
+.pkg-how>summary::after{content:"+";margin-left:auto;font-weight:500;font-size:26px;color:var(--text-3)}
+.pkg-how[open]>summary::after{content:"\2013"}
+.pkg-how>summary h3{font-family:var(--display);font-weight:800;font-style:italic;text-transform:uppercase;font-size:24px;line-height:1.15;margin:0}
+.pkg-how>summary span{display:none}
+.pkg-how .steps{list-style:none;padding:0;margin:16px 0 0}
+.pkg-how .promise-row{margin-top:20px}
+@media (max-width:620px){
+  .pkg-how>summary{padding:16px 18px}.pkg-how>summary h3{font-size:22px}
+  .pkg-how .steps{gap:10px}
+  .pkg-how .steps .step{padding:14px 16px;grid-template-columns:40px 1fr;column-gap:12px}
+  .pkg-how .steps .step .n{font-size:34px;margin:0}
+  .pkg-how .steps .step h3{font-size:18px;margin-bottom:2px}
+  .pkg-how .steps .step p{font-size:14.5px;line-height:1.5}
+}
+/* v31: footer fixes */
+footer .legal a{display:inline;padding:0}
+footer .legal a:hover{text-decoration:underline}
+@media (max-width:560px){
+  footer .wrap{grid-template-columns:1fr;gap:28px}
+  footer .wrap>div:not(:first-child):not(.legal){display:grid;grid-template-columns:1fr 1fr;column-gap:20px}
+  footer .wrap>div:not(:first-child):not(.legal)>h5,footer .wrap>div:not(:first-child):not(.legal)>div{grid-column:1/-1}
+  footer .legal{flex-direction:column;gap:10px}
+}
+@media (max-width:560px){
+  .home-tools-links>a{flex-direction:row;align-items:center;gap:12px;padding:16px 0}
+  .home-tools-links small{display:none}
+  .home-tools-links b{font-size:16.5px}
+}
