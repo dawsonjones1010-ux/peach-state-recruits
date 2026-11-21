@@ -1,5 +1,68 @@
 [
   {
+    "slug": "blake-pierson",
+    "active": true,
+    "name": "Blake Pierson",
+    "sport": "Baseball",
+    "position": "P/C/INF",
+    "gradYear": 2031,
+    "school": "Spring Hill High School",
+    "team": "",
+    "location": "Spring Hill, Kansas",
+    "coverImage": "images/players/blake-pierson.jpg",
+    "headline": "BLAKE PIERSON",
+    "playerInstagram": [],
+    "measurables": [
+      {
+        "label": "Height",
+        "value": "5'11\""
+      },
+      {
+        "label": "Weight",
+        "value": "180 lb"
+      },
+      {
+        "label": "Position",
+        "value": "P/C/INF"
+      }
+    ],
+    "video": {
+      "youtube": "",
+      "file": ""
+    },
+    "highlights": [],
+    "report": "Blake Pierson | P/C/INF | 2031 | 5’11 | 180 | Spring Hill High School\n\n🚀 Blake Pierson is a physical 2031 prospect out of Spring Hill, Kansas who already carries a strong, mature frame for his age. The right-hander can impact the game on the mound, behind the plate and in the infield.\n\n⚾️ On the mound, Pierson brings advanced arm strength for his class, and his size gives him a strong foundation to keep adding velocity as he develops.\n\n💣 Offensively, Blake has real juice in his bat. He drives the ball with authority, and his strength allows him to do damage when he gets a pitch to handle.\n\n🛡️ Behind the plate, Pierson shows quick pop times and a strong arm, and he can also help his team in the infield.\n\nWith a powerful right-handed bat and a live arm at multiple spots, Pierson is a 2031 Kansas prospect to watch. 📈",
+    "stats": null,
+    "academics": [],
+    "links": [],
+    "contactEmail": "",
+    "contactInstagram": "peachstaterecruits",
+    "contactName": "Peach State Recruits",
+    "postUrl": "",
+    "account": "peachstaterecruits",
+    "showOnHome": true,
+    "videos": [
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/blake-pierson/clip1.mp4",
+        "title": "Highlight clip 1"
+      },
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/blake-pierson/clip2.mp4",
+        "title": "Highlight clip 2"
+      },
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/blake-pierson/clip3.mp4",
+        "title": "Highlight clip 3"
+      }
+    ],
+    "coachReport": "Profile: 2031 pitcher, catcher and infielder from Spring Hill, Kansas. Spring Hill High School. 5'11\", 180 lb.\nPitching: Right-hander. Advanced arm strength for his class.\nHitting: Right-handed bat. Drives the ball with authority.\nDefense: Behind the plate and in the infield. Quick pop times and a strong arm as a catcher.",
+    "featuredRank": null,
+    "featureDate": "2026-11-21"
+  },
+  {
     "slug": "triston-bardi",
     "active": true,
     "name": "Triston Bardi",
