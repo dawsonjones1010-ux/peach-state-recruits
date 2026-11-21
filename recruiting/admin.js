@@ -45,8 +45,8 @@
     $("#tab").innerHTML = `
       <div class="rc-row" style="margin-bottom:12px">
         <input class="rc-input" style="max-width:280px" id="aq" type="search" placeholder="Search name or state" value="${esc(S.q)}">
-        <select class="rc-select" style="width:auto" id="as"><option value="">Any status</option>${["unverified", "verified", "needs_review", "hidden"].map(s => `<option${s === S.status ? " selected" : ""}>${s}</option>`).join("")}</select>
-        <select class="rc-select" style="width:auto" id="al"><option value="">Any level</option>${L.LEVELS.map(l => `<option${l === S.level ? " selected" : ""}>${l}</option>`).join("")}</select>
+        <select class="rc-select" style="width:auto" id="as"><option value="">Any status</option>${["unverified", "verified", "needs_review", "hidden"].map(s => `<option value="${s}"${s === S.status ? " selected" : ""}>${s[0].toUpperCase() + s.slice(1).replace(/_/g, " ")}</option>`).join("")}</select>
+        <select class="rc-select" style="width:auto" id="al"><option value="">Any level</option>${L.LEVELS.map(l => `<option value="${l}"${l === S.level ? " selected" : ""}>${l[0].toUpperCase() + l.slice(1).replace(/_/g, " ")}</option>`).join("")}</select>
         <button class="rc-btn primary" id="addP">Add program</button><button class="rc-btn" id="expP">Export CSV</button>
       </div>
       <p class="rc-small">${list.length.toLocaleString()} programs</p>
@@ -70,12 +70,12 @@
     const f = (k, l, type, extra) => `<label class="rc-field">${l}<input class="rc-input" name="${k}" type="${type || "text"}" value="${esc(p[k] == null ? "" : p[k])}" ${extra || ""}></label>`;
     U.openDialog(`<form id="pf" novalidate><h2>${p.id ? "Edit program" : "Add program"}</h2>
       <div class="rc-grid2">${f("name", "Name", "text", "required")}${f("slug", "Slug (URL id)")}
-        <label class="rc-field">Level<select class="rc-select" name="level">${L.LEVELS.map(l => `<option${l === p.level ? " selected" : ""}>${l}</option>`).join("")}</select></label>
-        <label class="rc-field">Association<select class="rc-select" name="association">${["NCAA", "NAIA", "NJCAA", "CCCAA", "NWAC", "Other"].map(l => `<option${l === p.association ? " selected" : ""}>${l}</option>`).join("")}</select></label>
+        <label class="rc-field">Level<select class="rc-select" name="level">${L.LEVELS.map(l => `<option value="${l}"${l === p.level ? " selected" : ""}>${l[0].toUpperCase() + l.slice(1).replace(/_/g, " ")}</option>`).join("")}</select></label>
+        <label class="rc-field">Association<select class="rc-select" name="association">${["NCAA", "NAIA", "NJCAA", "CCCAA", "NWAC", "Other"].map(l => `<option value="${l}"${l === p.association ? " selected" : ""}>${l[0].toUpperCase() + l.slice(1).replace(/_/g, " ")}</option>`).join("")}</select></label>
         ${f("conference", "Conference")}${f("city", "City")}<label class="rc-field">State<select class="rc-select" name="state">${U.stateOptions(p.state)}</select></label></div>
       <h3 style="margin:16px 0 8px">Official links</h3><div class="rc-grid2">${f("athletics_url", "Athletics site", "url")}${f("roster_url", "Roster", "url")}${f("schedule_url", "Schedule", "url")}${f("camps_url", "Camps page", "url")}${f("questionnaire_url", "Recruiting questionnaire", "url")}${f("staff_url", "Baseball staff page", "url")}${f("majors_url", "Majors / academic catalog", "url")}${f("website_url", "School website", "url")}</div>
       <h3 style="margin:16px 0 8px">Academics and cost <small class="rc-small">(College Scorecard)</small></h3><div class="rc-grid3">${f("undergrad_enrollment", "Undergrads", "number")}${f("admission_rate", "Admission rate (0-1)", "number", 'step="0.0001" min="0" max="1"')}${f("grad_rate", "Grad rate (0-1)", "number", 'step="0.0001" min="0" max="1"')}${f("sat_25", "SAT 25th", "number")}${f("sat_75", "SAT 75th", "number")}${f("act_25", "ACT 25th", "number")}${f("act_75", "ACT 75th", "number")}${f("tuition_in_state", "Tuition in-state $", "number")}${f("tuition_out_state", "Tuition out-of-state $", "number")}${f("avg_net_price", "Avg net price $", "number")}${f("academic_year", "Reporting year", "text", 'placeholder="e.g. 2022-23"')}${f("academic_source_url", "Source URL", "url")}</div>
-      <h3 style="margin:16px 0 8px">Review</h3><div class="rc-grid2"><label class="rc-field">Status<select class="rc-select" name="record_status">${["unverified", "verified", "needs_review", "hidden"].map(s => `<option${s === p.record_status ? " selected" : ""}>${s}</option>`).join("")}</select></label>${f("last_checked", "Last checked", "date")}</div>
+      <h3 style="margin:16px 0 8px">Review</h3><div class="rc-grid2"><label class="rc-field">Status<select class="rc-select" name="record_status">${["unverified", "verified", "needs_review", "hidden"].map(s => `<option value="${s}"${s === p.record_status ? " selected" : ""}>${s[0].toUpperCase() + s.slice(1).replace(/_/g, " ")}</option>`).join("")}</select></label>${f("last_checked", "Last checked", "date")}</div>
       ${f("review_note", "Review note")}
       <p class="rc-small" id="pfMsg" role="status"></p>
       <div class="rc-dlg-actions"><button class="rc-btn" type="button" id="chk">Mark checked today</button><button class="rc-btn" type="button" id="cx">Cancel</button><button class="rc-btn primary">Save</button></div></form>`, d => {
@@ -135,12 +135,12 @@
       <p class="rc-small" style="margin-top:0">Only enter details shown on the official school or registration page. Leave anything not listed blank.</p>
       <div class="rc-grid2">${f("title", "Camp name", "text", "required")}${f("host_name", "Host")}
         <label class="rc-field">School <small>(optional)</small><input class="rc-input" name="program" list="progList" value="${esc((S.programs.find(p => p.id === c.program_id) || {}).name || "")}"><datalist id="progList">${progOpts.map(p => `<option value="${esc(p.name)}">`).join("")}</datalist></label>
-        <label class="rc-field">Type<select class="rc-select" name="camp_type">${["camp", "prospect_camp", "showcase", "clinic", "id_camp"].map(t => `<option${t === c.camp_type ? " selected" : ""}>${t}</option>`).join("")}</select></label>
+        <label class="rc-field">Type<select class="rc-select" name="camp_type">${["camp", "prospect_camp", "showcase", "clinic", "id_camp"].map(t => `<option value="${t}"${t === c.camp_type ? " selected" : ""}>${t[0].toUpperCase() + t.slice(1).replace(/_/g, " ")}</option>`).join("")}</select></label>
         ${f("start_date", "Start date", "date", "required")}${f("end_date", "End date", "date")}${f("time_note", "Time")}${f("venue", "Venue")}${f("city", "City")}<label class="rc-field">State<select class="rc-select" name="state">${U.stateOptions(c.state)}</select></label>
         ${f("price", "Price ($)", "number", `step="0.01" min="0" value="${c.price_cents != null ? c.price_cents / 100 : ""}"`)}${f("price_note", "Price note")}
         ${f("grad_years_txt", "Eligible grad years (comma list)", "text", `value="${esc((c.grad_years || []).join(", "))}"`)}${f("eligibility_note", "Eligibility note")}${f("positions", "Positions")}${f("confirmed_coaches", "Coaches named on the official page")}</div>
       <div class="rc-grid2" style="margin-top:8px">${f("registration_url", "Registration URL", "url")}${f("source_url", "Official source URL", "url", "required")}
-        <label class="rc-field">Status<select class="rc-select" name="record_status">${["verified", "needs_review", "hidden"].map(s => `<option${s === c.record_status ? " selected" : ""}>${s}</option>`).join("")}</select></label>${f("last_checked", "Last checked", "date", "required")}</div>
+        <label class="rc-field">Status<select class="rc-select" name="record_status">${["verified", "needs_review", "hidden"].map(s => `<option value="${s}"${s === c.record_status ? " selected" : ""}>${s[0].toUpperCase() + s.slice(1).replace(/_/g, " ")}</option>`).join("")}</select></label>${f("last_checked", "Last checked", "date", "required")}</div>
       <p class="rc-small" id="cfMsg" role="status"></p>
       <div class="rc-dlg-actions">${c.id ? `<button class="rc-btn danger" type="button" id="delC">Delete</button>` : ""}<button class="rc-btn" type="button" id="chkC">Checked today</button><button class="rc-btn" type="button" id="cxC">Cancel</button><button class="rc-btn primary">Save</button></div></form>`, d => {
       const form = $("#cf", d);
@@ -186,7 +186,7 @@
     const f = (k, l, type) => `<label class="rc-field">${l}<input class="rc-input" name="${k}" type="${type || "text"}" value="${esc(r[k] == null ? "" : r[k])}"></label>`;
     U.openDialog(`<form id="rf"><h2>${r.id ? "Edit rule" : "Add rule"}</h2><div class="rc-grid2">${f("rule_key", "Key")}${f("level", "Level")}${f("topic", "Topic")}${f("applies_when", "When it applies")}</div>
       <label class="rc-field" style="margin-top:8px">Summary<textarea class="rc-textarea" style="min-height:90px" name="summary">${esc(r.summary || "")}</textarea></label>
-      <div class="rc-grid2" style="margin-top:8px">${f("source_name", "Official source name")}${f("source_url", "Official source URL", "url")}<label class="rc-field">Status<select class="rc-select" name="record_status">${["verified", "needs_review", "hidden"].map(s => `<option${s === r.record_status ? " selected" : ""}>${s}</option>`).join("")}</select></label>${f("last_checked", "Last checked", "date")}</div>
+      <div class="rc-grid2" style="margin-top:8px">${f("source_name", "Official source name")}${f("source_url", "Official source URL", "url")}<label class="rc-field">Status<select class="rc-select" name="record_status">${["verified", "needs_review", "hidden"].map(s => `<option value="${s}"${s === r.record_status ? " selected" : ""}>${s[0].toUpperCase() + s.slice(1).replace(/_/g, " ")}</option>`).join("")}</select></label>${f("last_checked", "Last checked", "date")}</div>
       <p class="rc-small" id="rfMsg"></p><div class="rc-dlg-actions"><button class="rc-btn" type="button" id="cxR">Cancel</button><button class="rc-btn primary">Save</button></div></form>`, d => {
       const form = $("#rf", d); $("#cxR", d).onclick = () => d.close();
       form.onsubmit = async e => {

@@ -179,7 +179,7 @@
             <span>${st.sent} sent · ${st.received} received${st.lastOn ? ` · last ${esc(L.fmtDate(st.lastOn))}` : ""}</span>${st.awaitingReply ? '<span class="rc-badge peach">Coach replied</span>' : ""}</div></div>
             <div class="rc-row"><a class="rc-btn sm primary" href="#emails?program=${esc(s.program_id)}&kind=${st.sent ? "update" : "introduction"}">Draft email</a><a class="rc-btn sm" href="#tracker?program=${esc(s.program_id)}">Log message</a></div></div>
           <div class="rc-grid3" style="margin-top:12px">
-            <label class="rc-field">Interest<select class="rc-select" data-f="interest">${["high", "medium", "low"].map(x => `<option${x === s.interest ? " selected" : ""}>${x}</option>`).join("")}</select></label>
+            <label class="rc-field">Interest<select class="rc-select" data-f="interest">${["high", "medium", "low"].map(x => `<option value="${x}"${x === s.interest ? " selected" : ""}>${x[0].toUpperCase() + x.slice(1).replace(/_/g, " ")}</option>`).join("")}</select></label>
             <label class="rc-field">Stage<select class="rc-select" data-f="stage">${STAGES.map(([k, l]) => `<option value="${k}"${k === s.stage ? " selected" : ""}>${l}</option>`).join("")}</select></label>
             <label class="rc-field">Coach name <small>(from the school's staff page)</small><input class="rc-input" data-f="coach_name" value="${esc(s.coach_name || "")}" maxlength="80"></label>
           </div>
@@ -297,7 +297,7 @@
       <div class="rc-camp"><div class="rc-date"><b>${esc(String(L.parseISO(c.start_date).getDate()))}</b><span>${esc(L.fmtDate(c.start_date, { month: "short" }))}</span></div>
         <div><h3 style="margin:0;font-family:var(--body);font-weight:800;font-size:18px;text-transform:none;letter-spacing:0;line-height:1.3">${esc(c.title)}</h3>
           <div class="rc-meta">${c.level ? U.levelBadge(c.level) : ""}<span>${esc(c.program_name || c.host_name || "")}</span><span>${esc([c.city, c.state].filter(Boolean).join(", "))}</span><span>${c.price_cents != null ? esc(L.money(c.price_cents / 100)) : "Price not listed"}</span></div></div>
-        <div class="rc-actions"><select class="rc-select" data-status aria-label="Status" style="min-height:34px;width:auto">${["interested", "registered", "attended", "skipped"].map(s => `<option${s === sc.status ? " selected" : ""}>${s}</option>`).join("")}</select></div></div>
+        <div class="rc-actions"><select class="rc-select" data-status aria-label="Status" style="min-height:34px;width:auto">${["interested", "registered", "attended", "skipped"].map(s => `<option value="${s}"${s === sc.status ? " selected" : ""}>${s[0].toUpperCase() + s.slice(1).replace(/_/g, " ")}</option>`).join("")}</select></div></div>
       <details style="margin-top:12px"><summary><b>Travel estimate:</b> <span data-total>${esc(L.money(est.total))}${est.complete ? " estimated total" : " partial estimate (camp fee unknown or input missing)"}</span></summary>
         <p class="rc-small">Your own assumptions. Nothing here is looked up. Includes the listed camp price when there is one.</p>
         <div class="rc-est">${fld("miles_one_way", "Miles one way")}${fld("mpg", "Car MPG")}${fld("gas_price", "Gas $/gal", 0.01)}${fld("nights", "Hotel nights")}${fld("hotel_rate", "Hotel $/night")}${fld("rooms", "Rooms")}${fld("days", "Days")}${fld("people", "People eating")}${fld("meal_cost", "$ per meal")}${fld("meals_per_day", "Meals per day")}${fld("other", "Other $")}</div>

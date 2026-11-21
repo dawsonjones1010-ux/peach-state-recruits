@@ -161,7 +161,7 @@
         <aside>
           <section class="rc-panel">
             <h3>Your list</h3>
-            ${s ? `<p class="rc-small" style="margin-top:0">Saved. Interest: ${esc(s.interest)} · Stage: ${esc(s.stage.replace(/_/g, " "))}</p>` : `<p class="rc-small" style="margin-top:0">Save this school to track emails, notes and follow-ups.</p>`}
+            ${s ? `<p class="rc-small" style="margin-top:0">Saved. Interest: ${esc(s.interest[0].toUpperCase() + s.interest.slice(1))} · Stage: ${esc((s.stage[0].toUpperCase() + s.stage.slice(1)).replace(/_/g, " "))}</p>` : `<p class="rc-small" style="margin-top:0">Save this school to track emails, notes and follow-ups.</p>`}
             <div class="rc-row">
               <button class="rc-btn ${s ? "dark" : "primary"}" data-save="${esc(p.id)}" aria-pressed="${s ? "true" : "false"}">${s ? "Saved" : "Save school"}</button>
               ${s ? `<a class="rc-btn" href="my-recruiting.html#emails?kind=introduction&program=${encodeURIComponent(p.id)}">Draft an email</a>` : ""}
