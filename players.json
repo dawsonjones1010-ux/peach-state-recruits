@@ -1,5 +1,63 @@
 [
   {
+    "slug": "triston-bardi",
+    "active": true,
+    "name": "Triston Bardi",
+    "sport": "Baseball",
+    "position": "1B/LHP/CF",
+    "gradYear": 2031,
+    "school": "",
+    "team": "",
+    "location": "Florence, South Carolina",
+    "coverImage": "images/players/triston-bardi.jpg",
+    "headline": "TRISTON BARDI",
+    "playerInstagram": [],
+    "measurables": [
+      {
+        "label": "Height",
+        "value": "5'5\""
+      },
+      {
+        "label": "Weight",
+        "value": "114 lb"
+      },
+      {
+        "label": "Position",
+        "value": "1B/LHP/CF"
+      }
+    ],
+    "video": {
+      "youtube": "",
+      "file": ""
+    },
+    "highlights": [],
+    "report": "🔥 Triston Bardi is a young 2031 two-way talent out of Florence, South Carolina who already brings a versatile skill set to the field. The left-hander impacts the game on the mound, at first base and in center field.\n\n⚾️ On the mound, Bardi works from the left side, an advantage that immediately grabs attention at his age. With more strength on the way, his arm has plenty of room to grow.\n\n💥 At the plate, Triston has been a steady producer, hitting .486 while showing the ability to drive the ball into the gaps. There is more power to come as he fills out.\n\n⚡️ Defensively, Bardi handles first base and center field, giving his coaches flexibility in how they use him.\n\nWith a productive left-handed bat and tools on both sides of the ball, Bardi is a 2031 South Carolina prospect to follow. 📈",
+    "stats": null,
+    "academics": [],
+    "links": [],
+    "contactEmail": "",
+    "contactInstagram": "peachstaterecruits",
+    "contactName": "Peach State Recruits",
+    "postUrl": "",
+    "account": "peachstaterecruits",
+    "showOnHome": true,
+    "videos": [
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/triston-bardi/clip1.mp4",
+        "title": "Highlight clip 1"
+      },
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/triston-bardi/clip2.mp4",
+        "title": "Highlight clip 2"
+      }
+    ],
+    "coachReport": "Profile: 2031 first baseman, left-handed pitcher and center fielder from Florence, South Carolina. 5'5\", 114 lb.\nPitching: Works from the left side.\nHitting: Left-handed bat. Hit .486 and has shown the ability to drive the ball into the gaps.\nDefense: Handles first base and center field.",
+    "featuredRank": null,
+    "featureDate": "2026-11-20"
+  },
+  {
     "slug": "titus-marasco",
     "active": true,
     "name": "Titus Marasco",
