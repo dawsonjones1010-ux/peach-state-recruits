@@ -5,12 +5,13 @@
   const api = window.PSRData.init();
   const PAGE = 25;
   let programs = [], user = null, saved = new Map(), page = 1;
-  const state = { q: "", levels: [], states: [], conference: "", verifiedOnly: false, maxNetPrice: "", hasAcademics: false, sort: "name", fromFml: false };
+  const state = { q: "", bands: [], states: [], conference: "", verifiedOnly: false, maxNetPrice: "", hasAcademics: false, sort: "name", fromFml: false };
 
   function readQuery() {
     const p = new URLSearchParams(location.search);
     if (p.get("q")) state.q = p.get("q");
-    if (p.get("levels")) state.levels = p.get("levels").split(",").filter(l => L.LEVELS.includes(l));
+    if (p.get("bands")) state.bands = p.get("bands").split(",").filter(b => L.BANDS.includes(b));
+    else if (p.get("levels")) state.bands = L.bandsFromLevels(p.get("levels").split(","));
     if (p.get("state")) state.states = [p.get("state")];
     if (p.get("verified") === "1") state.verifiedOnly = true;
     state.maxNetPrice = p.get("budget") || "";
@@ -26,7 +27,7 @@
     if (state.hasAcademics) p.set("academics", "1");
     if (state.conference) p.set("conference", state.conference);
     if (state.sort !== "name") p.set("sort", state.sort);
-    if (state.levels.length) p.set("levels", state.levels.join(","));
+    if (state.bands.length) p.set("bands", state.bands.join(","));
     if (state.states.length) p.set("state", state.states[0]);
     if (state.verifiedOnly) p.set("verified", "1");
     if (state.fromFml) p.set("from", "fml");
@@ -42,13 +43,14 @@
   }
 
   function filtersHtml() {
-    const confs = [...new Set(programs.filter(p => !state.levels.length || state.levels.includes(p.level)).map(p => p.conference).filter(Boolean))].sort();
+    const confs = [...new Set(programs.filter(p => !state.bands.length || state.bands.includes(L.bandOf(p))).map(p => p.conference).filter(Boolean))].sort();
     const coverage = window.PSRRoadmap.coverage(programs);
     return `
       <form class="rc-panel rc-filters" id="filters" aria-label="Filters">
         <label class="rc-field">Search<input class="rc-input" id="fQ" type="search" placeholder="School, city or conference" value="${esc(state.q)}"></label>
         <fieldset class="rc-fs" style="margin-top:14px"><legend>Level</legend><div class="rc-checks">
-          ${L.LEVELS.map(l => `<label class="rc-check"><input type="checkbox" name="lvl" value="${esc(l)}"${state.levels.includes(l) ? " checked" : ""}>${esc(l)} <span class="rc-small">(${programs.filter(p => p.level === l).length})</span></label>`).join("")}
+          ${L.BANDS.map(b => `<label class="rc-check"><input type="checkbox" name="lvl" value="${b}"${state.bands.includes(b) ? " checked" : ""}>${esc(L.BAND_LABELS[b])} <span class="rc-small">(${programs.filter(p => L.bandOf(p) === b).length})</span></label>`).join("")}
+          <small class="rc-small" style="grid-column:1/-1">D1 groups are based on each conference's typical strength in baseball. Every program is different.</small>
         </div></fieldset>
         <label class="rc-field">State<select class="rc-select" id="fState">${U.stateOptions(state.states[0])}</select></label>
         <label class="rc-field" style="margin-top:12px">Conference<select class="rc-select" id="fConf"><option value="">Any conference</option>${confs.map(c => `<option${c === state.conference ? " selected" : ""}>${esc(c)}</option>`).join("")}</select></label>
@@ -73,7 +75,7 @@
     return `<article class="rc-card">
       <div>
         <h3><a href="#school=${encodeURIComponent(p.slug)}">${esc(p.name)}</a></h3>
-        <div class="rc-meta">${U.levelBadge(p.level)}${p.conference ? `<span>${esc(p.conference)}</span>` : ""}<span>${esc([p.city, p.state].filter(Boolean).join(", "))}</span>${U.statusBadge(p)}</div>
+        <div class="rc-meta">${U.levelBadge(p.level === "NCAA D1" ? L.BAND_LABELS[L.bandOf(p)] : p.level)}${p.conference ? `<span>${esc(p.conference)}</span>` : ""}<span>${esc([p.city, p.state].filter(Boolean).join(", "))}</span>${U.statusBadge(p)}</div>
       </div>
       <div class="rc-actions">
         <a class="rc-btn sm" href="#school=${encodeURIComponent(p.slug)}">Details</a>
@@ -89,10 +91,10 @@
     const slice = res.slice((page - 1) * PAGE, page * PAGE);
     $("#results").innerHTML = `
       <div class="rc-results-head">
-        <p style="margin:0"><b>${res.length.toLocaleString()}</b> program${res.length === 1 ? "" : "s"}${state.levels.length ? ` at ${esc(state.levels.join(", "))}` : ""}</p>
+        <p style="margin:0"><b>${res.length.toLocaleString()}</b> program${res.length === 1 ? "" : "s"}${state.bands.length ? ` at ${esc(state.bands.map(b => L.BAND_LABELS[b]).join(", "))}` : ""}</p>
         <div class="rc-row"><button class="rc-btn sm rc-filters-toggle" id="toggleFilters" type="button" aria-expanded="false">Filters</button>${user ? `<a class="rc-btn sm" href="my-recruiting.html#saved">My saved schools (${saved.size})</a>` : ""}</div>
       </div>
-      ${state.fromFml && state.levels.length ? `<p class="rc-note">Showing the levels from your Find My Level comparison. These are levels to explore, not a judgment about any specific program. Every school decides on its own.</p>` : ""}
+      ${state.fromFml && state.bands.length ? `<p class="rc-note">Showing the levels from your Find My Level comparison. These are levels to explore, not a judgment about any specific program. Every school decides on its own.</p>` : ""}
       <div class="rc-list">${slice.map(cardHtml).join("") || `<div class="rc-empty">No programs match. Try fewer filters.</div>`}</div>
       ${pages > 1 ? `<nav class="rc-pager" aria-label="Pages"><button class="rc-btn sm" id="prev"${page === 1 ? " disabled" : ""}>Previous</button><span class="rc-small">Page ${page} of ${pages}</span><button class="rc-btn sm" id="next"${page === pages ? " disabled" : ""}>Next</button></nav>` : ""}`;
     const go = d => { page += d; renderList(); $("#results").scrollIntoView({ behavior: "smooth", block: "start" }); };
@@ -106,14 +108,14 @@
     if (window.matchMedia("(max-width:900px)").matches) f.classList.add("collapsed");
     const upd = () => { page = 1; writeQuery(); renderList(); };
     let t; $("#fQ").addEventListener("input", e => { clearTimeout(t); t = setTimeout(() => { state.q = e.target.value; upd(); }, 150); });
-    $$("input[name=lvl]", f).forEach(cb => cb.addEventListener("change", () => { state.levels = $$("input[name=lvl]:checked", f).map(x => x.value); state.conference = ""; renderAll(); }));
+    $$("input[name=lvl]", f).forEach(cb => cb.addEventListener("change", () => { state.bands = $$("input[name=lvl]:checked", f).map(x => x.value); state.conference = ""; renderAll(); }));
     $("#fState").onchange = e => { state.states = e.target.value ? [e.target.value] : []; upd(); };
     $("#fConf").onchange = e => { state.conference = e.target.value; upd(); };
     $("#fBudget").oninput = e => { state.maxNetPrice = e.target.value; upd(); };
     $("#fAcad").onchange = e => { state.hasAcademics = e.target.checked; upd(); };
     $("#fVer").onchange = e => { state.verifiedOnly = e.target.checked; upd(); };
     $("#fSort").onchange = e => { state.sort = e.target.value; upd(); };
-    $("#fClear").onclick = () => { Object.assign(state, { q: "", levels: [], states: [], conference: "", verifiedOnly: false, maxNetPrice: "", hasAcademics: false, sort: "name", fromFml: false }); renderAll(); };
+    $("#fClear").onclick = () => { Object.assign(state, { q: "", bands: [], states: [], conference: "", verifiedOnly: false, maxNetPrice: "", hasAcademics: false, sort: "name", fromFml: false }); renderAll(); };
     f.addEventListener("submit", e => e.preventDefault());
   }
 
@@ -137,7 +139,7 @@
       <div class="rc-cols rc-cols-side" style="--rc-side:320px">
         <div>
           <section class="rc-panel">
-            <div class="rc-spread"><div class="rc-meta" style="margin:0">${U.levelBadge(p.level)}${U.statusBadge(p)}</div></div>
+            <div class="rc-spread"><div class="rc-meta" style="margin:0">${U.levelBadge(p.level === "NCAA D1" ? L.BAND_LABELS[L.bandOf(p)] : p.level)}${U.statusBadge(p)}</div></div>
             <h2 style="margin-top:10px">${esc(p.name)}</h2>
             <dl class="rc-dl">
               <dt>Level</dt><dd>${esc(p.level)}${p.association && p.association !== "NCAA" ? ` (${esc(p.association)})` : ""}</dd>
@@ -220,6 +222,7 @@
     const c = window.PSRRoadmap.coverage(programs);
     $("#coverage").innerHTML = `<details class="rc-coverage"><summary>Directory coverage: ${c.checked.toLocaleString()} of ${c.total.toLocaleString()} listings marked checked</summary><p>${c.staff.toLocaleString()} listings include a baseball staff link; ${c.academics.toLocaleString()} include source-labeled academic or cost data. Most entries are starting points for research. A checked label reflects the record’s stored check date, not a verified roster opening, current coach interest or a fresh review of every field.</p><p>Use the school’s current official staff, roster, major catalog and net-price calculator before reaching out or paying for an event. <a class="rc-link" href="recruiting-roadmap.html#plan">Build your recruiting plan</a>.</p></details>`;
     renderAll(); route();
+    if (state.fromFml) { const jumpToResults = () => { const r = document.getElementById("results"); if (!r || location.hash) return; const hdr = document.querySelector("header"); const y = r.getBoundingClientRect().top + window.scrollY - ((hdr && hdr.offsetHeight) || 0) - 12; window.scrollTo({ top: Math.max(0, y), behavior: "auto" }); }; requestAnimationFrame(jumpToResults); }
     window.addEventListener("hashchange", route);
     document.addEventListener("click", e => { const b = e.target.closest("[data-save]"); if (b) { e.preventDefault(); toggleSave(b.dataset.save, b); } });
     api.onAuth(async () => { await refreshSaved(); renderList(); route(); });

@@ -26,7 +26,7 @@
   }
   function attachLevels(camps, programs) {
     const byId = new Map(programs.map(p => [p.id, p]));
-    return camps.map(c => { const p = byId.get(c.program_id); return Object.assign({}, c, { level: p ? p.level : null, program_name: p ? p.name : null, program_slug: p ? p.slug : null }); });
+    return camps.map(c => { const p = byId.get(c.program_id); return Object.assign({}, c, { level: p ? p.level : null, conference: p ? p.conference : null, band: p ? L.bandOf(p) : null, program_name: p ? p.name : null, program_slug: p ? p.slug : null }); });
   }
   function uid() { return (crypto.randomUUID ? crypto.randomUUID() : "x" + Date.now().toString(36) + Math.random().toString(36).slice(2)); }
 
@@ -182,7 +182,7 @@
       },
       async adminSaveProgram(p) { const row = Object.assign({}, p); delete row.updated_at; if (!row.id || String(row.id).startsWith("p_") || String(row.id).startsWith("new_")) delete row.id; dirCache = null; return must(sb.from("programs").upsert(row, { onConflict: "slug" }).select().single()); },
       async adminImportPrograms(rows) { dirCache = null; let n = 0; for (let i = 0; i < rows.length; i += 200) { for (const row of rows.slice(i, i + 200)) await must(sb.from("programs").upsert(row, { onConflict: "slug", defaultToNull: false })); n += Math.min(200, rows.length - i); } return n; },
-      async adminSaveCamp(c) { const row = Object.assign({}, c); ["level", "program_name", "program_slug", "updated_at", "program_slug"].forEach(k => delete row[k]); if (!row.id || String(row.id).startsWith("new_")) delete row.id; return must(sb.from("camps").upsert(row).select().single()); },
+      async adminSaveCamp(c) { const row = Object.assign({}, c); ["level", "conference", "band", "program_name", "program_slug", "updated_at"].forEach(k => delete row[k]); if (!row.id || String(row.id).startsWith("new_")) delete row.id; return must(sb.from("camps").upsert(row).select().single()); },
       async adminDeleteCamp(id) { return must(sb.from("camps").delete().eq("id", id)); },
       async adminSaveRule(r) { const row = Object.assign({}, r); delete row.updated_at; if (!row.id || String(row.id).startsWith("r") && !/^[0-9a-f-]{36}$/.test(row.id)) delete row.id; return must(sb.from("recruiting_rules").upsert(row, { onConflict: "rule_key" }).select().single()); },
       async adminStats() { const { data, error } = await sb.rpc("recruiting_stats"); if (error) throw new Error(error.message); return data; }

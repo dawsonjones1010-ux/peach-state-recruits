@@ -169,12 +169,12 @@
   const ORDER = ["p4", "mid", "low", "d2", "d3", "naia", "juco"];
   function schoolsAtLevel(read) {
     const h = headline(read);
-    if (!h.level) return { atLevel: false, filters: [], labels: [] };
-    const keys = ORDER.slice(ORDER.indexOf(h.level));
+    if (!h.level) return { atLevel: false, filters: [], bands: [], labels: [] };
+    // Your level plus the next one down: a realistic list instead of every school below you.
+    const keys = ORDER.slice(ORDER.indexOf(h.level), ORDER.indexOf(h.level) + 2);
     const filters = [...new Set(keys.map(k => FINDER[k]))];
-    const topLabel = TIER[h.level];
-    const labels = keys.length > 1 ? [topLabel + " and below"] : [topLabel];
-    return { atLevel: true, filters, labels, top: h.level };
+    const labels = [keys.map(k => TIER[k]).join(" and ")];
+    return { atLevel: true, filters, bands: keys, labels, top: h.level };
   }
 
   return { ST, SHORT, LONG, POS, levelStatus, levels, headline, nextStep, movesUp, schoolsAtLevel, title, tabLabel, deSource,

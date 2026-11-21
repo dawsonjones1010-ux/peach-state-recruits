@@ -4,11 +4,12 @@
   const L = window.PSRLogic, U = window.PSRUI, { esc, $, $$ } = U;
   const api = window.PSRData.init();
   let camps = [], user = null, saved = new Map();
-  const f = { q: "", states: [], levels: [], gradYear: "", maxPrice: "", from: "", to: "" };
+  const f = { q: "", states: [], bands: [], gradYear: "", maxPrice: "", from: "", to: "" };
   // Links from Find My Level: camps.html?levels=NCAA%20D1,NCAA%20D2&grad=2028&from=fml
   try {
     const qs = new URLSearchParams(location.search);
-    if (qs.get("levels")) f.levels = qs.get("levels").split(",").map(x => x.trim()).filter(x => L.LEVELS.includes(x));
+    if (qs.get("bands")) f.bands = qs.get("bands").split(",").filter(b => L.BANDS.includes(b));
+    else if (qs.get("levels")) f.bands = L.bandsFromLevels(qs.get("levels").split(",").map(x => x.trim()));
     if (/^20\d\d$/.test(qs.get("grad") || "")) f.gradYear = qs.get("grad");
   } catch (e) {}
 
@@ -22,7 +23,7 @@
       <form class="rc-panel rc-filters" id="filters">
         <label class="rc-field">Search<input class="rc-input" type="search" id="q" placeholder="School, camp or city" value="${esc(f.q)}"></label>
         <label class="rc-field" style="margin-top:12px">State<select class="rc-select" id="st">${U.stateOptions(f.states[0])}</select></label>
-        <fieldset class="rc-fs" style="margin-top:12px"><legend>Host level</legend><div class="rc-checks">${L.LEVELS.map(l => `<label class="rc-check"><input type="checkbox" name="lvl" value="${esc(l)}"${f.levels.includes(l) ? " checked" : ""}>${esc(l)}</label>`).join("")}</div></fieldset>
+        <fieldset class="rc-fs" style="margin-top:12px"><legend>Host level</legend><div class="rc-checks">${L.BANDS.map(b => `<label class="rc-check"><input type="checkbox" name="lvl" value="${b}"${f.bands.includes(b) ? " checked" : ""}>${esc(L.BAND_LABELS[b])}</label>`).join("")}</div></fieldset>
         <label class="rc-field">Your grad year<select class="rc-select" id="gy"><option value="">Any</option>${Array.from({ length: 6 }, (_, i) => cy + i).map(y => `<option${String(y) === f.gradYear ? " selected" : ""}>${y}</option>`).join("")}</select><small>Hides camps that list other grad years</small></label>
         <label class="rc-field" style="margin-top:12px">Max price ($)<input class="rc-input" type="number" min="0" id="mp" value="${esc(f.maxPrice)}"></label>
         <div class="rc-grid2" style="margin-top:12px"><label class="rc-field">From<input class="rc-input" type="date" id="from" value="${esc(f.from)}"></label><label class="rc-field">To<input class="rc-input" type="date" id="to" value="${esc(f.to)}"></label></div>
@@ -31,7 +32,7 @@
     const upd = () => { render(); };
     $("#q").oninput = e => { f.q = e.target.value; upd(); };
     $("#st").onchange = e => { f.states = e.target.value ? [e.target.value] : []; upd(); };
-    $$("input[name=lvl]").forEach(c => c.onchange = () => { f.levels = $$("input[name=lvl]:checked").map(x => x.value); upd(); });
+    $$("input[name=lvl]").forEach(c => c.onchange = () => { f.bands = $$("input[name=lvl]:checked").map(x => x.value); upd(); });
     $("#gy").onchange = e => { f.gradYear = e.target.value; upd(); };
     $("#mp").oninput = e => { f.maxPrice = e.target.value; upd(); };
     $("#from").onchange = e => { f.from = e.target.value; upd(); };
@@ -47,7 +48,7 @@
         <div class="rc-date" aria-hidden="true"><b>${esc(String(L.parseISO(c.start_date).getDate()))}</b><span>${esc(L.fmtDate(c.start_date, { month: "short" }))}</span></div>
         <div>
           <h3 style="margin:0;font-family:var(--body);font-weight:800;font-size:18px;text-transform:none;letter-spacing:0;line-height:1.3">${esc(c.title)}</h3>
-          <div class="rc-meta">${c.level ? U.levelBadge(c.level) : ""}<span>${esc(c.program_name || c.host_name || "")}</span><span>${esc([c.city, c.state].filter(Boolean).join(", "))}</span></div>
+          <div class="rc-meta">${c.level ? U.levelBadge(c.level === "NCAA D1" && c.band ? L.BAND_LABELS[c.band] : c.level) : ""}<span>${esc(c.program_name || c.host_name || "")}</span><span>${esc([c.city, c.state].filter(Boolean).join(", "))}</span></div>
         </div>
         <div class="rc-actions"><button class="rc-btn sm${s ? " dark" : ""}" data-save="${esc(c.id)}" aria-pressed="${s ? "true" : "false"}">${s ? "Saved" : "Save"}</button></div>
       </div>
@@ -68,11 +69,13 @@
     </article>`;
   }
   function render() {
-    const res = L.filterCamps(camps, { q: f.q, states: f.states, levels: f.levels, gradYear: f.gradYear, maxPrice: f.maxPrice ? Number(f.maxPrice) : null, from: f.from, to: f.to }, new Date());
+    const res = L.filterCamps(camps, { q: f.q, states: f.states, bands: f.bands, gradYear: f.gradYear, maxPrice: f.maxPrice ? Number(f.maxPrice) : null, from: f.from, to: f.to }, new Date());
     $("#results").innerHTML = `<div class="rc-results-head"><p style="margin:0"><b>${res.length}</b> upcoming camp${res.length === 1 ? "" : "s"}</p>
       <div class="rc-row"><button class="rc-btn sm rc-filters-toggle" id="tf" type="button">Filters</button>${res.length ? `<button class="rc-btn sm" id="icsAll">Add these to calendar</button>` : ""}${user ? `<a class="rc-btn sm" href="my-recruiting.html#camps">My camps (${saved.size})</a>` : ""}</div></div>
+      ${f.bands.length ? `<p class="rc-note">Showing camps hosted by ${esc(f.bands.map(x => L.BAND_LABELS[x]).join(" and "))} programs. Most camps are open to any player, so it's worth checking other levels too. <button class="rc-btn sm" id="allLv" type="button">Show every level</button></p>` : ""}
       <div class="rc-list">${res.map(card).join("") || `<div class="rc-empty">No upcoming camps match. Many schools post winter and summer camps on their own athletics site. Check the camps page of the schools on your list.</div>`}</div>`;
     $("#tf").onclick = () => $("#filters").classList.toggle("collapsed");
+    if ($("#allLv")) $("#allLv").onclick = () => { f.bands = []; $$("input[name=lvl]").forEach(c => c.checked = false); render(); };
     if ($("#icsAll")) $("#icsAll").onclick = () => U.download("camps.ics", L.buildICS(res), "text/calendar");
   }
   function estimate(c) {
@@ -108,6 +111,7 @@
     $("#demo").innerHTML = U.demoBanner(api);
     try { camps = await api.listCamps(); await refreshSaved(); } catch (e) { $("#results").innerHTML = `<div class="rc-empty">Could not load camps: ${esc(e.message)}. Reload to try again.</div>`; return; }
     filters(); render();
+    if (new URLSearchParams(location.search).get("from") === "fml") { const jumpToResults = () => { const r = document.getElementById("results"); if (!r || location.hash) return; const hdr = document.querySelector("header"); const y = r.getBoundingClientRect().top + window.scrollY - ((hdr && hdr.offsetHeight) || 0) - 12; window.scrollTo({ top: Math.max(0, y), behavior: "auto" }); }; requestAnimationFrame(jumpToResults); }
     document.addEventListener("click", e => {
       const s = e.target.closest("[data-save]"); if (s) return toggleSave(s.dataset.save);
       const i = e.target.closest("[data-ics]"); if (i) { const c = camps.find(x => x.id === i.dataset.ics); return U.download(L.slugify(c.title) + ".ics", L.buildICS([c]), "text/calendar"); }

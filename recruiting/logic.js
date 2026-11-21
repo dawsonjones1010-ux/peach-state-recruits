@@ -9,6 +9,19 @@
   "use strict";
 
   const LEVELS = ["NCAA D1", "NCAA D2", "NCAA D3", "NAIA", "JUCO"];
+  // Level groups that match Find My Level. D1 is split by typical conference strength in baseball
+  // (an approximate grouping, not a ranking of any single program).
+  const BANDS = ["p4", "mid", "low", "d2", "d3", "naia", "juco"];
+  const BAND_LABELS = { p4: "Power D1", mid: "Mid-major D1", low: "Lower D1", d2: "NCAA D2", d3: "NCAA D3", naia: "NAIA", juco: "JUCO" };
+  const BAND_LEVEL = { p4: "NCAA D1", mid: "NCAA D1", low: "NCAA D1", d2: "NCAA D2", d3: "NCAA D3", naia: "NAIA", juco: "JUCO" };
+  const D1_POWER = ["Southeastern", "Atlantic Coast", "Big Ten", "Big 12"];
+  const D1_LOWER = ["SWAC", "Northeast", "Metro Atlantic", "America East", "Horizon League", "Patriot League", "Summit League", "Ohio Valley", "United Athletic", "MEAC", "Independent"];
+  function bandOf(p) {
+    if (!p) return null;
+    if (p.level === "NCAA D1") return D1_POWER.includes(p.conference) ? "p4" : D1_LOWER.includes(p.conference) ? "low" : "mid";
+    return BANDS.find(b => BAND_LEVEL[b] === p.level && b !== "p4" && b !== "mid" && b !== "low") || null;
+  }
+  function bandsFromLevels(levels) { return BANDS.filter(b => (levels || []).includes(BAND_LEVEL[b])); }
   const STATES = {
     AL:"Alabama",AK:"Alaska",AZ:"Arizona",AR:"Arkansas",CA:"California",CO:"Colorado",CT:"Connecticut",DE:"Delaware",
     DC:"District of Columbia",FL:"Florida",GA:"Georgia",HI:"Hawaii",ID:"Idaho",IL:"Illinois",IN:"Indiana",IA:"Iowa",
@@ -68,10 +81,12 @@
     const q = norm(f.q).trim();
     const terms = q ? q.split(/\s+/) : [];
     const levels = (f.levels && f.levels.length) ? new Set(f.levels) : null;
+    const bands = (f.bands && f.bands.length) ? new Set(f.bands) : null;
     const states = (f.states && f.states.length) ? new Set(f.states) : null;
     return list.filter(p => {
       if (p.record_status === "hidden") return false;
       if (levels && !levels.has(p.level)) return false;
+      if (bands && !bands.has(bandOf(p))) return false;
       if (states && !states.has(p.state)) return false;
       if (f.conference && p.conference !== f.conference) return false;
       if (f.verifiedOnly && p.record_status !== "verified") return false;
@@ -84,7 +99,7 @@
       return true;
     }).sort((a, b) => {
       if (f.sort === "state") return (a.state || "").localeCompare(b.state || "") || a.name.localeCompare(b.name);
-      if (f.sort === "level") return LEVELS.indexOf(a.level) - LEVELS.indexOf(b.level) || a.name.localeCompare(b.name);
+      if (f.sort === "level") return BANDS.indexOf(bandOf(a)) - BANDS.indexOf(bandOf(b)) || a.name.localeCompare(b.name);
       return a.name.localeCompare(b.name);
     });
   }
@@ -416,6 +431,7 @@
       if (f.to && c.start_date > f.to) return false;
       if (f.maxPrice != null && f.maxPrice !== "" && (c.price_cents == null || c.price_cents > Number(f.maxPrice) * 100)) return false;
       if (f.levels && f.levels.length && !(c.level && f.levels.includes(c.level))) return false;
+      if (f.bands && f.bands.length && !(c.level && f.bands.includes(c.band || bandOf({ level: c.level, conference: c.conference })))) return false;
       if (q && !norm(`${c.title} ${c.host_name || ""} ${c.city || ""} ${c.state || ""}`).includes(q)) return false;
       return true;
     }).sort((a, b) => a.start_date.localeCompare(b.start_date));
@@ -533,7 +549,7 @@
   }
 
   return {
-    LEVELS, STATES, STATE_NAMES, KINDS, PLAN_RULES, TRAVEL_DEFAULTS, PROGRAM_FIELDS,
+    LEVELS, BANDS, BAND_LABELS, BAND_LEVEL, bandOf, bandsFromLevels, STATES, STATE_NAMES, KINDS, PLAN_RULES, TRAVEL_DEFAULTS, PROGRAM_FIELDS,
     toISO, parseISO, addDays, daysBetween, fmtDate, classYear, keyDates,
     filterPrograms, levelsFromFindMyLevel, fullName, heightText, metricsLine, profileMissing,
     buildEmail, mailtoUrl, schoolStatus, dueFollowUps, planCandidates, planView,

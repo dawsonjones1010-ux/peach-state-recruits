@@ -209,3 +209,28 @@ test("directory data: every program has a source, verified rows have links and d
   seed.rules.forEach(r => assert.ok(/^https:\/\//.test(r.source_url) && r.last_checked, r.rule_key));
   seed.camps.forEach(c => { assert.ok(/^https:\/\//.test(c.source_url) && c.last_checked, c.title); assert.ok(slugs.has(c.program_slug), c.program_slug); });
 });
+
+// ---- v34 level groups: D1 split by conference, matching Find My Level ----
+test("bandOf splits D1 by conference and maps other levels", () => {
+  assert.equal(L.bandOf({ level: "NCAA D1", conference: "Southeastern" }), "p4");
+  assert.equal(L.bandOf({ level: "NCAA D1", conference: "Sun Belt" }), "mid");
+  assert.equal(L.bandOf({ level: "NCAA D1", conference: "Horizon League" }), "low");
+  assert.equal(L.bandOf({ level: "NCAA D2", conference: "Peach Belt" }), "d2");
+  assert.equal(L.bandOf({ level: "JUCO" }), "juco");
+});
+test("filterPrograms by bands keeps only those groups", () => {
+  const list = [
+    { name: "A", level: "NCAA D1", conference: "Southeastern" },
+    { name: "B", level: "NCAA D1", conference: "Horizon League" },
+    { name: "C", level: "NCAA D2", conference: "Peach Belt" },
+    { name: "D", level: "NAIA", conference: "SSAC" }];
+  assert.deepEqual(L.filterPrograms(list, { bands: ["low", "d2"] }).map(p => p.name), ["B", "C"]);
+  assert.deepEqual(L.bandsFromLevels(["NCAA D1"]), ["p4", "mid", "low"]);
+});
+test("filterCamps by bands uses the host program's group", () => {
+  const camps = [
+    { title: "X", start_date: "2099-01-01", level: "NCAA D1", band: "p4" },
+    { title: "Y", start_date: "2099-01-02", level: "NCAA D1", band: "low" },
+    { title: "Z", start_date: "2099-01-03", level: "NCAA D2", band: "d2" }];
+  assert.deepEqual(L.filterCamps(camps, { bands: ["low", "d2"] }, new Date("2026-11-21")).map(c => c.title), ["Y", "Z"]);
+});
