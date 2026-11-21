@@ -5,10 +5,10 @@ import os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from mobile_menu import mobile_menu
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-V = "29"
+V = "30"
 BASE = "https://dawsonjones1010-ux.github.io/peach-state-recruits/"
 
-NAV = [('players.html', 'Players'), ('recruiting-roadmap.html', 'Start Here'), ('find-my-level.html', 'Find My Level'), ('colleges.html', 'Colleges'), ('email-coach.html', 'Email Coach'), ('my-recruiting.html', 'My Recruiting')]
+NAV = [('players.html', 'Players'), ('recruiting-roadmap.html', 'Start Here'), ('find-my-level.html', 'Find My Level'), ('colleges.html', 'Colleges'), ('email-coach.html', 'Email Coach'), ('my-recruiting.html', 'My Recruiting'), ('index.html#packages', 'Packages')]
 
 def page(fname, title, desc, h1, lead, body, scripts, current, robots=False, sub=""):
     nav = "\n      ".join('<a href="{}"{}>{}</a>'.format(h, ' aria-current="page"' if h == current else "", t) for h, t in NAV)
