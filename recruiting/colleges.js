@@ -131,9 +131,13 @@
 
   function detailHtml(p) {
     const s = saved.get(p.id);
-    const links = [["Athletics site", p.athletics_url], ["Baseball roster", p.roster_url], ["Schedule", p.schedule_url], ["Camps page", p.camps_url], ["Recruiting questionnaire", p.questionnaire_url], ["Baseball staff", p.staff_url], ["Majors / academic catalog", p.majors_url], ["School website", p.website_url]].filter(x => U.safeUrl(x[1]));
+    // A domain filled from memory (not yet confirmed) is only a hint: send people through a search
+    // for the school's athletics site instead of linking or restricting searches to a guess.
+    const siteOk = U.safeUrl(p.athletics_url) && !/not opened yet/i.test(p.review_note || "");
+    const athUrl = siteOk ? p.athletics_url : (U.safeUrl(p.athletics_url) ? "https://duckduckgo.com/?q=" + encodeURIComponent("\\" + p.name + " athletics") : null);
+    const links = [["Athletics site", athUrl], ["Baseball roster", p.roster_url], ["Schedule", p.schedule_url], ["Camps page", p.camps_url], ["Recruiting questionnaire", p.questionnaire_url], ["Baseball staff", p.staff_url], ["Majors / academic catalog", p.majors_url], ["School website", p.website_url]].filter(x => U.safeUrl(x[1]));
     // For any key page we haven't recorded, offer a one-tap link that opens the top search result for it.
-    const site = U.safeUrl(p.athletics_url) ? U.host(p.athletics_url) : "";
+    const site = siteOk ? U.host(p.athletics_url) : "";
     const find = q => "https://duckduckgo.com/?q=" + encodeURIComponent("\\" + (site ? "site:" + site + " " : p.name + " ") + q);
     const quick = [["Baseball roster", p.roster_url, "baseball roster"], ["Baseball coaches", p.staff_url, "baseball coaches staff directory"], ["Recruiting questionnaire", p.questionnaire_url, "baseball recruiting questionnaire"], ["Baseball camps", p.camps_url, "baseball camps"]].filter(x => !U.safeUrl(x[1]));
     const acad = [["Undergraduates", p.undergrad_enrollment != null ? Number(p.undergrad_enrollment).toLocaleString() : null], ["Admission rate", pct(p.admission_rate)], ["SAT (middle 50%)", range(p.sat_25, p.sat_75)], ["ACT (middle 50%)", range(p.act_25, p.act_75)], ["Graduation rate", pct(p.grad_rate)], ["Tuition, in-state", money(p.tuition_in_state)], ["Tuition, out-of-state", money(p.tuition_out_state)], ["Average net price", money(p.avg_net_price)]];
@@ -150,7 +154,6 @@
               <dt>Conference</dt><dd>${esc(p.conference || "Not listed")}</dd>
               <dt>Location</dt><dd>${esc([p.city, p.state].filter(Boolean).join(", ") || "Not listed")}</dd>
               <dt>Last checked</dt><dd>${p.last_checked ? esc(L.fmtDate(p.last_checked)) : "Official links not checked yet"}</dd>
-              ${p.review_note ? `<dt>Review note</dt><dd>${esc(p.review_note)}</dd>` : ""}
             </dl>
           </section>
           <section class="rc-panel">
