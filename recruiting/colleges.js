@@ -132,6 +132,9 @@
   function detailHtml(p) {
     const s = saved.get(p.id);
     const links = [["Athletics site", p.athletics_url], ["Baseball roster", p.roster_url], ["Schedule", p.schedule_url], ["Camps page", p.camps_url], ["Recruiting questionnaire", p.questionnaire_url], ["Baseball staff", p.staff_url], ["Majors / academic catalog", p.majors_url], ["School website", p.website_url]].filter(x => U.safeUrl(x[1]));
+    // For any key page we haven't recorded, offer a one-tap link that opens the top search result for it.
+    const find = q => "https://duckduckgo.com/?q=" + encodeURIComponent("\\" + p.name + " " + q);
+    const quick = [["Baseball roster", p.roster_url, "baseball roster"], ["Baseball coaches", p.staff_url, "baseball coaches staff directory"], ["Recruiting questionnaire", p.questionnaire_url, "baseball recruiting questionnaire"], ["Baseball camps", p.camps_url, "baseball camps"]].filter(x => !U.safeUrl(x[1]));
     const acad = [["Undergraduates", p.undergrad_enrollment != null ? Number(p.undergrad_enrollment).toLocaleString() : null], ["Admission rate", pct(p.admission_rate)], ["SAT (middle 50%)", range(p.sat_25, p.sat_75)], ["ACT (middle 50%)", range(p.act_25, p.act_75)], ["Graduation rate", pct(p.grad_rate)], ["Tuition, in-state", money(p.tuition_in_state)], ["Tuition, out-of-state", money(p.tuition_out_state)], ["Average net price", money(p.avg_net_price)]];
     const hasAcad = acad.some(a => a[1] != null);
     return `
@@ -171,7 +174,8 @@
           </section>
           <section class="rc-panel">
             <h3>Official links</h3>
-            ${links.length ? `<div class="rc-links">${links.map(([l, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(l)}<span>${esc(U.host(u))}</span></a>`).join("")}</div>` : `<p class="rc-muted" style="margin:0">No official links recorded yet. Search for "${esc(p.name)} baseball" and use the school's own athletics site.</p>`}
+            ${links.length ? `<div class="rc-links">${links.map(([l, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(l)}<span>${esc(U.host(u))}</span></a>`).join("")}</div>` : ""}
+            ${quick.length ? `<div class="rc-links rc-quick">${quick.map(([l, , q]) => `<a href="${esc(find(q))}" target="_blank" rel="noopener">${esc(l)}<span>Opens the top search result</span></a>`).join("")}</div><p class="rc-small" style="margin:8px 0 0">These open the first search result. Check that it's the school's official athletics site.</p>` : ""}
           </section>
         </aside>
       </div>`;
