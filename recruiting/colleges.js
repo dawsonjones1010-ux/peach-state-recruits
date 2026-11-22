@@ -173,7 +173,7 @@
             </div>
           </section>
           <section class="rc-panel">
-            <h3>Official links</h3>
+            <h3>${links.length ? "Official links" : "Find their pages"}</h3>
             ${links.length ? `<div class="rc-links">${links.map(([l, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(l)}<span>${esc(U.host(u))}</span></a>`).join("")}</div>` : ""}
             ${quick.length ? `<div class="rc-links rc-quick">${quick.map(([l, , q]) => `<a href="${esc(find(q))}" target="_blank" rel="noopener">${esc(l)}<span>Opens the top search result</span></a>`).join("")}</div><p class="rc-small" style="margin:8px 0 0">These open the first search result. Check that it's the school's official athletics site.</p>` : ""}
           </section>
