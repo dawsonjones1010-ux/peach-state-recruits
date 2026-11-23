@@ -7,7 +7,7 @@
 */
 (function () {
   "use strict";
-  const L = window.PSRLevel, CFG = window.PSRLevelConfig, S = L.S, V = window.PSRLevelV2, PG = window.PSRLevelProgress, Z = window.PSRLevelSize, PF = window.PSRPitcherFit;
+  const L = window.PSRLevel, CFG = window.PSRLevelConfig, S = L.S, V = window.PSRLevelV2, PG = window.PSRLevelProgress, Z = window.PSRLevelSize, PF = window.PSRPitcherFit, QF = window.PSRPositionFit;
   const store = (() => { try { const k = "__psr_t"; localStorage.setItem(k, "1"); localStorage.removeItem(k); return localStorage; } catch (e) { return null; } })();
   const app = document.getElementById("lvlApp");
   if (!app || !L) return;
@@ -176,7 +176,9 @@
       const fieldPos = positions().filter(p => p !== "P").join(" and ");
       parts.push(`<fieldset class="lvl-group"><legend>Hitting, running and throwing <small>(${esc(fieldPos)})</small></legend>
         <div class="lvl-grid">${numField("maxEv", v)}${numField("sixty", v, { optional: positions().includes("C") })}${throws.join("")}</div>
-        <details class="lvl-more"><summary>Add more information <span class="lvl-opt">optional</span></summary><div class="lvl-grid">${numField("avgEv", v, { optional: true })}${numField("batSpeed", v, { optional: true })}${numField("thirty", v, { optional: true })}${numField("avg", v, { optional: true })}${numField("obp", v, { optional: true })}${numField("slg", v, { optional: true })}</div></details>
+        <h3 class="lvl-subh">Season stats <span class="lvl-opt">optional, shown next to your tools</span></h3>
+        <div class="lvl-grid">${numField("avg", v, { optional: true })}${numField("obp", v, { optional: true })}${numField("slg", v, { optional: true })}</div>
+        <details class="lvl-more"><summary>Add sensor data <span class="lvl-opt">optional</span></summary><div class="lvl-grid">${numField("avgEv", v, { optional: true })}${numField("batSpeed", v, { optional: true })}${numField("thirty", v, { optional: true })}</div></details>
       </fieldset>`);
     }
     return `<form class="lvl-card lvl-form" data-step="2" novalidate>
@@ -473,6 +475,7 @@
 
   function readHtml(read, idx) {
     if (read.kind === "pitching" && PF) return pitcherReadHtml(read, idx);
+    if (read.kind === "position" && QF) return positionReadHtml(read, idx);
     const h = U.headline(read), i = state.input;
     const gapCat = state.gapCat[idx] || (read.categories.find(c => !c.highlighted && c.compared.length) || read.categories[0]).key;
     const gaps = L.gapsTo(read, gapCat);
@@ -590,7 +593,7 @@
         </section>
         <section class="lvl-msum" aria-label="Your pitching scores">
           <p class="lvl-pill-h">Your pitching scores</p>
-          <p class="lvl-msum-k">Each category is measured against ${esc(prim.label)} expectations.</p>
+          <p class="lvl-msum-k">Each category is measured against ${esc(prim.label)} expectations. Fastball velocity carries the most weight: coaches screen on it before anything else, and a fastball below a level's range holds the whole score down there.</p>
           <div class="lvl-pcats">${cats}</div>
         </section>
         <section class="lvl-msum lvl-conf" aria-label="Evaluation confidence">
@@ -667,6 +670,117 @@
       <div class="lvl-share no-print"><button class="btn btn-line" type="button" data-share="${idx}">Share my result</button><div class="lvl-share-out" id="shareOut${idx}" hidden></div></div>
       ${numbersStrip(read)}
       ${sec("plevels", "What each level looks for in a pitcher", pitcherLevelsGuide(fit))}
+      ${sec("age-frame", "Same-grade, height and weight context", youngHtml(read, idx) + frameHtml(read, idx))}
+      ${crossCheckHtml(read)}
+      ${sec("compare", "How you compare with committed players", compare)}
+    </section>`;
+  }
+
+  // ---------- v41: position-player evaluation (published targets, per-position model) ----------
+  const TOOL_NAME = (read, k) => k === "hitting" ? "Max exit velocity" : k === "running" ? "60-yard dash" : read.family === "C" ? "Pop time" : read.family === "OF" ? "Outfield throw" : "Infield throw";
+  const tFmt = (t, v) => v == null ? "—" : t.unit === "seconds" ? v.toFixed(2) + " s" : v + " mph";
+  function positionBoard(read, fit, idx) {
+    const i = state.input;
+    const head = `<h2 class="lvl-res-title" id="read${idx}" tabindex="-1">${titleHtml(read)}</h2><p class="lvl-flag">${esc(read.position)} · Class of ${esc(i.gradYear)}</p>`;
+    if (!fit.enough) return `<div class="lvl-board lvl-pboard">${head}<section class="lvl-match"><p class="lvl-pill-h">Your recruiting evaluation</p><p class="lvl-match-need">${esc(fit.message)}</p></section></div>`;
+    const prim = fit.levels.find(l => l.key === fit.primary), stretch = fit.stretch ? fit.levels.find(l => l.key === fit.stretch) : null;
+    const tiles = fit.levels.map(l => {
+      if (l.score == null) return `<li data-level="${l.key}"><b>${esc(l.short)}</b><span class="lvl-match-na">Needs more metrics</span></li>`;
+      return `<li data-level="${l.key}" data-score="${l.score}"${l.key === fit.primary ? ' class="is-hl"' : ""}><b>${esc(l.short)}</b><span class="lvl-match-pct">${l.score}<small>/100</small></span><small>${esc(QF.band(l.score))}</small><span class="lvl-tile-bar" aria-hidden="true"><i style="width:${l.score}%"></i></span></li>`;
+    }).join("");
+    const also = fit.also.map(k => QF.LEVELS.find(l => l.key === k).short);
+    const cats = fit.categories.map(c => c.score != null
+      ? `<article class="lvl-pcat" data-cat="${c.key}"><div><b>${esc(c.label)}</b><span>${c.score}</span></div><div class="lvl-mbar-track" aria-hidden="true"><span class="lvl-mbar-fill" style="width:${c.score}%"></span></div></article>`
+      : `<article class="lvl-pcat is-na" data-cat="${c.key}"><div><b>${esc(c.label)}</b><span>Not scored</span></div><p>${esc(c.why)}</p></article>`).join("");
+    const conf = fit.confidence;
+    const rows = prim.tools.map(t => {
+      const st = stretch ? stretch.tools.find(x => x.tool === t.tool) : null;
+      const tag = t.value == null ? "Not entered" : t.meets ? "Meets" : "Below";
+      const tgt = (x) => x && x.threshold != null ? (x.unit === "seconds" ? x.threshold.toFixed(2) + " s or faster" : x.threshold + "+ mph") + (x.estimated ? "*" : "") : "No target";
+      return `<tr><th scope="row">${esc(TOOL_NAME(read, t.tool))}</th><td><b>${esc(tFmt(t, t.value))}</b></td><td>${esc(tgt(t))}<br><em class="${t.value == null ? "na" : t.meets ? "ok" : "below"}">${tag}</em></td>${stretch ? `<td>${esc(tgt(st))}</td>` : ""}</tr>`;
+    }).join("");
+    const m = i.metrics, stats = [["Batting average", m.avg], ["On-base %", m.obp], ["Slugging", m.slg]].filter(x => x[1] != null);
+    const ops = m.obp != null && m.slg != null ? (m.obp + m.slg).toFixed(3).replace(/^0/, "") : null;
+    const statRows = stats.map(([l, v]) => `<tr><th scope="row">${esc(l)}</th><td><b>${esc(L.fmt(v, "ratio"))}</b></td><td colspan="${stretch ? 2 : 1}"><em class="na">Needs competition adjustment</em></td></tr>`).join("") + (ops ? `<tr><th scope="row">OPS</th><td><b>${esc(ops)}</b></td><td colspan="${stretch ? 2 : 1}"><em class="na">Needs competition adjustment</em></td></tr>` : "");
+    const est = prim.tools.concat(stretch ? stretch.tools : []).some(t => t.estimated);
+    const prio = fit.priorities.map((p, k) => `<tr><td>${k + 1}</td><th scope="row">${esc(p.label)}</th><td>${esc(p.current)}</td><td>${esc(p.goal)}</td></tr>`).join("");
+    const cls = PF ? PF.classContext(i.gradYear) : null;
+    return `<div class="lvl-board lvl-pboard">${head}
+        <section class="lvl-match" aria-label="Your college fit">
+          <p class="lvl-pill-h">Your best college match</p>
+          <div class="lvl-fit-row">${pRing(fit.primaryScore, prim.short, QF.band(fit.primaryScore))}
+            <div class="lvl-best"><p class="lvl-best-k">Primary recruiting target</p><p class="lvl-best-l">${esc(prim.label)}</p><p class="lvl-best-s">${fit.primaryScore}/100 · ${esc(QF.band(fit.primaryScore))}</p>
+            ${also.length ? `<p class="lvl-best-a"><b>Additional opportunities:</b> ${esc(also.join(", "))}</p>` : ""}
+            ${stretch && stretch.score != null ? `<p class="lvl-best-a"><b>Stretch target:</b> ${esc(stretch.label)} (${stretch.score}/100)</p>` : ""}</div></div>
+          <ol class="lvl-match-list lvl-pfit">${tiles}</ol>
+          <p class="lvl-match-disc">${esc(QF.DISCLAIMER)} A higher score at a lower level doesn't make it your best destination; your goals, academics and playing time matter too.</p>
+        </section>
+        <section class="lvl-msum" aria-label="Your scores">
+          <p class="lvl-pill-h">Your ${esc(U.tabLabel(read).toLowerCase())} scores</p>
+          <p class="lvl-msum-k">Measured against ${esc(prim.label)} targets. What matters most for your position: ${esc(fit.focus.toLowerCase())}.</p>
+          <div class="lvl-pcats">${cats}</div>
+        </section>
+        <section class="lvl-msum lvl-conf" aria-label="Evaluation confidence">
+          <p class="lvl-pill-h">Evaluation confidence</p>
+          <div class="lvl-conf-row"><b>${conf.score}<small>/100</small></b><p>How much of this evaluation is backed by complete, verified, recent numbers. It isn't a talent rating.</p></div>
+          ${conf.missing.length ? `<p class="lvl-msum-k">Raise your confidence:</p><ol class="lvl-conf-list">${conf.missing.slice(0, 4).map(x => `<li>${esc(x)}</li>`).join("")}</ol>` : `<p class="lvl-msum-k">Your evaluation is well supported.</p>`}
+        </section>
+        <section class="lvl-msum" aria-label="Where you stand">
+          <p class="lvl-pill-h">Where you stand</p>
+          <div class="lvl-ptable-wrap"><table class="lvl-ptable"><thead><tr><th scope="col">Metric</th><th scope="col">You</th><th scope="col">${esc(prim.short)}</th>${stretch ? `<th scope="col">${esc(stretch.short)}</th>` : ""}</tr></thead><tbody>${rows}${statRows}</tbody></table></div>
+          ${est ? `<p class="lvl-msum-k">* Estimated target: no source publishes this one, so it's set from the published targets around it.</p>` : ""}
+          ${stats.length ? `<p class="lvl-msum-k">Game stats are shown but not scored. A strong OPS means more against good pitching, so a coach adjusts for who you faced.</p>` : ""}
+        </section>
+        <section class="lvl-msum" aria-label="Development priorities">
+          <p class="lvl-pill-h">${stretch ? "Your path to " + esc(stretch.short) : "Keep building"}</p>
+          ${prio ? `<div class="lvl-ptable-wrap"><table class="lvl-ptable"><thead><tr><th scope="col">#</th><th scope="col">Priority</th><th scope="col">Now</th><th scope="col">Goal</th></tr></thead><tbody>${prio}</tbody></table></div>` : `<p class="lvl-msum-k">You already meet the ${esc(stretch ? stretch.short : prim.short)} targets we can measure. Get film and verified numbers in front of coaches.</p>`}
+          <p class="lvl-msum-k">Goals are the published targets for that level. Closing a gap doesn't guarantee interest or an offer.</p>
+          ${cls ? `<p class="lvl-pclass">${esc(cls.text.replace(/pitcher/g, "player"))}</p>` : ""}
+        </section>
+        <p class="pro-source-note">Targets: <a href="https://www.nextcommit.ai/downloads/college-baseball-recruiting-standards-by-division.pdf" target="_blank" rel="noopener">NextCommit</a>, with gaps filled from NextCommit's catcher page, TP College Showcase, Uncommitted University, GoBig Recruiting and NCSA. The scoring weights are Peach State Recruits' starting model for your position.</p>
+      </div>`;
+  }
+  function positionWhatIfHtml(read, idx, fit) {
+    if (!fit.enough) return "";
+    const m = state.input.metrics, tk = read.family === "C" ? "pop" : read.family === "OF" ? "ofVelo" : "ifVelo";
+    const f = [["maxEv", "Max exit velocity", "mph", m.maxEv], ["sixty", "60-yard dash", "s", m.sixty], [tk, read.family === "C" ? "Pop time" : "Throwing velocity", read.family === "C" ? "s" : "mph", m[tk]]];
+    return `<details class="pro-scenario no-print" open><summary>What if my numbers change?</summary><p>Try goal numbers and see how your level scores move. Your real result stays the same. This is a hypothetical, not a forecast, and improving a few numbers doesn't guarantee recruitment.</p>
+      <div class="pro-scenario-inputs">${f.map(([k, l, u, v]) => `<label>${esc(l)} (${esc(u)})<input class="input" type="number" inputmode="decimal" step="${u === "s" ? "0.01" : "0.5"}" data-qwhat="${idx}:${k}" value="${v ?? ""}"></label>`).join("")}</div>
+      <button class="btn btn-line" type="button" data-run-qwhat="${idx}">See my hypothetical scores</button><div id="qwhatOut${idx}" role="status"></div></details>`;
+  }
+  function runPositionWhatIf(idx) {
+    const read = state.result.reads[idx], out = document.getElementById("qwhatOut" + idx), patch = {};
+    app.querySelectorAll(`[data-qwhat^="${idx}:"]`).forEach(el => { const k = el.dataset.qwhat.split(":")[1]; patch[k] = el.value === "" ? null : Number(el.value); });
+    const now = QF.evaluate(read, state.input), hyp = QF.evaluate(QF.withValues(read, patch), state.input);
+    if (!hyp.enough) { out.innerHTML = `<p class="lvl-note-sm">${esc(hyp.message)}</p>`; return; }
+    const lvl = QF.LEVELS.find(l => l.key === hyp.primary);
+    out.innerHTML = `<p><b>Hypothetical target: ${esc(lvl.label)} (${hyp.primaryScore}/100).</b> Your real result is unchanged.</p><ul class="lvl-pwhat">${hyp.levels.map(l => { const was = now.levels.find(x => x.key === l.key).score; if (l.score == null) return `<li><b>${esc(l.short)}</b><span>—</span></li>`; const dlt = was == null ? 0 : l.score - was; return `<li><b>${esc(l.short)}</b><span>${l.score}</span><small class="${dlt > 0 ? "up" : dlt < 0 ? "down" : ""}">${dlt > 0 ? "+" + dlt : dlt < 0 ? dlt : "no change"}</small></li>`; }).join("")}</ul>`;
+  }
+  function positionReadHtml(read, idx) {
+    const fit = QF.evaluate(read, state.input);
+    const pi = fit.enough ? QF.LEVELS.findIndex(l => l.key === fit.primary) : -1;
+    const at = fit.enough ? [fit.primary].concat(pi < 5 ? [QF.LEVELS[pi + 1].key] : []) : [];
+    const q = at.length ? "bands=" + encodeURIComponent(at.join(",")) + "&" : "";
+    const grad = state.input.gradYear ? "grad=" + encodeURIComponent(state.input.gradYear) + "&" : "";
+    const where = at.length ? at.map(k => QF.LEVELS.find(l => l.key === k).short).join(" · ") : "Every level's";
+    const compare = `<p class="lvl-note-sm">These are averages of researched groups, not pass/fail lines. Being below an average doesn't rule you out. Each group is kept separate.</p>
+      ${read.panels.map(panelHtml).join("")}${collegeHtml(read.college)}${idx === 0 ? advancedHtml() : ""}`;
+    return `<section class="lvl-read" aria-labelledby="read${idx}" data-read="${idx}">
+      ${positionBoard(read, fit, idx)}
+      ${positionWhatIfHtml(read, idx, fit)}
+      <section class="lvl-onetap no-print" aria-label="Your next steps">
+        <p class="lvl-cta2-t">Your next steps</p>
+        <div class="lvl-onetap-grid">
+          <button class="lvl-tap lvl-tap-main" type="button" data-email-handoff="${idx}"><b>Email a coach</b><span>A personal email with your real metrics</span></button>
+          <a class="lvl-tap" href="colleges.html?${q}from=fml"><b>${at.length ? "Schools at your level" : "Explore schools"}</b><span>${esc(where)} programs</span></a>
+          <a class="lvl-tap" href="camps.html?${q}${grad}from=fml"><b>${at.length ? "Camps for your level" : "Explore camps"}</b><span>Upcoming college camps</span></a>
+          <a class="lvl-tap" href="my-recruiting.html?from=fml#profile"><b>Save to My Recruiting</b><span>Your metrics, schools and follow-ups</span></a>
+        </div>
+        <p class="lvl-note-sm">School and camp lists are filtered by level only. They don't rate how you fit any specific school.</p>
+      </section>
+      <div class="lvl-likeyou no-print" data-likeyou="${idx}" hidden></div>
+      <div class="lvl-share no-print"><button class="btn btn-line" type="button" data-share="${idx}">Share my result</button><div class="lvl-share-out" id="shareOut${idx}" hidden></div></div>
+      ${numbersStrip(read)}
       ${sec("age-frame", "Same-grade, height and weight context", youngHtml(read, idx) + frameHtml(read, idx))}
       ${crossCheckHtml(read)}
       ${sec("compare", "How you compare with committed players", compare)}
@@ -1000,6 +1114,7 @@
     const cp=e.target.closest("[data-copy-snapshot]");if(cp){const text=R.snapshot(state.input,state.result.reads[+cp.dataset.copySnapshot]);Promise.resolve().then(()=>navigator.clipboard.writeText(text)).then(()=>window.PSR&&window.PSR.toast("Coach snapshot copied")).catch(()=>{const out=document.getElementById("snapshotText"+cp.dataset.copySnapshot);out.hidden=false;out.value=text;out.focus();out.select();});return;}
     const sc=e.target.closest("[data-run-scenario]");if(sc){runScenario(+sc.dataset.runScenario);return;}
     const pw=e.target.closest("[data-run-pwhat]");if(pw){runPitcherWhatIf(+pw.dataset.runPwhat);return;}
+    const qw=e.target.closest("[data-run-qwhat]");if(qw){runPositionWhatIf(+qw.dataset.runQwhat);return;}
     const edit=e.target.closest('[data-edit-evidence]');if(edit){go(3);return;}
     const tb = e.target.closest("[data-tab]"); if (tb) { selectTab(+tb.dataset.tab, true); return; }
     const sh = e.target.closest("[data-share]"); if (sh) { share(+sh.dataset.share); return; }

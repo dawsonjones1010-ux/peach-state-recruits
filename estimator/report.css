@@ -158,3 +158,6 @@
   .lvl-pboard .lvl-fit-row{flex-direction:column;align-items:flex-start;gap:16px}
 }
 .lvl-ptable em{margin:4px 0 0;white-space:nowrap}
+.lvl-tabpanel,.lvl-read,.lvl-pboard,.lvl-pboard>section{min-width:0;max-width:100%}
+.lvl-ptable-wrap{max-width:100%}
+.lvl-ptable em.na{white-space:normal}

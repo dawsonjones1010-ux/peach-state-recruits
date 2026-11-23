@@ -8,7 +8,9 @@
   program, and NOT offer probabilities. Ranges overlap on purpose. JUCO varies widely.
 
   Scoring model (starting weights to test, not coaching standards):
-    Velocity 25 · Pitch characteristics 15 · Secondary pitches 20 · Command 20 · Game performance 15 · Projection 5
+    Velocity 40 · Command 20 · Secondary pitches 15 · Pitch characteristics 10 · Game performance 10 · Projection 5
+  (v41, owner direction: coaches screen on fastball velocity before anything else, so velocity
+  carries the most weight and also gates the whole score.)
   Pitch characteristics and secondary pitches have no numeric screening line (they depend on pitch
   shape, arm slot and video), and projection is not calculated (no growth forecasts). Those three
   are shown as "Not scored" and their weight is spread over the scored categories. The data
@@ -90,7 +92,7 @@
     juco: ["Varies", "Varies", "Very high", "Varies", "High", "High", "Important"]
   };
 
-  const WEIGHTS = { velocity: 25, pitchShape: 15, secondary: 20, command: 20, performance: 15, projection: 5 };
+  const WEIGHTS = { velocity: 40, pitchShape: 10, secondary: 15, command: 20, performance: 10, projection: 5 };
   const CAT_LABEL = { velocity: "Velocity", pitchShape: "Fastball characteristics", secondary: "Secondary pitches", command: "Command", performance: "Game performance", projection: "Projection" };
 
   const isNum = (v) => typeof v === "number" && isFinite(v);
@@ -162,7 +164,7 @@
     const weighted = scored.reduce((a, k) => a + cats[k] * WEIGHTS[k], 0) / wsum;
     // Velocity gate: a level's fit can't outrun the fastball. Coaches screen on velocity first,
     // so great stats with a fastball well below a level's range still read as a stretch there.
-    const gate = 0.4 + 0.6 * (cats.velocity / 100);
+    const gate = 0.25 + 0.75 * (cats.velocity / 100);
     const score = Math.round(clamp(weighted * gate, 0, 99));
     return { key, cats, velo, cmd, perf, score };
   }

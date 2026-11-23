@@ -9,7 +9,7 @@ test("worked example from the standards doc lands on Low-Major D1", () => {
   const r = P.evaluate(doc, { bbVelo: 78 });
   const s = Object.fromEntries(r.levels.map(l => [l.key, l.score]));
   assert.equal(r.primary, "low");
-  assert.ok(s.p4 >= 35 && s.p4 <= 50, "P4 is a long shot (" + s.p4 + ")");
+  assert.ok(s.p4 >= 25 && s.p4 <= 45, "P4 is a long shot (" + s.p4 + ")");
   assert.ok(s.mid >= 70 && s.mid < 85, "Mid-major is possible (" + s.mid + ")");
   assert.ok(s.low >= 85, "Low-major is strong (" + s.low + ")");
   assert.ok(s.juco >= 85);
@@ -42,6 +42,12 @@ test("JUCO performance is 'Varies' and not scored", () => {
   const j = r.levels.find(l => l.key === "juco");
   assert.equal(j.cats.performance, null);
   assert.equal(j.cats.command, null);
+});
+
+test("velocity outweighs everything else", () => {
+  const fast = P.evaluate({ throws: "R", metrics: { typFb: 89, maxFb: 92, era: 4.5, whip: 1.6, k9: 7, bb9: 4.5, strikePct: 58 } });
+  const crafty = P.evaluate({ throws: "R", metrics: { typFb: 83, maxFb: 86, era: 1.2, whip: 0.8, k9: 13, bb9: 1.5, strikePct: 70 } });
+  assert.ok(fast.levels.find(l => l.key === "mid").score > crafty.levels.find(l => l.key === "mid").score);
 });
 
 test("great stats can't carry a slow fastball at a high level (velocity gate)", () => {
