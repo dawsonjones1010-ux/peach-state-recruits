@@ -117,6 +117,12 @@
     era:          { hard: [0, 100],    unit: "runs / 9 innings" },
     whip:         { hard: [0, 20],     unit: "(H+BB) / inning" },
     strikePct:    { hard: [0, 100],    unit: "percent" },
+    // v40 pitcher evaluation inputs (season totals and secondary pitch velocity)
+    ip:           { hard: [0, 200],    soft: [1, 120],     unit: "innings" },
+    so:           { hard: [0, 400],    soft: [0, 200],     unit: "strikeouts" },
+    bb:           { hard: [0, 300],    soft: [0, 120],     unit: "walks" },
+    bbVelo:       { hard: [40, 100],   soft: [55, 92],     unit: "mph" },
+    chVelo:       { hard: [40, 100],   soft: [55, 92],     unit: "mph" },
     // v17 optional advanced fields (context only; never used to pick a level)
     fbSpin:       { hard: [500, 3500], soft: [1400, 2800], unit: "rpm" },
     bbSpin:       { hard: [500, 3800], soft: [1500, 3200], unit: "rpm" },

@@ -7,7 +7,7 @@
 */
 (function () {
   "use strict";
-  const L = window.PSRLevel, CFG = window.PSRLevelConfig, S = L.S, V = window.PSRLevelV2, PG = window.PSRLevelProgress, Z = window.PSRLevelSize;
+  const L = window.PSRLevel, CFG = window.PSRLevelConfig, S = L.S, V = window.PSRLevelV2, PG = window.PSRLevelProgress, Z = window.PSRLevelSize, PF = window.PSRPitcherFit;
   const store = (() => { try { const k = "__psr_t"; localStorage.setItem(k, "1"); localStorage.removeItem(k); return localStorage; } catch (e) { return null; } })();
   const app = document.getElementById("lvlApp");
   if (!app || !L) return;
@@ -15,9 +15,14 @@
 
   // ---------- Field definitions ----------
   const F = {
-    maxFb:     { label: "Max fastball", unit: "mph", kind: "number", hint: "Your highest valid fastball reading." },
-    typFb:     { label: "Typical game fastball", unit: "mph", kind: "number", hint: "What you usually throw in games, if you know it. Can't be higher than your max." },
-    strikePct: { label: "Strike rate", unit: "%", kind: "percent", hint: "Strikes ÷ all pitches, from your season stats." },
+    maxFb:     { label: "Peak fastball", unit: "mph", kind: "number", hint: "Your highest valid fastball reading." },
+    typFb:     { label: "Sitting fastball", unit: "mph", kind: "number", hint: "What you usually sit at in games. Coaches screen on this as much as your peak." },
+    strikePct: { label: "Strike %", unit: "%", kind: "percent", hint: "Strikes ÷ all pitches, from your season stats." },
+    ip:        { label: "Innings pitched", unit: "IP", kind: "number", hint: "Season total, like 45.1 (45 and one out)." },
+    so:        { label: "Strikeouts", unit: "K", kind: "number", hint: "Season total. Turned into K/9 for you." },
+    bb:        { label: "Walks", unit: "BB", kind: "number", hint: "Season total. Turned into BB/9 for you." },
+    bbVelo:    { label: "Breaking ball velocity", unit: "mph", kind: "number", hint: "Your best breaking ball (slider or curve), typical speed." },
+    chVelo:    { label: "Changeup velocity", unit: "mph", kind: "number", hint: "Typical changeup speed, if you throw one." },
     era:       { label: "ERA", unit: "runs / 9 inn", kind: "number", hint: "Season ERA." },
     whip:      { label: "WHIP", unit: "(H+BB) / inn", kind: "number", hint: "Season WHIP." },
     maxEv:     { label: "Max exit velocity", unit: "mph", kind: "number", hint: "Hardest ball you've hit on a measuring device." },
@@ -138,7 +143,7 @@
 
   function step2Fields() {
     const f = [];
-    if (hasP()) f.push("maxFb", "typFb", "strikePct", "era", "whip", "fbSpin", "bbSpin", "extension", "ivb");
+    if (hasP()) f.push("maxFb", "typFb", "ip", "so", "bb", "era", "whip", "strikePct", "bbVelo", "chVelo", "fbSpin", "bbSpin", "extension", "ivb");
     if (hasField()) {
       f.push("maxEv", "sixty", "avgEv", "batSpeed", "thirty", "avg", "obp", "slg");
       if (positions().some(p => IF.includes(p))) f.push("ifVelo");
@@ -152,10 +157,14 @@
     if (hasP()) {
       const rep = state.input.metrics.repertoire || [];
       parts.push(`<fieldset class="lvl-group"><legend>Pitching</legend>
+        <h3 class="lvl-subh">Velocity</h3>
         <div class="lvl-grid">${numField("maxFb", v)}${numField("typFb", v, { optional: true })}</div>
-        <fieldset class="lvl-field"><legend>Pitches you throw in games <span class="lvl-opt">optional</span></legend><div class="lvl-chips">${PITCHES.map(p => `<label><input type="checkbox" data-rep="${esc(p)}" ${rep.includes(p) ? "checked" : ""}><span>${esc(p)}</span></label>`).join("")}</div>
-        <p class="lvl-hint">Recorded for your read. There are no published numeric targets for repertoire, command or pitch quality.</p></fieldset>
-        <details class="lvl-more"><summary>Add more information <span class="lvl-opt">control and results, optional</span></summary><div class="lvl-grid">${numField("strikePct", v, { optional: true })}${numField("era", v, { optional: true })}${numField("whip", v, { optional: true })}${numField("fbSpin", v, { optional: true })}${numField("bbSpin", v, { optional: true })}${numField("extension", v, { optional: true })}${numField("ivb", v, { optional: true })}</div>
+        <h3 class="lvl-subh">Season stats <span class="lvl-opt">optional, but they score your command and game performance</span></h3>
+        <div class="lvl-grid">${numField("ip", v, { optional: true })}${numField("so", v, { optional: true })}${numField("bb", v, { optional: true })}${numField("era", v, { optional: true })}${numField("whip", v, { optional: true })}${numField("strikePct", v, { optional: true })}</div>
+        <h3 class="lvl-subh">Secondary pitches <span class="lvl-opt">optional</span></h3>
+        <fieldset class="lvl-field"><legend>Pitches you throw in games</legend><div class="lvl-chips">${PITCHES.map(p => `<label><input type="checkbox" data-rep="${esc(p)}" ${rep.includes(p) ? "checked" : ""}><span>${esc(p)}</span></label>`).join("")}</div></fieldset>
+        <div class="lvl-grid">${numField("bbVelo", v, { optional: true })}${numField("chVelo", v, { optional: true })}</div>
+        <details class="lvl-more"><summary>Add TrackMan or Rapsodo data <span class="lvl-opt">optional</span></summary><div class="lvl-grid">${numField("fbSpin", v, { optional: true })}${numField("ivb", v, { optional: true })}${numField("extension", v, { optional: true })}${numField("bbSpin", v, { optional: true })}</div>
           <div class="lvl-grid">${select("pitchDevice", "Spin and movement measured with", PITCH_DEV, state.input.methods.pitchDevice, v, { optional: true })}</div></details>
       </fieldset>`);
     }
@@ -463,6 +472,7 @@
   }
 
   function readHtml(read, idx) {
+    if (read.kind === "pitching" && PF) return pitcherReadHtml(read, idx);
     const h = U.headline(read), i = state.input;
     const gapCat = state.gapCat[idx] || (read.categories.find(c => !c.highlighted && c.compared.length) || read.categories[0]).key;
     const gaps = L.gapsTo(read, gapCat);
@@ -512,6 +522,153 @@
       ${numbersStrip(read)}
       ${sec("age-frame", "Same-grade, height and weight context", youngHtml(read, idx) + frameHtml(read, idx))}
       ${sec("levels", "All levels in detail", detail)}
+      ${sec("compare", "How you compare with committed players", compare)}
+    </section>`;
+  }
+
+
+  // ---------- v40: pitcher evaluation (Peach State Recruits screening ranges) ----------
+  function pitcherFit() {
+    const m = state.input.metrics || {};
+    return PF.evaluate(state.input, { bbVelo: m.bbVelo, chVelo: m.chVelo });
+  }
+  const BAND_CLASS = { "Strong fit": "ok", "Possible fit": "close", "Stretch": "below", "Long shot today": "below", "Not enough data": "none" };
+  function pRing(score, label, band) {
+    const r = 58, c = 2 * Math.PI * r, dash = (score / 100) * c;
+    return `<div class="lvl-ring">
+      <svg viewBox="0 0 144 144" role="img" aria-label="${esc(label)}: ${score} out of 100, ${esc(band)}">
+        <circle class="lvl-ring-track" cx="72" cy="72" r="${r}" fill="none" stroke-width="10"/>
+        <circle class="lvl-ring-val" cx="72" cy="72" r="${r}" fill="none" stroke-width="10" stroke-linecap="round" stroke-dasharray="${dash.toFixed(2)} ${c.toFixed(2)}" transform="rotate(-90 72 72)"/>
+      </svg>
+      <div class="lvl-ring-caption"><b>${score}</b><span>${esc(label)}</span><small>out of 100</small></div>
+    </div>`;
+  }
+  function pVal(k, v) {
+    if (v == null) return "—";
+    if (k === "sit" || k === "peak") return v + " mph";
+    const p = PF.PERF[k]; return p ? p.fmt(v) : String(v);
+  }
+  function pTarget(k, key, hand) {
+    if (k === "sit" || k === "peak") { const r = PF.VELO[hand][k][key]; return r[0] + "–" + r[1] + (key === "p4" || key === "juco" ? "+" : "") + " mph"; }
+    const p = PF.PERF[k], t = p.t[key]; if (t == null) return "Varies";
+    return (p.dir === "lower" ? "under " : "") + p.fmt(t) + (p.dir === "higher" ? "+" : "");
+  }
+  function pitcherBoard(read, fit, idx) {
+    const i = state.input, hand = fit.hand, handLabel = hand === "L" ? "LHP" : "RHP";
+    if (!fit.enough) return `<div class="lvl-board">
+        <h2 class="lvl-res-title" id="read${idx}" tabindex="-1">${titleHtml(read)}</h2>
+        <section class="lvl-match"><p class="lvl-pill-h">Your pitcher evaluation</p><p class="lvl-match-need">${esc(fit.message)}</p></section></div>`;
+    const prim = fit.levels.find(l => l.key === fit.primary);
+    const tiles = fit.levels.map(l => {
+      const b = PF.band(l.score), hl = l.key === fit.primary;
+      return `<li data-level="${l.key}" data-score="${l.score}"${hl ? ' class="is-hl"' : ""}><b>${esc(l.short)}</b><span class="lvl-match-pct">${l.score}<small>/100</small></span><small>${esc(b)}</small><span class="lvl-tile-bar" aria-hidden="true"><i style="width:${l.score}%"></i></span></li>`;
+    }).join("");
+    const cats = fit.categories.map(c => c.score != null
+      ? `<article class="lvl-pcat" data-cat="${c.key}"><div><b>${esc(c.label)}</b><span>${c.score}</span></div><div class="lvl-mbar-track" aria-hidden="true"><span class="lvl-mbar-fill" style="width:${c.score}%"></span></div></article>`
+      : `<article class="lvl-pcat is-na" data-cat="${c.key}"><div><b>${esc(c.label)}</b><span>Not scored</span></div><p>${esc(c.why)}</p></article>`).join("");
+    const conf = fit.confidence;
+    const also = fit.also.map(k => PF.LEVELS.find(l => l.key === k).short);
+    const stretch = fit.stretch ? fit.levels.find(l => l.key === fit.stretch) : null;
+    const prio = fit.priorities.map((p, k) => `<tr><td>${k + 1}</td><th scope="row">${esc(p.label)}</th><td>${esc(p.current)}</td><td>${esc(p.goal)}</td></tr>`).join("");
+    const rows = [].concat(prim.velo, prim.cmd, prim.perf).map(r => {
+      const st = stretch ? [].concat(stretch.velo, stretch.cmd, stretch.perf).find(x => x.key === r.key) : null;
+      const isV = r.key === "sit" || r.key === "peak", ok = isV ? r.value >= r.range[0] : r.meets;
+      const tag = ok == null ? "Varies" : !ok ? "Below" : isV ? (r.value >= r.range[1] ? "Above" : "In range") : "Meets";
+      return `<tr><th scope="row">${esc(r.label)}</th><td><b>${esc(pVal(r.key, r.value))}</b></td><td>${esc(pTarget(r.key, fit.primary, hand))}<br><em class="${ok == null ? "na" : ok ? "ok" : "below"}">${tag}</em></td>${stretch ? `<td>${esc(pTarget(r.key, fit.stretch, hand))}</td>` : ""}</tr>`;
+    }).join("");
+    return `<div class="lvl-board lvl-pboard">
+        <h2 class="lvl-res-title" id="read${idx}" tabindex="-1">${titleHtml(read)}</h2>
+        <p class="lvl-flag">${handLabel} · Class of ${esc(i.gradYear)}</p>
+        <section class="lvl-match" aria-label="Your college fit">
+          <p class="lvl-pill-h">Your best college match</p>
+          <div class="lvl-fit-row">${pRing(fit.primaryScore, prim.short, PF.band(fit.primaryScore))}
+            <div class="lvl-best"><p class="lvl-best-k">Primary recruiting target</p><p class="lvl-best-l">${esc(prim.label)}</p><p class="lvl-best-s">${fit.primaryScore}/100 · ${esc(PF.band(fit.primaryScore))}</p>
+            ${also.length ? `<p class="lvl-best-a"><b>Additional opportunities:</b> ${esc(also.join(", "))}</p>` : ""}
+            ${stretch ? `<p class="lvl-best-a"><b>Stretch target:</b> ${esc(stretch.label)} (${stretch.score}/100)</p>` : ""}</div></div>
+          <ol class="lvl-match-list lvl-pfit">${tiles}</ol>
+          <p class="lvl-match-disc">${esc(PF.DISCLAIMER)} JUCO is its own pathway, not a level below NAIA or D3.</p>
+        </section>
+        <section class="lvl-msum" aria-label="Your pitching scores">
+          <p class="lvl-pill-h">Your pitching scores</p>
+          <p class="lvl-msum-k">Each category is measured against ${esc(prim.label)} expectations.</p>
+          <div class="lvl-pcats">${cats}</div>
+        </section>
+        <section class="lvl-msum lvl-conf" aria-label="Evaluation confidence">
+          <p class="lvl-pill-h">Evaluation confidence</p>
+          <div class="lvl-conf-row"><b>${conf.score}<small>/100</small></b><p>How much of this evaluation is backed by complete, verified, recent numbers. It isn't a talent rating.</p></div>
+          ${conf.missing.length ? `<p class="lvl-msum-k">Raise your confidence:</p><ol class="lvl-conf-list">${conf.missing.slice(0, 4).map(x => `<li>${esc(x)}</li>`).join("")}</ol>` : `<p class="lvl-msum-k">Your evaluation is well supported.</p>`}
+        </section>
+        <section class="lvl-msum" aria-label="Where you stand">
+          <p class="lvl-pill-h">Where you stand</p>
+          <div class="lvl-ptable-wrap"><table class="lvl-ptable"><thead><tr><th scope="col">Metric</th><th scope="col">You</th><th scope="col">${esc(prim.short)}</th>${stretch ? `<th scope="col">${esc(stretch.short)}</th>` : ""}</tr></thead><tbody>${rows}</tbody></table></div>
+          ${fit.derived.ip != null && PF.baseballInnings(fit.derived.ip) < 20 ? `<p class="lvl-msum-k">Under 20 innings is a small sample, so your stats count for less here.</p>` : ""}
+          <p class="lvl-msum-k">Stats are taken at face value. Strikeouts against weak competition mean less than fewer strikeouts against ranked teams, so a coach will adjust for who you faced.</p>
+        </section>
+        <section class="lvl-msum" aria-label="Development priorities">
+          <p class="lvl-pill-h">${stretch ? "Your path to " + esc(stretch.short) : "Keep building"}</p>
+          ${prio ? `<div class="lvl-ptable-wrap"><table class="lvl-ptable"><thead><tr><th scope="col">#</th><th scope="col">Priority</th><th scope="col">Now</th><th scope="col">Goal</th></tr></thead><tbody>${prio}</tbody></table></div>` : `<p class="lvl-msum-k">Your numbers already sit in the ${esc(stretch ? stretch.short : prim.short)} ranges we can score. Get video and verified data in front of coaches.</p>`}
+          <p class="lvl-msum-k">Goals are illustrative. A real plan should fit your age, training history, health and your coach's guidance.</p>
+          ${fit.classContext ? `<p class="lvl-pclass">${esc(fit.classContext.text)}</p>` : ""}
+        </section>
+        <p class="pro-source-note">Ranges: ${esc(PF.SOURCE.name)} v${esc(PF.SOURCE.version)} (${esc(PF.SOURCE.asOf)}). ${esc(PF.SOURCE.note)}</p>
+      </div>`;
+  }
+  function pitcherWhatIfHtml(idx, fit) {
+    if (!fit.enough) return "";
+    const d = fit.derived;
+    const f = [["typFb", "Sitting fastball", "mph", d.sit], ["maxFb", "Peak fastball", "mph", d.peak], ["strikePct", "Strike %", "%", d.strikePct], ["bb9", "BB/9", "", d.bb9], ["k9", "K/9", "", d.k9], ["era", "ERA", "", d.era]];
+    return `<details class="pro-scenario no-print" open><summary>What if my numbers change?</summary><p>Try goal numbers and see how your level scores move. Your real result stays the same. This is a hypothetical, not a forecast, and improving a few numbers doesn't guarantee recruitment.</p>
+      <div class="pro-scenario-inputs">${f.map(([k, l, u, v]) => `<label>${esc(l)}${u ? ` (${esc(u)})` : ""}<input class="input" type="number" inputmode="decimal" step="0.1" data-pwhat="${idx}:${k}" value="${v ?? ""}"></label>`).join("")}</div>
+      <button class="btn btn-line" type="button" data-run-pwhat="${idx}">See my hypothetical scores</button><div id="pwhatOut${idx}" role="status"></div></details>`;
+  }
+  function runPitcherWhatIf(idx) {
+    const m = Object.assign({}, state.input.metrics), out = document.getElementById("pwhatOut" + idx);
+    app.querySelectorAll(`[data-pwhat^="${idx}:"]`).forEach(el => { const k = el.dataset.pwhat.split(":")[1]; const v = el.value === "" ? null : Number(el.value); if (v != null && !isFinite(v)) return; m[k] = v; });
+    // Typed per-9 rates replace the season totals they came from.
+    if (m.k9 != null || m.bb9 != null) { m.so = null; m.bb = null; }
+    const now = pitcherFit(), hyp = PF.evaluate(Object.assign({}, state.input, { metrics: m }), { bbVelo: m.bbVelo, chVelo: m.chVelo });
+    if (!hyp.enough) { out.innerHTML = `<p class="lvl-note-sm">Enter a fastball velocity to compare.</p>`; return; }
+    const lvl = PF.LEVELS.find(l => l.key === hyp.primary);
+    out.innerHTML = `<p><b>Hypothetical target: ${esc(lvl.label)} (${hyp.primaryScore}/100).</b> Your real result is unchanged.</p><ul class="lvl-pwhat">${hyp.levels.map(l => { const was = now.levels.find(x => x.key === l.key).score, dlt = l.score - was; return `<li><b>${esc(l.short)}</b><span>${l.score}</span><small class="${dlt > 0 ? "up" : dlt < 0 ? "down" : ""}">${dlt > 0 ? "+" + dlt : dlt < 0 ? dlt : "no change"}</small></li>`; }).join("")}</ul>`;
+  }
+  function pitcherLevelsGuide(fit) {
+    const P = PF.PRIORITIES;
+    const keys = PF.LEVELS.map(l => l.key);
+    return `<div class="lvl-ptable-wrap"><table class="lvl-ptable lvl-ptable-light"><thead><tr><th scope="col">What coaches weigh</th>${PF.LEVELS.map(l => `<th scope="col">${esc(l.short)}</th>`).join("")}</tr></thead><tbody>${P.rows.map((r, j) => `<tr><th scope="row">${esc(r)}</th>${keys.map(k => `<td>${esc(P[k][j])}</td>`).join("")}</tr>`).join("")}</tbody></table></div>
+      <h4>Secondary pitches by level</h4><ul class="lvl-list">${PF.LEVELS.map(l => `<li><b>${esc(l.short)}:</b> ${esc(PF.SECONDARY[l.key].breaking)}. Changeup: ${esc(PF.SECONDARY[l.key].change.toLowerCase())}.</li>`).join("")}</ul>
+      <p class="lvl-note-sm">An 88 mph fastball with an outstanding slider can draw more interest than 91 mph with no dependable secondary pitch. Secondary pitches are judged on video and movement, so they aren't scored here yet.</p>
+      <h4>What coaches look for physically</h4><ul class="lvl-list">${PF.LEVELS.map(l => `<li><b>${esc(l.short)}:</b> ${esc(PF.PHYSICAL[l.key])}.</li>`).join("")}</ul>
+      <p class="lvl-note-sm">There's no minimum height or weight for any level. A 5'10" pitcher with velocity, command and movement can be a real D1 prospect.</p>
+      <h4>Spin, break and extension</h4><p class="lvl-note-sm">No single spin or break number makes a good fastball. A four-seamer can win with lots of ride, a sinker with less ride and more run, and a low slot with a different approach angle. These are read next to your pitch type, velocity, hand and release, never against one cutoff.</p>`;
+  }
+  function pitcherReadHtml(read, idx) {
+    const fit = pitcherFit();
+    const at = fit.enough ? [fit.primary].concat(PF.LEVELS.map(l => l.key).filter(k => k !== "juco" && PF.LEVELS.findIndex(x => x.key === k) === PF.LEVELS.findIndex(x => x.key === fit.primary) + 1)) : [];
+    const q = at.length ? "bands=" + encodeURIComponent(at.join(",")) + "&" : "";
+    const grad = state.input.gradYear ? "grad=" + encodeURIComponent(state.input.gradYear) + "&" : "";
+    const where = at.length ? at.map(k => PF.LEVELS.find(l => l.key === k).short).join(" · ") : "Every level's";
+    const taps = `<section class="lvl-onetap no-print" aria-label="Your next steps">
+      <p class="lvl-cta2-t">Your next steps</p>
+      <div class="lvl-onetap-grid">
+        <button class="lvl-tap lvl-tap-main" type="button" data-email-handoff="${idx}"><b>Email a coach</b><span>A personal email with your real metrics</span></button>
+        <a class="lvl-tap" href="colleges.html?${q}from=fml"><b>${at.length ? "Schools at your level" : "Explore schools"}</b><span>${esc(where)} programs</span></a>
+        <a class="lvl-tap" href="camps.html?${q}${grad}from=fml"><b>${at.length ? "Camps for your level" : "Explore camps"}</b><span>Upcoming college camps</span></a>
+        <a class="lvl-tap" href="my-recruiting.html?from=fml#profile"><b>Save to My Recruiting</b><span>Your metrics, schools and follow-ups</span></a>
+      </div>
+      <p class="lvl-note-sm">School and camp lists are filtered by level only. They don't rate how you fit any specific school.</p>
+    </section>`;
+    const compare = `<p class="lvl-note-sm">These are averages of researched groups, not pass/fail lines. Being below an average doesn't rule you out. Each group is kept separate.</p>
+      ${read.panels.map(panelHtml).join("")}${collegeHtml(read.college)}${idx === 0 ? advancedHtml() : ""}`;
+    return `<section class="lvl-read" aria-labelledby="read${idx}" data-read="${idx}">
+      ${pitcherBoard(read, fit, idx)}
+      ${pitcherWhatIfHtml(idx, fit)}
+      ${taps}
+      <div class="lvl-likeyou no-print" data-likeyou="${idx}" hidden></div>
+      <div class="lvl-share no-print"><button class="btn btn-line" type="button" data-share="${idx}">Share my result</button><div class="lvl-share-out" id="shareOut${idx}" hidden></div></div>
+      ${numbersStrip(read)}
+      ${sec("plevels", "What each level looks for in a pitcher", pitcherLevelsGuide(fit))}
+      ${sec("age-frame", "Same-grade, height and weight context", youngHtml(read, idx) + frameHtml(read, idx))}
+      ${crossCheckHtml(read)}
       ${sec("compare", "How you compare with committed players", compare)}
     </section>`;
   }
@@ -842,6 +999,7 @@
     if(eh){try{sessionStorage.setItem("psr_email_handoff_v2",JSON.stringify(R.handoff(state.input,state.result.reads[+eh.dataset.emailHandoff])));location.href="email-coach.html?from=level";}catch(error){if(window.PSR)window.PSR.toast("This browser cannot transfer your metrics. Open Email Coach and enter them there.");}return;}
     const cp=e.target.closest("[data-copy-snapshot]");if(cp){const text=R.snapshot(state.input,state.result.reads[+cp.dataset.copySnapshot]);Promise.resolve().then(()=>navigator.clipboard.writeText(text)).then(()=>window.PSR&&window.PSR.toast("Coach snapshot copied")).catch(()=>{const out=document.getElementById("snapshotText"+cp.dataset.copySnapshot);out.hidden=false;out.value=text;out.focus();out.select();});return;}
     const sc=e.target.closest("[data-run-scenario]");if(sc){runScenario(+sc.dataset.runScenario);return;}
+    const pw=e.target.closest("[data-run-pwhat]");if(pw){runPitcherWhatIf(+pw.dataset.runPwhat);return;}
     const edit=e.target.closest('[data-edit-evidence]');if(edit){go(3);return;}
     const tb = e.target.closest("[data-tab]"); if (tb) { selectTab(+tb.dataset.tab, true); return; }
     const sh = e.target.closest("[data-share]"); if (sh) { share(+sh.dataset.share); return; }

@@ -110,13 +110,17 @@
       sixty: "60-yard time", thirty: "30-yard time", ifVelo: "Infield throwing velocity", ofVelo: "Outfield throwing velocity",
       cVelo: "Catcher throwing velocity", pop: "Pop time", avg: "Batting average", obp: "On-base percentage", slg: "Slugging",
       era: "ERA", whip: "WHIP", strikePct: "Strike rate",
-      fbSpin: "Fastball spin", bbSpin: "Breaking-ball spin", extension: "Extension", ivb: "Induced vertical break", batSpeed: "Bat speed"
+      fbSpin: "Fastball spin", bbSpin: "Breaking-ball spin", extension: "Extension", ivb: "Induced vertical break", batSpeed: "Bat speed",
+      ip: "Innings pitched", so: "Strikeouts", bb: "Walks", bbVelo: "Breaking-ball velocity", chVelo: "Changeup velocity"
     };
     Object.keys(L).forEach(k => range(k, m[k], k, L[k]));
     if (isNum(m.typFb) && isNum(m.maxFb) && m.typFb > m.maxFb) err("typFb", "Typical game fastball can't be higher than your max fastball. Please correct one of them.");
     if (isNum(m.avgEv) && isNum(m.maxEv) && m.avgEv > m.maxEv) err("avgEv", "Average exit velocity can't be higher than your max exit velocity. Please correct one of them.");
     if (isNum(m.slg) && isNum(m.avg) && m.slg < m.avg) err("slg", "Slugging can't be lower than batting average. Please check both.");
     if (isNum(m.obp) && isNum(m.avg) && m.obp < m.avg) warn("obp", "On-base percentage is usually at least your batting average. Please check it, or confirm it is correct.");
+    if (isNum(m.bbVelo) && isNum(m.maxFb) && m.bbVelo >= m.maxFb) err("bbVelo", "Breaking-ball velocity should be slower than your max fastball. Please check it.");
+    if (isNum(m.chVelo) && isNum(m.maxFb) && m.chVelo >= m.maxFb) err("chVelo", "Changeup velocity should be slower than your max fastball. Please check it.");
+    if ((isNum(m.so) || isNum(m.bb)) && !isNum(m.ip)) err("ip", "Add innings pitched so strikeouts and walks can be turned into per-9 rates.");
     if (isNum(m.thirty) && isNum(m.sixty) && m.thirty >= m.sixty) err("thirty", "Your 30-yard time can't be slower than your 60-yard time.");
 
     const meta = input.meta || {};
