@@ -99,10 +99,12 @@
     if (v >= lo) return 75 + 25 * (v - lo) / (hi - lo);
     return clamp(75 - 12.5 * (lo - v), 0, 75);
   }
-  function targetScore(v, target, dir) {
+  function targetScore(v, target, dir, key) {
     if (!isNum(v) || !isNum(target)) return null;
-    const short = dir === "lower" ? (v - target) / target : (target - v) / target;
-    return short <= 0 ? 100 : clamp(100 - 400 * short, 0, 100);
+    const short = dir === "lower" ? v - target : target - v;
+    if (short <= 1e-9) return 100;
+    const step = CFG.pitcher.statSteps[key] || Math.abs(target) * 0.1;
+    return clamp(100 - CFG.pitcher.statStepPoints * short / step, 0, 100);
   }
   const meets = (v, target, dir) => dir === "lower" ? v <= target : v >= target;
   function penaltyFor(gap) { return CFG.pitcher.velocityPenalty.find(p => gap > p.over).points; }
@@ -148,7 +150,7 @@
 
     const rows = (cat) => Object.keys(PERF).filter(k => PERF[k].cat === cat && isNum(d[k])).map(k => {
       const p = PERF[k], t = p.t[key];
-      return { key: k, label: p.label, value: d[k], target: t, dir: p.dir, score: t == null ? null : targetScore(d[k], t, p.dir), meets: t == null ? null : meets(d[k], t, p.dir) };
+      return { key: k, label: p.label, value: d[k], target: t, dir: p.dir, score: t == null ? null : targetScore(d[k], t, p.dir, k), meets: t == null ? null : meets(d[k], t, p.dir) };
     });
     const cmdRows = rows("command"), perfRows = rows("performance");
     const scoreMap = (rs) => Object.fromEntries(rs.filter(r => r.score != null).map(r => [r.key, r.score]));

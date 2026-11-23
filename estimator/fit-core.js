@@ -41,6 +41,11 @@
       performance: { era: 1, whip: 1, k9: 1 },
       // Velocity shortfall adjustment (points), from sitting velocity vs the level's sitting minimum.
       velocityPenalty: [ { over: 5, points: 18 }, { over: 3, points: 12 }, { over: 2, points: 7 }, { over: 1, points: 3 }, { over: -Infinity, points: 0 } ],
+      // Command and performance stats: meeting a target = 100; each "step" short costs statStepPoints.
+      // (v42.0 used -4 points per 1% short, which zeroed out a 2.0 K/BB against a 3.5 target and let
+      // ratio stats outweigh a Power 4-range fastball.) Steps are about one meaningful season difference.
+      statSteps: { strikePct: 2, bb9: 0.5, kbb: 0.5, era: 0.5, whip: 0.1, k9: 1 },
+      statStepPoints: 10,
       // "Core benchmarks reasonably satisfied" for a primary target: sitting (or peak, if that's all
       // we have) within this many mph of the level's minimum.
       coreWithinMph: 2,

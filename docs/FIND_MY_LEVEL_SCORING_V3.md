@@ -47,6 +47,11 @@ All of these are Peach State Recruits' provisional product settings, not publish
 - Scored on strike % (25), BB/9 (25) and K/BB (15), normalized over whatever is entered.
 - First-pitch strike % and zone % are collected and shown but have no benchmark, so they aren't scored.
 
+**Stat scoring curve (v42.1)**
+- Meeting a command or performance target scores 100. Each step short costs 10 points.
+- Steps: strike % 2 points, BB/9 0.5, K/BB 0.5, ERA 0.5, WHIP 0.10, K/9 1.0.
+- v42.0 took 4 points off per 1% short, so a 2.0 K/BB against a 3.5 target scored 0. That let ratio stats outweigh a Power 4-range fastball: a lefty at 87/92 with a 2.10 ERA came back D2. He now comes back Mid-Major D1 with Power 4 as the stretch.
+
 **Performance**
 - Scored on ERA, WHIP and K/9.
 - BB/9 and K/BB count only in command, so nothing is counted twice.

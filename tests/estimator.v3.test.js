@@ -174,3 +174,10 @@ test("a published benchmark is never changed by v3", () => {
   assert.deepEqual(P.VELO.R.sit.p4, [90, 94]); assert.deepEqual(P.VELO.L.peak.d3, [77, 85]);
   assert.equal(P.PERF.era.t.mid, 2.5); assert.equal(P.PERF.strikePct.t.d2, 62); assert.equal(P.PERF.k9.t.juco, null);
 });
+
+test("a lefty sitting 87 / touching 92 with a 2.10 ERA is a D1 target even with a 2.0 K/BB", () => {
+  const f = P.evaluate({ throws: "L", metrics: { typFb: 87, maxFb: 92, bb9: 4.0, strikePct: 70, kbb: 2.0, era: 2.10, whip: 1.20, k9: 7.8 } });
+  assert.equal(f.primary, "mid");
+  assert.equal(f.stretch, "p4");
+  assert.equal(P.targetScore(2.0, 3.5, "higher", "kbb"), 70, "three half-steps short of K/BB costs 30, not 100");
+});
