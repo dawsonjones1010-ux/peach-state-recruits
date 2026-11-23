@@ -1,5 +1,68 @@
 [
   {
+    "slug": "juan-duque",
+    "active": true,
+    "name": "Juan Duque",
+    "sport": "Baseball",
+    "position": "RHP",
+    "gradYear": 2028,
+    "school": "Bishop Moore Catholic High School",
+    "team": "SBA Bolts National",
+    "location": "Orlando, Florida",
+    "coverImage": "images/players/juan-duque.jpg",
+    "headline": "JUAN DUQUE IS A FLAMETHROWER🔥📈",
+    "playerInstagram": [],
+    "measurables": [
+      {
+        "label": "Height",
+        "value": "6'3\""
+      },
+      {
+        "label": "Weight",
+        "value": "180 lb"
+      },
+      {
+        "label": "Position",
+        "value": "RHP"
+      }
+    ],
+    "video": {
+      "youtube": "",
+      "file": ""
+    },
+    "highlights": [],
+    "report": "Juan Duque | RHP | 2028 | 6’3 | 180 | Bishop Moore Catholic High School\n\n🎯 Juan Duque is a long, athletic 2028 right-hander out of Orlando, Florida who recently committed to Florida Gulf Coast University. The SBA Bolts National arm pairs a projectable 6’3 frame with an arm that already plays at a high level.\n\n🔥 On the mound, Duque runs his fastball up to 92 mph, giving him real power stuff for his class. His head coach calls him an impact arm, and his size and arm strength give him a strong foundation to work from.\n\n📈 There is plenty left in the tank too. With more strength still to add to his frame, Juan has clear room to keep building velocity as he matures.\n\nAs Bishop Moore's newest Division I commit, Duque is a 2028 Florida arm with the tools to make an impact at the next level. ⚾️",
+    "stats": null,
+    "academics": [],
+    "links": [],
+    "contactEmail": "",
+    "contactInstagram": "peachstaterecruits",
+    "contactName": "Peach State Recruits",
+    "postUrl": "",
+    "account": "peachstaterecruits",
+    "showOnHome": true,
+    "videos": [
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/juan-duque/clip1.mp4",
+        "title": "Highlight clip 1"
+      },
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/juan-duque/clip2.mp4",
+        "title": "Highlight clip 2"
+      },
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/juan-duque/clip3.mp4",
+        "title": "Highlight clip 3"
+      }
+    ],
+    "coachReport": "Profile: 2028 right-handed pitcher from Orlando, Florida. Bishop Moore Catholic High School; SBA Bolts National. 6'3\", 180 lb.\nPitching: Right-hander. Fastball up to 92 mph.\nCommitment: Florida Gulf Coast University.",
+    "featuredRank": null,
+    "featureDate": "2026-11-23"
+  },
+  {
     "slug": "blake-pierson",
     "active": true,
     "name": "Blake Pierson",
