@@ -383,6 +383,17 @@
   function runScenario(idx){const patch={};const output=document.getElementById('scenarioResult'+idx);app.querySelectorAll(`[data-scenario^="${idx}:"]`).forEach(el=>{if(el.value!=='')patch[el.dataset.scenario.split(':')[1]]=Number(el.value);});try{const r=R.scenario(state.data,state.input,state.result.reads[idx],patch);const met=r.read.categories.filter(c=>c.highlighted);output.textContent='Hypothetical only: '+(met.length?'reaches the listed targets for '+met.map(c=>c.label).join(', '):'does not fully reach a listed category with these inputs')+'. Actual result unchanged.';}catch(error){output.textContent=error.message;}}
   function nextMovesHtml(read){return `<section class="pro-actions"><p class="pro-eyebrow">TURN A RESULT INTO ACTION</p><h3>Your next three moves</h3><ol>${R.actionPlan(state.input,read).map((a,k)=>`<li><span>${k+1}</span><div><h4>${esc(a.title)}</h4><p>${esc(a.detail)}</p>${a.href==='#edit-evidence'?'<button class="pro-text-button" type="button" data-edit-evidence>Edit measurement context</button>':a.href==='#target-workbench'?'<p class="lvl-note-sm">Use the target comparison above.</p>':`<a href="${esc(a.href)}">${a.href.includes('email')?'Open Email Coach':'Find colleges'}</a>`}</div></li>`).join('')}</ol><div class="pro-snapshot"><button type="button" class="btn btn-line" data-copy-snapshot="${state.result.reads.indexOf(read)}">Copy coach snapshot</button><textarea class="input" id="snapshotText${state.result.reads.indexOf(read)}" hidden readonly aria-label="Coach snapshot text"></textarea><p>No assigned-level claim is added to your email. Coaches see your actual measurements.</p></div></section>`;}
 
+  function matchHtml(read) {
+    const m = U.matchShare(read);
+    const rows = m.enough ? `<ol class="lvl-match-list">${m.levels.map(l => {
+      const detail = l.show ? `<span class="lvl-match-pct">${l.pct}% match</span><small>${l.met} of ${l.of} metrics</small>`
+        : `<span class="lvl-match-na">${l.reason === "no-target" ? "No published target" : "Needs more metrics"}</span>`;
+      return `<li data-level="${l.key}"${l.show ? ` data-pct="${l.pct}"` : ""}><b>${esc(l.label)}</b>${detail}</li>`;
+    }).join("")}</ol>
+      <p class="lvl-match-disc">${esc(m.disclaimer)}</p>` : `<p class="lvl-match-need">${esc(m.message)}</p>`;
+    return `<section class="lvl-match" aria-label="Match by level"><h3>Match by level</h3>${rows}</section>`;
+  }
+
   function readHtml(read, idx) {
     const h = U.headline(read), i = state.input;
     const gapCat = state.gapCat[idx] || (read.categories.find(c => !c.highlighted && c.compared.length) || read.categories[0]).key;
@@ -416,6 +427,7 @@
         <p class="lvl-head-sup">${esc(h.support)}</p>
         <p class="lvl-head-cav">${esc(U.CAVEAT)}</p><p class="pro-source-note">Seven-category targets: <a href="https://www.nextcommit.ai/downloads/college-baseball-recruiting-standards-by-division.pdf" target="_blank" rel="noopener">NextCommit</a>. These publisher targets are one reference; the NCSA cross-check below stays separate.</p>
       </div>
+      ${matchHtml(read)}
       ${reportOverview(read, idx)}
       ${movesHtml(read)}
       ${oneTapHtml(read, idx)}
@@ -444,6 +456,7 @@
     const tabs = r.reads.length > 1 ? `<div class="lvl-tabs" role="tablist" aria-label="Results by position">${r.reads.map((rd, k) => `<button type="button" role="tab" id="tab${k}" aria-controls="tp${k}" aria-selected="${k === tab}" tabindex="${k === tab ? 0 : -1}" data-tab="${k}">${esc(U.tabLabel(rd))}</button>`).join("")}</div>` : "";
     const rule = `A level shows "Meets targets" only when at least ${CFG.HIGHLIGHT_RULE.minDistinctCoreTools} different core tools have published targets there and every compared tool meets its target. For pitchers, it's when your fastball meets the listed velocity target. This is a product rule, not a validated prediction.`;
     const how = `<p><b>Evidence policy:</b> NCAA rules are used for timing, MLB for definitions, NCSA for a separate guideline check, and the named original publishers for their own targets and samples. No offer odds, percentiles or growth forecasts are calculated.</p><p>We compare each metric you enter with the published recruiting targets for your position at each level, using the edge of each published band as a provisional line. Averages of researched groups and college-player metrics are shown separately and never change a level's status.</p>
+      <p>A match percentage is the share of the metrics you entered that meet that level's existing published target. Only metrics with a published target are counted. Height and weight are not counted and do not change the percentage. If too few metrics were entered, we say so instead of showing a percentage. The percentage does not change a level's status.</p>
       <p><b>The rule used.</b> ${esc(rule)}</p>
       <ul class="lvl-list"><li><b>Meets targets:</b> passes the rule above.</li><li><b>Close:</b> at least one of your compared metrics meets that level's target and at least one is below it.</li><li><b>Below targets:</b> your compared metrics are all below that level's targets.</li><li><b>Needs more metrics:</b> targets exist, but too few of your metrics could be compared there.</li><li><b>Estimated target:</b> no source publishes this one, so it's set from the published targets right around it. The card says exactly how.</li></ul>
       <p><b>Your headline</b> is the first level in the list that shows "Meets targets". <b>Next step</b> is the nearest level above it with a metric below target, showing only that level's smallest gap relative to its target.</p>

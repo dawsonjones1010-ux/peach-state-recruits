@@ -1,15 +1,16 @@
 /*
   Find My Level: presentation summary (v13).
   Pure functions that turn an existing logic.js read into the short main-view answer:
-  headline, next step, and one status per level. Adds no numbers and changes no
-  calculation; everything comes from the read's existing statuses, thresholds and gaps.
+  headline, next step, one status per level, and a match percentage per level.
+  Percentages are derived from the read's existing statuses (share of entered metrics
+  that meet that level's published target). They change no highlight or target number.
 
   Level status (documented in README):
     Meets targets        the level passes the existing highlight rule (logic.js).
     Close                not highlighted, at least one compared tool meets its published
                          target and at least one is below it (partly met).
     Below targets        compared tools exist there and none meets.
-    Needs more numbers   published targets exist but too few of your numbers could be
+    Needs more metrics   published targets exist but too few of your metrics could be
                          compared (not entered, or fewer tools than the rule needs).
     No published target  the source has no classifiable target for any tool at that level.
   Next step: the nearest level above the headline level that has a number below target
@@ -46,6 +47,34 @@
     return met ? ST.CLOSE : ST.BELOW;
   }
   const levels = (read) => read.categories.map(c => ({ key: c.key, label: SHORT[c.key], status: levelStatus(read, c) }));
+
+  // Match percentage: share of entered metrics that meet this level's existing published
+  // target (the same guideline comparisons already used for status). Height and weight are
+  // never counted. Missing benchmarks stay missing (not treated as misses). This does not
+  // change the highlight rule or rank levels.
+  const MATCH_DISC = "These percentages are estimates based only on your metrics. They don't account for grades, film, coach evaluations or anything else, and they aren't a guarantee of recruitment.";
+  function matchShare(read) {
+    const minTools = read.kind === "pitching" ? 1 : 2;
+    const enough = read.categories.some(c => c.compared.length >= minTools);
+    const levels = read.categories.map(c => {
+      const of = c.compared.length;
+      const met = c.compared.filter(k => c.tools[k].status === S.MEETS).length;
+      if (!enough) return { key: c.key, label: SHORT[c.key], show: false, reason: "not-enough" };
+      if (of === 0) {
+        const hasTarget = read.toolKeys.some(k => {
+          const t = c.tools[k];
+          return t && t.status !== S.NO_BENCH && t.status !== S.REF_ONLY;
+        });
+        return { key: c.key, label: SHORT[c.key], show: false, reason: hasTarget ? "not-enough-here" : "no-target" };
+      }
+      if (of < minTools) return { key: c.key, label: SHORT[c.key], show: false, reason: "not-enough-here" };
+      return { key: c.key, label: SHORT[c.key], show: true, pct: Math.round((met / of) * 100), met, of };
+    });
+    const message = enough ? null : (read.kind === "pitching"
+      ? "Not enough metrics were entered to estimate a match percentage. Enter your fastball velocity to compare it with the published targets."
+      : "Not enough metrics were entered to estimate a match percentage. A position comparison needs at least 2 of your entered metrics that have a published target.");
+    return { enough, minTools, levels, message, disclaimer: MATCH_DISC };
+  }
 
   function headline(read) {
     const first = read.categories.find(c => c.highlighted);
@@ -177,6 +206,6 @@
     return { atLevel: true, filters, bands: keys, labels, top: h.level };
   }
 
-  return { ST, SHORT, LONG, POS, levelStatus, levels, headline, nextStep, movesUp, schoolsAtLevel, title, tabLabel, deSource,
+  return { ST, SHORT, LONG, POS, levelStatus, levels, matchShare, MATCH_DISC, headline, nextStep, movesUp, schoolsAtLevel, title, tabLabel, deSource,
     CAVEAT: "A benchmark comparison, not a prediction. Coaches also weigh game performance and roster needs." };
 });

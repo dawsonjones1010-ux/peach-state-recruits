@@ -85,7 +85,9 @@
     package names NextCommit as the one consistent provisional guideline family.
     Pitchers: the sourced table is velocity-only, so a pitcher read highlights categories whose
     listed fastball target is met and is always labeled "Velocity comparison only".
-    Categories are never ranked by number or percentage of matches.
+    Categories are never ranked by number or percentage of matches. A displayed match
+    percentage (share of entered metrics that meet a level's existing target) is presentation
+    only and does not change this rule.
   */
   const HIGHLIGHT_RULE = {
     guidelineFamily: "NC",

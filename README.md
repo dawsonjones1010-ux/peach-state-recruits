@@ -100,15 +100,17 @@ Runs entirely in the browser: no accounts, no API keys, no backend, nothing stor
   (`HIGHLIGHT_RULE`, a product heuristic, not a prediction) and typo-guard input ranges. No benchmark numbers.
 - `estimator/logic.js`: pure comparison functions (browser and Node).
 - `estimator/summary.js` (v13): pure presentation helpers for the results page (headline, next step,
-  level statuses, source-free wording). Adds no numbers and changes no calculation.
+  level statuses, match percentages, source-free wording). Percentages are derived from existing
+  comparisons and do not change the highlight rule or any target number.
 - `estimator/ui.js`: the stepped form and results.
 - Tests: `npm test` (logic + summary, `node --test`) and
   `node tests/estimator.ui.js <site-url> [screenshot-dir]` (Playwright, desktop 1440 and phone 390).
 
 Rules it follows: blank is unknown (never zero); guidelines (NextCommit, NCSA), sample means (BaseballPath,
 Flatground, Slammers) and college norms (Pitching Coach U, SEC study) stay separate; only NextCommit
-guidelines feed the provisional range; missing benchmarks stay missing; no scores, percentages or
-probabilities; height, weight and evidence quality never change the comparison.
+guidelines feed the provisional range; missing benchmarks stay missing; no offer odds, percentiles
+or growth forecasts; a match percentage shows the share of entered metrics that meet each level's
+existing published targets (height and weight are not counted and never change the comparison).
 
 ### Results page (v13)
 
@@ -119,16 +121,21 @@ Sources (the only place sources are named, plus the tag legend) and How this wor
 one tab per position.
 
 - **Headline**: the first level in that list that passes the existing `HIGHLIGHT_RULE`. Fallbacks:
-  "Your numbers don't fully meet any level's listed targets yet." (something compared, nothing passes)
-  or "More information needed for an overall range." (not enough comparable numbers).
+  "Your metrics don't fully meet any level's listed targets yet." (something compared, nothing passes)
+  or "More information needed for an overall range." (not enough comparable metrics).
 - **Level status** (from the existing per-tool statuses):
   Meets targets = passes the highlight rule; Close = at least one compared tool meets that level's
   published target and at least one is below; Below targets = compared tools exist and none meets;
-  Needs more numbers = targets exist but too few numbers could be compared; No published target = the
+  Needs more metrics = targets exist but too few metrics could be compared; No published target = the
   source has no classifiable target for any tool at that level.
-- **Next step**: the nearest level above the headline with a number below target (no headline: the level
-  with the fewest numbers below target, ties to the later level). Only that level's smallest gap relative
-  to its target (gap ÷ threshold) is shown, using the existing gap numbers.
+- **Match by level**: for each category, the share of the player's entered metrics that meet that
+  level's existing published target, shown as e.g. "D2: 100% match · 3 of 3 metrics". Only metrics
+  with a published target at that level are counted. If fewer than 2 position metrics (or a pitcher's
+  fastball) can be compared, the page says so instead of showing a percentage. A disclaimer sits
+  directly under the percentages. This does not change the headline or highlight rule.
+- **Next step**: the nearest level above the headline with a metric below target (no headline: the level
+  with the fewest metrics below target, ties to the later level). Only that level's smallest gap relative
+  to its target (gap ÷ threshold) is shown, using the existing gap figures.
 - **Share image**: a 1080x1920 PNG drawn on a canvas in the browser (logo, position, class, three numbers,
   headline level, @peachstaterecruits). Download link, plus the native share sheet when
   `navigator.canShare({ files })` is true. Nothing is uploaded.
