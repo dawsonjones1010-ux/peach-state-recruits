@@ -383,15 +383,83 @@
   function runScenario(idx){const patch={};const output=document.getElementById('scenarioResult'+idx);app.querySelectorAll(`[data-scenario^="${idx}:"]`).forEach(el=>{if(el.value!=='')patch[el.dataset.scenario.split(':')[1]]=Number(el.value);});try{const r=R.scenario(state.data,state.input,state.result.reads[idx],patch);const met=r.read.categories.filter(c=>c.highlighted);output.textContent='Hypothetical only: '+(met.length?'reaches the listed targets for '+met.map(c=>c.label).join(', '):'does not fully reach a listed category with these inputs')+'. Actual result unchanged.';}catch(error){output.textContent=error.message;}}
   function nextMovesHtml(read){return `<section class="pro-actions"><p class="pro-eyebrow">TURN A RESULT INTO ACTION</p><h3>Your next three moves</h3><ol>${R.actionPlan(state.input,read).map((a,k)=>`<li><span>${k+1}</span><div><h4>${esc(a.title)}</h4><p>${esc(a.detail)}</p>${a.href==='#edit-evidence'?'<button class="pro-text-button" type="button" data-edit-evidence>Edit measurement context</button>':a.href==='#target-workbench'?'<p class="lvl-note-sm">Use the target comparison above.</p>':`<a href="${esc(a.href)}">${a.href.includes('email')?'Open Email Coach':'Find colleges'}</a>`}</div></li>`).join('')}</ol><div class="pro-snapshot"><button type="button" class="btn btn-line" data-copy-snapshot="${state.result.reads.indexOf(read)}">Copy coach snapshot</button><textarea class="input" id="snapshotText${state.result.reads.indexOf(read)}" hidden readonly aria-label="Coach snapshot text"></textarea><p>No assigned-level claim is added to your email. Coaches see your actual measurements.</p></div></section>`;}
 
+  function titleHtml(read) {
+    const raw = U.title(read), pos = U.POS[read.position] || read.position;
+    const i = raw.toLowerCase().lastIndexOf(String(pos).toLowerCase());
+    if (i < 0) return esc(raw);
+    return esc(raw.slice(0, i)) + `<span class="lvl-accent">${esc(raw.slice(i, i + pos.length))}</span>` + esc(raw.slice(i + pos.length));
+  }
+  function metricIcon(key) {
+    const p = {
+      hitting: '<path d="M4.2 16.2l3 3 13-13-3-3-13 13zm14.3-11.6l1.9 1.9 1.6-1.6a1.3 1.3 0 10-1.9-1.9l-1.6 1.6z"/>',
+      running: '<circle cx="8" cy="12" r="6.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8 8.2V12l2.6 1.8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M16.2 7.5l2.2 2.2 3.2-1"/>',
+      throwing: '<circle cx="8.2" cy="12" r="4.1"/><path d="M13.2 9.2c2.4 1.4 4.4 1.4 7.2.2-2.2 2.6-4.6 3.6-7.4 3.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>',
+      pitching: '<circle cx="12" cy="12" r="3.2"/><path d="M12 3.6v2.4M12 18v2.4M3.6 12h2.4M18 12h2.4M6.2 6.2l1.7 1.7M16.1 16.1l1.7 1.7M6.2 17.8l1.7-1.7M16.1 7.9l1.7-1.7" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>'
+    };
+    return `<svg class="lvl-mbar-svg" viewBox="0 0 24 24" aria-hidden="true">${p[key] || p.hitting}</svg>`;
+  }
+  function ringHtml(read, m) {
+    const h = U.headline(read);
+    if (!m.enough || !h.level) return "";
+    const l = m.levels.find(x => x.key === h.level);
+    if (!l || !l.show) return "";
+    const r = 58, c = 2 * Math.PI * r, dash = (l.pct / 100) * c;
+    return `<div class="lvl-ring" data-level="${l.key}">
+      <svg viewBox="0 0 144 144" role="img" aria-label="${esc(l.label)}: ${l.pct}% match, ${l.met} of ${l.of} metrics">
+        <circle class="lvl-ring-track" cx="72" cy="72" r="${r}" fill="none" stroke-width="10"/>
+        <circle class="lvl-ring-val" cx="72" cy="72" r="${r}" fill="none" stroke-width="10" stroke-linecap="round" stroke-dasharray="${dash.toFixed(2)} ${c.toFixed(2)}" transform="rotate(-90 72 72)"/>
+      </svg>
+      <div class="lvl-ring-caption"><b>${l.pct}%</b><span>${esc(l.label)}</span><small>match</small></div>
+    </div>`;
+  }
   function matchHtml(read) {
     const m = U.matchShare(read);
-    const rows = m.enough ? `<ol class="lvl-match-list">${m.levels.map(l => {
+    const h = U.headline(read);
+    const rows = m.enough ? `<div class="lvl-fit-row">${ringHtml(read, m)}<ol class="lvl-match-list">${m.levels.map(l => {
+      const hl = h.level && l.key === h.level;
       const detail = l.show ? `<span class="lvl-match-pct">${l.pct}% match</span><small>${l.met} of ${l.of} metrics</small>`
         : `<span class="lvl-match-na">${l.reason === "no-target" ? "No published target" : "Needs more metrics"}</span>`;
-      return `<li data-level="${l.key}"${l.show ? ` data-pct="${l.pct}"` : ""}><b>${esc(l.label)}</b>${detail}</li>`;
-    }).join("")}</ol>
+      return `<li data-level="${l.key}"${l.show ? ` data-pct="${l.pct}"` : ""}${hl ? ' class="is-hl"' : ""}><b>${esc(l.label)}</b>${detail}</li>`;
+    }).join("")}</ol></div>
       <p class="lvl-match-disc">${esc(m.disclaimer)}</p>` : `<p class="lvl-match-need">${esc(m.message)}</p>`;
-    return `<section class="lvl-match" aria-label="Match by level"><h3>Match by level</h3>${rows}</section>`;
+    return `<section class="lvl-match" aria-label="Your college fit"><p class="lvl-pill-h">Your college fit</p>${rows}</section>`;
+  }
+  function outlookHtml(read) {
+    const h = U.headline(read), o = U.outlook(read);
+    const gaps = o.gaps && o.gaps.length ? `<ul class="lvl-rec-gaps">${o.gaps.map(g => `<li>${esc(g.text)}</li>`).join("")}</ul>` : (o.follow ? `<p class="lvl-rec-follow">${esc(o.follow)}</p>` : "");
+    return `<section class="lvl-outlook lvl-head-card" aria-label="Your level outlook">
+      <p class="lvl-pill-h">Your level outlook</p>
+      <p class="lvl-head">${esc(h.text)}</p>
+      ${gaps}
+      <p class="lvl-head-sup">${esc(h.support)}</p>
+      <p class="lvl-head-cav">${esc(U.CAVEAT)}</p>
+    </section>`;
+  }
+  function metricsHtml(read) {
+    const s = U.metricSummary(read);
+    if (!s.bars.length) return `<section class="lvl-msum" aria-label="Your metrics summary"><p class="lvl-pill-h">Your metrics summary</p><p class="lvl-msum-need">No entered metrics could be compared with a published target yet.</p></section>`;
+    const rows = s.bars.map(b => {
+      const w = Math.round(b.fill * 100);
+      return `<article class="lvl-mbar" data-tool="${esc(b.key)}" data-status="${b.status}">
+        <span class="lvl-mbar-ico">${metricIcon(b.key)}</span>
+        <div class="lvl-mbar-body">
+          <div class="lvl-mbar-top"><b>${esc(b.label)} ${esc(b.valueText)}</b><span>target ${esc(b.targetText)}</span><em>${b.status}</em></div>
+          <div class="lvl-mbar-track" aria-hidden="true"><span class="lvl-mbar-fill" style="width:${w}%"></span></div>
+        </div>
+      </article>`;
+    }).join("");
+    return `<section class="lvl-msum" aria-label="Your metrics summary">
+      <p class="lvl-pill-h">Your metrics summary</p>
+      <p class="lvl-msum-k">Compared with listed ${esc(s.levelLabel)} targets.</p>
+      ${rows}
+    </section>`;
+  }
+  function how3Html() {
+    return `<ol class="lvl-how3" aria-label="How it works">
+      <li><span>1</span><div><b>Enter your metrics</b><small>Add the measurements you have for your position.</small></div></li>
+      <li><span>2</span><div><b>See your match by level</b><small>Each percentage is the share of your entered metrics that meet that level's published target.</small></div></li>
+      <li><span>3</span><div><b>Take your next steps</b><small>Email a coach, find schools or work on a listed gap.</small></div></li>
+    </ol>`;
   }
 
   function readHtml(read, idx) {
@@ -420,14 +488,15 @@
     const compare = `<p class="lvl-note-sm">These are averages of researched groups, not pass/fail lines. Being below an average doesn't rule you out. Each group is kept separate.</p>
       ${read.panels.map(panelHtml).join("")}${collegeHtml(read.college)}${idx === 0 ? advancedHtml() : ""}`;
     return `<section class="lvl-read" aria-labelledby="read${idx}" data-read="${idx}">
-      <h2 class="lvl-res-title" id="read${idx}" tabindex="-1">${esc(U.title(read))}</h2>
-      <div class="lvl-head-card">
-        <p class="lvl-head-k">Your benchmark snapshot${read.kind === "pitching" ? ` <span class="lvl-flag">Velocity comparison only</span>` : ""}</p>
-        <p class="lvl-head">${esc(h.text)}</p>
-        <p class="lvl-head-sup">${esc(h.support)}</p>
-        <p class="lvl-head-cav">${esc(U.CAVEAT)}</p><p class="pro-source-note">Seven-category targets: <a href="https://www.nextcommit.ai/downloads/college-baseball-recruiting-standards-by-division.pdf" target="_blank" rel="noopener">NextCommit</a>. These publisher targets are one reference; the NCSA cross-check below stays separate.</p>
+      <div class="lvl-board">
+        <h2 class="lvl-res-title" id="read${idx}" tabindex="-1">${titleHtml(read)}</h2>
+        ${read.kind === "pitching" ? `<p class="lvl-flag">Velocity comparison only</p>` : ""}
+        ${matchHtml(read)}
+        ${outlookHtml(read)}
+        ${metricsHtml(read)}
+        ${how3Html()}
+        <p class="pro-source-note">Seven-category targets: <a href="https://www.nextcommit.ai/downloads/college-baseball-recruiting-standards-by-division.pdf" target="_blank" rel="noopener">NextCommit</a>. These publisher targets are one reference; the NCSA cross-check below stays separate.</p>
       </div>
-      ${matchHtml(read)}
       ${reportOverview(read, idx)}
       ${movesHtml(read)}
       ${oneTapHtml(read, idx)}

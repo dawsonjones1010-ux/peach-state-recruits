@@ -5,7 +5,7 @@ import os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from mobile_menu import mobile_menu
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-V = "38"
+V = "39"
 BASE = "https://dawsonjones1010-ux.github.io/peach-state-recruits/"
 
 NAV = [('players.html', 'Players'), ('recruiting-roadmap.html', 'Start Here'), ('find-my-level.html', 'Find My Level'), ('colleges.html', 'Colleges'), ('email-coach.html', 'Email Coach'), ('my-recruiting.html', 'My Recruiting'), ('index.html#packages', 'Packages')]

@@ -115,3 +115,48 @@ test("too few entered metrics: no misleading percentage", () => {
   assert.equal(p.minTools, 1);
   assert.equal(pctRow(runFilled({ primary: "P", metrics: { maxFb: 90 } }).reads[0]), "Power D1: 0% (0 of 1)|Mid-major D1: 100% (1 of 1)|Lower D1: 100% (1 of 1)|D2: 100% (1 of 1)|D3: 100% (1 of 1)|NAIA: 100% (1 of 1)|JUCO: 100% (1 of 1)");
 });
+
+
+test("outlook names the headline and each metric below the next level's target", () => {
+  const rd = runFilled({ primary: "CF", metrics: { maxEv: 94, sixty: 6.75, ofVelo: 88 } }).reads[0];
+  const o = U.outlook(rd);
+  assert.equal(o.level, "mid");
+  assert.equal(o.nextLevel, "p4");
+  assert.match(o.text, /meet the listed mid-major D1 targets/);
+  assert.match(o.text, /Your 60-yard 6\.75 s is slower than the Power D1 target of 6\.70 s/);
+  assert.equal(o.gaps.length, 1);
+  assert.doesNotMatch(o.text, /odds|guarantee|numbers/i);
+
+  const p = U.outlook(runFilled({ primary: "P", metrics: { maxFb: 90 } }).reads[0]);
+  assert.equal(p.level, "mid");
+  assert.match(p.text, /fastball meets the listed mid-major D1 velocity target/);
+  assert.match(p.text, /Your fastball 90 mph is 2 mph short of the Power D1 target of 92 mph/);
+});
+
+test("metric summary bars use headline targets; height, weight and unused stats are omitted", () => {
+  const metrics = { maxEv: 94, sixty: 6.75, ofVelo: 88 };
+  const a = U.metricSummary(runFilled({ primary: "CF", heightIn: 64, weightLb: 130, metrics }).reads[0]);
+  const b = U.metricSummary(runFilled({ primary: "CF", heightIn: 76, weightLb: 210, metrics: Object.assign({ avgEv: 88, thirty: 3.9, avg: .400 }, metrics) }).reads[0]);
+  assert.equal(a.level, "mid");
+  assert.deepEqual(a.bars.map(x => x.key), ["hitting", "running", "throwing"]);
+  assert.deepEqual(a.bars.map(x => x.status), ["MEETS", "MEETS", "MEETS"]);
+  assert.ok(a.bars.every(x => x.fill === 1));
+  assert.equal(a.bars[0].value, 94);
+  assert.ok(a.bars[0].targetText);
+  assert.deepEqual(a.bars.map(x => [x.key, x.value, x.threshold, x.status]), b.bars.map(x => [x.key, x.value, x.threshold, x.status]));
+  assert.ok(!a.bars.some(x => /height|weight|gpa|academic|physical/i.test(x.label + x.key)));
+
+  const p = U.metricSummary(runFilled({ primary: "P", metrics: { maxFb: 90 } }).reads[0]);
+  assert.deepEqual(p.bars.map(x => x.key), ["pitching"]);
+  assert.equal(p.bars[0].status, "MEETS");
+  assert.equal(p.bars[0].value, 90);
+});
+
+test("too few metrics: no match percentage; bars only include scored entered metrics", () => {
+  const rd = runFilled({ primary: "CF", metrics: { maxEv: 94 } }).reads[0];
+  const m = U.matchShare(rd);
+  assert.equal(m.enough, false);
+  const s = U.metricSummary(rd);
+  assert.ok(s.bars.every(b => b.key === "hitting" && b.value === 94));
+  assert.ok(!s.bars.some(b => /height|weight|gpa/i.test(b.label + b.key)));
+});

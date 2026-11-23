@@ -1,7 +1,8 @@
 /*
   Find My Level: presentation summary (v13).
   Pure functions that turn an existing logic.js read into the short main-view answer:
-  headline, next step, one status per level, and a match percentage per level.
+  headline, next step, one status per level, a match percentage per level,
+  a recommendation outlook, and per-metric bars versus a listed target.
   Percentages are derived from the read's existing statuses (share of entered metrics
   that meet that level's published target). They change no highlight or target number.
 
@@ -13,10 +14,13 @@
     Needs more metrics   published targets exist but too few of your metrics could be
                          compared (not entered, or fewer tools than the rule needs).
     No published target  the source has no classifiable target for any tool at that level.
-  Next step: the nearest level above the headline level that has a number below target
-  (no headline: the level with the fewest numbers below target; ties go to the later
+  Next step: the nearest level above the headline level that has a metric below target
+  (no headline: the level with the fewest metrics below target; ties go to the later
   level in the list). Of that level's gaps, only the smallest relative to its target
   (gap / threshold) is shown.
+  Outlook / metric bars: derived from the same comparisons. Bars use the headline
+  level's existing targets (or the next-step level if there is no headline). Height,
+  weight and GPA are never included.
 */
 (function (root, factory) {
   const api = factory(typeof module === "object" && module.exports ? require("./logic.js") : root.PSRLevel);
@@ -190,6 +194,74 @@
   }
 
 
+
+  const GAP_NAME = (t, k) => k === "hitting" ? "exit velocity" : k === "running" ? "60-yard" : k === "pitching" ? "fastball" : /pop/i.test(t.metric || "") ? "pop time" : "throw";
+  const tgtFmt = (t) => t.unit === "seconds" ? t.threshold.toFixed(2) + " s" : t.threshold + " mph";
+
+  function gapItems(c, read) {
+    return read.toolKeys.filter(k => c.tools[k].status === S.BELOW && c.compared.includes(k)).map(k => {
+      const t = c.tools[k];
+      const name = GAP_NAME(t, k);
+      const you = fmt(t);
+      const tgt = tgtFmt(t);
+      const mid = t.unit === "seconds" ? "is slower than" : `is ${t.gap} mph short of`;
+      return { tool: k, name, value: t.value, threshold: t.threshold, unit: t.unit,
+        text: `Your ${name} ${you} ${mid} the ${SHORT[c.key]} target of ${tgt}.` };
+    });
+  }
+
+  // Recommendation copy from the headline and any entered metrics that are below
+  // the next level's existing target. No odds or guarantee language.
+  function outlook(read) {
+    const h = headline(read), cats = read.categories;
+    let target = null, follow = null;
+    if (h.level) {
+      const i = cats.findIndex(c => c.key === h.level);
+      for (let j = i - 1; j >= 0 && !target; j--) if (gapItems(cats[j], read).length) target = cats[j];
+      if (!target && i === 0) follow = "You meet the highest listed level. Keep your metrics current and get them in front of coaches.";
+    } else {
+      let best = null;
+      cats.forEach(c => { const n = gapItems(c, read).length; if (!n) return; if (!best || n <= best.n) best = { c, n }; });
+      if (best) target = best.c;
+    }
+    const gaps = target ? gapItems(target, read) : [];
+    const parts = [h.text];
+    if (gaps.length) parts.push(gaps.map(g => g.text).join(" "));
+    else if (follow) parts.push(follow);
+    return { headlineText: h.text, level: h.level, nextLevel: target ? target.key : null, nextLabel: target ? SHORT[target.key] : null, gaps, follow, text: parts.join(" ") };
+  }
+
+  // Bars for entered metrics that already have a usable comparison at the headline
+  // level (or the next-step level if there is no headline). Fill is a visual of
+  // value vs that existing threshold only; it is not a new benchmark or a labeled %.
+  function metricSummary(read) {
+    const h = headline(read);
+    let cat = h.level ? read.categories.find(c => c.key === h.level) : null;
+    if (!cat) {
+      const n = nextStep(read);
+      cat = (n && n.level && read.categories.find(c => c.key === n.level)) || read.categories.find(c => c.compared.length) || null;
+    }
+    if (!cat) return { level: null, levelLabel: null, bars: [] };
+    const bars = cat.compared.map(k => {
+      const t = cat.tools[k];
+      const meets = t.status === S.MEETS;
+      let fill = 1;
+      if (!meets && t.value != null && t.threshold) {
+        fill = t.direction === "higher_is_better" ? t.value / t.threshold : t.threshold / t.value;
+        fill = Math.max(0, Math.min(1, fill));
+      }
+      return {
+        key: k, label: t.metric || k, value: t.value, unit: t.unit, valueText: fmt(t),
+        threshold: t.threshold, band: t.band,
+        targetText: t.band || tgtFmt(t),
+        status: meets ? "MEETS" : "BELOW",
+        direction: t.direction,
+        fill: meets ? 1 : fill
+      };
+    });
+    return { level: cat.key, levelLabel: SHORT[cat.key], bars };
+  }
+
   // Schools and camps linked from the result: the headline (meets-targets) level and below.
   // CLOSE is not a match. Finder filters use directory labels (all of D1 is "NCAA D1");
   // the visible label keeps the actual tier, so Power/mid-major are not named unless met.
@@ -206,6 +278,6 @@
     return { atLevel: true, filters, bands: keys, labels, top: h.level };
   }
 
-  return { ST, SHORT, LONG, POS, levelStatus, levels, matchShare, MATCH_DISC, headline, nextStep, movesUp, schoolsAtLevel, title, tabLabel, deSource,
+  return { ST, SHORT, LONG, POS, levelStatus, levels, matchShare, MATCH_DISC, headline, nextStep, outlook, metricSummary, movesUp, schoolsAtLevel, title, tabLabel, deSource,
     CAVEAT: "A benchmark comparison, not a prediction. Coaches also weigh game performance and roster needs." };
 });

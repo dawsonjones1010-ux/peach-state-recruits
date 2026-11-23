@@ -100,9 +100,10 @@ Runs entirely in the browser: no accounts, no API keys, no backend, nothing stor
   (`HIGHLIGHT_RULE`, a product heuristic, not a prediction) and typo-guard input ranges. No benchmark numbers.
 - `estimator/logic.js`: pure comparison functions (browser and Node).
 - `estimator/summary.js` (v13): pure presentation helpers for the results page (headline, next step,
-  level statuses, match percentages, source-free wording). Percentages are derived from existing
-  comparisons and do not change the highlight rule or any target number.
-- `estimator/ui.js`: the stepped form and results.
+  level statuses, match percentages, recommendation outlook, metric bars, source-free wording).
+  Percentages and bars are derived from existing comparisons and do not change the highlight rule
+  or any target number.
+- `estimator/ui.js`: the stepped form and the results board (college fit, outlook, metrics summary).
 - Tests: `npm test` (logic + summary, `node --test`) and
   `node tests/estimator.ui.js <site-url> [screenshot-dir]` (Playwright, desktop 1440 and phone 390).
 
@@ -114,11 +115,18 @@ existing published targets (height and weight are not counted and never change t
 
 ### Results page (v13)
 
-Main view, in order: "Your results as a <position>.", a headline, a Next step card, a short CTA, a
-"Share my result" button and one row with every level (Power D1, Mid-major D1, Lower D1, D2, D3, NAIA,
-JUCO). Detail sits in four closed sections: All levels in detail, How you compare with committed players,
-Sources (the only place sources are named, plus the tag legend) and How this works. Two-way players get
-one tab per position.
+Main view, in order: "Your results as a <position>." on a dark results board; Your college fit (a
+radial ring for the headline level's match percentage, plus a tile for each of Power D1, Mid-major
+D1, Lower D1, D2, D3, NAIA and JUCO); the exact match-percentage disclaimer under those tiles;
+Your level outlook (the headline and any entered metrics below the next level's existing target);
+Your metrics summary (horizontal bars for entered, scored metrics versus the headline level's
+published target, with MEETS/BELOW — height, weight and GPA are never shown); a 3-step How it works
+strip (enter metrics, see your match by level, take next steps); then the existing next-step card,
+CTA, "Share my result" button and one status row with every level. The college-fit chart is not a
+donut that splits 100% across levels, because each percentage is independent. Detail sits in four
+closed sections: All levels in detail, How you compare with committed players, Sources (the only
+place sources are named, plus the tag legend) and How this works. Two-way players get one tab per
+position. Pitcher results stay labeled "Velocity comparison only".
 
 - **Headline**: the first level in that list that passes the existing `HIGHLIGHT_RULE`. Fallbacks:
   "Your metrics don't fully meet any level's listed targets yet." (something compared, nothing passes)
