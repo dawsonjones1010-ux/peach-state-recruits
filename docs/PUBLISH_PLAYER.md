@@ -42,7 +42,7 @@ players-in/colin-lopez/
 
 Aliases accepted: `title` / `headline`, `writeup` / `report`, `positions` / `position`, `travelTeam` / `team`, `cityState` / `location`, `igHandle` / `playerInstagram`.
 
-- **package** controls the clip cap only and is not shown on the site: Basic = 3, Pro = 8, Elite = unlimited.
+- **package** controls the clip cap only and is not shown on the site: Basic = 3, Pro = 8, Elite = unlimited, Free = 3.
 - **report** is the approved write-up. The pipeline does not edit it (a trailing `#peachstaterecruits` is stripped).
 - **coachReport** is optional. If omitted, a one-line Profile entry is built from the structured fields only (name, year, position, school, team, location, height, weight). No scouting language is invented.
 - Height / weight are normalized to `5'6"` and `150 lb`.
@@ -82,7 +82,7 @@ Run the full suites (`npm test`, `npm run test:dom`, `npm run test:imports`, and
 
 ## What the agent should do
 
-1. Confirm the owner approved the feature and which package they bought (Basic 3 / Pro 8 / Elite unlimited).
+1. Confirm the owner approved the feature and which package they bought (Basic 3 / Pro 8 / Elite unlimited / Free 3).
 2. Put the approved write-up, cover, and clips in `players-in/<slug>/`. Do not invent copy or edit the media.
 3. `bin/add-player.sh --dry-run <slug>` and fix any gate errors.
 4. `bin/add-player.sh <slug>`. If there is no database URL, apply the printed SQL via the Supabase MCP `execute_sql` (project `eqghenbqsbvifzkzkdwf`), then `bin/add-player.sh --resume-after-sql <slug>`.

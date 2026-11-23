@@ -15,7 +15,7 @@ from zoneinfo import ZoneInfo
 SITE = "https://dawsonjones1010-ux.github.io/peach-state-recruits"
 ET = ZoneInfo("America/New_York")
 SLUG_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
-CLIP_LIMITS = {"basic": 3, "pro": 8, "elite": None}
+CLIP_LIMITS = {"basic": 3, "pro": 8, "elite": None, "free": 3}
 VIDEO_EXT = {".mp4", ".m4v", ".mov", ".webm"}
 IMAGE_EXT = {".png", ".jpg", ".jpeg", ".webp", ".tif", ".tiff"}
 FORBIDDEN = {
@@ -223,7 +223,7 @@ def validate_one(slug: str, root: Path | None = None) -> list[str]:
         problems.append(f"{slug}: need at least one of school, team, or location")
     pkg = meta.get("package")
     if pkg and pkg not in CLIP_LIMITS:
-        problems.append(f"{slug}: package must be basic, pro, or elite (got {raw.get('package')!r})")
+        problems.append(f"{slug}: package must be basic, pro, elite, or free (got {raw.get('package')!r})")
     gy = meta.get("gradYear")
     if gy is not None and not isinstance(gy, int):
         problems.append(f"{slug}: gradYear must be a 4-digit year (got {gy!r})")

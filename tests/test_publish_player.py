@@ -75,6 +75,22 @@ class GateTests(unittest.TestCase):
         _write_input(self.tmp, "elite-player", _meta(package="elite"), clips=12)
         self.assertEqual(pp.validate_slugs(["elite-player"], self.tmp), [])
 
+    def test_free_allows_three_rejects_four(self):
+        _write_input(self.tmp, "free-player", _meta(package="Free"), clips=3)
+        self.assertEqual(pp.validate_slugs(["free-player"], self.tmp), [])
+        src = pp.load_input("free-player", self.tmp)
+        self.assertEqual(src["meta"]["package"], "free")
+        shutil.rmtree(self.tmp / "free-player")
+        _write_input(self.tmp, "free-player", _meta(package="free"), clips=4)
+        problems = pp.validate_slugs(["free-player"], self.tmp)
+        self.assertTrue(any("at most 3" in p for p in problems), problems)
+
+    def test_unknown_package_mentions_free(self):
+        _write_input(self.tmp, "odd-player", _meta(package="kit"), clips=1)
+        problems = pp.validate_slugs(["odd-player"], self.tmp)
+        joined = " ".join(problems)
+        self.assertIn("basic, pro, elite, or free", joined)
+
     def test_missing_required_and_cover(self):
         _write_input(self.tmp, "bad-player", {"name": "X", "package": "basic"}, clips=0, cover=False)
         problems = pp.validate_slugs(["bad-player"], self.tmp)
@@ -121,6 +137,7 @@ class JsonAndSqlTests(unittest.TestCase):
         self.assertEqual(data[0]["slug"], "colin-lopez")
         self.assertEqual(len(data[0]["videos"]), 3)
         self.assertEqual(data[0]["coverImage"], "images/players/colin-lopez.jpg")
+        self.assertNotIn("package", data[0])
 
     def test_upsert_moves_to_front_and_keeps_others(self):
         path = self.tmp / "players.json"
@@ -146,6 +163,15 @@ class JsonAndSqlTests(unittest.TestCase):
         # Applying the statement twice is safe: UPDATE-or-INSERT then replace file videos.
         self.assertIn("BEGIN;", sql)
         self.assertIn("COMMIT;", sql)
+
+    def test_free_package_is_not_written_to_public_entry(self):
+        _write_input(self.tmp, "juan-duque", _meta(name="Juan Duque", package="free", title="JUAN DUQUE"), clips=3)
+        e = pp.build_entry("juan-duque", pp.load_input("juan-duque", self.tmp))
+        self.assertNotIn("package", e)
+        blob = json.dumps(e)
+        self.assertNotRegex(blob, r'"package"')
+        sql = pp.emit_sql([e])
+        self.assertNotRegex(sql, r"\bpackage\b")
 
     def test_coach_report_is_factual_when_omitted(self):
         e = pp.build_entry("colin-lopez", pp.load_input("colin-lopez", self.tmp))
