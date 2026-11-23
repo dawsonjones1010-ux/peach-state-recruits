@@ -111,7 +111,9 @@
       cVelo: "Catcher throwing velocity", pop: "Pop time", avg: "Batting average", obp: "On-base percentage", slg: "Slugging",
       era: "ERA", whip: "WHIP", strikePct: "Strike rate",
       fbSpin: "Fastball spin", bbSpin: "Breaking-ball spin", extension: "Extension", ivb: "Induced vertical break", batSpeed: "Bat speed",
-      ip: "Innings pitched", so: "Strikeouts", bb: "Walks", bbVelo: "Breaking-ball velocity", chVelo: "Changeup velocity"
+      ip: "Innings pitched", so: "Strikeouts", bb: "Walks", bbVelo: "Breaking-ball velocity", chVelo: "Changeup velocity",
+      fpsPct: "First-pitch strike %", zonePct: "Zone %", bbWhiff: "Breaking-ball whiff %", chWhiff: "Changeup whiff %",
+      pa: "Plate appearances", hk: "Strikeouts (hitting)", hbb: "Walks (hitting)"
     };
     Object.keys(L).forEach(k => range(k, m[k], k, L[k]));
     if (isNum(m.typFb) && isNum(m.maxFb) && m.typFb > m.maxFb) err("typFb", "Typical game fastball can't be higher than your max fastball. Please correct one of them.");
@@ -121,6 +123,8 @@
     if (isNum(m.bbVelo) && isNum(m.maxFb) && m.bbVelo >= m.maxFb) err("bbVelo", "Breaking-ball velocity should be slower than your max fastball. Please check it.");
     if (isNum(m.chVelo) && isNum(m.maxFb) && m.chVelo >= m.maxFb) err("chVelo", "Changeup velocity should be slower than your max fastball. Please check it.");
     if ((isNum(m.so) || isNum(m.bb)) && !isNum(m.ip)) err("ip", "Add innings pitched so strikeouts and walks can be turned into per-9 rates.");
+    if ((isNum(m.hk) || isNum(m.hbb)) && !isNum(m.pa)) err("pa", "Add plate appearances so strikeouts and walks can be turned into rates.");
+    if (isNum(m.pa) && isNum(m.hk) && isNum(m.hbb) && m.hk + m.hbb > m.pa) err("hk", "Strikeouts plus walks can't be more than your plate appearances.");
     if (isNum(m.thirty) && isNum(m.sixty) && m.thirty >= m.sixty) err("thirty", "Your 30-yard time can't be slower than your 60-yard time.");
 
     const meta = input.meta || {};

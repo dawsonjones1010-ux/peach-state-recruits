@@ -5,18 +5,17 @@ const P = require("../estimator/pitcher.js");
 
 const doc = { throws: "R", gradYear: 2027, metrics: { typFb: 87, maxFb: 90, era: 2.10, whip: 1.05, k9: 10.5, bb9: 2.4, strikePct: 65, repertoire: ["Four-seam fastball", "Slider"] }, meta: { source: "event", date: new Date(Date.now() - 30 * 864e5).toISOString().slice(0, 10) }, methods: {} };
 
-test("worked example from the standards doc lands on Low-Major D1", () => {
+test("worked example from the standards doc: v3 lands on Mid-Major D1 (velocity in range, elite command)", () => {
   const r = P.evaluate(doc, { bbVelo: 78 });
   const s = Object.fromEntries(r.levels.map(l => [l.key, l.score]));
-  assert.equal(r.primary, "low");
-  assert.ok(s.p4 >= 25 && s.p4 <= 45, "P4 is a long shot (" + s.p4 + ")");
-  assert.ok(s.mid >= 70 && s.mid < 85, "Mid-major is possible (" + s.mid + ")");
-  assert.ok(s.low >= 85, "Low-major is strong (" + s.low + ")");
-  assert.ok(s.juco >= 85);
-  assert.equal(r.stretch, "mid");
-  assert.ok(!r.also.includes("mid"), "stretch target not repeated as an additional opportunity");
-  assert.equal(r.priorities[0].key, "sit");
-  assert.equal(r.priorities[0].goal, "89 mph");
+  assert.equal(r.primary, "mid");
+  assert.ok(s.p4 < 65, "Power 4 is well short (" + s.p4 + ")");
+  assert.ok(s.mid >= 85 && s.mid < 90, "Mid-major is a competitive fit (" + s.mid + ")");
+  assert.ok(s.low >= 90);
+  assert.equal(r.stretch, null, "P4 under 65 is not a stretch");
+  assert.match(r.stretchReason, /Not established/);
+  assert.ok(!r.also.includes("mid"), "primary not repeated as an additional opportunity");
+  assert.ok(!r.also.includes("juco"), "JUCO is reported separately");
 });
 
 test("left-handers are measured against the LHP ranges", () => {
@@ -57,7 +56,8 @@ test("great stats can't carry a slow fastball at a high level (velocity gate)", 
 
 test("secondary pitches, pitch shape and projection are never scored", () => {
   const r = P.evaluate(Object.assign({}, doc, { metrics: Object.assign({}, doc.metrics, { fbSpin: 2400, ivb: 18 }) }));
-  ["pitchShape", "secondary", "projection"].forEach(k => assert.equal(r.categories.find(c => c.key === k).score, null));
+  ["characteristics", "secondary"].forEach(k => assert.equal(r.categories.find(c => c.key === k).score, null));
+  assert.equal(r.categories.find(c => c.key === "projection"), undefined, "projection removed in v3");
 });
 
 test("confidence reflects completeness, not talent", () => {

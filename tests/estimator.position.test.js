@@ -15,12 +15,19 @@ test("meeting a target exactly scores 85, each step better adds 5, each step sho
   assert.equal(F.metricScore({ value: 2.1, threshold: 2.05, direction: "lower_is_better", unit: "seconds", metric: "Pop time to 2B" }), 75);
 });
 
-test("a CF with 94 / 6.75 / 88 is a mid-major primary target with Power 4 as the stretch", () => {
+test("a CF with 94 / 6.75 / 88 is a Power 4 primary target (v3: no weakest-tool multiplier)", () => {
   const f = run("CF", { maxEv: 94, sixty: 6.75, ofVelo: 88 });
-  assert.equal(f.primary, "mid");
-  assert.equal(f.stretch, "p4");
-  assert.ok(f.levels.find(l => l.key === "p4").score < F.STRONG);
-  assert.equal(f.priorities[0].tool, "running");
+  assert.equal(f.primary, "p4");
+  assert.equal(f.stretch, null);
+  assert.match(f.stretchReason, /top category/);
+  assert.equal(f.priorities[0].tool, "running", "the 60 is the only tool short of the Power 4 target");
+});
+
+test("a core tool far below a level's line blocks it as the primary target", () => {
+  const f = run("SS", { maxEv: 100, sixty: 6.5, ifVelo: 78 });
+  const p4 = f.levels.find(l => l.key === "p4");
+  assert.equal(p4.coreOk, false);
+  assert.notEqual(f.primary, "p4");
 });
 
 test("fewer than two tools means no score, never a zero", () => {
@@ -35,9 +42,10 @@ test("positions weigh tools differently: speed matters more for a CF than a 1B",
   assert.ok(cf.levels.find(l => l.key === "p4").score < lf.levels.find(l => l.key === "p4").score);
 });
 
-test("a first baseman's 60 can lower his score but doesn't gate it", () => {
+test("a first baseman's 60 can lower his score but doesn't block a level", () => {
   const f = run("1B", { maxEv: 99, sixty: 7.4, ifVelo: 80 });
-  assert.ok(f.levels.find(l => l.key === "low").score >= F.STRONG);
+  assert.ok(f.levels.find(l => l.key === "low").score >= 85);
+  assert.equal(f.levels.find(l => l.key === "low").coreOk, true);
 });
 
 test("catchers are scored on pop time", () => {
@@ -50,7 +58,7 @@ test("game stats and projection are never scored; height and weight never count"
   const b = run("SS", { maxEv: 92, sixty: 6.9, ifVelo: 85 }, { heightIn: 66, weightLb: 150 });
   assert.deepEqual(a.levels.map(l => l.score), b.levels.map(l => l.score));
   assert.equal(a.categories.find(c => c.key === "performance").score, null);
-  assert.equal(a.categories.find(c => c.key === "projection").score, null);
+  assert.equal(a.categories.find(c => c.key === "projection"), undefined, "projection removed in v3");
 });
 
 test("what-if re-scores without touching the real read", () => {

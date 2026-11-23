@@ -15,11 +15,15 @@
   const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   const monthLabel = (iso) => { const d = new Date(iso); return isNaN(d) ? "" : `${MON[d.getMonth()]} ${d.getFullYear()}`; };
 
-  function entryFrom(input, levelKeys, now) {
+  // versions (v42): { model, benchmarks } stored with each entry so later reads know which scoring made it.
+  // History is append-only: an identical re-save only refreshes the last entry's time.
+  function entryFrom(input, levelKeys, now, versions) {
     const m = input.metrics || {}, metrics = {};
     TRACKED.forEach(([k]) => { if (typeof m[k] === "number" && isFinite(m[k])) metrics[k] = m[k]; });
     return { t: (now || new Date()).toISOString(), gradYear: input.gradYear || null, primary: input.primary || "", secondary: input.secondary || "",
-      throws: input.throws || "", bats: input.bats || "", metrics, levels: levelKeys || [] };
+      throws: input.throws || "", bats: input.bats || "", metrics, levels: levelKeys || [],
+      measured: (input.meta && /^\d{4}-\d{2}-\d{2}$/.test(input.meta.date || "")) ? input.meta.date : null,
+      model: versions && versions.model || null, benchmarks: versions && versions.benchmarks || null };
   }
   const same = (a, b) => a && b && a.primary === b.primary && a.secondary === b.secondary && JSON.stringify(a.metrics) === JSON.stringify(b.metrics);
 

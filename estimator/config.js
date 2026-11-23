@@ -128,7 +128,15 @@
     bbSpin:       { hard: [500, 3800], soft: [1500, 3200], unit: "rpm" },
     extension:    { hard: [3, 9],      soft: [5, 7.5],     unit: "ft" },
     ivb:          { hard: [-30, 30],   soft: [-5, 25],     unit: "inches" },
-    batSpeed:     { hard: [30, 100],   soft: [50, 85],     unit: "mph" }
+    batSpeed:     { hard: [30, 100],   soft: [50, 85],     unit: "mph" },
+    // v42 scoring engine v3 inputs (shown and used for confidence; none has a published level benchmark)
+    fpsPct:       { hard: [0, 100],    soft: [35, 85],     unit: "percent" },
+    zonePct:      { hard: [0, 100],    soft: [25, 75],     unit: "percent" },
+    bbWhiff:      { hard: [0, 100],    soft: [5, 70],      unit: "percent" },
+    chWhiff:      { hard: [0, 100],    soft: [5, 70],      unit: "percent" },
+    pa:           { hard: [0, 400],    soft: [1, 250],     unit: "plate appearances" },
+    hk:           { hard: [0, 300],    soft: [0, 120],     unit: "strikeouts" },
+    hbb:          { hard: [0, 300],    soft: [0, 120],     unit: "walks" }
   };
 
   const NOTE = "This compares your current metrics with published benchmarks. Coaches also evaluate game performance, defense, projection and roster needs. It does not predict an offer.";
