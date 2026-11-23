@@ -131,15 +131,19 @@
 
   function detailHtml(p) {
     const s = saved.get(p.id);
-    // A domain filled from memory (not yet confirmed) is only a hint: send people through a search
-    // for the school's athletics site instead of linking or restricting searches to a guess.
+    // Only link an athletics site we've confirmed. No search-engine links anywhere: every link goes
+    // straight to an official page.
     const siteOk = U.safeUrl(p.athletics_url) && !/not opened yet/i.test(p.review_note || "");
-    const athUrl = siteOk ? p.athletics_url : (U.safeUrl(p.athletics_url) ? "https://duckduckgo.com/?q=" + encodeURIComponent("\\" + p.name + " athletics") : null);
+    const athUrl = siteOk ? p.athletics_url : null;
     const links = [["Athletics site", athUrl], ["Baseball roster", p.roster_url], ["Schedule", p.schedule_url], ["Camps page", p.camps_url], ["Recruiting questionnaire", p.questionnaire_url], ["Baseball staff", p.staff_url], ["Majors / academic catalog", p.majors_url], ["School website", p.website_url]].filter(x => U.safeUrl(x[1]));
     // For any key page we haven't recorded, offer a one-tap link that opens the top search result for it.
     const site = siteOk ? U.host(p.athletics_url) : "";
-    const find = q => "https://duckduckgo.com/?q=" + encodeURIComponent("\\" + (site ? "site:" + site + " " : p.name + " ") + q);
-    const quick = [["Baseball roster", p.roster_url, "baseball roster"], ["Baseball coaches", p.staff_url, "baseball coaches staff directory"], ["Recruiting questionnaire", p.questionnaire_url, "baseball recruiting questionnaire"], ["Baseball camps", p.camps_url, "baseball camps"]].filter(x => !U.safeUrl(x[1]));
+    // PrestoSports sites all use the same baseball paths, so those pages can be linked directly.
+    const presto = /\.prestosports\.com$/i.test(site) ? "https://" + site + "/sports/bsb/" : "";
+    const quick = [["Baseball roster", p.roster_url, "roster"], ["Baseball coaches", p.staff_url, "coaches"], ["Baseball schedule", p.schedule_url, "schedule"]]
+      .filter(x => presto && !U.safeUrl(x[1])).map(([l, , path]) => [l, presto + path]);
+    const missing = ["roster", "coaches", "recruiting questionnaire", "camps"].filter((_, i) => !U.safeUrl([p.roster_url, p.staff_url, p.questionnaire_url, p.camps_url][i]));
+    const home = siteOk ? p.athletics_url : (U.safeUrl(p.website_url) ? p.website_url : null);
     const acad = [["Undergraduates", p.undergrad_enrollment != null ? Number(p.undergrad_enrollment).toLocaleString() : null], ["Admission rate", pct(p.admission_rate)], ["SAT (middle 50%)", range(p.sat_25, p.sat_75)], ["ACT (middle 50%)", range(p.act_25, p.act_75)], ["Graduation rate", pct(p.grad_rate)], ["Tuition, in-state", money(p.tuition_in_state)], ["Tuition, out-of-state", money(p.tuition_out_state)], ["Average net price", money(p.avg_net_price)]];
     const hasAcad = acad.some(a => a[1] != null);
     return `
@@ -179,7 +183,8 @@
           <section class="rc-panel">
             <h3>${links.length ? "Official links" : "Find their pages"}</h3>
             ${links.length ? `<div class="rc-links">${links.map(([l, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(l)}<span>${esc(U.host(u))}</span></a>`).join("")}</div>` : ""}
-            ${quick.length ? `<div class="rc-links rc-quick">${quick.map(([l, , q]) => `<a href="${esc(find(q))}" target="_blank" rel="noopener">${esc(l)}<span>${site ? "Searches " + esc(site) : "Opens the top search result"}</span></a>`).join("")}</div><p class="rc-small" style="margin:8px 0 0">${site ? "These open the best match on the school's official athletics site." : "These open the first search result. Check that it's the school's official athletics site."}</p>` : ""}
+            ${quick.length ? `<div class="rc-links rc-quick">${quick.map(([l, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(l)}<span>${esc(U.host(u))}</span></a>`).join("")}</div>` : ""}
+            ${missing.length && home ? `<p class="rc-small" style="margin:8px 0 0">Their ${esc(missing.length > 1 ? missing.slice(0, -1).join(", ") + " and " + missing[missing.length - 1] : missing[0])} ${missing.length > 1 ? "are" : "is"} on the <a class="rc-link" href="${esc(home)}" target="_blank" rel="noopener">${siteOk ? "official athletics site" : "school website"}</a>, under Baseball.</p>` : ""}
           </section>
         </aside>
       </div>`;

@@ -169,7 +169,7 @@
         <h3 class="lvl-subh">Velocity</h3>
         <div class="lvl-grid">${numField("maxFb", v)}${numField("typFb", v, { optional: true })}</div>
         <h3 class="lvl-subh">Season stats <span class="lvl-opt">optional, but they score your command and game performance</span></h3>
-        <div class="lvl-grid">${numField("ip", v, { optional: true })}${numField("so", v, { optional: true })}${numField("bb", v, { optional: true })}${numField("era", v, { optional: true })}${numField("whip", v, { optional: true })}${numField("strikePct", v, { optional: true })}</div>
+        <div class="lvl-grid">${numField("ip", v, { optional: true })}${numField("so", v, { optional: true })}${numField("bb", v, { optional: true })}${numField("era", v, { optional: true })}${numField("whip", v, { optional: true })}${numField("strikePct", v, { optional: true })}${select("pCompetition", "Level of competition", COMPETITION, state.input.metrics.pCompetition || "", v, { optional: true })}</div>
         <h3 class="lvl-subh">Secondary pitches <span class="lvl-opt">optional</span></h3>
         <fieldset class="lvl-field"><legend>Pitches you throw in games</legend><div class="lvl-chips">${PITCHES.map(p => `<label><input type="checkbox" data-rep="${esc(p)}" ${rep.includes(p) ? "checked" : ""}><span>${esc(p)}</span></label>`).join("")}</div></fieldset>
         <div class="lvl-grid">${select("bbType", "Main breaking ball", BB_TYPES, state.input.metrics.bbType || "", v, { optional: true })}${numField("bbVelo", v, { optional: true })}${numField("chVelo", v, { optional: true })}</div>
@@ -739,8 +739,9 @@
     if (!fit.enough) return `<div class="lvl-board lvl-pboard">${head}<section class="lvl-match"><p class="lvl-pill-h">Your pitcher evaluation</p><p class="lvl-match-need">${esc(fit.message)}</p></section></div>`;
     const anchor = fit.levels.find(l => l.key === (fit.primary || fit.closest)), stretch = fit.stretch ? fit.levels.find(l => l.key === fit.stretch) : null;
     const notes = [];
-    if (fit.derived.ip != null && PF.baseballInnings(fit.derived.ip) < 25) notes.push("Under 25 innings is a small sample. Your stats still count, but confidence is lower.");
-    notes.push("Stats are taken at face value. Strikeouts against weak competition mean less than fewer strikeouts against ranked teams, so a coach will adjust for who you faced.");
+    if (anchor.sampleWeight < 1) notes.push(`Small sample (${fit.derived.ip} IP): your stats count ${Math.round(anchor.sampleWeight * 100)}% toward command and game performance, and the rest is held at a neutral score. Full weight starts at 20 innings.`);
+    const comp = (COMPETITION.find(c => c[0] === i.metrics.pCompetition) || [])[1];
+    notes.push(comp ? `Stats are against ${comp.toLowerCase()} competition. They're scored at face value; a coach will weigh who you faced.` : "Stats are taken at face value. Strikeouts against weak competition mean less than fewer strikeouts against ranked teams, so a coach will adjust for who you faced. Add your level of competition above.");
     return `<div class="lvl-board lvl-pboard">${head}
         ${matchSection(fit, PF)}
         ${standoutsSection(fit)}
@@ -1156,7 +1157,7 @@
       if (k === "gradYear") i.gradYear = v ? parseInt(v, 10) : null;
       else if (k === "environment" || k === "method" || k === "grade") i.meta[k] = v;
       else if (k === "pitchDevice") i.methods.pitchDevice = v;
-      else if (k === "bbType" || k === "competition") i.metrics[k] = v;
+      else if (k === "bbType" || k === "competition" || k === "pCompetition") i.metrics[k] = v;
       else if (k.startsWith("m_")) i.methods[k.slice(2)] = v;
       else i[k] = v;
     });
@@ -1187,7 +1188,7 @@
       const p = L.parseEntry(state.raw[k], F[k].kind);
       if (p.error) { errors.push({ field: k, msg: `${F[k].label}: ${p.error}` }); i.metrics[k] = null; } else i.metrics[k] = p.value;
     });
-    if (!hasP()) { i.metrics.repertoire = []; i.metrics.bbType = ""; }
+    if (!hasP()) { i.metrics.repertoire = []; i.metrics.bbType = ""; i.metrics.pCompetition = ""; }
     if (!hasField()) i.metrics.competition = "";
     return errors;
   }

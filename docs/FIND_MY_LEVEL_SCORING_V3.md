@@ -73,17 +73,27 @@ performance 5/10/10/10/15/15/15, with secondary 20 and characteristics 10–15 r
 
 Final = clamp(weighted score − deduction, 0, 100). The unrounded value is kept internally; the display is rounded.
 
+## v45 changes (model 3.2.0)
+
+- **Small samples:** under 20 innings, command and game-performance scores are blended toward a neutral 85 in proportion to innings (10 IP = half weight). Without innings entered, stats count at face value and confidence reflects the missing sample.
+- **Pitcher competition level:** a new optional input. It's shown with the stats and never changes the score.
+- **Additional opportunities:** only the next category down from the target, when it scores 80+.
+- **Hitter weights:** each position's core tools now carry 50–70% of the score (table below).
+- **Stale pages:** `find-my-level.html` checks `version.json` (fetched with no-store) and reloads once with `?_v=` when a newer build is live. Bump `PSR_FML_V` in the page and `version.json` together on every release.
+- **Page tests without jsdom:** `npm run test:dom:chrome` (with the local server on :8098) runs all three jsdom suites unchanged in headless Chrome.
+
 ## Position players
 
 | Position | Hitting | Defense | Speed | Performance |
 |---|---|---|---|---|
-| C | 35 | 45 | 10 | 10 |
-| 1B | 65 | 15 | 10 | 10 |
-| 2B | 35 | 30 | 25 | 10 |
-| SS | 30 | 40 | 20 | 10 |
-| 3B | 45 | 35 | 10 | 10 |
-| CF | 35 | 30 | 25 | 10 |
-| LF / RF | 50 | 25 | 15 | 10 |
+| C | 30 | 55 | 5 | 10 |
+| 1B | 70 | 15 | 5 | 10 |
+| 2B | 35 | 25 | 30 | 10 |
+| SS | 25 | 45 | 20 | 10 |
+| 3B | 55 | 30 | 5 | 10 |
+| CF | 30 | 25 | 35 | 10 |
+| LF | 60 | 20 | 10 | 10 |
+| RF | 55 | 30 | 5 | 10 |
 
 **What gets scored**
 - Only metrics with a published benchmark: max exit velocity, throwing velocity or pop time, and the 60.

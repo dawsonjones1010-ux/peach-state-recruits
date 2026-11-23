@@ -14,7 +14,7 @@
 })(typeof self !== "undefined" ? self : this, function () {
   "use strict";
 
-  const MODEL_VERSION = "3.1.0";
+  const MODEL_VERSION = "3.2.0";
 
   const CONFIG = {
     // ---- Pitchers (Phase 1) ----
@@ -47,6 +47,10 @@
       // ratio stats outweigh a Power 4-range fastball.) Steps are about one meaningful season difference.
       statSteps: { strikePct: 2, bb9: 0.5, kbb: 0.5, era: 0.5, whip: 0.1, k9: 1 },
       statStepPoints: 10,
+      // Small samples: under fullSampleIp innings, command and performance scores are blended toward
+      // neutralScore in proportion to innings (10 IP = half weight), so a few outings can't swing a level.
+      // Innings not entered: stats count at face value and confidence shows the missing sample.
+      smallSample: { fullSampleIp: 20, neutralScore: 85 },
       // "Core benchmarks reasonably satisfied" for a primary target: sitting (or peak, if that's all
       // we have) within this many mph of the level's minimum.
       coreWithinMph: 2,
@@ -57,14 +61,15 @@
     // ---- Position players (Phase 2) ----
     position: {
       weights: {
-        C:    { hitting: 35, defense: 45, speed: 10, performance: 10 },
-        "1B": { hitting: 65, defense: 15, speed: 10, performance: 10 },
-        "2B": { hitting: 35, defense: 30, speed: 25, performance: 10 },
-        SS:   { hitting: 30, defense: 40, speed: 20, performance: 10 },
-        "3B": { hitting: 45, defense: 35, speed: 10, performance: 10 },
-        CF:   { hitting: 35, defense: 30, speed: 25, performance: 10 },
-        LF:   { hitting: 50, defense: 25, speed: 15, performance: 10 },
-        RF:   { hitting: 50, defense: 25, speed: 15, performance: 10 }
+        // v45 (owner decision): each position's core tools carry 50-70% of the score.
+        C:    { hitting: 30, defense: 55, speed: 5,  performance: 10 },
+        "1B": { hitting: 70, defense: 15, speed: 5,  performance: 10 },
+        "2B": { hitting: 35, defense: 25, speed: 30, performance: 10 },
+        SS:   { hitting: 25, defense: 45, speed: 20, performance: 10 },
+        "3B": { hitting: 55, defense: 30, speed: 5,  performance: 10 },
+        CF:   { hitting: 30, defense: 25, speed: 35, performance: 10 },
+        LF:   { hitting: 60, defense: 20, speed: 10, performance: 10 },
+        RF:   { hitting: 55, defense: 30, speed: 5,  performance: 10 }
       },
       // Inside each category, only metrics with a published benchmark are scored. The others are
       // collected and shown, and the category is labeled "limited assessment".
@@ -195,7 +200,10 @@
       else if (!up.hasGap) stretchReason = "Not established with current data: no measurable gap to work on.";
       else stretch = up;
     }
-    const also = ladder.filter(l => l !== primary && l !== stretch && isNum(l.score) && round(l) >= S.additionalMin).map(l => l.key);
+    // Additional opportunity: only the next category down from the target, when it scores 80+.
+    // (Listing every lower level was noise; JUCO has its own section.)
+    const below = anchor ? byKey(S.ladder[S.ladder.indexOf(anchor.key) + 1]) : null;
+    const also = below && below !== stretch && isNum(below.score) && round(below) >= S.additionalMin ? [below.key] : [];
     // Ties: levels whose displayed score equals the primary's (or closest's) and share its benchmarks.
     const ties = anchor ? ladder.filter(l => l !== anchor && isNum(l.score) && round(l) === round(anchor)).map(l => l.key) : [];
     return { primary: primary ? primary.key : null, closest: closest ? closest.key : null, stretch: stretch ? stretch.key : null, stretchReason, also, ties, juco: byKey("juco") || null };

@@ -156,7 +156,10 @@
     const scoreMap = (rs) => Object.fromEntries(rs.filter(r => r.score != null).map(r => [r.key, r.score]));
     const cmdW = Object.fromEntries(Object.entries(P.command).filter(([k]) => !P.commandNoBenchmark.includes(k)));
     const command = C.weighted(scoreMap(cmdRows), cmdW), performance = C.weighted(scoreMap(perfRows), P.performance);
-    const cats = { velocity, command: command.score, performance: performance.score, secondary: null, characteristics: null };
+    const ipN = baseballInnings(d.ip), SS = P.smallSample;
+    const sampleW = isNum(ipN) && ipN < SS.fullSampleIp ? Math.max(0, ipN) / SS.fullSampleIp : 1;
+    const shrink = (v) => v == null ? null : sampleW * v + (1 - sampleW) * SS.neutralScore;
+    const cats = { velocity, command: shrink(command.score), performance: shrink(performance.score), secondary: null, characteristics: null };
     const scorable = Object.fromEntries(Object.entries(W).filter(([k]) => k !== "provisional" && !P.notScored.includes(k)));
     const base = velocity == null ? { score: null, used: [] } : C.weighted(cats, scorable);
     const gap = isNum(d.sit) ? Math.max(0, vr.sit[key][0] - d.sit) : null;
@@ -164,7 +167,7 @@
     const score = base.score == null ? null : clamp(base.score - penalty, 0, 100);
     const coreV = isNum(d.sit) ? d.sit : d.peak, coreMin = isNum(d.sit) ? vr.sit[key][0] : vr.peak[key][0];
     return {
-      key, cats, veloRows, cmdRows, perfRows, veloNote, base: base.score, used: base.used, score,
+      key, cats, veloRows, cmdRows, perfRows, veloNote, sampleWeight: sampleW, base: base.score, used: base.used, score,
       display: score == null ? null : Math.round(score),
       adjustments: penalty ? [{ label: `Velocity shortfall: sitting ${r1(gap)} mph below the ${vr.sit[key][0]} mph minimum`, points: -penalty }] : [],
       weights: W, provisional: !!W.provisional,

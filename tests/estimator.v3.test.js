@@ -189,3 +189,25 @@ test("velocity is 60% of a pitcher's score at D1 levels and 50% elsewhere", () =
   const l = P.evaluate({ throws: "R", metrics: { typFb: 88, strikePct: 50, era: 6 } }).levels.find(x => x.key === "mid");
   assert.equal(l.used.find(u => u.key === "velocity").share, 0.6);
 });
+
+test("small samples: under 20 IP, stats are blended toward neutral; 20+ IP counts in full", () => {
+  const m = { typFb: 88, maxFb: 91, era: 6.5, whip: 1.9, strikePct: 55 };
+  const tiny = P.evaluate({ throws: "R", metrics: Object.assign({ ip: 5 }, m) }), full = P.evaluate({ throws: "R", metrics: Object.assign({ ip: 40 }, m) });
+  const t = tiny.levels.find(l => l.key === "mid"), f = full.levels.find(l => l.key === "mid");
+  assert.equal(t.sampleWeight, 0.25); assert.equal(f.sampleWeight, 1);
+  assert.ok(t.cats.performance > f.cats.performance && t.score > f.score, "bad stats over 5 IP can't sink the level like 40 IP");
+  const good = P.evaluate({ throws: "R", metrics: { typFb: 80, ip: 4, era: 0, whip: 0.5, strikePct: 75 } }).levels.find(l => l.key === "mid");
+  assert.ok(good.cats.performance < 100, "a hot 4 innings doesn't count in full either");
+});
+
+test("additional opportunities: only the next category down, at 80+", () => {
+  const f = P.evaluate({ throws: "L", metrics: { typFb: 87, maxFb: 92, bb9: 4.0, strikePct: 70, kbb: 2.0, era: 2.10, whip: 1.20, k9: 7.8 } });
+  assert.deepEqual(f.also, ["low"]);
+});
+
+test("hitter core tools carry 50-70% of the score", () => {
+  const W = F.WEIGHTS;
+  assert.equal(W["1B"].hitting, 70); assert.equal(W.C.defense, 55);
+  assert.equal(W.SS.defense + W.SS.speed, 65); assert.equal(W.CF.speed + W.CF.defense, 60);
+  Object.values(W).forEach(w => assert.equal(w.hitting + w.defense + w.speed + w.performance, 100));
+});

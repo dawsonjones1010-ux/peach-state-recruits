@@ -11,7 +11,8 @@
     "test:dom": "node tests/recruiting.dom.js && node tests/eleven.dom.js && node tests/roadmap.dom.js",
     "test:database": "node tests/recruiting.database.js",
     "test:imports": "python3 -m unittest discover -s tests -p 'test_*.py'",
-    "test:roadmap": "node --test tests/roadmap.test.js && node tests/roadmap.dom.js"
+    "test:roadmap": "node --test tests/roadmap.test.js && node tests/roadmap.dom.js",
+    "test:dom:chrome": "node tests/dom-in-chrome.js http://localhost:8098/"
   },
   "devDependencies": {
     "@electric-sql/pglite": "0.3.14",
