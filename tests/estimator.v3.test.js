@@ -167,7 +167,7 @@ test("history stores model and benchmark versions and stays append-only", () => 
   const e1 = PG.entryFrom({ primary: "P", metrics: { typFb: 84 }, meta: { date: "2026-05-01" } }, [], new Date("2026-05-02"), { model: C.MODEL_VERSION, benchmarks: "x" });
   const e2 = PG.entryFrom({ primary: "P", metrics: { typFb: 86 }, meta: { date: "2026-09-01" } }, [], new Date("2026-09-02"), { model: C.MODEL_VERSION, benchmarks: "x" });
   PG.save(store, e1); const h = PG.save(store, e2);
-  assert.equal(h.length, 2); assert.equal(h[0].metrics.typFb, 84); assert.equal(h[1].model, "3.0.0"); assert.equal(h[1].measured, "2026-09-01");
+  assert.equal(h.length, 2); assert.equal(h[0].metrics.typFb, 84); assert.equal(h[1].model, C.MODEL_VERSION); assert.equal(h[1].measured, "2026-09-01");
 });
 
 test("a published benchmark is never changed by v3", () => {
@@ -180,4 +180,12 @@ test("a lefty sitting 87 / touching 92 with a 2.10 ERA is a D1 target even with 
   assert.equal(f.primary, "mid");
   assert.equal(f.stretch, "p4");
   assert.equal(P.targetScore(2.0, 3.5, "higher", "kbb"), 70, "three half-steps short of K/BB costs 30, not 100");
+});
+
+test("velocity is 60% of a pitcher's score at D1 levels and 50% elsewhere", () => {
+  const W = C.CONFIG.pitcher.weights;
+  ["p4", "mid", "low"].forEach(k => assert.equal(W[k].velocity, 60));
+  ["d2", "d3", "naia", "juco"].forEach(k => assert.equal(W[k].velocity, 50));
+  const l = P.evaluate({ throws: "R", metrics: { typFb: 88, strikePct: 50, era: 6 } }).levels.find(x => x.key === "mid");
+  assert.equal(l.used.find(u => u.key === "velocity").share, 0.6);
 });

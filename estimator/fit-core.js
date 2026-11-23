@@ -14,22 +14,23 @@
 })(typeof self !== "undefined" ? self : this, function () {
   "use strict";
 
-  const MODEL_VERSION = "3.0.0";
+  const MODEL_VERSION = "3.1.0";
 
   const CONFIG = {
     // ---- Pitchers (Phase 1) ----
     pitcher: {
-      // Category weights per level. Normalized over the categories that can actually be scored.
-      // Secondary pitches and pitch characteristics have no pitch-shape-specific benchmark yet, so
-      // they are descriptive only and their weight is redistributed (see notScored).
+      // Category weights per level (v44, owner decision): fastball velocity is 60% of the score at
+      // the three D1 levels and 50% everywhere else. Command and game performance split the rest in
+      // the same proportions as the v3 spec. Secondary pitches and pitch characteristics have no
+      // pitch-shape benchmark yet, so they're shown and weighted 0 until one exists.
       weights: {
-        p4:   { velocity: 45, command: 15, secondary: 20, characteristics: 15, performance: 5 },
-        mid:  { velocity: 40, command: 20, secondary: 20, characteristics: 10, performance: 10 },
-        low:  { velocity: 35, command: 25, secondary: 20, characteristics: 10, performance: 10 },
-        d2:   { velocity: 30, command: 30, secondary: 20, characteristics: 10, performance: 10 },
-        d3:   { velocity: 25, command: 30, secondary: 20, characteristics: 10, performance: 15 },
-        naia: { velocity: 30, command: 25, secondary: 20, characteristics: 10, performance: 15 },
-        juco: { velocity: 35, command: 20, secondary: 20, characteristics: 10, performance: 15, provisional: true }
+        p4:   { velocity: 60, command: 30, performance: 10, secondary: 0, characteristics: 0 },
+        mid:  { velocity: 60, command: 27, performance: 13, secondary: 0, characteristics: 0 },
+        low:  { velocity: 60, command: 28, performance: 12, secondary: 0, characteristics: 0 },
+        d2:   { velocity: 50, command: 37, performance: 13, secondary: 0, characteristics: 0 },
+        d3:   { velocity: 50, command: 33, performance: 17, secondary: 0, characteristics: 0 },
+        naia: { velocity: 50, command: 31, performance: 19, secondary: 0, characteristics: 0 },
+        juco: { velocity: 50, command: 29, performance: 21, secondary: 0, characteristics: 0, provisional: true }
       },
       notScored: ["secondary", "characteristics"],
       velocitySplit: { sitting: 0.75, peak: 0.25 },

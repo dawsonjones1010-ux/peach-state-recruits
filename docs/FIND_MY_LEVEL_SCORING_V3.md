@@ -27,15 +27,19 @@ All of these are Peach State Recruits' provisional product settings, not publish
 
 ## Pitchers
 
+Weights as of v44 (model 3.1.0, owner decision: velocity is 60% at D1, 50% elsewhere):
+
 | Category | P4 | Mid | Low | D2 | D3 | NAIA | JUCO* |
 |---|---|---|---|---|---|---|---|
-| Velocity | 45 | 40 | 35 | 30 | 25 | 30 | 35 |
-| Command | 15 | 20 | 25 | 30 | 30 | 25 | 20 |
-| Secondary pitches | 20 | 20 | 20 | 20 | 20 | 20 | 20 |
-| Pitch characteristics | 15 | 10 | 10 | 10 | 10 | 10 | 10 |
-| Game performance | 5 | 10 | 10 | 10 | 15 | 15 | 15 |
+| Velocity | 60 | 60 | 60 | 50 | 50 | 50 | 50 |
+| Command | 30 | 27 | 28 | 37 | 33 | 31 | 29 |
+| Game performance | 10 | 13 | 12 | 13 | 17 | 19 | 21 |
+| Secondary pitches | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| Pitch characteristics | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 
-\*JUCO weights are provisional.
+\*JUCO weights are provisional. Command and performance keep the v3 spec's proportions to each other.
+The original v3 spec weights were velocity 45/40/35/30/25/30/35, command 15/20/25/30/30/25/20 and
+performance 5/10/10/10/15/15/15, with secondary 20 and characteristics 10–15 redistributed because they aren't scored.
 
 **Secondary pitches and pitch characteristics are shown, not scored.** There's no pitch-shape benchmark yet, so their weight is shared across the scored categories. Projection was removed.
 
