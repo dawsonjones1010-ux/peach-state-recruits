@@ -365,9 +365,22 @@
     return programsLoad;
   }
   function homeState() { try { return localStorage.getItem(window.PSRPicks.STATE_KEY) || ""; } catch (_) { return ""; } }
+  // Offer shown right after the college list: the moment a family is about to email coaches.
+  function offerHtml(bands) {
+    const C = window.PSR_CONFIG || {}, pk = (C.packages || []).find(p => p.id === "pro") || (C.packages || [])[0];
+    if (!pk) return "";
+    const band = (bands && bands[0]) || "";
+    const who = band && window.PSRLogic && window.PSRLogic.BAND_LABELS[band] ? `${window.PSRLogic.BAND_LABELS[band]} coaches` : "College coaches";
+    return `<section class="lvl-offer no-print" aria-label="Get in front of coaches">
+      <h3>Give coaches something to click</h3>
+      <p>${esc(who)} get a lot of emails. A link to your highlight video and profile page lets them see you play in one tap.</p>
+      <p class="lvl-offer-pk"><b>${esc(pk.name)}, $${esc(pk.price)}</b>: ${esc(pk.tagline)}</p>
+      <div class="lvl-offer-btns"><a class="btn btn-peach" href="index.html#packages" data-track="fml_offer_click" data-track-detail="${esc(band)}">See packages</a><a class="btn btn-line" href="players.html">See player examples</a></div>
+    </section>`;
+  }
   function picksHtml(bands, idx) {
-    if (!window.PSRPicks || !window.PSRLogic || !bands || !bands.length) return "";
-    return `<section class="lvl-picks no-print" data-picks="${idx}" data-bands="${esc(bands.join(","))}" aria-label="Colleges at your level">
+    if (!window.PSRPicks || !window.PSRLogic || !bands || !bands.length) return offerHtml(bands);
+    return offerHtml(bands) + `<section class="lvl-picks no-print" data-picks="${idx}" data-bands="${esc(bands.join(","))}" aria-label="Colleges at your level">
       <p class="lvl-cta2-t">Colleges at your level</p><div class="lvl-picks-b" aria-live="polite"><p class="lvl-note-sm">Loading schools…</p></div></section>`;
   }
   function drawPicks(sec) {
@@ -406,7 +419,7 @@
     const extra = document.createElement("div");
     extra.className = "lvl-board lvl-board-more";
     kids.filter(c => c.matches(".lvl-msum, .pro-source-note") && c !== where && c !== prio).forEach(c => extra.appendChild(c));
-    const TOP = ".lvl-board, .lvl-picks, .lvl-onetap, .lvl-likeyou, .lvl-share";
+    const TOP = ".lvl-board, .lvl-picks, .lvl-offer, .lvl-onetap, .lvl-likeyou, .lvl-share";
     const rest = [...readEl.children].filter(c => !c.matches(TOP));
     const more = document.createElement("details");
     more.className = "lvl-more";
@@ -415,7 +428,7 @@
     const body = more.querySelector(".lvl-more-b");
     if (extra.children.length) body.appendChild(extra);
     rest.forEach(c => body.appendChild(c));
-    ["lvl-picks", "lvl-onetap", "lvl-likeyou", "lvl-share"].forEach(cls => { const el = readEl.querySelector(":scope > ." + cls); if (el) readEl.appendChild(el); });
+    ["lvl-picks", "lvl-offer", "lvl-onetap", "lvl-likeyou", "lvl-share"].forEach(cls => { const el = readEl.querySelector(":scope > ." + cls); if (el) readEl.appendChild(el); });
     readEl.appendChild(more);
   }
   window.addEventListener("beforeprint", () => document.querySelectorAll(".lvl-more:not([open])").forEach(d => { d.open = true; d.dataset.printOpened = "1"; }));
@@ -1039,6 +1052,18 @@
     words.forEach(w => { const t = line ? line + " " + w : w; if (ctx.measureText(t).width > maxW && line) { lines.push(line); line = w; } else line = t; });
     if (line) lines.push(line); return lines;
   }
+  // The same fit the results board shows (v3), so the share image and the tracked level always match the page.
+  function primaryOf(read) {
+    try {
+      const fit = read.kind === "pitching" ? pitcherFit() : QF.evaluate(read, state.input);
+      if (!fit || !fit.primary) return null;
+      const l = fit.levels.find(x => x.key === fit.primary);
+      return l ? { key: l.key, label: l.label, score: l.display } : null;
+    } catch (_) { return null; }
+  }
+  function shareSite() {
+    try { return window.PSR.displayUrl(window.PSR.siteBase()).replace(/\/$/, ""); } catch (_) { return "peachstaterecruits"; }
+  }
   async function storyBlob(read) {
     try { await Promise.all(["120px Anton", "700 60px 'Barlow Condensed'", "600 40px Inter"].map(f => document.fonts && document.fonts.load(f))); } catch (e) { /* fonts optional */ }
     const W = 1080, H = 1920, cv = document.createElement("canvas"); cv.width = W; cv.height = H;
@@ -1062,13 +1087,21 @@
       x.fillStyle = "#fff"; x.font = "120px Anton, Impact, sans-serif"; x.fillText(val, bx + bw / 2, y0 + 210);
       x.fillStyle = "#c9d2e3"; x.font = "600 34px Inter, sans-serif"; x.fillText(unit, bx + bw / 2, y0 + 262);
     });
+    const pf = primaryOf(read);
     x.fillStyle = "#c9d2e3"; x.font = "600 44px Inter, sans-serif";
-    x.fillText(h.level ? (read.kind === "pitching" ? "FASTBALL MEETS THE LISTED" : "METRICS MEET THE LISTED") : "WORKING TOWARD", W / 2, 1260);
-    x.fillStyle = "#fff"; x.font = "128px Anton, Impact, sans-serif";
-    const big = h.level ? (U.LONG[h.level] + (read.kind === "pitching" ? " velocity target" : " targets")).toUpperCase() : "THE PUBLISHED TARGETS";
-    wrap(x, big, 960).slice(0, 3).forEach((ln, k) => x.fillText(ln, W / 2, 1400 + k * 136));
-    x.fillStyle = "#8f9bb3"; x.font = "500 32px Inter, sans-serif";
-    x.fillText("A benchmark comparison, not a prediction.", W / 2, 1720);
+    x.fillText(pf ? "BEST COLLEGE MATCH" : "WORKING TOWARD", W / 2, 1215);
+    x.fillStyle = "#fff"; x.font = "120px Anton, Impact, sans-serif";
+    const big = pf ? pf.label.toUpperCase() : "THE PUBLISHED TARGETS";
+    const lines = wrap(x, big, 960).slice(0, 2);
+    lines.forEach((ln, k) => x.fillText(ln, W / 2, 1335 + k * 122));
+    if (pf) { x.fillStyle = "#ff8a4c"; x.font = "700 52px 'Barlow Condensed', sans-serif"; x.fillText(`${pf.score}/100 BENCHMARK FIT`, W / 2, 1335 + (lines.length - 1) * 122 + 80); }
+    x.fillStyle = "#fff"; x.font = "600 38px Inter, sans-serif";
+    x.fillText("Find your level free:", W / 2, 1625);
+    x.fillStyle = "#ffb48a"; const site = shareSite() + "/find-my-level"; let fs = 40;
+    do { x.font = `700 ${fs}px Inter, sans-serif`; fs -= 2; } while (x.measureText(site).width > 980 && fs > 22);
+    x.fillText(site, W / 2, 1677);
+    x.fillStyle = "#8f9bb3"; x.font = "500 30px Inter, sans-serif";
+    x.fillText("A benchmark comparison, not a prediction.", W / 2, 1740);
     x.fillStyle = "#ff8a4c"; x.font = "700 64px 'Barlow Condensed', sans-serif"; x.fillText("@peachstaterecruits", W / 2, 1820);
     return new Promise(res => cv.toBlob(b => res(b), "image/png"));
   }
@@ -1076,12 +1109,14 @@
     const read = state.result.reads[idx], out = document.getElementById("shareOut" + idx); if (!out) return;
     out.hidden = false; out.innerHTML = `<p class="lvl-note-sm">Making your image…</p>`;
     const blob = await storyBlob(read);
+    if (window.PSR && window.PSR.track) window.PSR.track("fml_share", read.position);
     const url = URL.createObjectURL(blob), name = `find-my-level-${read.position.toLowerCase()}.png`;
     const file = typeof File === "function" ? new File([blob], name, { type: "image/png" }) : null;
     const canShare = !!(file && navigator.canShare && navigator.canShare({ files: [file] }));
     state.share = { blob, file, name };
     out.innerHTML = `<img src="${url}" alt="Your Find My Level story image" width="1080" height="1920">
       <div class="lvl-share-btns">${canShare ? `<button class="btn btn-peach" type="button" data-native="${idx}">Share…</button>` : ""}<a class="btn btn-line" href="${url}" download="${name}">Download image</a></div>
+      <p class="lvl-share-tip"><b>Post it to your Instagram story and tag @${esc((window.PSR_CONFIG || {}).instagram || "peachstaterecruits")}</b> so we see it. Teammates can find their level at the link on the image.</p>
       <p class="lvl-note-sm">Made on your device. Nothing is uploaded.</p>`;
   }
 
@@ -1309,13 +1344,16 @@
     collect();
     const v = check(state.step);
     if (v.errors.length || v.warnings.length) { render(v); return; }
-    if (state.step === 3) { state.result = L.evaluate(state.data, state.input); state.step = 4; state.tab = 0; saveProgress(); }
+    if (state.step === 3) {
+      state.result = L.evaluate(state.data, state.input); state.step = 4; state.tab = 0; saveProgress();
+      try { const r0 = state.result.reads[0]; if (window.PSR && window.PSR.track) window.PSR.track("fml_result", r0 ? ((primaryOf(r0) || {}).key || "below") : "none"); } catch (_) {}
+    }
     else state.step += 1;
     render(NOV, true);
   });
   app.addEventListener("click", (e) => {
     const eh = e.target.closest("[data-email-handoff]");
-    if(eh){try{sessionStorage.setItem("psr_email_handoff_v2",JSON.stringify(R.handoff(state.input,state.result.reads[+eh.dataset.emailHandoff])));location.href="email-coach.html?from=level"+(eh.dataset.school?"&school="+encodeURIComponent(eh.dataset.school):"");}catch(error){if(window.PSR)window.PSR.toast("This browser cannot transfer your metrics. Open Email Coach and enter them there.");}return;}
+    if(eh){if(window.PSR&&window.PSR.track)window.PSR.track("email_handoff",eh.dataset.school?"school":"general");try{sessionStorage.setItem("psr_email_handoff_v2",JSON.stringify(R.handoff(state.input,state.result.reads[+eh.dataset.emailHandoff])));location.href="email-coach.html?from=level"+(eh.dataset.school?"&school="+encodeURIComponent(eh.dataset.school):"");}catch(error){if(window.PSR)window.PSR.toast("This browser cannot transfer your metrics. Open Email Coach and enter them there.");}return;}
     const cp=e.target.closest("[data-copy-snapshot]");if(cp){const text=R.snapshot(state.input,state.result.reads[+cp.dataset.copySnapshot]);Promise.resolve().then(()=>navigator.clipboard.writeText(text)).then(()=>window.PSR&&window.PSR.toast("Coach snapshot copied")).catch(()=>{const out=document.getElementById("snapshotText"+cp.dataset.copySnapshot);out.hidden=false;out.value=text;out.focus();out.select();});return;}
     const sc=e.target.closest("[data-run-scenario]");if(sc){runScenario(+sc.dataset.runScenario);return;}
     const pw=e.target.closest("[data-run-pwhat]");if(pw){runPitcherWhatIf(+pw.dataset.runPwhat);return;}

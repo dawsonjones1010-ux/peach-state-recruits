@@ -63,7 +63,7 @@
         <dt>Checked</dt><dd>${esc(L.fmtDate(c.last_checked))} · <a class="rc-link" href="${esc(U.safeUrl(c.source_url))}" target="_blank" rel="noopener">${esc(U.host(c.source_url))}</a>${stale ? ' <span class="rc-badge warn">May be out of date</span>' : ""}</dd>
       </dl>
       <div class="rc-row" style="margin-top:12px">
-        ${U.safeUrl(c.registration_url) ? `<a class="rc-btn sm primary" href="${esc(c.registration_url)}" target="_blank" rel="noopener">Register on official page</a>` : ""}
+        ${U.safeUrl(c.registration_url) ? `<a class="rc-btn sm primary" href="${esc(c.registration_url)}" target="_blank" rel="noopener" data-track="camp_click" data-track-detail="${esc(c.band || "")}">Register on official page</a>` : ""}
         <button class="rc-btn sm" data-ics="${esc(c.id)}">Add to calendar</button>
         <button class="rc-btn sm" data-est="${esc(c.id)}">Estimate travel cost</button>
         ${c.program_slug ? `<a class="rc-btn sm" href="colleges.html#school=${encodeURIComponent(c.program_slug)}">School details</a>` : ""}

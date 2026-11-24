@@ -105,7 +105,7 @@
       </div>
       <div class="rc-actions">
         <a class="rc-btn sm" href="#school=${encodeURIComponent(p.slug)}">Details</a>
-        <a class="rc-btn sm" href="${emailHref(p)}">Email coach</a>
+        <a class="rc-btn sm" href="${emailHref(p)}" data-track="college_email_click">Email coach</a>
         <button class="rc-btn sm${s ? " dark" : ""}" data-save="${esc(p.id)}" aria-pressed="${s ? "true" : "false"}">${s ? "Saved" : "Save"}</button>
       </div>
     </article>`;
@@ -206,7 +206,7 @@
             ${s ? `<p class="rc-small" style="margin-top:0">Saved. Interest: ${esc(s.interest[0].toUpperCase() + s.interest.slice(1))} · Stage: ${esc((s.stage[0].toUpperCase() + s.stage.slice(1)).replace(/_/g, " "))}</p>` : `<p class="rc-small" style="margin-top:0">Save this school to track emails, notes and follow-ups.</p>`}
             <div class="rc-row">
               <button class="rc-btn ${s ? "dark" : "primary"}" data-save="${esc(p.id)}" aria-pressed="${s ? "true" : "false"}">${s ? "Saved" : "Save school"}</button>
-              <a class="rc-btn" href="${emailHref(p)}">Email this coach</a>
+              <a class="rc-btn" href="${emailHref(p)}" data-track="college_email_click">Email this coach</a>
             </div>
           </section>
           <section class="rc-panel">

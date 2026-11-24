@@ -255,7 +255,7 @@
 </div>
 
 <script src="config.js?v=39"></script>
-<script src="shared.js?v=39"></script>
+<script src="shared.js?v=40"></script>
 <script>
 (async function () {
   const C = window.PSR_CONFIG, PSR = window.PSR, { esc, photoFrame, payLink, loadPlayers, profileUrl, ICON } = PSR;
@@ -280,7 +280,7 @@
       <h3 id="plan-${esc(p.id)}-t">${esc(p.name)}</h3>
       <p class="plan-tag">${esc(p.tagline)}</p>
       <div class="price">$${p.price}<small>${esc(p.unit)}</small></div>
-      <a class="btn ${p.highlight ? "btn-peach" : "btn-ink"} btn-block" href="${esc(payLink(C, p.id))}" ${ext$}>${orderLabel(p.id, esc(short(p)))}</a>
+      <a class="btn ${p.highlight ? "btn-peach" : "btn-ink"} btn-block" href="${esc(payLink(C, p.id))}" data-pkg="${esc(p.id)}" ${ext$}>${orderLabel(p.id, esc(short(p)))}</a>
       <ul class="ticks">${p.features.map(f => `<li>${esc(f)}</li>`).join("")}</ul>
       <p class="plan-terms">${esc(p.clips)}, ${esc(C.terms.revisions)}</p>
     </article>`).join("");
@@ -297,7 +297,7 @@
     <caption class="sr-only">What each package includes</caption>
     <thead><tr><th scope="col"><span class="sr-only">Feature</span></th>${P.map(p => `<th scope="col" class="${p.highlight ? "hl" : ""}">${esc(short(p))}<small>$${p.price}</small></th>`).join("")}</tr></thead>
     <tbody>${C.compare.map(r => `<tr><th scope="row" style="font-weight:500;text-align:left">${esc(r.label)}</th>${P.map(p => `<td class="${p.highlight ? "hl" : ""}">${cell(r[p.id])}</td>`).join("")}</tr>`).join("")}</tbody>
-    <tfoot><tr><td></td>${P.map(p => `<td class="${p.highlight ? "hl" : ""}"><a class="btn ${p.highlight ? "btn-peach" : "btn-line"} btn-sm" href="${esc(payLink(C, p.id))}" ${ext$}>${hasLink(p.id) ? "Order " + esc(short(p)) : "Order on IG"}</a></td>`).join("")}</tr></tfoot>`;
+    <tfoot><tr><td></td>${P.map(p => `<td class="${p.highlight ? "hl" : ""}"><a class="btn ${p.highlight ? "btn-peach" : "btn-line"} btn-sm" href="${esc(payLink(C, p.id))}" data-pkg="${esc(p.id)}" ${ext$}>${hasLink(p.id) ? "Order " + esc(short(p)) : "Order on IG"}</a></td>`).join("")}</tr></tfoot>`;
 
   // ---- Founder + testimonials: only real content from config.js ----
   const F = C.founder || {}, Q = (C.testimonials || []).filter(t => t && t.quote && t.name);

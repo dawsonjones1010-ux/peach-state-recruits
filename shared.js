@@ -479,17 +479,47 @@
   // Cookie-free page counts for the owner dashboard. Sends only the page, the referring
   // site's name, campaign tags (?utm_...) and phone/tablet/desktop. No IP, no ids, no cookies.
   // Skipped for the owner's own pages, local testing, preview mode and Do Not Track / GPC.
+  function canTrack() {
+    const loc = window.location;
+    if (!hasDb() || loc.protocol !== "https:" || /^(localhost|127\.|0\.0\.0\.0)/.test(loc.hostname)) return false;
+    if (/\/(admin|admin-recruiting|account)\.html$/.test(loc.pathname)) return false;
+    if (new URLSearchParams(loc.search).has("demo") || navigator.globalPrivacyControl === true || navigator.doNotTrack === "1") return false;
+    return true;
+  }
+  function pagePath() {
+    const loc = window.location, base = new URL(siteBase() + "/").pathname;
+    let path = loc.pathname.startsWith(base) ? "/" + loc.pathname.slice(base.length) : loc.pathname;
+    path = path.replace(/^(\/player\/[^/]+)(\/index\.html|\/)?$/, "$1/");
+    return path === "/" ? "/index.html" : path;
+  }
+  const ACTIONS = ["fml_result", "fml_share", "fml_offer_click", "college_email_click", "email_handoff", "email_drafted", "email_opened", "package_click", "camp_click"];
+  // Counts a key action (finished result, drafted email, package click). Same rules as page views:
+  // no player data, no ids, no cookies; detail is a short code such as a level band or package id.
+  function track(action, detail) {
+    try {
+      if (!ACTIONS.includes(action) || !canTrack()) return;
+      const d = detail ? String(detail).toLowerCase().replace(/[^a-z0-9_.-]/g, "-").slice(0, 40) : null;
+      fetch(`${C().supabaseUrl}/rest/v1/site_events`, {
+        method: "POST", keepalive: true,
+        headers: { apikey: C().supabaseAnonKey, Authorization: `Bearer ${C().supabaseAnonKey}`, "Content-Type": "application/json", Prefer: "return=minimal" },
+        body: JSON.stringify({ path: pagePath().slice(0, 120), action, detail: d, first_page: false })
+      }).catch(() => {});
+    } catch (e) {}
+  }
+  // Package buttons anywhere on the site: <a data-pkg="pro">.
+  // Any element: <a data-track="camp_click" data-track-detail="d1">.
+  document.addEventListener("click", e => {
+    if (!e.target.closest) return;
+    const a = e.target.closest("[data-pkg]"); if (a) track("package_click", a.dataset.pkg);
+    const t = e.target.closest("[data-track]"); if (t) track(t.dataset.track, t.dataset.trackDetail);
+  }, true);
+
   function trackPage() {
     try {
       const loc = window.location;
-      if (!hasDb() || loc.protocol !== "https:" || /^(localhost|127\.|0\.0\.0\.0)/.test(loc.hostname)) return;
-      if (/\/(admin|admin-recruiting|account)\.html$/.test(loc.pathname)) return;
+      if (!canTrack()) return;
       const q = new URLSearchParams(loc.search);
-      if (q.has("demo") || navigator.globalPrivacyControl === true || navigator.doNotTrack === "1") return;
-      const base = new URL(siteBase() + "/").pathname;
-      let path = loc.pathname.startsWith(base) ? "/" + loc.pathname.slice(base.length) : loc.pathname;
-      path = path.replace(/^(\/player\/[^/]+)(\/index\.html|\/)?$/, "$1/");
-      if (path === "/") path = "/index.html";
+      const path = pagePath();
       let first = false;
       try { first = !sessionStorage.getItem("psr_visit"); sessionStorage.setItem("psr_visit", "1"); } catch (e) {}
       let ref = null;
@@ -509,6 +539,6 @@
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", trackPage, { once: true }); else trackPage();
 
-  window.PSR = { loadPlayerOfWeek, renderPlayerOfWeek, weekLabel, esc, LOGO, logoMark, cover, coverOrImage, photoFrame, photoFallback, photoSrc, initials, PHOTO_SIZES, IMAGE_ACCEPT, prepareImageFile, isHeicFile, isImageFile, payLink, toast, loadPlayers, countView, recentFromPlayers, fromRow, hasDb, profileUrl, siteBase, shareProfileUrl, displayUrl,
+  window.PSR = { track, loadPlayerOfWeek, renderPlayerOfWeek, weekLabel, esc, LOGO, logoMark, cover, coverOrImage, photoFrame, photoFallback, photoSrc, initials, PHOTO_SIZES, IMAGE_ACCEPT, prepareImageFile, isHeicFile, isImageFile, payLink, toast, loadPlayers, countView, recentFromPlayers, fromRow, hasDb, profileUrl, siteBase, shareProfileUrl, displayUrl,
     ICON, initNav, reveal, fitVideo, playIg, igPermalink, copyText, shareLink, qrSvg, reducedMotion, parseVideo, videoHtml, VIDEO_LABEL };
 })();
