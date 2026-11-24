@@ -70,6 +70,7 @@ fieldset.rc-fs legend{font-weight:700;font-size:14px;margin-bottom:6px;color:var
 .rc-card h3{font-family:var(--body);font-weight:700;font-size:17px;letter-spacing:0;line-height:1.3;margin:0}
 .rc-card h3 a{text-decoration:none}
 .rc-card h3 a:hover{text-decoration:underline}
+.rc-nextcamp{display:inline-block;margin-top:10px;font-size:14px;font-weight:700;color:var(--peach-ink,#b4521c);text-decoration:underline;text-underline-offset:3px}
 .rc-card-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px 16px;max-width:520px;margin:12px 0 0;padding-top:12px;border-top:1px solid var(--line)}
 .rc-card-stats div{min-width:0}.rc-card-stats dt{font-size:12.5px;color:var(--text-3);line-height:1.3}.rc-card-stats dd{margin:2px 0 0;font-size:clamp(15px,4.2vw,18px);font-weight:800;color:var(--text);font-variant-numeric:tabular-nums;line-height:1.2}
 .rc-meta{display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:6px;font-size:13.5px;color:var(--text-3);align-items:center}

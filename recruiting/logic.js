@@ -50,6 +50,19 @@
   }
   function addDays(d, n) { const x = parseISO(d) || new Date(d); x.setDate(x.getDate() + n); return x; }
   function daysBetween(a, b) { return Math.round((parseISO(b) - parseISO(a)) / 86400000); }
+  // Earliest camp per program that hasn't ended yet. Keys are program ids, or slugs when camps carry program_slug.
+  function nextCampByProgram(camps, now, key) {
+    const today = isoDay(now || new Date()), out = new Map();
+    (camps || []).forEach(c => {
+      const k = key ? key(c) : c.program_id;
+      if (!k || c.record_status === "hidden" || !c.start_date || (c.end_date || c.start_date) < today) return;
+      const cur = out.get(k);
+      if (!cur || c.start_date < cur.start_date) out.set(k, c);
+    });
+    return out;
+  }
+  function isoDay(d) { return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10); }
+
   function fmtDate(s, opts) {
     const d = parseISO(s); if (!d) return "";
     return d.toLocaleDateString("en-US", opts || { month: "short", day: "numeric", year: "numeric" });
@@ -551,7 +564,7 @@
 
   return {
     LEVELS, BANDS, BAND_LABELS, BAND_LEVEL, bandOf, bandsFromLevels, STATES, STATE_NAMES, KINDS, PLAN_RULES, TRAVEL_DEFAULTS, PROGRAM_FIELDS,
-    toISO, parseISO, addDays, daysBetween, fmtDate, classYear, keyDates,
+    toISO, parseISO, addDays, daysBetween, fmtDate, nextCampByProgram, classYear, keyDates,
     filterPrograms, levelsFromFindMyLevel, fullName, heightText, metricsLine, profileMissing,
     buildEmail, mailtoUrl, schoolStatus, dueFollowUps, planCandidates, planView,
     filterCamps, isStale, buildICS, travelEstimate, money, parseCSV, slugify, normalizeProgramRow

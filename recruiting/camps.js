@@ -11,6 +11,7 @@
     if (qs.get("bands")) f.bands = qs.get("bands").split(",").filter(b => L.BANDS.includes(b));
     else if (qs.get("levels")) f.bands = L.bandsFromLevels(qs.get("levels").split(",").map(x => x.trim()));
     if (/^20\d\d$/.test(qs.get("grad") || "")) f.gradYear = qs.get("grad");
+    if (qs.get("q")) f.q = qs.get("q").slice(0, 80);
   } catch (e) {}
 
   async function refreshSaved() {

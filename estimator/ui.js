@@ -347,7 +347,17 @@
     return U.schoolsAtLevel(read).filters;
   }
   // ---- Schools to start with: a few programs at the player's level near home, each one tap from Email Coach ----
-  let PROGRAMS = null, programsLoad = null;
+  let PROGRAMS = null, programsLoad = null, NEXT_CAMP = new Map(), campsLoad = null;
+  // Next upcoming camp per school, read from the public Camp Finder table. Optional: picks draw without it.
+  function loadCamps() {
+    const C = window.PSR_CONFIG || {}, key = C.supabasePublishableKey || C.supabaseAnonKey;
+    if (campsLoad || !C.supabaseUrl || !key || !window.PSRLogic.nextCampByProgram) return campsLoad || Promise.resolve();
+    campsLoad = fetch(`${C.supabaseUrl}/rest/v1/camps?select=title,start_date,end_date,record_status,programs(slug)&order=start_date.asc&limit=1000`, { headers: { apikey: key, Authorization: "Bearer " + key } })
+      .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(rows => { NEXT_CAMP = window.PSRLogic.nextCampByProgram(rows, new Date(), c => c.programs && c.programs.slug); })
+      .catch(() => {});
+    return campsLoad;
+  }
   function loadPrograms() {
     if (!programsLoad) programsLoad = fetch("data/programs.json").then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
       .then(d => { PROGRAMS = d.programs.map(p => Object.assign({ band: window.PSRLogic.bandOf(p) }, p)); })
@@ -366,7 +376,7 @@
     const label = bands.map(b => LG.BAND_LABELS[b]).join(" and ");
     const opts = LG.STATE_NAMES.map(n => `<option${n === st ? " selected" : ""}>${esc(n)}</option>`).join("");
     const list = !st ? `<p class="lvl-note-sm">Choose your state to see ${esc(label)} programs near you.</p>`
-      : r.list.length ? `<ul class="lvl-pick-list">${r.list.map(p => `<li><div class="lvl-pick-n"><a href="colleges.html#school=${encodeURIComponent(p.slug)}">${esc(p.name)}</a><span>${esc(LG.BAND_LABELS[p.band] || p.level)}, ${esc(p.state)}</span></div><button class="lvl-pick-email" type="button" data-email-handoff="${idx}" data-school="${esc(p.slug)}">Email coach</button></li>`).join("")}</ul>`
+      : r.list.length ? `<ul class="lvl-pick-list">${r.list.map(p => `<li><div class="lvl-pick-n"><a href="colleges.html#school=${encodeURIComponent(p.slug)}">${esc(p.name)}</a><span>${esc(LG.BAND_LABELS[p.band] || p.level)}, ${esc(p.state)}</span>${NEXT_CAMP.get(p.slug) ? `<a class="lvl-pick-camp" href="camps.html?q=${encodeURIComponent(p.name)}">Next camp ${esc(LG.fmtDate(NEXT_CAMP.get(p.slug).start_date, { month: "short", day: "numeric" }))}</a>` : ""}</div><button class="lvl-pick-email" type="button" data-email-handoff="${idx}" data-school="${esc(p.slug)}">Email coach</button></li>`).join("")}</ul>`
       : `<p class="lvl-note-sm">No ${esc(label)} programs in or next to ${esc(st)}.</p>`;
     sec.querySelector(".lvl-picks-b").innerHTML = `<label class="lvl-picks-state"><span>Your home state</span><select data-picks-state><option value="">Choose a state</option>${opts}</select></label>
       ${list}
@@ -375,6 +385,7 @@
   function fillPicks() {
     const secs = app.querySelectorAll("[data-picks]");
     if (!secs.length) return;
+    loadCamps().then(() => { if (PROGRAMS && NEXT_CAMP.size) app.querySelectorAll("[data-picks]").forEach(drawPicks); });
     loadPrograms().then(() => secs.forEach(drawPicks)).catch(() => secs.forEach(s => {
       s.querySelector(".lvl-picks-b").innerHTML = `<p class="lvl-note-sm">The school list couldn't load. <a href="colleges.html?bands=${encodeURIComponent(s.dataset.bands)}&from=fml">Open College Finder</a> instead.</p>`;
     }));

@@ -4,7 +4,7 @@
   const L = window.PSRLogic, U = window.PSRUI, { esc, $, $$ } = U;
   const api = window.PSRData.init();
   const PAGE = 25;
-  let programs = [], user = null, saved = new Map(), page = 1;
+  let programs = [], user = null, saved = new Map(), page = 1, nextCamp = new Map();
   const state = { q: "", bands: [], states: [], conference: "", verifiedOnly: false, maxNetPrice: "", hasAcademics: false, sort: "name", fromFml: false };
 
   function readQuery() {
@@ -86,6 +86,13 @@
     return saved.get(p.id) ? `my-recruiting.html#emails?kind=introduction&program=${encodeURIComponent(p.id)}` : `email-coach.html?school=${encodeURIComponent(p.slug)}`;
   }
 
+  function nextCampHtml(p) {
+    const c = nextCamp.get(p.id);
+    if (!c) return "";
+    const when = L.fmtDate(c.start_date, { month: "short", day: "numeric" });
+    return `<a class="rc-nextcamp" href="camps.html?q=${encodeURIComponent(p.name)}">Next camp ${esc(when)}</a>`;
+  }
+
   function cardHtml(p) {
     const s = saved.get(p.id);
     return `<article class="rc-card">
@@ -93,6 +100,7 @@
         <h3><a href="#school=${encodeURIComponent(p.slug)}">${esc(p.name)}</a></h3>
         <div class="rc-meta">${U.levelBadge(p.level === "NCAA D1" ? L.BAND_LABELS[L.bandOf(p)] : p.level)}${p.conference ? `<span>${esc(p.conference)}</span>` : ""}<span>${esc([p.city, p.state].filter(Boolean).join(", "))}</span>${U.statusBadge(p)}</div>
         ${cardStats(p)}
+        ${nextCampHtml(p)}
       </div>
       <div class="rc-actions">
         <a class="rc-btn sm" href="#school=${encodeURIComponent(p.slug)}">Details</a>
@@ -176,6 +184,7 @@
               <dt>Level</dt><dd>${esc(p.level)}${p.association && p.association !== "NCAA" ? ` (${esc(p.association)})` : ""}</dd>
               <dt>Conference</dt><dd>${esc(p.conference || "Not listed")}</dd>
               <dt>Location</dt><dd>${esc([p.city, p.state].filter(Boolean).join(", ") || "Not listed")}</dd>
+              ${nextCamp.get(p.id) ? `<dt>Next camp</dt><dd>${esc(nextCamp.get(p.id).title || "Camp")}, ${esc(L.fmtDate(nextCamp.get(p.id).start_date, { weekday: "short", month: "short", day: "numeric" }))}. <a href="camps.html?q=${encodeURIComponent(p.name)}">See it in Camp Finder</a></dd>` : ""}
               <dt>Last checked</dt><dd>${p.last_checked ? esc(L.fmtDate(p.last_checked)) : "Official links not checked yet"}</dd>
             </dl>
           </section>
@@ -249,6 +258,8 @@
     readQuery();
     $("#demo").innerHTML = U.demoBanner(api);
     try { programs = await api.listPrograms(); } catch (e) { $("#results").innerHTML = `<div class="rc-empty">Couldn't load the directory. ${esc(e.message)}</div>`; return; }
+    // Next camp per school, from Camp Finder. Loads after the list so it never slows the directory down.
+    api.listCamps().then(cs => { nextCamp = L.nextCampByProgram(cs, new Date()); if (nextCamp.size) { renderList(); if (/^#school=/.test(location.hash)) route(); } }).catch(() => {});
     try { await refreshSaved(); } catch (e) { U.toast("Your saved schools could not be loaded: " + e.message); }
     $("#total").textContent = programs.length.toLocaleString();
     $("#coverage").innerHTML = `<p class="rc-coverage">Each school links to its official athletics site. Check the current coaching staff and roster there before you reach out or pay for a camp. <a class="rc-link" href="recruiting-roadmap.html#plan">Build your recruiting plan</a>.</p>`;
