@@ -1815,3 +1815,16 @@ footer .legal a:hover{text-decoration:underline}
 
 /* v32: 16px form text on phones so iPhone Safari doesn't zoom in when a field is tapped */
 @media (max-width:900px){input:not([type=checkbox]):not([type=radio]):not([type=range]),select,textarea{font-size:16px !important}}
+
+/* Recruiting path: Find My Level -> College Finder -> Email Coach. Sits under the header on all three pages. */
+.tool-path{background:#0d1118;border-bottom:1px solid rgba(255,255,255,.08)}
+.tool-path ol{list-style:none;margin:0 auto;padding:0 16px;max-width:1180px;display:flex;align-items:center}
+.tool-path li{display:flex;align-items:center}
+.tool-path li+li::before{content:"";flex:none;width:7px;height:7px;margin:0 14px 0 10px;border-top:2px solid #5b6472;border-right:2px solid #5b6472;transform:rotate(45deg)}
+.tool-path a{display:block;padding:12px 2px 9px;color:#a9b1bd;font-weight:700;font-size:14px;text-decoration:none;white-space:nowrap;border-bottom:3px solid transparent}
+.tool-path a:hover{color:#fff}
+.tool-path a:focus-visible{outline:3px solid var(--peach);outline-offset:-3px}
+.tool-path a[aria-current]{color:#fff;border-bottom-color:var(--peach)}
+@media(max-width:420px){.tool-path ol{padding:0 12px;justify-content:space-between}.tool-path a{font-size:13px}.tool-path li+li::before{margin:0 8px 0 4px;width:6px;height:6px}}
+@media(max-width:360px){.tool-path ol{padding:0 8px}.tool-path a{font-size:12px}.tool-path li+li::before{margin:0 6px 0 2px;width:5px;height:5px}}
+.ec-page .rc-intro h1{font-size:clamp(34px,10.4vw,84px);overflow-wrap:anywhere}

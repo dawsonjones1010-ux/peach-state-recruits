@@ -81,6 +81,11 @@
     return st.length ? `<dl class="rc-card-stats">${st.map(([v, l]) => `<div><dt>${esc(l)}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>` : "";
   }
 
+  // Saved schools draft inside My Recruiting so the email is tracked; others open Email Coach with the school picked.
+  function emailHref(p) {
+    return saved.get(p.id) ? `my-recruiting.html#emails?kind=introduction&program=${encodeURIComponent(p.id)}` : `email-coach.html?school=${encodeURIComponent(p.slug)}`;
+  }
+
   function cardHtml(p) {
     const s = saved.get(p.id);
     return `<article class="rc-card">
@@ -91,6 +96,7 @@
       </div>
       <div class="rc-actions">
         <a class="rc-btn sm" href="#school=${encodeURIComponent(p.slug)}">Details</a>
+        <a class="rc-btn sm" href="${emailHref(p)}">Email coach</a>
         <button class="rc-btn sm${s ? " dark" : ""}" data-save="${esc(p.id)}" aria-pressed="${s ? "true" : "false"}">${s ? "Saved" : "Save"}</button>
       </div>
     </article>`;
@@ -190,7 +196,7 @@
             ${s ? `<p class="rc-small" style="margin-top:0">Saved. Interest: ${esc(s.interest[0].toUpperCase() + s.interest.slice(1))} · Stage: ${esc((s.stage[0].toUpperCase() + s.stage.slice(1)).replace(/_/g, " "))}</p>` : `<p class="rc-small" style="margin-top:0">Save this school to track emails, notes and follow-ups.</p>`}
             <div class="rc-row">
               <button class="rc-btn ${s ? "dark" : "primary"}" data-save="${esc(p.id)}" aria-pressed="${s ? "true" : "false"}">${s ? "Saved" : "Save school"}</button>
-              ${s ? `<a class="rc-btn" href="my-recruiting.html#emails?kind=introduction&program=${encodeURIComponent(p.id)}">Draft an email</a>` : ""}
+              <a class="rc-btn" href="${emailHref(p)}">Email this coach</a>
             </div>
           </section>
           <section class="rc-panel">

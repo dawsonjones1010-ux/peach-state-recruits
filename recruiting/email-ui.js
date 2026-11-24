@@ -9,7 +9,7 @@
   let draft=drafts.find(x=>x.id===params.get('draft'))||null;const prior=draft?.template_context||{};let profile=clone(opts.profile||{});profile.metrics=profile.metrics||{};
   let measurement=clone(prior.measurement||{});let details=Object.assign({reason:'',update:'',schedule:'',hsCoach:'',clubCoach:'',gpaScale:'',questionnaire:false,videoChecked:false,eventMode:'event',researchUrl:''},prior.details||{});
   if(prior.profile)profile=clone(prior.profile);
-  let initial=draft?.program_id||params.get('program')||saved[0]?.program_id;let selected=programs.find(p=>p.id===initial)||null;
+  const bySlug=params.get('school')?programs.find(p=>p.slug===params.get('school')):null;let initial=bySlug?.id||draft?.program_id||params.get('program')||saved[0]?.program_id;let selected=programs.find(p=>p.id===initial)||null;
   let kind=draft?.kind||params.get('kind')||'introduction';if(!E.KINDS[kind])kind='introduction';
   let imported=false;const standalone=!!opts.standalone;
   if(standalone&&params.get('from')==='level'){
