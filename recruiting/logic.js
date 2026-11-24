@@ -99,6 +99,7 @@
       return true;
     }).sort((a, b) => {
       if (f.sort === "state") return (a.state || "").localeCompare(b.state || "") || a.name.localeCompare(b.name);
+      if (f.sort === "price") return (a.avg_net_price ?? Infinity) - (b.avg_net_price ?? Infinity) || a.name.localeCompare(b.name);
       if (f.sort === "level") return BANDS.indexOf(bandOf(a)) - BANDS.indexOf(bandOf(b)) || a.name.localeCompare(b.name);
       return a.name.localeCompare(b.name);
     });

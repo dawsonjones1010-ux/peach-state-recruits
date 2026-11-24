@@ -17,7 +17,7 @@
     state.maxNetPrice = p.get("budget") || "";
     state.hasAcademics = p.get("academics") === "1";
     state.conference = p.get("conference") || "";
-    state.sort = ["name", "state", "level"].includes(p.get("sort")) ? p.get("sort") : "name";
+    state.sort = ["name", "state", "level", "price"].includes(p.get("sort")) ? p.get("sort") : "name";
     state.fromFml = p.get("from") === "fml";
   }
   function writeQuery() {
@@ -61,7 +61,8 @@
         <label class="rc-field" style="margin-top:12px">Sort<select class="rc-select" id="fSort">
           <option value="name"${state.sort === "name" ? " selected" : ""}>Name</option>
           <option value="state"${state.sort === "state" ? " selected" : ""}>State</option>
-          <option value="level"${state.sort === "level" ? " selected" : ""}>Level</option></select></label>
+          <option value="level"${state.sort === "level" ? " selected" : ""}>Level</option>
+          <option value="price"${state.sort === "price" ? " selected" : ""}>Lowest net price</option></select></label>
         <button class="rc-btn" type="button" id="fClear" style="margin-top:14px;width:100%">Clear filters</button>
       </form>
       <div class="rc-panel">
@@ -70,12 +71,23 @@
       </div>`;
   }
 
+  // Up to three College Scorecard numbers. Missing values are skipped, never shown as blanks.
+  function cardStats(p) {
+    const st = [];
+    if (p.undergrad_enrollment != null) st.push([Number(p.undergrad_enrollment).toLocaleString("en-US"), "Undergrads"]);
+    if (p.avg_net_price != null) st.push([L.money(Math.round(p.avg_net_price / 100) * 100), "Avg net price / yr"]);
+    if (p.grad_rate != null) st.push([Math.round(p.grad_rate * 100) + "%", "Graduate in 6 yrs"]);
+    else if (p.admission_rate != null) st.push([Math.round(p.admission_rate * 100) + "%", "Admit rate"]);
+    return st.length ? `<dl class="rc-card-stats">${st.map(([v, l]) => `<div><dt>${esc(l)}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>` : "";
+  }
+
   function cardHtml(p) {
     const s = saved.get(p.id);
     return `<article class="rc-card">
       <div>
         <h3><a href="#school=${encodeURIComponent(p.slug)}">${esc(p.name)}</a></h3>
         <div class="rc-meta">${U.levelBadge(p.level === "NCAA D1" ? L.BAND_LABELS[L.bandOf(p)] : p.level)}${p.conference ? `<span>${esc(p.conference)}</span>` : ""}<span>${esc([p.city, p.state].filter(Boolean).join(", "))}</span>${U.statusBadge(p)}</div>
+        ${cardStats(p)}
       </div>
       <div class="rc-actions">
         <a class="rc-btn sm" href="#school=${encodeURIComponent(p.slug)}">Details</a>
