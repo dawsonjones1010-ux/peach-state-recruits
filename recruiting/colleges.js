@@ -232,8 +232,7 @@
     try { programs = await api.listPrograms(); } catch (e) { $("#results").innerHTML = `<div class="rc-empty">Couldn't load the directory. ${esc(e.message)}</div>`; return; }
     try { await refreshSaved(); } catch (e) { U.toast("Your saved schools could not be loaded: " + e.message); }
     $("#total").textContent = programs.length.toLocaleString();
-    const c = window.PSRRoadmap.coverage(programs);
-    $("#coverage").innerHTML = `<details class="rc-coverage"><summary>Directory coverage: ${c.checked.toLocaleString()} of ${c.total.toLocaleString()} listings marked checked</summary><p>${c.staff.toLocaleString()} listings include a baseball staff link; ${c.academics.toLocaleString()} include source-labeled academic or cost data. Most entries are starting points for research. A checked label reflects the record’s stored check date, not a verified roster opening, current coach interest or a fresh review of every field.</p><p>Use the school’s current official staff, roster, major catalog and net-price calculator before reaching out or paying for an event. <a class="rc-link" href="recruiting-roadmap.html#plan">Build your recruiting plan</a>.</p></details>`;
+    $("#coverage").innerHTML = `<p class="rc-coverage">Each school links to its official athletics site. Check the current coaching staff and roster there before you reach out or pay for a camp. <a class="rc-link" href="recruiting-roadmap.html#plan">Build your recruiting plan</a>.</p>`;
     renderAll(); route();
     if (state.fromFml) { const jumpToResults = () => { const r = document.getElementById("results"); if (!r || location.hash) return; const hdr = document.querySelector("header"); const y = r.getBoundingClientRect().top + window.scrollY - ((hdr && hdr.offsetHeight) || 0) - 12; window.scrollTo({ top: Math.max(0, y), behavior: "auto" }); }; requestAnimationFrame(jumpToResults); }
     window.addEventListener("hashchange", route);
