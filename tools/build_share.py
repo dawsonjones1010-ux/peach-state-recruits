@@ -11,7 +11,21 @@ if argv and argv[0] == "--root" and len(argv) >= 2:
 elif os.environ.get("PSR_ROOT"):
     os.chdir(os.path.abspath(os.environ["PSR_ROOT"]))
 slugs = argv or ["eduardo-vazquez", "chase-doyle", "cole-corey"]
-covers = [Image.open(f"images/players/{s}.jpg").convert("RGB") for s in slugs if os.path.exists(f"images/players/{s}.jpg")]
+def _cover_path(slug):
+    default = f"images/players/{slug}.jpg"
+    if os.path.exists(default):
+        return default
+    try:
+        import json
+        for pl in json.load(open("players.json", encoding="utf-8")):
+            if pl.get("slug") == slug and pl.get("coverImage"):
+                c = str(pl["coverImage"]).split("?")[0]
+                if os.path.exists(c):
+                    return c
+    except Exception:
+        pass
+    return ""
+covers = [Image.open(p).convert("RGB") for s in slugs if (p := _cover_path(s))]
 A = lambda n: ImageFont.truetype("tools/fonts/Anton.ttf", n)
 B = lambda n: ImageFont.truetype("tools/fonts/Barlow.ttf", n)
 peach, ink = (255, 138, 76), (7, 11, 20)
