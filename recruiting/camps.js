@@ -3,6 +3,7 @@
   "use strict";
   const L = window.PSRLogic, U = window.PSRUI, { esc, $, $$ } = U;
   const api = window.PSRData.init();
+  U.updateStamp(api, document.getElementById("lastUpdate"), "camps");
   let camps = [], user = null, saved = new Map();
   const f = { q: "", states: [], bands: [], gradYear: "", maxPrice: "", from: "", to: "" };
   // Links from Find My Level: camps.html?levels=NCAA%20D1,NCAA%20D2&grad=2028&from=fml

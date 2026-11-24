@@ -97,5 +97,18 @@
   }
   function navInit() { if (window.PSR && window.PSR.initNav) try { window.PSR.initNav(); } catch (e) {} }
 
-  window.PSRUI = { esc, $, $$, toast, safeUrl, host, statusBadge, levelBadge, demoBanner, renderGate, openDialog, confirmDialog, copy, download, stateOptions, navInit };
+  // "Updated every Monday" line. Shows the last weekly update's date and one count for this page when there is one.
+  function updateStamp(api, el, kind) {
+    if (!el) return;
+    el.textContent = "Updated every Monday";
+    if (!api || !api.lastUpdate) return;
+    api.lastUpdate().then(u => {
+      if (!u || !u.ran_on) return;
+      const n = kind === "camps" ? u.camps_added : u.schools_checked;
+      const what = kind === "camps" ? (n === 1 ? "new camp" : "new camps") : (n === 1 ? "school checked" : "schools checked");
+      el.textContent = `Updated every Monday. Last update ${L.fmtDate(u.ran_on, { month: "short", day: "numeric" })}` + (n > 0 ? `: ${n} ${what}` : "");
+    }).catch(() => {});
+  }
+
+  window.PSRUI = { esc, $, $$, toast, safeUrl, host, statusBadge, levelBadge, demoBanner, renderGate, openDialog, confirmDialog, copy, download, stateOptions, navInit, updateStamp };
 })();

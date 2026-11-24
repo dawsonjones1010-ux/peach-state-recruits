@@ -3,6 +3,7 @@
   "use strict";
   const L = window.PSRLogic, U = window.PSRUI, { esc, $, $$ } = U;
   const api = window.PSRData.init();
+  U.updateStamp(api, document.getElementById("lastUpdate"), "schools");
   const PAGE = 25;
   let programs = [], user = null, saved = new Map(), page = 1, nextCamp = new Map();
   const state = { q: "", bands: [], states: [], conference: "", verifiedOnly: false, maxNetPrice: "", hasAcademics: false, sort: "name", fromFml: false };

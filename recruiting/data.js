@@ -77,6 +77,7 @@
       async listProgramsAdmin() { return (await directory()).programs; },
       async listRules() { return (await directory()).rules; },
       async listCamps() { const d = await directory(); return attachLevels(d.camps, d.programs); },
+      async lastUpdate() { return null; },
       async listSavedCamps(ids) { const d = await directory(); return attachLevels(d.camps.filter(c => ids.includes(c.id) && c.record_status !== "hidden"), d.programs); },
       async getProfile() { const u = me(); if (!u) return null; return read().users[u.id].profile || { user_id: u.id, contact_email: u.email, metrics: {}, prep: {}, levels_of_interest: [], regions: [] }; },
       async saveProfile(p) { const { s, u } = bucket("_"); s.users[u].profile = Object.assign({}, s.users[u].profile || {}, p, { user_id: u, updated_at: new Date().toISOString() }); write(s); return s.users[u].profile; },
@@ -154,6 +155,11 @@
       async listPrograms() { return programs(false); },
       async listProgramsAdmin() { return programs(true); },
       async listRules() { return pageAll("recruiting_rules", "*", q => q.order("level").order("id")); },
+      async lastUpdate() {
+        const { data, error } = await sb.from("data_updates").select("ran_on,camps_added,camps_rechecked,schools_checked,links_added").order("ran_on", { ascending: false }).limit(1);
+        if (error) throw error;
+        return data && data[0] || null;
+      },
       async listCamps() {
         const camps = await pageAll("camps", "*", q => q.order("start_date").order("id"));
         return attachLevels(camps, await programs(false));
@@ -200,6 +206,7 @@
       async listPrograms() { return (await loadFallback()).programs.filter(p => p.record_status !== "hidden"); },
       async listCamps() { const d = await loadFallback(); return attachLevels(d.camps.filter(c => c.record_status !== "hidden"), d.programs); },
       async listRules() { return (await loadFallback()).rules.filter(r => r.record_status !== "hidden"); },
+      lastUpdate: async () => null,
       getProfile: async () => null, saveProfile: blocked, deleteMyData: blocked,
       table: () => ({ list: async () => [], insert: blocked, update: blocked, remove: blocked }),
       listProgramsAdmin: blocked, adminSaveProgram: blocked, adminImportPrograms: blocked,
