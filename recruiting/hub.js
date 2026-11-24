@@ -107,7 +107,7 @@
             ${window.PSRCalendar ? (() => { const c=window.PSRCalendar.status(); return `<p class="rc-note"><b>NCAA D1 baseball: ${esc(c.label)}</b><br>${esc(c.text)} <a class="rc-link" href="${esc(c.source)}" target="_blank" rel="noopener">${esc(c.season)} official calendar</a></p>`; })() : ""}
             ${p.grad_year ? `<dl class="rc-dl"><dt>Class</dt><dd>${esc(p.grad_year)} (${esc(cy.label)})</dd>
               <dt>D1 class-year communication boundary</dt><dd>${esc(L.fmtDate(kd.d1Contact))}<br>${ruleLink("d1_contact_start")}<br><small>General U.S. high-school timeline. Calendar periods and individual exceptions still apply.</small></dd>
-              <dt>D2 off-campus contact / official visits</dt><dd>${esc(L.fmtDate(kd.d2Contact))}<br>${ruleLink("d2_contact_start") || ""}${(S.rules.find(r => r.rule_key === "d2_contact_start") || {}).record_status === "needs_review" ? ' <span class="rc-badge warn">Source under review</span>' : ""}</dd></dl>`
+              <dt>D2 off-campus contact / official visits</dt><dd>${esc(L.fmtDate(kd.d2Contact))}<br>${ruleLink("d2_contact_start") || ""}</dd></dl>`
               : `<p class="rc-muted" style="margin:0">Add your grad year in <a class="rc-link" href="#profile">Profile</a> to see your key dates.</p>`}
           </section>
           <section class="rc-panel">
@@ -118,7 +118,7 @@
             <p class="rc-small">Each step comes from a fixed rule using your grad year, profile, saved schools and the messages you log. Nothing is guessed about you, and no step predicts interest from any school.</p>
             <ul class="rc-small" style="padding-left:18px">${L.PLAN_RULES.map(r => `<li><b>${esc(r.key.replace(/_/g, " "))}</b>: ${esc(RULE_TEXT[r.key] || "")}</li>`).join("")}</ul>
             <p class="rc-small"><b>Recruiting rules we use</b></p>
-            <ul class="rc-small" style="padding-left:18px">${S.rules.map(r => `<li>${esc(r.level)}: ${esc(r.summary)} ${U.safeUrl(r.source_url) ? `<a class="rc-link" href="${esc(r.source_url)}" target="_blank" rel="noopener">Source</a>` : ""}${r.record_status === "needs_review" ? ' <span class="rc-badge warn">Under review</span>' : ""}</li>`).join("")}</ul>
+            <ul class="rc-small" style="padding-left:18px">${S.rules.map(r => `<li>${esc(r.level)}: ${esc(r.summary)} ${U.safeUrl(r.source_url) ? `<a class="rc-link" href="${esc(r.source_url)}" target="_blank" rel="noopener">Source</a>` : ""}</li>`).join("")}</ul>
           </details>
         </aside>
       </div>`;

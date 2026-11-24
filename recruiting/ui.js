@@ -11,8 +11,9 @@
 
   function statusBadge(p) {
     if (p.record_status === "verified") return `<span class="rc-badge ok" title="Official links checked">Checked ${esc(L.fmtDate(p.last_checked))}</span>`;
-    if (p.record_status === "needs_review") return `<span class="rc-badge warn" title="${esc(p.review_note || "")}">Needs review</span>`;
-    return `<span class="rc-badge" title="Listed from a public directory. Official links not checked yet.">Listing only</span>`;
+    // Public pages show only positive badges. "Needs review" stays on the admin page.
+    if (safeUrl(p.athletics_url)) return `<span class="rc-badge ok" title="Links to the school's official athletics site">Official site</span>`;
+    return "";
   }
   function levelBadge(level) { return `<span class="rc-badge level">${esc(level)}</span>`; }
   function demoBanner(api) {

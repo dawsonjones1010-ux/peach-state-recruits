@@ -175,7 +175,7 @@
 
   // ------------------------------------------------------------ rules
   function rules() {
-    $("#tab").innerHTML = `<p class="rc-small">Rules feed the plan's key dates and links. Each needs an official source and a last-checked date. Rules marked needs_review show a warning to players.</p>
+    $("#tab").innerHTML = `<p class="rc-small">Rules feed the plan's key dates and links. Each needs an official source and a last-checked date. Rules marked needs_review are kept off public pages until rechecked.</p>
       <div class="rc-list">${S.rules.map(r => `<article class="rc-panel" style="margin:0"><div class="rc-spread"><div><b>${esc(r.level)} · ${esc(r.topic)}</b> <span class="rc-small">(${esc(r.rule_key || "")})</span></div><div class="rc-row">${r.record_status === "verified" && !L.isStale(r, today(), 180) ? `<span class="rc-badge ok">Checked ${esc(r.last_checked)}</span>` : `<span class="rc-badge warn">${esc(r.record_status === "verified" ? "Recheck" : r.record_status)}</span>`}<button class="rc-btn sm" data-editr="${esc(r.id)}">Edit</button></div></div>
         <p style="margin:8px 0 4px">${esc(r.summary)}</p><p class="rc-small" style="margin:0">${esc(r.source_name)} · <a class="rc-link" href="${esc(U.safeUrl(r.source_url))}" target="_blank" rel="noopener">${esc(U.host(r.source_url))}</a></p></article>`).join("")}</div>
       <button class="rc-btn primary" id="addR" style="margin-top:12px">Add rule</button>`;

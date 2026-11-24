@@ -57,7 +57,7 @@
         <label class="rc-field" style="margin-top:12px">Max average net price ($/year)<input class="rc-input" type="number" id="fBudget" min="0" value="${esc(state.maxNetPrice)}"${!coverage.cost && state.maxNetPrice === '' ? ' disabled' : ''}><small>${coverage.cost ? 'Only includes schools with sourced cost data.' : 'No source-labeled average net prices loaded yet.'} Average net price is not your financial aid offer.</small></label>
         <label class="rc-check" style="margin-top:12px"><input type="checkbox" id="fAcad"${state.hasAcademics ? " checked" : ""}>Only schools with loaded academic or cost data</label>
         <p class="rc-small">${coverage.academics.toLocaleString()} schools currently have source-labeled academic or cost data. <a class="rc-link" href="recruiting-roadmap.html#cost">Compare your own college costs</a>.</p>
-        <label class="rc-check" style="margin-top:12px"><input type="checkbox" id="fVer"${state.verifiedOnly ? " checked" : ""}>Only schools with checked official links</label>
+        <label class="rc-check" style="margin-top:12px"><input type="checkbox" id="fVer"${state.verifiedOnly ? " checked" : ""}>Only schools with an official athletics site</label>
         <label class="rc-field" style="margin-top:12px">Sort<select class="rc-select" id="fSort">
           <option value="name"${state.sort === "name" ? " selected" : ""}>Name</option>
           <option value="state"${state.sort === "state" ? " selected" : ""}>State</option>
@@ -66,7 +66,7 @@
       </form>
       <div class="rc-panel">
         <h3>About this directory</h3>
-        <p class="rc-small" style="margin:0">Schools come from public listings of college baseball programs. A green "Checked" badge means someone opened the school's official athletics page and recorded the link on that date. Academic and cost figures come from the U.S. Department of Education College Scorecard and show their reporting year. Blank means not loaded yet. We never list coach contacts, roster openings, scholarships or admission chances.</p>
+        <p class="rc-small" style="margin:0">Schools come from public listings of college baseball programs. An "Official site" badge means the listing links to the school's official athletics website. Academic and cost figures come from the U.S. Department of Education College Scorecard and show their reporting year. Blank means not loaded yet. We never list coach contacts, roster openings, scholarships or admission chances.</p>
       </div>`;
   }
 
@@ -85,7 +85,8 @@
   }
 
   function renderList() {
-    const res = L.filterPrograms(programs, state);
+    const res = L.filterPrograms(programs, Object.assign({}, state, { verifiedOnly: false }))
+      .filter(p => !state.verifiedOnly || U.safeUrl(p.athletics_url));
     const pages = Math.max(1, Math.ceil(res.length / PAGE));
     page = Math.min(page, pages);
     const slice = res.slice((page - 1) * PAGE, page * PAGE);

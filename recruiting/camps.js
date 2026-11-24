@@ -58,7 +58,7 @@
         <dt>Who</dt><dd>${c.grad_years && c.grad_years.length ? `Grad years ${esc(c.grad_years.join(", "))}` : ""}${c.eligibility_note ? esc(c.eligibility_note) : (c.grad_years && c.grad_years.length ? "" : "Not listed")}</dd>
         ${c.positions ? `<dt>Positions</dt><dd>${esc(c.positions)}</dd>` : ""}
         <dt>Coaches</dt><dd>${c.confirmed_coaches ? esc(c.confirmed_coaches) : "Not named on the official page"}</dd>
-        <dt>Checked</dt><dd>${esc(L.fmtDate(c.last_checked))} · <a class="rc-link" href="${esc(U.safeUrl(c.source_url))}" target="_blank" rel="noopener">${esc(U.host(c.source_url))}</a>${stale ? ' <span class="rc-badge warn">May be out of date</span>' : ""}${c.record_status === "needs_review" ? ' <span class="rc-badge warn">Under review</span>' : ""}</dd>
+        <dt>Checked</dt><dd>${esc(L.fmtDate(c.last_checked))} · <a class="rc-link" href="${esc(U.safeUrl(c.source_url))}" target="_blank" rel="noopener">${esc(U.host(c.source_url))}</a>${stale ? ' <span class="rc-badge warn">May be out of date</span>' : ""}</dd>
       </dl>
       <div class="rc-row" style="margin-top:12px">
         ${U.safeUrl(c.registration_url) ? `<a class="rc-btn sm primary" href="${esc(c.registration_url)}" target="_blank" rel="noopener">Register on official page</a>` : ""}

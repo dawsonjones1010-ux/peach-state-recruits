@@ -97,6 +97,26 @@ def og_card(p, src_path, dest):
     d.text((60, H - 56), "RECRUITING PROFILE", font=B(22), fill=(255, 255, 255))
     bg.save(dest, quality=84, optimize=True, progressive=True)
 
+def search_description(p):
+    """Plain, factual search snippet (no emoji or hype): who, what, where, what's on the page."""
+    pos = (p.get("position") or "").replace(" / ", "/")
+    cls = f"Class of {p['gradYear']}" if p.get("gradYear") else ""
+    who = ", ".join(x for x in [pos, cls] if x)
+    where = ", ".join(x for x in [p.get("school") or p.get("team"), p.get("location")] if x)
+    d = p["name"] + (f" ({who})" if who else "") + (f" from {where}" if where else "") + "."
+    return d + " Baseball highlight video, measurables and scouting report on Peach State Recruits."
+
+def person_jsonld(p, url, img):
+    """schema.org ProfilePage about the player, so search engines read the profile as a person."""
+    person = {"@type": "Person", "name": p["name"], "url": url, "image": img}
+    if p.get("school"): person["affiliation"] = {"@type": "EducationalOrganization", "name": p["school"]}
+    if p.get("location"): person["homeLocation"] = {"@type": "Place", "name": p["location"]}
+    desc = ", ".join(x for x in ["Baseball", p.get("position"), f"Class of {p['gradYear']}" if p.get("gradYear") else ""] if x)
+    person["description"] = desc
+    data = {"@context": "https://schema.org", "@type": "ProfilePage", "url": url, "mainEntity": person}
+    if p.get("updated"): data["dateModified"] = p["updated"]
+    return '<script type="application/ld+json">' + json.dumps(data, ensure_ascii=False).replace("</", "<\\/") + "</script>"
+
 def local_cover(cover):
     m = re.search(r"(images/players/[\w-]+\.jpg)", cover or "")
     return m.group(1) if m and os.path.exists(m.group(1)) else ""
@@ -119,6 +139,7 @@ def main():
     tpl = open("player.html", encoding="utf-8").read()
     players = load_players()
     keep = set()
+    updated = {p["slug"]: p.get("updated") for p in players}
     if os.path.isdir("player"):
         shutil.rmtree("player")
     for p in players:
@@ -145,7 +166,7 @@ def main():
         url = f"{SITE}/player/{slug}/"
         e = lambda t: html.escape(str(t), quote=True)
         meta = f'''<title>{e(title)}</title>
-<meta name="description" content="{e(desc)}">
+<meta name="description" content="{e(search_description(p))}">
 <link rel="canonical" href="{e(url)}">
 <meta property="og:title" content="{e(p['name'] + ' | Peach State Recruits')}">
 <meta property="og:description" content="{e(desc)}">
@@ -158,10 +179,12 @@ def main():
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{e(p['name'] + ' | Peach State Recruits')}">
 <meta name="twitter:description" content="{e(desc)}">
-<meta name="twitter:image" content="{e(img)}">'''
+<meta name="twitter:image" content="{e(img)}">
+{person_jsonld(p, url, img)}'''
         out = re.sub(r"<title>.*?</title>\s*<meta name=\"description\"[^>]*>", lambda m: "<!--og-->", tpl, count=1, flags=re.S)
         out = re.sub(r'<meta property="og:image"[^>]*>\s*<meta property="og:type"[^>]*>\s*<meta name="twitter:card"[^>]*>\s*<meta name="twitter:image"[^>]*>', "", out, count=1)
         out = out.replace("<!--og-->", meta, 1)
+        out = re.sub(r'<meta name="robots" content="noindex[^"]*">(<!--.*?-->)?\n?', "", out, count=1)  # the template is noindex; player pages are not
         # Static base (the page lives at player/<slug>/), so every asset resolves on first fetch
         out = re.sub(r"<script>\(function\(\)\{var m=location\.pathname.*?</script>", '<base href="../../">', out, count=1)
         assert '<base href="../../">' in out, slug
@@ -171,7 +194,7 @@ def main():
     for f in os.listdir("images/og"):
         if f.endswith(".jpg") and f[:-4] not in keep:
             os.remove(os.path.join("images/og", f))
-    urls = [f"  <url><loc>{SITE}/</loc></url>", f"  <url><loc>{SITE}/players.html</loc></url>", f"  <url><loc>{SITE}/find-my-level.html</loc></url>", f"  <url><loc>{SITE}/recruiting-roadmap.html</loc></url>", f"  <url><loc>{SITE}/colleges.html</loc></url>", f"  <url><loc>{SITE}/camps.html</loc></url>", f"  <url><loc>{SITE}/email-coach.html</loc></url>"] + [f"  <url><loc>{SITE}/player/{s}/</loc></url>" for s in sorted(keep)]
+    urls = [f"  <url><loc>{SITE}/</loc></url>", f"  <url><loc>{SITE}/players.html</loc></url>", f"  <url><loc>{SITE}/find-my-level.html</loc></url>", f"  <url><loc>{SITE}/recruiting-roadmap.html</loc></url>", f"  <url><loc>{SITE}/colleges.html</loc></url>", f"  <url><loc>{SITE}/camps.html</loc></url>", f"  <url><loc>{SITE}/email-coach.html</loc></url>"] + [f"  <url><loc>{SITE}/player/{s}/</loc>{f'<lastmod>{updated[s]}</lastmod>' if updated.get(s) else ''}</url>" for s in sorted(keep)]
     open("sitemap.xml", "w").write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "\n".join(urls) + "\n</urlset>\n")
     print(f"built {len(keep)} player pages:", ", ".join(sorted(keep)))
 

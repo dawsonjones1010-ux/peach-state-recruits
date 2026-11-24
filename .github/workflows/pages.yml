@@ -42,7 +42,7 @@ jobs:
           done
           touch _site/.nojekyll
           # Safety: fail the deploy if a repo-only file slipped in.
-          for x in README.md SETUP.md README_RECRUITING_UPDATE.md FIXES_AND_GAPS.md CHANGE_MANIFEST.json config.recruiting.example.js package.json package-lock.json node_modules vercel.json .htaccess tests tools supabase api .github; do
+          for x in README.md SETUP.md docs config.recruiting.example.js package.json package-lock.json node_modules vercel.json .htaccess tests tools supabase api .github; do
             if [ -e "_site/$x" ]; then echo "::error::$x must not be published"; exit 1; fi
           done
           echo "Published files:"; find _site -maxdepth 1 | sort
