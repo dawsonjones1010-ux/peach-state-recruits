@@ -346,6 +346,40 @@
   function levelsFor(read) {
     return U.schoolsAtLevel(read).filters;
   }
+  // ---- Schools to start with: a few programs at the player's level near home, each one tap from Email Coach ----
+  let PROGRAMS = null, programsLoad = null;
+  function loadPrograms() {
+    if (!programsLoad) programsLoad = fetch("data/programs.json").then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(d => { PROGRAMS = d.programs.map(p => Object.assign({ band: window.PSRLogic.bandOf(p) }, p)); })
+      .catch(err => { programsLoad = null; throw err; });
+    return programsLoad;
+  }
+  function homeState() { try { return localStorage.getItem(window.PSRPicks.STATE_KEY) || ""; } catch (_) { return ""; } }
+  function picksHtml(bands, idx) {
+    if (!window.PSRPicks || !window.PSRLogic || !bands || !bands.length) return "";
+    return `<section class="lvl-picks no-print" data-picks="${idx}" data-bands="${esc(bands.join(","))}" aria-label="Schools to start with">
+      <p class="lvl-cta2-t">Schools to start with</p><div class="lvl-picks-b" aria-live="polite"><p class="lvl-note-sm">Loading schools…</p></div></section>`;
+  }
+  function drawPicks(sec) {
+    const LG = window.PSRLogic, bands = sec.dataset.bands.split(","), idx = sec.dataset.picks, st = homeState();
+    const r = window.PSRPicks.pick(PROGRAMS, bands, st);
+    const label = bands.map(b => LG.BAND_LABELS[b]).join(" and ");
+    const opts = LG.STATE_NAMES.map(n => `<option${n === st ? " selected" : ""}>${esc(n)}</option>`).join("");
+    const list = !st ? `<p class="lvl-note-sm">Choose your state to see ${esc(label)} programs near you.</p>`
+      : r.list.length ? `<ul class="lvl-pick-list">${r.list.map(p => `<li><div class="lvl-pick-n"><a href="colleges.html#school=${encodeURIComponent(p.slug)}">${esc(p.name)}</a><span>${esc(LG.BAND_LABELS[p.band] || p.level)}, ${esc(p.state)}</span></div><button class="lvl-pick-email" type="button" data-email-handoff="${idx}" data-school="${esc(p.slug)}">Email coach</button></li>`).join("")}</ul>`
+      : `<p class="lvl-note-sm">No ${esc(label)} programs in or next to ${esc(st)}.</p>`;
+    sec.querySelector(".lvl-picks-b").innerHTML = `<label class="lvl-picks-state"><span>Your home state</span><select data-picks-state><option value="">Choose a state</option>${opts}</select></label>
+      ${list}
+      <p class="lvl-note-sm">${st && r.list.length ? "Picked by level and distance from home, not by how you'd fit a program. " : ""}<a href="colleges.html?bands=${encodeURIComponent(bands.join(","))}&from=fml">See every ${esc(label)} program</a></p>`;
+  }
+  function fillPicks() {
+    const secs = app.querySelectorAll("[data-picks]");
+    if (!secs.length) return;
+    loadPrograms().then(() => secs.forEach(drawPicks)).catch(() => secs.forEach(s => {
+      s.querySelector(".lvl-picks-b").innerHTML = `<p class="lvl-note-sm">The school list couldn't load. <a href="colleges.html?bands=${encodeURIComponent(s.dataset.bands)}&from=fml">Open College Finder</a> instead.</p>`;
+    }));
+  }
+
   function oneTapHtml(read, idx) {
     const at = U.schoolsAtLevel(read);
     const q = at.bands && at.bands.length ? "bands=" + encodeURIComponent(at.bands.join(",")) + "&" : "";
@@ -521,6 +555,7 @@
       </div>
       ${reportOverview(read, idx)}
       ${movesHtml(read)}
+      ${picksHtml(U.schoolsAtLevel(read).bands, idx)}
       ${oneTapHtml(read, idx)}
       <div class="lvl-likeyou no-print" data-likeyou="${idx}" hidden></div>
       ${crossCheckHtml(read)}
@@ -803,6 +838,7 @@
     return `<section class="lvl-read" aria-labelledby="read${idx}" data-read="${idx}">
       ${pitcherBoard(read, fit, idx)}
       ${pitcherWhatIfHtml(idx, fit)}
+      ${picksHtml(at, idx)}
       ${taps}
       <div class="lvl-likeyou no-print" data-likeyou="${idx}" hidden></div>
       <div class="lvl-share no-print"><button class="btn btn-line" type="button" data-share="${idx}">Share my result</button><div class="lvl-share-out" id="shareOut${idx}" hidden></div></div>
@@ -885,6 +921,7 @@
     return `<section class="lvl-read" aria-labelledby="read${idx}" data-read="${idx}">
       ${positionBoard(read, fit, idx)}
       ${positionWhatIfHtml(read, idx, fit)}
+      ${picksHtml(at, idx)}
       ${fit.enough ? levelExplainSection(fit, QF, QF.CAT_LABEL) : ""}
       <section class="lvl-onetap no-print" aria-label="Your next steps">
         <p class="lvl-cta2-t">Your next steps</p>
@@ -1210,7 +1247,7 @@
     });
     const openSecs = state.step === 4 ? [...app.querySelectorAll("details[open][data-sec]")].map(d => d.closest("[data-read]") ? d.closest("[data-read]").dataset.read + ":" + d.dataset.sec : d.dataset.sec) : [];
     app.innerHTML = state.step === 1 ? step1(v) : state.step === 2 ? step2(v) : state.step === 3 ? step3(v) : results();
-    if (state.step === 4) fillLikeYou();
+    if (state.step === 4) { fillLikeYou(); fillPicks(); }
     openSecs.forEach(k => { const [r, sct] = k.includes(":") ? k.split(":") : [null, k]; const d = app.querySelector(r != null ? `[data-read="${r}"] [data-sec="${sct}"]` : `.lvl-results > [data-sec="${sct}"]`); if (d) d.open = true; });
     const sum = document.getElementById("lvlSummary");
     if (sum) sum.focus();
@@ -1230,7 +1267,7 @@
   });
   app.addEventListener("click", (e) => {
     const eh = e.target.closest("[data-email-handoff]");
-    if(eh){try{sessionStorage.setItem("psr_email_handoff_v2",JSON.stringify(R.handoff(state.input,state.result.reads[+eh.dataset.emailHandoff])));location.href="email-coach.html?from=level";}catch(error){if(window.PSR)window.PSR.toast("This browser cannot transfer your metrics. Open Email Coach and enter them there.");}return;}
+    if(eh){try{sessionStorage.setItem("psr_email_handoff_v2",JSON.stringify(R.handoff(state.input,state.result.reads[+eh.dataset.emailHandoff])));location.href="email-coach.html?from=level"+(eh.dataset.school?"&school="+encodeURIComponent(eh.dataset.school):"");}catch(error){if(window.PSR)window.PSR.toast("This browser cannot transfer your metrics. Open Email Coach and enter them there.");}return;}
     const cp=e.target.closest("[data-copy-snapshot]");if(cp){const text=R.snapshot(state.input,state.result.reads[+cp.dataset.copySnapshot]);Promise.resolve().then(()=>navigator.clipboard.writeText(text)).then(()=>window.PSR&&window.PSR.toast("Coach snapshot copied")).catch(()=>{const out=document.getElementById("snapshotText"+cp.dataset.copySnapshot);out.hidden=false;out.value=text;out.focus();out.select();});return;}
     const sc=e.target.closest("[data-run-scenario]");if(sc){runScenario(+sc.dataset.runScenario);return;}
     const pw=e.target.closest("[data-run-pwhat]");if(pw){runPitcherWhatIf(+pw.dataset.runPwhat);return;}
@@ -1260,6 +1297,7 @@
   app.addEventListener("input", e => { if (e.target.dataset.num) state.confirmed.delete(e.target.dataset.num); if (e.target.dataset.plain) state.confirmed.delete(e.target.dataset.plain); });
   app.addEventListener("change", (e) => {
     const t = e.target;
+    if (t.matches("[data-picks-state]")) { try { localStorage.setItem(window.PSRPicks.STATE_KEY, t.value); } catch (_) {} const which = t.closest("[data-picks]").dataset.picks; app.querySelectorAll("[data-picks]").forEach(drawPicks); const s = app.querySelector(`[data-picks="${which}"] [data-picks-state]`); if (s) s.focus(); return; }
     if(t.dataset.h)state.confirmed.delete("heightIn");
     if (t.dataset.unknown) {
       const k = t.dataset.unknown; collect();

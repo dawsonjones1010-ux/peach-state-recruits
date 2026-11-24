@@ -204,3 +204,14 @@
 .lvl-whatif span,.lvl-whatif small{display:block;font-size:12px;color:#536078}.lvl-whatif b{display:block;font-size:14px;margin:3px 0}
 @media(max-width:600px){.lvl-whatif{grid-template-columns:1fr}.lvl-radar-wrap{max-width:300px}}
 @media(max-width:600px){.lvl-where{font-size:12px}.lvl-where th,.lvl-where td{padding:8px 6px}.lvl-radar-label{font-size:12px}}
+
+/* Schools to start with */
+.lvl-picks{margin:20px 0;padding:18px;border:1px solid #e3e6eb;border-radius:14px;background:#fff}
+.lvl-picks-state{display:flex;flex-direction:column;gap:6px;max-width:320px;margin:4px 0 12px;font-weight:700;font-size:14px}
+.lvl-picks-state select{font:inherit;font-size:16px;padding:10px 12px;border:1px solid #b9c2cf;border-radius:10px;background:#fff}
+.lvl-pick-list{list-style:none;margin:0 0 10px;padding:0}
+.lvl-pick-list li{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-top:1px solid #eceff3}
+.lvl-pick-n{min-width:0}.lvl-pick-n a{display:block;font-weight:800;color:#11151c;text-decoration:none;line-height:1.25}.lvl-pick-n a:hover{text-decoration:underline}
+.lvl-pick-n span{display:block;font-size:13px;color:#5b6472;margin-top:2px}
+.lvl-pick-email{flex:none;font:inherit;font-weight:800;font-size:14px;padding:9px 14px;border-radius:999px;border:0;background:var(--peach,#f08a4b);color:#11151c;cursor:pointer}
+.lvl-pick-email:focus-visible{outline:3px solid #11151c;outline-offset:2px}
