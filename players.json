@@ -1,5 +1,68 @@
 [
   {
+    "slug": "gunnar-johnson",
+    "active": true,
+    "name": "Gunnar Johnson",
+    "sport": "Baseball",
+    "position": "SS/3B/RHP",
+    "gradYear": 2028,
+    "school": "Alexander Central High School",
+    "team": "South Charlotte Panthers",
+    "location": "Hickory, North Carolina",
+    "coverImage": "images/players/gunnar-johnson.jpg",
+    "headline": "GUNNAR JOHNSON IS A TOP TIER INFIELDER🔥📈",
+    "playerInstagram": [],
+    "measurables": [
+      {
+        "label": "Height",
+        "value": "5'10\""
+      },
+      {
+        "label": "Weight",
+        "value": "175 lb"
+      },
+      {
+        "label": "Position",
+        "value": "SS/3B/RHP"
+      }
+    ],
+    "video": {
+      "youtube": "",
+      "file": ""
+    },
+    "highlights": [],
+    "report": "Gunnar Johnson | SS/3B/RHP | 2028 | 5’10 | 175 | Alexander Central High School\n\n💎 Gunnar Johnson is a rising 2028 infielder out of Hickory, North Carolina, ranked by Prep Baseball as the No. 4 third baseman in the state’s 2028 class. The South Charlotte Panthers standout brings a stout, athletic build.\n\n💥 Johnson swings with intent and does damage when he squares one up, driving the baseball hard into the gaps. His blend of consistent contact and real power potential makes him a tough out in the middle of a lineup.\n\n⚡️ On the dirt, Johnson moves quickly at shortstop and third base, plays with a strong feel for his body and shows a fluid arm across the diamond. He also takes the mound as a right-hander, adding another layer to his value.\n\nWith a dangerous bat and two-way value, Johnson is a 2028 North Carolina prospect to know.",
+    "stats": null,
+    "academics": [],
+    "links": [],
+    "contactEmail": "",
+    "contactInstagram": "peachstaterecruits",
+    "contactName": "Peach State Recruits",
+    "postUrl": "",
+    "account": "peachstaterecruits",
+    "showOnHome": true,
+    "videos": [
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/gunnar-johnson/clip1.mp4",
+        "title": "Highlight clip 1"
+      },
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/gunnar-johnson/clip2.mp4",
+        "title": "Highlight clip 2"
+      },
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/gunnar-johnson/clip3.mp4",
+        "title": "Highlight clip 3"
+      }
+    ],
+    "coachReport": "Profile: 2028 SS/3B/RHP from Hickory, North Carolina. Alexander Central High School; South Charlotte Panthers. 5'10\", 175 lb.",
+    "featuredRank": null,
+    "featureDate": "2026-11-24"
+  },
+  {
     "slug": "juan-duque",
     "active": true,
     "name": "Juan Duque",
