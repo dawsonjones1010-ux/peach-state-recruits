@@ -357,8 +357,8 @@
   function homeState() { try { return localStorage.getItem(window.PSRPicks.STATE_KEY) || ""; } catch (_) { return ""; } }
   function picksHtml(bands, idx) {
     if (!window.PSRPicks || !window.PSRLogic || !bands || !bands.length) return "";
-    return `<section class="lvl-picks no-print" data-picks="${idx}" data-bands="${esc(bands.join(","))}" aria-label="Schools to start with">
-      <p class="lvl-cta2-t">Schools to start with</p><div class="lvl-picks-b" aria-live="polite"><p class="lvl-note-sm">Loading schools…</p></div></section>`;
+    return `<section class="lvl-picks no-print" data-picks="${idx}" data-bands="${esc(bands.join(","))}" aria-label="Colleges at your level">
+      <p class="lvl-cta2-t">Colleges at your level</p><div class="lvl-picks-b" aria-live="polite"><p class="lvl-note-sm">Loading schools…</p></div></section>`;
   }
   function drawPicks(sec) {
     const LG = window.PSRLogic, bands = sec.dataset.bands.split(","), idx = sec.dataset.picks, st = homeState();
@@ -379,6 +379,36 @@
       s.querySelector(".lvl-picks-b").innerHTML = `<p class="lvl-note-sm">The school list couldn't load. <a href="colleges.html?bands=${encodeURIComponent(s.dataset.bands)}&from=fml">Open College Finder</a> instead.</p>`;
     }));
   }
+
+  // ---- Results layout: the answer first, the detail after ----
+  // Top: level, how you line up, priorities, colleges at your level, next steps.
+  // Everything else for that read goes into one closed "Full breakdown" section.
+  function arrangeRead(readEl) {
+    const board = readEl.querySelector(":scope > .lvl-board");
+    if (!board || readEl.querySelector(":scope > .lvl-more")) return;
+    const kids = [...board.children];
+    const match = kids.find(c => c.classList.contains("lvl-match"));
+    const where = kids.find(c => c.querySelector(".lvl-ptable-wrap"));
+    const prio = kids.find(c => c.querySelector(".lvl-prio"));
+    let at = match || null;
+    [where, prio].forEach(el => { if (el && at) { at.after(el); at = el; } });
+    const extra = document.createElement("div");
+    extra.className = "lvl-board lvl-board-more";
+    kids.filter(c => c.matches(".lvl-msum, .pro-source-note") && c !== where && c !== prio).forEach(c => extra.appendChild(c));
+    const TOP = ".lvl-board, .lvl-picks, .lvl-onetap, .lvl-likeyou, .lvl-share";
+    const rest = [...readEl.children].filter(c => !c.matches(TOP));
+    const more = document.createElement("details");
+    more.className = "lvl-more";
+    more.dataset.more = readEl.dataset.read;
+    more.innerHTML = `<summary><b>Full breakdown</b><span>Category scores, confidence, standout tools, what-ifs, how each score works and more</span></summary><div class="lvl-more-b"></div>`;
+    const body = more.querySelector(".lvl-more-b");
+    if (extra.children.length) body.appendChild(extra);
+    rest.forEach(c => body.appendChild(c));
+    ["lvl-picks", "lvl-onetap", "lvl-likeyou", "lvl-share"].forEach(cls => { const el = readEl.querySelector(":scope > ." + cls); if (el) readEl.appendChild(el); });
+    readEl.appendChild(more);
+  }
+  window.addEventListener("beforeprint", () => document.querySelectorAll(".lvl-more:not([open])").forEach(d => { d.open = true; d.dataset.printOpened = "1"; }));
+  window.addEventListener("afterprint", () => document.querySelectorAll(".lvl-more[data-print-opened]").forEach(d => { d.open = false; delete d.dataset.printOpened; }));
 
   function oneTapHtml(read, idx) {
     const at = U.schoolsAtLevel(read);
@@ -977,12 +1007,14 @@
       ${tabs}
       ${r.reads.map((rd, k) => `<div class="lvl-tabpanel" id="tp${k}"${r.reads.length > 1 ? ` role="tabpanel" aria-labelledby="tab${k}"` : ""}${k === tab ? "" : " hidden"}>${readHtml(rd, k)}</div>`).join("")}
       ${r.twoWay ? `<p class="lvl-note-sm">Two-way player: pitching and position play are compared separately and never blended into one result.</p>` : ""}
-      ${clockHtml()}
-      ${progressHtml()}
       ${reviewHtml()}
       <div class="lvl-res-actions no-print"><button class="btn btn-line" type="button" data-go="1">Update my metrics</button><button class="btn btn-line" type="button" data-print>Print</button><button class="btn btn-line" type="button" data-reset>Start over</button></div>
+      <details class="lvl-more" data-more="g"><summary><b>Recruiting timeline, saved results and sources</b><span>Your recruiting clock, progress since last time, how this works</span></summary><div class="lvl-more-b">
+      ${clockHtml()}
+      ${progressHtml()}
       ${sec("sources", "Sources", sources)}
       ${sec("how", "How this works", how)}
+      </div></details>
       ${printHtml()}
       <div class="lvl-card lvl-cta no-print"><div><h3>Want coaches to see your film?</h3><p>Peach State Recruits builds Instagram features, highlight videos and recruiting profiles for baseball players.</p></div><a class="btn btn-peach btn-lg" href="index.html#packages">See packages</a></div>
     </div>`;
@@ -1246,9 +1278,14 @@
       if (n === state.step) li.setAttribute("aria-current", "step"); else li.removeAttribute("aria-current");
     });
     const openSecs = state.step === 4 ? [...app.querySelectorAll("details[open][data-sec]")].map(d => d.closest("[data-read]") ? d.closest("[data-read]").dataset.read + ":" + d.dataset.sec : d.dataset.sec) : [];
+    const openMore = state.step === 4 ? [...app.querySelectorAll(".lvl-more[open]")].map(d => d.dataset.more) : [];
     app.innerHTML = state.step === 1 ? step1(v) : state.step === 2 ? step2(v) : state.step === 3 ? step3(v) : results();
-    if (state.step === 4) { fillLikeYou(); fillPicks(); }
-    openSecs.forEach(k => { const [r, sct] = k.includes(":") ? k.split(":") : [null, k]; const d = app.querySelector(r != null ? `[data-read="${r}"] [data-sec="${sct}"]` : `.lvl-results > [data-sec="${sct}"]`); if (d) d.open = true; });
+    if (state.step === 4) {
+      app.querySelectorAll(".lvl-read[data-read]").forEach(arrangeRead);
+      openMore.forEach(k => { const d = app.querySelector(`.lvl-more[data-more="${k}"]`); if (d) d.open = true; });
+      fillLikeYou(); fillPicks();
+    }
+    openSecs.forEach(k => { const [r, sct] = k.includes(":") ? k.split(":") : [null, k]; const d = app.querySelector(r != null ? `[data-read="${r}"] [data-sec="${sct}"]` : `.lvl-results [data-more="g"] [data-sec="${sct}"]`); if (d) d.open = true; });
     const sum = document.getElementById("lvlSummary");
     if (sum) sum.focus();
     else if (focus) { const h = app.querySelector(state.step === 4 ? ".lvl-tabpanel:not([hidden]) h2" : "h2"); if (h) { h.setAttribute("tabindex", "-1"); h.focus({ preventScroll: true }); } const top = state.step === 4 ? app.querySelector(".lvl-results") : document.querySelector(".lvl-main"); const nav = document.querySelector(".nav"); if (top) window.scrollTo({ top: top.getBoundingClientRect().top + window.scrollY - (nav ? nav.offsetHeight : 64) - 8, behavior: "instant" }); }
