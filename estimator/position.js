@@ -223,5 +223,5 @@
   }
 
   return { LEVELS, WEIGHTS, CAT_LABEL, FOCUS, UNSCORED, metricScore, levelFit, hittingStats, confidence, priorities, standouts, evaluate, withValues, band,
-    DISCLAIMER: "These scores compare the measurements you entered with published recruiting targets for your position at each level. They are not your chance of being recruited or getting an offer. Coaches also weigh game performance, defense, film, academics and roster needs. Levels are listed for easy navigation, not as a strict talent ladder." };
+    DISCLAIMER: "These scores compare the measurements you entered with published recruiting targets for your position at each level. They are not the chance of being recruited or getting an offer. Coaches also weigh game performance, defense, film, academics and roster needs. Levels are listed for easy navigation, not as a strict talent ladder." };
 });
