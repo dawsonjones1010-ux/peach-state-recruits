@@ -688,7 +688,7 @@
             ${fit.provisional ? `<p class="lvl-best-a lvl-prov">Provisional: there isn't enough verified, recent data to stand behind this target yet. See Evaluation confidence below.</p>` : ""}
           </div></div>
         <ol class="lvl-match-list lvl-pfit">${tiles}</ol>
-        <p class="lvl-match-disc">${esc(M.DISCLAIMER)} The order of the categories is for navigation only; it isn't a strict talent ladder.</p>
+        <p class="lvl-match-disc">${esc(M.DISCLAIMER)}</p>
       </section>
       <section class="lvl-msum lvl-juco" aria-label="JUCO recruiting pathway" data-level="juco">
         <p class="lvl-pill-h">JUCO recruiting pathway</p>

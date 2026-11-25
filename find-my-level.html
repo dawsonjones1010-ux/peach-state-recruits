@@ -28,7 +28,7 @@
 /* Phones can keep this page cached for ~10 minutes after an update. If version.json says a newer
    build is live, reload once with a cache-busting query so players never see stale scores.
    Bump PSR_FML_V and version.json together on every Find My Level release. */
-window.PSR_FML_V = 53;
+window.PSR_FML_V = 54;
 (function () {
   try {
     fetch("version.json?t=" + Date.now(), { cache: "no-store" }).then(function (r) { return r.json(); }).then(function (j) {
@@ -141,8 +141,8 @@ window.PSR_FML_V = 53;
 <script src="estimator/logic.js?v=46"></script>
 <script src="estimator/summary.js?v=45"></script>
 <script src="estimator/fit-core.js?v=45"></script>
-<script src="estimator/pitcher.js?v=46"></script>
-<script src="estimator/position.js?v=45"></script>
+<script src="estimator/pitcher.js?v=47"></script>
+<script src="estimator/position.js?v=46"></script>
 <script src="estimator/v2.js?v=39"></script>
 <script src="estimator/progress.js?v=39"></script>
 <script src="estimator/size.js?v=40"></script>
@@ -150,7 +150,7 @@ window.PSR_FML_V = 53;
 <script src="estimator/report.js?v=39"></script>
 <script src="recruiting/logic.js?v=42"></script>
 <script src="estimator/picks.js?v=46"></script>
-<script src="estimator/ui.js?v=53"></script>
+<script src="estimator/ui.js?v=54"></script>
 <script>
 (function () {
   const PSR = window.PSR, C = window.PSR_CONFIG || {};

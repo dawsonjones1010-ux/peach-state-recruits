@@ -315,5 +315,5 @@
   function label(key) { const l = LEVELS.find(x => x.key === key); return l ? l.label : key; }
   return { SOURCE, LEVELS, VELO, PERF, SECONDARY, PHYSICAL, PRIORITIES, CAT_LABEL, PITCH_TYPES,
     veloScore, targetScore, penaltyFor, derive, baseballInnings, levelFit, confidence, classContext, priorities, standouts, evaluate, label, band: C.classify,
-    DISCLAIMER: "These scores show how your measurements line up with Peach State Recruits' screening ranges for each level. They are not the chance of being recruited or getting an offer. Coaches also weigh video, pitch quality, competition, academics and roster needs." };
+    DISCLAIMER: "These scores compare the measurements you entered with Peach State Recruits' screening ranges for pitchers at each level. They are not your chance of being recruited or getting an offer. Coaches also weigh pitch quality, command, film, competition, academics and roster needs. Levels are listed for easy navigation, not as a strict talent ladder." };
 });
