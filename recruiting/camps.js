@@ -56,7 +56,7 @@
       </div>
       <dl class="rc-dl" style="margin-top:12px;font-size:14px">
         <dt>Dates</dt><dd>${esc(L.fmtDate(c.start_date, { weekday: "short", month: "short", day: "numeric", year: "numeric" }))}${c.end_date && c.end_date !== c.start_date ? ` to ${esc(L.fmtDate(c.end_date, { weekday: "short", month: "short", day: "numeric" }))}` : ""}${c.time_note ? ` · ${esc(c.time_note)}` : ""}</dd>
-        <dt>Price</dt><dd>${c.price_cents != null ? esc(L.money(c.price_cents / 100)) : "Not listed"}${c.price_note ? `<br><span class="rc-small">${esc(c.price_note)}</span>` : ""}</dd>
+        <dt>Price</dt><dd>${c.price_cents != null ? esc(L.money(c.price_cents / 100)) : "Not listed"}${c.price_note && !L.sameAsPrice(c.price_note, c.price_cents) ? `<br><span class="rc-small">${esc(c.price_note)}</span>` : ""}</dd>
         <dt>Who</dt><dd>${c.grad_years && c.grad_years.length ? `Grad years ${esc(c.grad_years.join(", "))}` : ""}${c.eligibility_note ? esc(c.eligibility_note) : (c.grad_years && c.grad_years.length ? "" : "Not listed")}</dd>
         ${c.positions ? `<dt>Positions</dt><dd>${esc(c.positions)}</dd>` : ""}
         <dt>Coaches</dt><dd>${c.confirmed_coaches ? esc(c.confirmed_coaches) : "Not named on the official page"}</dd>

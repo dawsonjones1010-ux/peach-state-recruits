@@ -268,7 +268,7 @@
         <span class="lvl-mini">${read.toolKeys.map(k => `<span><b>${esc(TOOL_LABEL[k])}</b> <i class="lvl-pill ${pillClass(c.tools[k].status)}">${esc(statusText(c.tools[k].status))}</i></span>`).join("")}</span>
         <span class="lvl-more-k" aria-hidden="true">Details</span></summary>
       <p class="lvl-src"><span class="lvl-kind guide">Published target</span> Category: ${esc(c.ncLabel)}</p>
-      ${noData ? (Object.values(c.tools).some(t => t.fill) ? `<p class="lvl-note-sm"><b>The main target source has no separate Lower D1 targets for position players.</b> These come from other published sources; any target with no published value anywhere is marked as an estimate and says how it was set.</p>` : `<p class="lvl-note-sm"><b>This source has no separate lower D1 targets for position players.</b> This is a data gap, not a negative result. Nothing is borrowed from mid-major or other D1 metrics.</p>`) : ""}
+      ${noData ? (Object.values(c.tools).some(t => t.fill) ? `<p class="lvl-note-sm"><b>The main target source has no separate Low-Major D1 targets for position players.</b> These come from other published sources; any target with no published value anywhere is marked as an estimate and says how it was set.</p>` : `<p class="lvl-note-sm"><b>This source has no separate lower D1 targets for position players.</b> This is a data gap, not a negative result. Nothing is borrowed from mid-major or other D1 metrics.</p>`) : ""}
       <ul class="lvl-tools">${read.toolKeys.map(k => toolRow(k, c.tools[k])).join("")}</ul>
       <p class="lvl-cov"><b>Compared:</b> ${comp.length ? esc(comp.join(", ")) : "none"}${noTgt.length ? ` · <b>No published target:</b> ${esc(noTgt.join(", "))}` : ""}${notIn.length ? ` · <b>Not entered:</b> ${esc(notIn.join(", "))}` : ""}</p>
       ${ns}
@@ -720,7 +720,7 @@
       .map(([l, k]) => `<li><span>${esc(l)} <small>${Math.round(W[k] * 100)}%</small></span><b>${Math.round(P[k])}</b><em>${esc(N[k])}</em></li>`).join("");
     return `<section class="lvl-msum lvl-conf" aria-label="Evaluation confidence">
         <p class="lvl-pill-h">Evaluation confidence</p>
-        <div class="lvl-conf-row"><b>${conf.score}<small>/100</small></b><p><strong>${esc(conf.label)}.</strong> How much of this evaluation is backed by complete, verified, recent numbers. It isn't a talent rating and never changes your fit scores.${conf.incomplete ? " Essential data is missing, so confidence is capped." : ""}</p></div>
+        <div class="lvl-conf-row"><b>${conf.score}<small>/100</small></b><p><strong>${esc(conf.label)}.</strong> How much of this evaluation is backed by complete, verified, recent measurements. It isn't a talent rating and never changes your fit scores.${conf.incomplete ? " Essential data is missing, so confidence is capped." : ""}</p></div>
         <ul class="lvl-conf-parts">${rows}</ul>
         ${conf.missing.length ? `<p class="lvl-msum-k">Raise your confidence:</p><ol class="lvl-conf-list">${conf.missing.slice(0, 4).map(x => `<li>${esc(x)}</li>`).join("")}</ol>` : `<p class="lvl-msum-k">Your evaluation is well supported.</p>`}
       </section>`;
@@ -847,7 +847,7 @@
     if (!fit.enough) return "";
     const d = fit.derived;
     const f = [["typFb", "Sitting fastball", "mph", d.sit], ["maxFb", "Peak fastball", "mph", d.peak], ["strikePct", "Strike %", "%", d.strikePct], ["bb9", "BB/9", "", d.bb9], ["k9", "K/9", "", d.k9], ["era", "ERA", "", d.era]];
-    return `<details class="pro-scenario no-print" open><summary>What if my numbers change?</summary><p>Try goal numbers and see how your level scores move. Your real result stays the same. This is a hypothetical, not a forecast, and improving a few numbers doesn't guarantee recruitment.</p>
+    return `<details class="pro-scenario no-print" open><summary>What if my measurements change?</summary><p>Try goal numbers and see how your level scores move. Your real result stays the same. This is a hypothetical, not a forecast, and improving a few measurements doesn't guarantee recruitment.</p>
       <div class="pro-scenario-inputs">${f.map(([k, l, u, v]) => `<label>${esc(l)}${u ? ` (${esc(u)})` : ""}<input class="input" type="number" inputmode="decimal" step="0.1" data-pwhat="${idx}:${k}" value="${v ?? ""}"></label>`).join("")}</div>
       <button class="btn btn-line" type="button" data-run-pwhat="${idx}">See my hypothetical scores</button><div id="pwhatOut${idx}" role="status"></div></details>`;
   }
@@ -952,7 +952,7 @@
     if (!fit.enough) return "";
     const m = state.input.metrics, tk = read.family === "C" ? "pop" : read.family === "OF" ? "ofVelo" : "ifVelo";
     const f = [["maxEv", "Max exit velocity", "mph", m.maxEv], ["sixty", "60-yard dash", "s", m.sixty], [tk, read.family === "C" ? "Pop time" : "Throwing velocity", read.family === "C" ? "s" : "mph", m[tk]]];
-    return `<details class="pro-scenario no-print" open><summary>What if my numbers change?</summary><p>Try goal numbers and see how your level scores move. Your real result stays the same. This is a hypothetical, not a forecast, and improving a few numbers doesn't guarantee recruitment.</p>
+    return `<details class="pro-scenario no-print" open><summary>What if my measurements change?</summary><p>Try goal numbers and see how your level scores move. Your real result stays the same. This is a hypothetical, not a forecast, and improving a few measurements doesn't guarantee recruitment.</p>
       <div class="pro-scenario-inputs">${f.map(([k, l, u, v]) => `<label>${esc(l)} (${esc(u)})<input class="input" type="number" inputmode="decimal" step="${u === "s" ? "0.01" : "0.5"}" data-qwhat="${idx}:${k}" value="${v ?? ""}"></label>`).join("")}</div>
       <button class="btn btn-line" type="button" data-run-qwhat="${idx}">See my hypothetical scores</button><div id="qwhatOut${idx}" role="status"></div></details>`;
   }

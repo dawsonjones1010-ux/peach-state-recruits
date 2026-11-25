@@ -14,7 +14,7 @@
   "use strict";
   const isNum = (v) => typeof v === "number" && isFinite(v);
   const LEVELS = ["Power 4", "Mid-major D1", "Lower D1", "D2", "D3", "NAIA", "JUCO"];
-  const SHORT = { "Power 4": "Power 4", "Mid-major D1": "Mid-major D1", "Lower D1": "Lower D1", D2: "D2", D3: "D3", NAIA: "NAIA", JUCO: "JUCO" };
+  const SHORT = { "Power 4": "Power 4", "Mid-major D1": "Mid-Major D1", "Lower D1": "Low-Major D1", D2: "D2", D3: "D3", NAIA: "NAIA", JUCO: "JUCO" };
   const OF = ["LF", "CF", "RF"];
   const NOTE = "College averages come from listed roster heights and weights of players aged 18–23. They show the bodies players grow into, not a requirement. About 1 in 3 college players below Power 4 is under 6'0\".";
   const PBR_FACT = "In PBR's Indiana study, 57.4% of eventual D1 pitchers who were 6'2\" or taller as sophomores signed Power 4, vs 34% of shorter ones. The same study found velocity and spin mattered more than height.";

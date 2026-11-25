@@ -64,6 +64,7 @@
         </form>
         <p class="rc-small" id="rcGateMsg" role="status" aria-live="polite"></p>
         ${v.foot ? `<p class="rc-small rc-gate-foot">${v.foot}</p>` : ""}
+        ${demo ? "" : `<p class="rc-small rc-gate-foot">Featured player updating your Peach State profile page? Use the <a class="rc-link" href="account.html">featured player login</a>.</p>`}
       </div>`;
       $$("[data-gate]", el).forEach(b => b.addEventListener("click", () => { mode = b.dataset.gate; draw(true); }));
       $$(".rc-pw-show", el).forEach(b => b.addEventListener("click", () => {

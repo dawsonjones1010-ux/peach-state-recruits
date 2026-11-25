@@ -225,7 +225,7 @@
     if (!isNum(gradYear)) return null;
     const seniorYear = now.getMonth() >= 7 ? now.getFullYear() + 1 : now.getFullYear();
     const yearsLeft = gradYear - seniorYear;
-    if (yearsLeft <= 0) return { yearsLeft, text: "This is your current fit. You're in your senior year or later, so today's numbers are what coaches are evaluating now." };
+    if (yearsLeft <= 0) return { yearsLeft, text: "This is your current fit. You're in your senior year or later, so today's measurements are what coaches are evaluating now." };
     if (yearsLeft === 1) return { yearsLeft, text: "This is your current fit as a junior. Graduation year never adds points; retest every few months to show progress." };
     return { yearsLeft, text: `This is your current fit, ${yearsLeft} years before graduation. Graduation year never adds points, and this read doesn't forecast growth. Use it as a starting line and retest every few months.` };
   }
@@ -315,5 +315,5 @@
   function label(key) { const l = LEVELS.find(x => x.key === key); return l ? l.label : key; }
   return { SOURCE, LEVELS, VELO, PERF, SECONDARY, PHYSICAL, PRIORITIES, CAT_LABEL, PITCH_TYPES,
     veloScore, targetScore, penaltyFor, derive, baseballInnings, levelFit, confidence, classContext, priorities, standouts, evaluate, label, band: C.classify,
-    DISCLAIMER: "These scores show how your numbers line up with Peach State Recruits' screening ranges for each level. They are not the chance of being recruited or getting an offer. Coaches also weigh video, pitch quality, competition, academics and roster needs." };
+    DISCLAIMER: "These scores show how your measurements line up with Peach State Recruits' screening ranges for each level. They are not the chance of being recruited or getting an offer. Coaches also weigh video, pitch quality, competition, academics and roster needs." };
 });

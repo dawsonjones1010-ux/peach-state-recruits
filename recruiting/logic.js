@@ -12,7 +12,7 @@
   // Level groups that match Find My Level. D1 is split by typical conference strength in baseball
   // (an approximate grouping, not a ranking of any single program).
   const BANDS = ["p4", "mid", "low", "d2", "d3", "naia", "juco"];
-  const BAND_LABELS = { p4: "Power D1", mid: "Mid-major D1", low: "Lower D1", d2: "NCAA D2", d3: "NCAA D3", naia: "NAIA", juco: "JUCO" };
+  const BAND_LABELS = { p4: "Power 4 / Elite D1", mid: "Mid-Major D1", low: "Low-Major D1", d2: "NCAA D2", d3: "NCAA D3", naia: "NAIA", juco: "JUCO" };
   const BAND_LEVEL = { p4: "NCAA D1", mid: "NCAA D1", low: "NCAA D1", d2: "NCAA D2", d3: "NCAA D3", naia: "NAIA", juco: "JUCO" };
   const D1_POWER = ["Southeastern", "Atlantic Coast", "Big Ten", "Big 12"];
   const D1_LOWER = ["SWAC", "Northeast", "Metro Atlantic", "America East", "Horizon League", "Patriot League", "Summit League", "Ohio Valley", "United Athletic", "MEAC", "Independent"];
@@ -50,6 +50,13 @@
   }
   function addDays(d, n) { const x = parseISO(d) || new Date(d); x.setDate(x.getDate() + n); return x; }
   function daysBetween(a, b) { return Math.round((parseISO(b) - parseISO(a)) / 86400000); }
+  // True when a camp's price note only repeats the price ("$450" next to $450), so the page shows it once.
+  function sameAsPrice(note, cents) {
+    if (cents == null || !note) return false;
+    const n = String(note).trim().replace(/^\$/, "").replace(/,/g, "").replace(/\.00$/, "").replace(/\.$/, "");
+    return /^\d+(\.\d\d)?$/.test(n) && Math.round(Number(n) * 100) === Number(cents);
+  }
+
   // Earliest camp per program that hasn't ended yet. Keys are program ids, or slugs when camps carry program_slug.
   function nextCampByProgram(camps, now, key) {
     const today = isoDay(now || new Date()), out = new Map();
@@ -564,7 +571,7 @@
 
   return {
     LEVELS, BANDS, BAND_LABELS, BAND_LEVEL, bandOf, bandsFromLevels, STATES, STATE_NAMES, KINDS, PLAN_RULES, TRAVEL_DEFAULTS, PROGRAM_FIELDS,
-    toISO, parseISO, addDays, daysBetween, fmtDate, nextCampByProgram, classYear, keyDates,
+    toISO, parseISO, addDays, daysBetween, fmtDate, nextCampByProgram, sameAsPrice, classYear, keyDates,
     filterPrograms, levelsFromFindMyLevel, fullName, heightText, metricsLine, profileMissing,
     buildEmail, mailtoUrl, schoolStatus, dueFollowUps, planCandidates, planView,
     filterCamps, isStale, buildICS, travelEstimate, money, parseCSV, slugify, normalizeProgramRow

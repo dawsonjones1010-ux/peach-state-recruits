@@ -18,7 +18,7 @@
       <div class="st-body"><h3>${title}${state === "done" ? '<span class="st-sr"> (done)</span>' : ""}</h3>${body}</div></li>`;
   }
   function step1() {
-    if (!sum) return step(1, "now", "Find your level", `<p>Enter your measurables, like fastball velo, exit velo and 60 time. See which college levels your numbers line up with. It's free and takes about 3 minutes.</p>
+    if (!sum) return step(1, "now", "Find your level", `<p>Enter your measurements, like fastball velo, exit velo and 60 time. See which college levels your measurements line up with. It's free and takes about 3 minutes.</p>
       <a class="btn btn-peach" href="find-my-level.html">Find my level</a>`);
     const lv = sum.level;
     return step(1, "done", "Find your level", `<p class="st-result">${lv ? `<b>${esc(lv.label)}</b><span>${esc(lv.score)}/100 ${lv.primary ? "best college match" : "closest level"}</span>` : `<b>Working toward the published targets</b>`}</p>
@@ -31,7 +31,7 @@
   }
   function step3() {
     const ready = sum && sum.bands && sum.bands.length;
-    return step(3, ready ? "next" : "locked", "Email coaches", `<p>Send each coach a short, personal email with your real numbers and a link to your video. Email Coach writes the first draft for you.</p>
+    return step(3, ready ? "next" : "locked", "Email coaches", `<p>Send each coach a short, personal email with your real measurements and a link to your video. Email Coach writes the first draft for you.</p>
       <a class="btn ${ready ? "btn-line st-btn-dark" : "btn-line st-btn-dark"}" href="email-coach.html${ready ? "?from=level" : ""}" data-st-email>Open Email Coach</a>`);
   }
   function drawPicks() {

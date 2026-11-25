@@ -142,7 +142,7 @@
     const draw = s => {
       if (!$("#levelCard")) return;
       const LB = L.BAND_LABELS || {};
-      if (!s || !s.level) { box.innerHTML = `<div class="rc-card rc-levelcard"><h2>Your level</h2><p class="rc-muted">Find out which college levels your numbers line up with. It takes about 3 minutes and saves here.</p><a class="rc-btn primary" href="find-my-level.html">Find my level</a></div>`; return; }
+      if (!s || !s.level) { box.innerHTML = `<div class="rc-card rc-levelcard"><h2>Your level</h2><p class="rc-muted">Find out which college levels your measurements line up with. It takes about 3 minutes and saves here.</p><a class="rc-btn primary" href="find-my-level.html">Find my level</a></div>`; return; }
       const d = new Date(s.t), when = isNaN(d) ? "" : d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
       const bands = (s.bands || []).join(",");
       box.innerHTML = `<div class="rc-card rc-levelcard"><p class="rc-levelcard-k">Your level</p>

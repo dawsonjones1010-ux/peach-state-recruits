@@ -28,7 +28,7 @@ window.PSR_CONFIG = {
 
   // Optional one-line explanation shown under the "4M+ views" stats (e.g. what accounts/period it covers).
   // Leave empty to hide it.
-  statsCaption: "",
+  statsCaption: "Instagram totals for @peachstaterecruits as of November 2026.",
 
   // Founder introduction. The section stays hidden until photo AND bio are filled in.
   // photo: an image file in the images folder, e.g. "images/founder.jpg".

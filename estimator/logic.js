@@ -398,7 +398,7 @@
         headline = "Compared tools meet the listed targets for: " + hl.map(c => c.label).join(", ");
       }
       const low = read.categories.find(c => c.key === "low");
-      if (low && !low.compared.length) explain.push("Lower D1 can't be listed: NextCommit publishes no lower D1 targets for position players. That's a data gap, not a negative result.");
+      if (low && !low.compared.length) explain.push("Low-Major D1 can't be listed: NextCommit publishes no low-major D1 targets for position players. That's a data gap, not a negative result.");
     }
     // NAIA/JUCO pooled rows: one piece of evidence, not two.
     const pooledPair = hl.filter(c => c.pooledGroup === "NAIA/JUCO");

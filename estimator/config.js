@@ -29,8 +29,8 @@
   // category (shown as a separate reference; "D1 (all)" and "D3 / NAIA" are pooled source groups).
   const CATEGORIES = [
     { key: "p4",   label: "Power conference D1", nc: "Power 4",      ns: "D1 (all)",  d1Tier: 1 },
-    { key: "mid",  label: "Mid major D1",        nc: "Mid-major D1", ns: "D1 (all)",  d1Tier: 2 },
-    { key: "low",  label: "Lower D1",            nc: "Lower D1",     ns: "D1 (all)",  d1Tier: 3 },
+    { key: "mid",  label: "Mid-Major D1",        nc: "Mid-major D1", ns: "D1 (all)",  d1Tier: 2 },
+    { key: "low",  label: "Low-Major D1",        nc: "Lower D1",     ns: "D1 (all)",  d1Tier: 3 },
     { key: "d2",   label: "D2",                  nc: "D2",           ns: "D2" },
     { key: "d3",   label: "D3",                  nc: "D3",           ns: "D3 / NAIA" },
     { key: "naia", label: "NAIA",                nc: "NAIA",         ns: "D3 / NAIA" },
