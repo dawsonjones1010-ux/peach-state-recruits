@@ -50,5 +50,8 @@ jobs:
       - uses: actions/upload-pages-artifact@v5
         with:
           path: _site
+      # GitHub sometimes can't list a just-uploaded artifact yet ("Found 0 artifact(s)"); give it a moment.
+      - name: Wait for the artifact to register
+        run: sleep 20
       - id: deployment
         uses: actions/deploy-pages@v5
