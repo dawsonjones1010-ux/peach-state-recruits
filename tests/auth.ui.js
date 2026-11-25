@@ -23,7 +23,7 @@ await page.screenshot({path:"/tmp/gbashots/gate_create.png"});
 // create
 await page.fill('[name=email]','kid@example.com');await page.fill('[name=username]','Kid_23');await page.fill('[name=password]','GoodPass123');
 await page.click('button[type=submit]');await page.waitForTimeout(600);console.log("no consent msg shown?", await page.locator('#rcGateForm').count());
-await page.check('[name=consent]');await page.click('button[type=submit]');await page.waitForTimeout(2500);console.log('APP:',(await page.locator('#app').innerText()).slice(0,300).replace(/\n+/g,' | '));console.log(JSON.stringify(await page.evaluate(()=>window.__calls)));await page.waitForSelector('#acctBtn',{timeout:3000});console.log("signed up ->", await page.locator('.rc-spread b').first().innerText(), page.url().split('/').pop());
+await page.check('[name=consent]');await page.click('button[type=submit]');await page.waitForTimeout(2500);console.log('APP:',(await page.locator('#app').innerText()).slice(0,300).replace(/\n+/g,' | '));console.log(JSON.stringify(await page.evaluate(()=>window.__calls)));await page.waitForSelector('#acctBtn',{timeout:3000});console.log("signed up ->", await page.locator('.rc-userbar b').first().innerText(), page.url().split('/').pop());
 // account dialog
 await page.click('#acctBtn');await page.waitForSelector('#acctUser');await page.waitForTimeout(300);console.log("username prefill:",await page.inputValue('#acctUser'));await page.screenshot({path:"/tmp/gbashots/acct.png"});
 await page.fill('#acctPw','NewPass1234');await page.click('#acctPwSave');await page.waitForTimeout(300);console.log("pw msg:",await page.locator('#acctMsg').innerText());

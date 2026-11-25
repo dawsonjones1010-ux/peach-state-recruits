@@ -7,7 +7,7 @@
 .rc-intro p{margin:0;color:var(--on-ink-2);max-width:62ch}
 .rc-intro .rc-sub{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:14px;font-size:14px;color:var(--on-ink-3)}
 .rc-wrap{max-width:1180px;margin:0 auto;padding:0 20px}
-.rc-body{padding:26px 0 70px}
+.rc-body{padding:26px 20px 70px}
 .rc-demo{background:#fff6d6;border:1px solid #f1d27a;color:#5b4300;border-radius:10px;padding:10px 14px;font-size:14px;margin:0 0 16px}
 .rc-demo a{color:inherit;font-weight:700}
 
@@ -180,3 +180,24 @@ dialog.rc-dialog::backdrop{background:rgba(7,11,20,.55)}
 .rc-levelcard h2{margin:0 0 6px}
 .rc-levelcard-k{margin:0;font-size:13px;font-weight:800;color:var(--peach-ink,#b4521c)}
 .rc-levelcard-l{margin:4px 0 2px}.rc-levelcard-l b{display:block;font-size:24px;line-height:1.15;color:#11151c}.rc-levelcard-l span{display:block;margin-top:2px;font-weight:700;color:#4a5361}
+
+/* My Recruiting polish */
+.rc-body h2{font-size:clamp(24px,6vw,34px);line-height:1.1}
+.rc-userbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.rc-userbar p{margin:0;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;color:#5b6472}
+.rc-userbar p b{color:#11151c}
+.rc-userbar .rc-row{flex:none;gap:6px}
+.rc-levelcard{padding:16px 18px;margin-bottom:20px}
+.rc-levelcard h2{font-size:22px;margin:0 0 6px}
+.rc-levelcard p.rc-muted{margin:0 0 12px}
+.rc-task-btns{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:10px}
+.rc-task-more{position:relative}
+.rc-task-more>summary{list-style:none;cursor:pointer;font-size:14px;font-weight:700;color:#4a5361;padding:8px 6px;border-radius:8px}
+.rc-task-more>summary::-webkit-details-marker{display:none}
+.rc-task-more>summary::after{content:" ▾"}
+.rc-task-more[open]>summary::after{content:" ▴"}
+.rc-task-more>summary:focus-visible{outline:3px solid var(--peach,#f08a4b)}
+.rc-task-more-b{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;flex-basis:100%}
+.rc-task-more[open]{flex-basis:100%}
+.rc-task-more .rc-why{flex-basis:100%;margin:0 0 4px}
+.rc-levelcard .rc-btn{width:auto}

@@ -98,7 +98,7 @@
     const counts = { saved: S.saved.length, emails: S.drafts.filter(d => d.status === "draft").length, tracker: L.dueFollowUps(S.comms, today()).length, camps: S.savedCamps.length };
     $("#app").innerHTML = `
       ${U.demoBanner(api)}
-      <div class="rc-spread" style="margin-bottom:8px"><p class="rc-muted" style="margin:0">Signed in as <b>${esc(S.user.email || "")}</b></p><span class="rc-row" style="gap:8px"><button class="rc-btn sm" id="acctBtn">Account</button><button class="rc-btn sm" id="signOut">Sign out</button></span></div>
+      <div class="rc-userbar"><p>Signed in as <b>${esc(S.user.email || "")}</b></p><span class="rc-row"><button class="rc-btn sm" id="acctBtn">Account</button><button class="rc-btn sm" id="signOut">Sign out</button></span></div>
       <nav class="rc-tabs" role="tablist" aria-label="My Recruiting">${TABS.map(([k, l]) => `<a class="rc-tab" role="tab" href="#${k}" aria-selected="${k === tab}">${l}${counts[k] ? `<span class="rc-count">${counts[k]}</span>` : ""}</a>`).join("")}</nav>
       <div id="tab"></div>`;
     $("#signOut").onclick = async () => { await api.signOut(); location.hash = "signin"; start(); };
@@ -123,12 +123,16 @@
     return `<article class="rc-task${t.status === "done" ? " done" : ""}" data-task="${esc(t.rule_key || t.id)}">
       <h3>${esc(t.title)}</h3>
       ${t.detail ? `<p>${esc(t.detail)}</p>` : ""}
-      <p class="rc-why">Why this shows: ${esc(t.why || "")}${t.ruleRef ? ` · ${ruleLink(t.ruleRef)}` : ""}${t.status === "postponed" && t.postponed_until ? ` · Postponed until ${esc(L.fmtDate(t.postponed_until))}` : ""}</p>
-      ${compact ? "" : `<div class="rc-row">
+      ${t.status === "postponed" && t.postponed_until ? `<p class="rc-why">Postponed until ${esc(L.fmtDate(t.postponed_until))}</p>` : ""}
+      ${compact ? `<p class="rc-why">Why this shows: ${esc(t.why || "")}</p>` : `<div class="rc-task-btns">
         ${a ? `<a class="rc-btn sm primary" href="${esc(a.href)}"${a.external ? ' target="_blank" rel="noopener"' : ""}>${esc(a.label)}</a>` : ""}
-        ${t.status !== "done" ? `<button class="rc-btn sm" data-act="done">Mark done</button><button class="rc-btn sm" data-act="postpone">Postpone</button>` : `<button class="rc-btn sm" data-act="reopen">Reopen</button>`}
-        <button class="rc-btn sm" data-act="edit">Edit</button>
-        ${t.custom ? `<button class="rc-btn sm danger" data-act="delete">Delete</button>` : `<button class="rc-btn sm" data-act="dismiss">Not relevant</button>`}
+        ${t.status !== "done" ? `<button class="rc-btn sm" data-act="done">Done</button>` : `<button class="rc-btn sm" data-act="reopen">Reopen</button>`}
+        <details class="rc-task-more"><summary>More</summary><div class="rc-task-more-b">
+          <p class="rc-why">Why this shows: ${esc(t.why || "")}${t.ruleRef ? ` · ${ruleLink(t.ruleRef)}` : ""}</p>
+          ${t.status !== "done" ? `<button class="rc-btn sm" data-act="postpone">Postpone</button>` : ""}
+          <button class="rc-btn sm" data-act="edit">Edit</button>
+          ${t.custom ? `<button class="rc-btn sm danger" data-act="delete">Delete</button>` : `<button class="rc-btn sm" data-act="dismiss">Not relevant</button>`}
+        </div></details>
       </div>`}
     </article>`;
   }
@@ -138,13 +142,13 @@
     const draw = s => {
       if (!$("#levelCard")) return;
       const LB = L.BAND_LABELS || {};
-      if (!s || !s.level) { box.innerHTML = `<section class="rc-card rc-levelcard"><h2>Your level</h2><p class="rc-muted">Find out which college levels your numbers line up with. It takes about 3 minutes and saves here.</p><a class="rc-btn primary" href="find-my-level.html">Find my level</a></section>`; return; }
+      if (!s || !s.level) { box.innerHTML = `<div class="rc-card rc-levelcard"><h2>Your level</h2><p class="rc-muted">Find out which college levels your numbers line up with. It takes about 3 minutes and saves here.</p><a class="rc-btn primary" href="find-my-level.html">Find my level</a></div>`; return; }
       const d = new Date(s.t), when = isNaN(d) ? "" : d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
       const bands = (s.bands || []).join(",");
-      box.innerHTML = `<section class="rc-card rc-levelcard"><p class="rc-levelcard-k">Your level</p>
+      box.innerHTML = `<div class="rc-card rc-levelcard"><p class="rc-levelcard-k">Your level</p>
         <p class="rc-levelcard-l"><b>${esc(s.level.label)}</b><span>${esc(s.level.score)}/100 ${s.level.primary ? "best college match" : "closest level"}</span></p>
         <p class="rc-small">${esc([s.position ? s.position.charAt(0).toUpperCase() + s.position.slice(1) : "", s.gradYear ? "Class of " + s.gradYear : "", when ? "checked " + when : ""].filter(Boolean).join(", "))}</p>
-        <div class="rc-row" style="gap:8px;flex-wrap:wrap"><a class="rc-btn primary" href="colleges.html?bands=${encodeURIComponent(bands)}&from=fml">Colleges at my level</a><a class="rc-btn" href="find-my-level.html">See or update my results</a></div></section>`;
+        <div class="rc-row" style="gap:8px;flex-wrap:wrap"><a class="rc-btn primary" href="colleges.html?bands=${encodeURIComponent(bands)}&from=fml">Colleges at my level</a><a class="rc-btn" href="find-my-level.html">See or update my results</a></div></div>`;
     };
     if (window.PSRLevelSync) { draw(window.PSRLevelSync.local()); window.PSRLevelSync.sync().then(draw).catch(() => {}); }
     else box.innerHTML = "";
@@ -159,7 +163,7 @@
     $("#tab").innerHTML = `<div id="levelCard"></div>
       <div class="rc-cols rc-cols-side" style="--rc-side:320px">
         <div>
-          <h2 style="font-size:40px;margin:0 0 12px">Your next 3 steps</h2>
+          <h2 style="margin:0 0 12px">Your next 3 steps</h2>
           <div class="rc-tasks">${v.next.map(t => taskCard(t)).join("") || `<div class="rc-empty">Nothing urgent. Nice work. Add your own task below or check back after you log new messages.</div>`}</div>
           <details class="rc-panel" style="margin-top:16px"><summary><b>Everything else (${later.length})</b></summary>
             <div class="rc-tasks" style="margin-top:12px">${later.map(t => taskCard(t)).join("") || `<p class="rc-muted">No other tasks.</p>`}</div>
@@ -296,7 +300,7 @@
         <div class="rc-row"><a class="rc-btn sm primary" href="#emails?kind=follow_up&program=${esc(c.program_id)}">Draft follow-up</a><button class="rc-btn sm" data-fudone="${esc(c.id)}">Done</button></div></div>`).join("")}</div></section>` : ""}
       <div class="rc-cols rc-cols-side" style="--rc-side:340px">
         <section>
-          <div class="rc-spread" style="margin-bottom:10px"><h2 style="font-size:36px;margin:0">Message history</h2>
+          <div class="rc-spread" style="margin-bottom:10px"><h2 style="margin:0">Message history</h2>
             <label class="rc-field" style="min-width:220px"><span class="rc-hide">Filter</span><select class="rc-select" id="filt"><option value="">All schools</option>${progOpts.map(([id, n]) => `<option value="${esc(id)}"${id === filt ? " selected" : ""}>${esc(n)}</option>`).join("")}</select></label></div>
           <div class="rc-log">${list.map(c => `
             <div class="rc-log-item" data-comm="${esc(c.id)}">
