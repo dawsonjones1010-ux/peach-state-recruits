@@ -158,3 +158,21 @@ dialog.rc-dialog::backdrop{background:rgba(7,11,20,.55)}
 .legal-doc p,.legal-doc li{font-size:16px;color:var(--text)}
 .legal-doc ul{padding-left:20px;display:grid;gap:6px;margin:8px 0}
 .legal-doc code{font-size:14px}
+
+/* Sign in / create account */
+.rc-gate-tabs{display:flex;gap:4px;margin:14px 0 4px;padding:4px;background:#eef1f5;border-radius:12px;max-width:420px}
+.rc-gate-tabs button{flex:1;font:inherit;font-weight:700;font-size:15px;padding:10px 12px;border:0;border-radius:9px;background:transparent;color:#4a5361;cursor:pointer}
+.rc-gate-tabs button[aria-selected="true"]{background:#fff;color:#11151c;box-shadow:0 1px 2px rgba(17,21,28,.12)}
+.rc-gate-tabs button:focus-visible{outline:3px solid var(--peach,#f08a4b);outline-offset:1px}
+.rc-gate-form{display:flex;flex-direction:column;gap:12px;max-width:420px;margin-top:12px}
+.rc-gate-form .rc-field{display:flex;flex-direction:column;gap:6px}
+.rc-gate-form .rc-btn.primary{align-self:flex-start;min-width:160px}
+.rc-pw{position:relative;display:block}
+.rc-pw .rc-input{width:100%;padding-right:64px;box-sizing:border-box}
+.rc-pw-show{position:absolute;right:6px;top:50%;transform:translateY(-50%);font:inherit;font-size:13px;font-weight:700;padding:6px 8px;border:0;background:transparent;color:#4a5361;cursor:pointer;border-radius:6px}
+.rc-pw-show:focus-visible{outline:3px solid var(--peach,#f08a4b)}
+.rc-gate-foot{margin-top:6px}
+.rc-acct{display:flex;flex-direction:column;gap:10px;min-width:min(420px,80vw)}
+.rc-acct .rc-field{display:flex;flex-direction:column;gap:6px}
+.rc-acct .rc-btn{align-self:flex-start}
+.rc-hr{border:0;border-top:1px solid #e3e6eb;margin:8px 0}

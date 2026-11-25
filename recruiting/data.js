@@ -64,13 +64,20 @@
       mode: "demo",
       async getUser() { return me(); },
       onAuth(cb) { listeners.push(cb); },
-      async signIn(email) {
-        email = String(email || "").trim().toLowerCase();
-        if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) throw new Error("Enter a valid email address.");
+      // Preview accounts: any password works. Usernames map to a made-up email in this browser.
+      async signIn(c) {
+        const ident = String((c && c.identifier) || c || "").trim().toLowerCase();
+        const email = ident.includes("@") ? ident : ident ? ident + "@preview.local" : "";
+        if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) throw new Error("Enter your email or username.");
         const s = read(); let id = Object.keys(s.users).find(k => s.users[k].email === email);
         if (!id) { id = uid(); s.users[id] = { email }; }
         s.session = id; write(s); listeners.forEach(f => f()); return { signedIn: true };
       },
+      async signUp(c) { return this.signIn({ identifier: (c && c.email) || "" }); },
+      async resetPassword() { return { emailSent: true }; },
+      async updatePassword() {},
+      async getUsername() { return null; },
+      async setUsername(u) { return u; },
       async signOut() { const s = read(); s.session = null; write(s); listeners.forEach(f => f()); },
       async isAdmin() { const u = me(); return !!(u && /^admin@/.test(u.email || "")); },
       async listPrograms() { return (await directory()).programs.filter(p => p.record_status !== "hidden" || false); },
@@ -136,11 +143,72 @@
       };
     }
     const site = (window.PSR && window.PSR.siteBase) ? window.PSR.siteBase() : location.origin + location.pathname.replace(/[^/]*$/, "");
+    // A password-reset link signs the person in and fires PASSWORD_RECOVERY; My Recruiting then asks for a new password.
+    try { sb.auth.onAuthStateChange(evt => { if (evt === "PASSWORD_RECOVERY") { try { sessionStorage.setItem("psr_pw_recovery", "1"); } catch (_) {} } }); } catch (_) {}
+    async function accountCall(payload, withUser) {
+      const key = CFG.supabasePublishableKey || CFG.supabaseAnonKey;
+      let token = key;
+      if (withUser) { const { data } = await sb.auth.getSession(); if (!data.session) throw new Error("Sign in first."); token = data.session.access_token; }
+      let res;
+      try {
+        res = await fetch(CFG.supabaseUrl.replace(/\/$/, "") + "/functions/v1/account", { method: "POST", headers: { "Content-Type": "application/json", apikey: key, Authorization: "Bearer " + token }, body: JSON.stringify(payload) });
+      } catch (_) { throw new Error("Couldn't reach the server. Check your connection and try again."); }
+      let body = {}; try { body = await res.json(); } catch (_) {}
+      if (res.status === 202) return body;
+      if (!res.ok) throw new Error(body.error || "Something went wrong. Try again.");
+      return body;
+    }
     return {
       mode: "live",
       async getUser() { const { data, error } = await sb.auth.getSession(); if (error) throw error; return data.session ? { id: data.session.user.id, email: data.session.user.email } : null; },
       onAuth(cb) { return sb.auth.onAuthStateChange(() => { setTimeout(() => Promise.resolve().then(cb).catch(e => console.error("Recruiting session refresh failed", e)), 0); }); },
-      async signIn(email) {
+      // Password sign-in. Email goes straight to Supabase Auth; a username is resolved on the server
+      // (account edge function) so emails are never exposed.
+      async signIn(c) {
+        const ident = String((c && c.identifier) || "").trim(), password = String((c && c.password) || "");
+        if (!ident || !password) throw new Error("Enter your email or username and your password.");
+        if (ident.includes("@")) {
+          const { error } = await sb.auth.signInWithPassword({ email: ident.toLowerCase(), password });
+          if (error) throw new Error(/invalid login|credentials/i.test(error.message || "") ? "Wrong email or password." : (error.status === 429 ? "Too many tries. Wait a few minutes and try again." : (error.message || "Sign-in failed. Try again.")));
+          return { signedIn: true };
+        }
+        const r = await accountCall({ action: "login", username: ident, password });
+        const { error } = await sb.auth.setSession(r.session);
+        if (error) throw new Error("Sign-in failed. Try again.");
+        return { signedIn: true };
+      },
+      async signUp(c) {
+        const r = await accountCall({ action: "signup", email: c.email, username: c.username || "", password: c.password, consent: !!c.consent });
+        if (!r.session) return { signedIn: false, message: r.error || "Account created. Sign in with your email and password." };
+        const { error } = await sb.auth.setSession(r.session);
+        if (error) throw new Error("Account created. Sign in with your email and password.");
+        return { signedIn: true };
+      },
+      async resetPassword(email) {
+        const { error } = await sb.auth.resetPasswordForEmail(String(email || "").trim().toLowerCase(), { redirectTo: site.replace(/\/$/, "") + "/my-recruiting.html" });
+        if (error) {
+          const code = String(error.code || ""), msg = String(error.message || "");
+          if (code === "email_address_not_authorized" || /not authorized|smtp|sending/i.test(msg)) throw new Error("Password reset emails aren't turned on yet. DM @peachstaterecruits on Instagram from the account's owner and we'll reset it for you.");
+          if (error.status === 429 || /rate limit/i.test(msg)) throw new Error("Too many reset emails were sent. Try again in an hour.");
+          throw new Error(msg || "Couldn't send the reset email. Try again.");
+        }
+        return { emailSent: true };
+      },
+      async updatePassword(password) {
+        if (String(password || "").length < 8) throw new Error("Use a password with at least 8 characters.");
+        const { error } = await sb.auth.updateUser({ password });
+        if (error) throw new Error(/different|same/i.test(error.message || "") ? "Pick a password you haven't used here before." : (error.message || "Couldn't change the password."));
+      },
+      async getUsername() {
+        const { data: s } = await sb.auth.getSession(); if (!s.session) return null;
+        const { data } = await sb.from("usernames").select("username").eq("user_id", s.session.user.id).maybeSingle();
+        return data ? data.username : null;
+      },
+      async setUsername(username) {
+        const r = await accountCall({ action: "set_username", username }, true);
+        return r.username;
+      },
+      async signInWithLink(email) {
         const { error } = await sb.auth.signInWithOtp({ email: String(email).trim(), options: { shouldCreateUser: true, emailRedirectTo: site.replace(/\/$/, "") + "/my-recruiting.html" } });
         if (error) {
           const code = String(error.code || ""), msg = String(error.message || "");
@@ -202,7 +270,7 @@
     const blocked = async () => { throw new Error(message); };
     return {
       mode: "unavailable", unavailableReason: message,
-      getUser: async () => null, onAuth() {}, signIn: blocked, signOut: async () => {}, isAdmin: async () => false,
+      getUser: async () => null, onAuth() {}, signIn: blocked, signUp: blocked, resetPassword: blocked, updatePassword: blocked, getUsername: async () => null, setUsername: blocked, signOut: async () => {}, isAdmin: async () => false,
       async listPrograms() { return (await loadFallback()).programs.filter(p => p.record_status !== "hidden"); },
       async listCamps() { const d = await loadFallback(); return attachLevels(d.camps.filter(c => c.record_status !== "hidden"), d.programs); },
       async listRules() { return (await loadFallback()).rules.filter(r => r.record_status !== "hidden"); },

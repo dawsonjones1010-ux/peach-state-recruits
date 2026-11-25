@@ -23,39 +23,78 @@
   }
 
   // Simple sign-in block. Live: emails a sign-in link. Demo: signs in immediately.
+  // Sign in / create account. Email or username + password. opts.mode: "signin" | "create" (default "create").
   function renderGate(el, api, opts) {
     opts = opts || {};
     if (api.mode === "unavailable") {
       el.innerHTML = `<div class="rc-gate"><h2>Account features unavailable</h2><p>${esc(api.unavailableReason)}</p><a class="rc-btn" href="colleges.html">Browse colleges</a></div>`;
       return;
     }
-    el.innerHTML = `
+    const demo = api.mode === "demo";
+    const terms = `<label class="rc-check rc-consent"><input type="checkbox" name="consent" required> <span>I'm 13 or older. If I'm under 18, my parent or guardian knows I'm using this. I agree to the <a class="rc-link" href="terms.html" target="_blank" rel="noopener">terms</a> and <a class="rc-link" href="privacy.html" target="_blank" rel="noopener">privacy policy</a>.</span></label>`;
+    const pw = (auto, label) => `<label class="rc-field"><span>${label}</span><span class="rc-pw"><input class="rc-input" type="password" name="password" autocomplete="${auto}" minlength="8" required><button class="rc-pw-show" type="button" aria-label="Show password" aria-pressed="false">Show</button></span></label>`;
+    const views = {
+      signin: { btn: "Sign in", body: `
+          <label class="rc-field">Email or username<input class="rc-input" type="text" name="identifier" autocomplete="username" autocapitalize="none" spellcheck="false" required></label>
+          ${pw("current-password", "Password")}`,
+        foot: `<button class="rc-link" type="button" data-gate="forgot">Forgot password?</button>` },
+      create: { btn: "Create account", body: `
+          <label class="rc-field">Email<input class="rc-input" type="email" name="email" autocomplete="email" required></label>
+          <label class="rc-field"><span>Username <span class="rc-muted">(optional)</span></span><input class="rc-input" type="text" name="username" autocomplete="username" autocapitalize="none" spellcheck="false" pattern="[A-Za-z0-9_.]{3,20}" maxlength="20" aria-describedby="rcUserHint"><span class="rc-small" id="rcUserHint">3 to 20 letters, numbers, dots or underscores. Lets you sign in without typing your email.</span></label>
+          ${pw("new-password", "Password <span class=\"rc-muted\">(8+ characters)</span>")}
+          ${terms}`, foot: "" },
+      forgot: { btn: "Email me a reset link", body: `
+          <p class="rc-small" style="margin:0">Enter the email on your account and we'll send a link to set a new password.</p>
+          <label class="rc-field">Email<input class="rc-input" type="email" name="email" autocomplete="email" required></label>`,
+        foot: `<button class="rc-link" type="button" data-gate="signin">Back to sign in</button>` }
+    };
+    let mode = opts.mode === "signin" ? "signin" : "create";
+    function draw(focus) {
+      const v = views[mode];
+      el.innerHTML = `
       <div class="rc-gate">
         <h2>${esc(opts.title || "Sign in")}</h2>
-        <p class="rc-muted">${esc(api.mode === "demo" ? "Preview uses made-up accounts in this browser. No email verification or account security is provided." : (opts.text || "Free account. Your saved schools, emails and notes are private to you."))}</p>
-        <form id="rcGateForm" class="rc-row" style="margin-top:14px" novalidate>
-          <label class="rc-field" style="flex:1 1 240px">Email<input class="rc-input" type="email" name="email" autocomplete="email" required></label>
-          <button class="rc-btn primary" type="submit" style="align-self:flex-end">${api.mode === "demo" ? "Sign in" : "Email me a sign-in link"}</button>
-          <label class="rc-check rc-consent" style="flex:1 1 100%"><input type="checkbox" name="consent" required> <span>I'm 13 or older. If I'm under 18, my parent or guardian knows I'm using this. I agree to the <a class="rc-link" href="terms.html" target="_blank" rel="noopener">Terms</a> and <a class="rc-link" href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a>.</span></label>
+        <p class="rc-muted">${esc(demo ? "Preview uses made-up accounts in this browser. Any password works and nothing is secured." : (opts.text || "Free account. Your saved schools, emails and notes are private to you."))}</p>
+        ${mode === "forgot" ? "" : `<div class="rc-gate-tabs" role="tablist" aria-label="Account">
+          <button type="button" role="tab" aria-selected="${mode === "create"}" data-gate="create">Create account</button>
+          <button type="button" role="tab" aria-selected="${mode === "signin"}" data-gate="signin">Sign in</button></div>`}
+        <form id="rcGateForm" class="rc-gate-form" novalidate>
+          ${v.body}
+          <button class="rc-btn primary" type="submit">${v.btn}</button>
         </form>
-        <p class="rc-small" id="rcGateMsg" role="status" style="margin-top:10px"></p>
-        ${api.mode === "demo" ? `<p class="rc-small">Preview: any email works and creates a separate test account.</p>` : `<p class="rc-small">No password. We email you a link each time you sign in.</p>`}
+        <p class="rc-small" id="rcGateMsg" role="status" aria-live="polite"></p>
+        ${v.foot ? `<p class="rc-small rc-gate-foot">${v.foot}</p>` : ""}
       </div>`;
-    $("#rcGateForm", el).addEventListener("submit", async e => {
-      e.preventDefault();
-      if (!e.target.reportValidity()) return;
-      const button = $("button[type=submit]", e.target);
-      if (button.disabled) return;
-      button.disabled = true;
-      const email = e.target.elements.namedItem("email").value;
-      const msg = $("#rcGateMsg", el);
-      try {
-        const r = await api.signIn(email);
-        if (r.emailSent) msg.textContent = "Check your email for the sign-in link. You can close this tab.";
-        else if (opts.onSignedIn) opts.onSignedIn();
-      } catch (err) { msg.textContent = err.message; }
-      finally { button.disabled = false; }
-    });
+      $$("[data-gate]", el).forEach(b => b.addEventListener("click", () => { mode = b.dataset.gate; draw(true); }));
+      $$(".rc-pw-show", el).forEach(b => b.addEventListener("click", () => {
+        const i = b.previousElementSibling, show = i.type === "password";
+        i.type = show ? "text" : "password"; b.textContent = show ? "Hide" : "Show"; b.setAttribute("aria-pressed", String(show)); b.setAttribute("aria-label", show ? "Hide password" : "Show password");
+      }));
+      if (focus) { const f = $("#rcGateForm input", el); if (f) f.focus(); }
+      $("#rcGateForm", el).addEventListener("submit", async e => {
+        e.preventDefault();
+        const form = e.target, msg = $("#rcGateMsg", el);
+        if (!form.reportValidity()) return;
+        const button = $("button[type=submit]", form);
+        if (button.disabled) return;
+        button.disabled = true; msg.textContent = "";
+        const val = n => (form.elements.namedItem(n) || {}).value || "";
+        try {
+          if (mode === "forgot") {
+            await api.resetPassword(val("email"));
+            msg.textContent = "If that email has an account, a reset link is on its way. Check your inbox and spam folder.";
+            return;
+          }
+          const r = mode === "signin"
+            ? await api.signIn({ identifier: val("identifier"), password: val("password") })
+            : await api.signUp({ email: val("email"), username: val("username").trim(), password: val("password"), consent: form.elements.namedItem("consent").checked });
+          if (r && r.signedIn) { if (opts.onSignedIn) opts.onSignedIn(); }
+          else { mode = "signin"; draw(true); $("#rcGateMsg", el).textContent = (r && r.message) || "Account created. Sign in to continue."; }
+        } catch (err) { msg.textContent = err.message; }
+        finally { if (button.isConnected) button.disabled = false; }
+      });
+    }
+    draw(false);
   }
 
   function openDialog(html, onMount) {

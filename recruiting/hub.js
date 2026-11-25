@@ -44,15 +44,46 @@
     const [tab, qs] = h.split("?");
     return { tab: TABS.some(t => t[0] === tab) ? tab : "plan", params: new URLSearchParams(qs || "") };
   }
+  // Username and password for the signed-in account. recovery = arrived from a password-reset link.
+  function accountDialog(recovery) {
+    U.openDialog(`<form method="dialog" class="rc-acct">
+      <h2>${recovery ? "Set a new password" : "Account"}</h2>
+      <p class="rc-muted" style="margin-top:0">Signed in as <b>${esc(S.user.email || "")}</b></p>
+      ${recovery ? "" : `<label class="rc-field">Username<input class="rc-input" id="acctUser" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" pattern="[A-Za-z0-9_.]{3,20}" maxlength="20" placeholder="Not set"><span class="rc-small">Sign in with this instead of your email. 3 to 20 letters, numbers, dots or underscores.</span></label>
+      <button class="rc-btn" type="button" id="acctUserSave">Save username</button>
+      <hr class="rc-hr">`}
+      <label class="rc-field"><span>New password <span class="rc-muted">(8+ characters)</span></span><input class="rc-input" id="acctPw" type="password" autocomplete="new-password" minlength="8"></label>
+      <button class="rc-btn primary" type="button" id="acctPwSave">${recovery ? "Save new password" : "Change password"}</button>
+      <p class="rc-small" id="acctMsg" role="status" aria-live="polite"></p>
+      <div class="rc-row" style="justify-content:flex-end"><button class="rc-btn" value="close">Close</button></div>
+    </form>`, d => {
+      const msg = t => { $("#acctMsg", d).textContent = t; };
+      const ui = $("#acctUser", d);
+      if (ui) api.getUsername().then(u => { if (u) ui.value = u; }).catch(() => {});
+      if (ui) $("#acctUserSave", d).onclick = async () => {
+        if (!ui.reportValidity()) return;
+        try { const u = await api.setUsername(ui.value.trim()); ui.value = u; msg(`Username saved. You can sign in as ${u}.`); } catch (e) { msg(e.message); }
+      };
+      $("#acctPwSave", d).onclick = async () => {
+        const pi = $("#acctPw", d);
+        if (!pi.value || !pi.reportValidity()) { msg("Use a password with at least 8 characters."); return; }
+        try { await api.updatePassword(pi.value); pi.value = ""; try { sessionStorage.removeItem("psr_pw_recovery"); } catch (_) {} msg("Password changed."); } catch (e) { msg(e.message); }
+      };
+    });
+  }
+
   function shell() {
     const { tab } = parseHash();
     const counts = { saved: S.saved.length, emails: S.drafts.filter(d => d.status === "draft").length, tracker: L.dueFollowUps(S.comms, today()).length, camps: S.savedCamps.length };
     $("#app").innerHTML = `
       ${U.demoBanner(api)}
-      <div class="rc-spread" style="margin-bottom:8px"><p class="rc-muted" style="margin:0">Signed in as <b>${esc(S.user.email || "")}</b></p><button class="rc-btn sm" id="signOut">Sign out</button></div>
+      <div class="rc-spread" style="margin-bottom:8px"><p class="rc-muted" style="margin:0">Signed in as <b>${esc(S.user.email || "")}</b></p><span class="rc-row" style="gap:8px"><button class="rc-btn sm" id="acctBtn">Account</button><button class="rc-btn sm" id="signOut">Sign out</button></span></div>
       <nav class="rc-tabs" role="tablist" aria-label="My Recruiting">${TABS.map(([k, l]) => `<a class="rc-tab" role="tab" href="#${k}" aria-selected="${k === tab}">${l}${counts[k] ? `<span class="rc-count">${counts[k]}</span>` : ""}</a>`).join("")}</nav>
       <div id="tab"></div>`;
     $("#signOut").onclick = async () => { await api.signOut(); location.hash = ""; start(); };
+    $("#acctBtn").onclick = () => accountDialog(false);
+    let recovering = false; try { recovering = sessionStorage.getItem("psr_pw_recovery") === "1"; } catch (_) {}
+    if (recovering) accountDialog(true);
     ({ plan: renderPlan, saved: renderSaved, emails: renderEmails, tracker: renderTracker, camps: renderCamps, profile: renderProfile })[tab]();
   }
 

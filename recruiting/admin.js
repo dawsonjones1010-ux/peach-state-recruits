@@ -206,7 +206,7 @@
     U.navInit();
     try {
     const user = await api.getUser();
-    if (!user) { $("#app").innerHTML = U.demoBanner(api) + `<div id="gate"></div>`; U.renderGate($("#gate"), api, { title: "Owner sign in", text: "Sign in with the owner email.", onSignedIn: start }); return; }
+    if (!user) { $("#app").innerHTML = U.demoBanner(api) + `<div id="gate"></div>`; U.renderGate($("#gate"), api, { mode: "signin", title: "Owner sign in", text: "Sign in with the owner email.", onSignedIn: start }); return; }
     if (!(await api.isAdmin())) { $("#app").innerHTML = U.demoBanner(api) + `<div class="rc-empty">This account isn't an admin. <button class="rc-link" id="so">Sign out</button></div>`; $("#so").onclick = async () => { await api.signOut(); start(); }; return; }
     await reload(); shell();
     } catch (error) { $("#app").innerHTML = `<div class="rc-empty">Admin workspace could not load: ${esc(error.message)}. Reload to retry.</div>`; }
