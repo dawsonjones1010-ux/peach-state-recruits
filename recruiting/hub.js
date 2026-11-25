@@ -36,6 +36,27 @@
     const mergedCamps = [...new Map(camps.concat(historical).map(c => [c.id, c])).values()];
     Object.assign(S, { profile, programs, saved, drafts, comms, tasks, camps: mergedCamps, savedCamps, rules });
     S.byId = new Map(programs.map(p => [p.id, p]));
+    await fillFromLevel();
+  }
+
+  // Fill empty profile fields from the latest Find My Level result. Never overwrites what the player typed.
+  async function fillFromLevel() {
+    const LS = window.PSRLevelSync; if (!LS || !S.profile) return;
+    let s = LS.local();
+    try { s = (await LS.sync()) || s; } catch (_) {}
+    const src = s && s.handoff && s.handoff.profile; if (!src) return;
+    const p = S.profile, patch = {}, empty = v => v == null || v === "";
+    ["grad_year", "primary_position", "secondary_position", "bats", "throws", "height_in", "weight_lb"].forEach(k => { if (empty(p[k]) && !empty(src[k])) patch[k] = src[k]; });
+    const m = Object.assign({}, p.metrics || {}); let mAdded = false;
+    Object.entries(src.metrics || {}).forEach(([k, v]) => { if (empty(m[k]) && typeof v === "number") { m[k] = v; mAdded = true; } });
+    if (mAdded) patch.metrics = m;
+    if (s.level && (!p.find_my_level || p.find_my_level.t !== s.t)) patch.find_my_level = { t: s.t, key: s.level.key, label: s.level.label, score: s.level.score, bands: s.bands || [] };
+    const filled = Object.keys(patch).filter(k => k !== "find_my_level");
+    if (!Object.keys(patch).length) return;
+    try {
+      S.profile = await api.saveProfile(Object.assign({}, p, patch)) || Object.assign({}, p, patch);
+      if (filled.length) U.toast("Filled in your profile from Find My Level");
+    } catch (_) {}
   }
 
   // ------------------------------------------------------------ routing

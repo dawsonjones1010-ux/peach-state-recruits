@@ -22,7 +22,7 @@
     return `<p class="rc-demo"><b>Preview mode.</b> Everything you save stays in this browser only. Use made-up details: anyone using this browser can open preview accounts. <a href="?demo=0">Use the live site</a></p>`;
   }
 
-  // Simple sign-in block. Live: emails a sign-in link. Demo: signs in immediately.
+  // Sign-in block (see renderGate below): email or username + password; demo signs in with any password.
   // Sign in / create account. Email or username + password. opts.mode: "signin" | "create" (default "create").
   function renderGate(el, api, opts) {
     opts = opts || {};

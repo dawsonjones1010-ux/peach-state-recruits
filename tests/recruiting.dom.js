@@ -1,5 +1,5 @@
 // DOM integration tests with real application code and local fixture storage.
-// jsdom has no layout engine: this does NOT certify mobile layout or live magic-link auth.
+// jsdom has no layout engine: this does NOT certify mobile layout or live password sign-in.
 const { JSDOM } = require('jsdom'); const fs=require('node:fs'); const path=require('node:path'); const a=require('node:assert/strict');
 const ROOT=path.resolve(__dirname,'..'); const wait=()=>new Promise(r=>setTimeout(r,30));let checks=0;
 const check=(x,label)=>{a.ok(x,label);checks++;console.log('ok',label);};

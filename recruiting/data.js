@@ -208,16 +208,6 @@
         const r = await accountCall({ action: "set_username", username }, true);
         return r.username;
       },
-      async signInWithLink(email) {
-        const { error } = await sb.auth.signInWithOtp({ email: String(email).trim(), options: { shouldCreateUser: true, emailRedirectTo: site.replace(/\/$/, "") + "/my-recruiting.html" } });
-        if (error) {
-          const code = String(error.code || ""), msg = String(error.message || "");
-          if (code === "email_address_not_authorized" || /not authorized/i.test(msg)) throw new Error("Sign-up emails aren't turned on yet. The free tools still work without an account. DM us on Instagram and we'll let you know when accounts open.");
-          if (error.status === 429 || /rate limit/i.test(msg)) throw new Error("Too many sign-in emails were sent in the last hour. Try again in a little while.");
-          throw new Error(msg || "Sign-in failed. Try again.");
-        }
-        return { emailSent: true };
-      },
       async signOut() { const { error } = await sb.auth.signOut(); if (error) throw error; },
       async isAdmin() { const { data, error } = await sb.rpc("is_recruiting_admin"); if (error) throw new Error(error.message); return data === true; },
       async listPrograms() { return programs(false); },
