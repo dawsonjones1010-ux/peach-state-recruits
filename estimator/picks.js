@@ -49,5 +49,30 @@
     return { list, total: pool.filter(p => tier(p) < 2).length, inState: pool.filter(p => tier(p) === 0).length };
   }
 
-  return { pick, nearNames, COUNT, STATE_KEY };
+  // One directory for every recommendation (audit PSR-009): the same live, public program list College Finder uses.
+  // Falls back to the saved copy only if the live list can't load, and says so (stale: true).
+  async function loadPrograms(fetchFn, cfg) {
+    fetchFn = fetchFn || (typeof fetch !== "undefined" ? fetch : null);
+    cfg = cfg || (typeof window !== "undefined" ? window.PSR_CONFIG : null) || {};
+    const key = cfg.supabasePublishableKey || cfg.supabaseAnonKey;
+    const withBand = rows => rows.filter(p => p.record_status !== "hidden").map(p => Object.assign({ band: L.bandOf(p) }, p));
+    if (fetchFn && cfg.supabaseUrl && key) {
+      try {
+        const rows = [];
+        for (let from = 0; from < 10000; from += 1000) {
+          const r = await fetchFn(`${cfg.supabaseUrl.replace(/\/$/, "")}/rest/v1/programs?select=id,slug,name,level,conference,city,state,record_status&order=name.asc,id.asc&offset=${from}&limit=1000`, { headers: { apikey: key, Authorization: "Bearer " + key } });
+          if (!r.ok) throw new Error(String(r.status));
+          const page = await r.json();
+          rows.push.apply(rows, page);
+          if (page.length < 1000) break;
+        }
+        if (rows.length) return { programs: withBand(rows), stale: false };
+      } catch (_) { /* fall through to the saved copy */ }
+    }
+    const r = await fetchFn("data/programs.json");
+    const d = await r.json();
+    return { programs: withBand(d.programs || []), stale: true };
+  }
+
+  return { pick, nearNames, loadPrograms, COUNT, STATE_KEY };
 });

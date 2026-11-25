@@ -347,7 +347,7 @@
     return U.schoolsAtLevel(read).filters;
   }
   // ---- Schools to start with: a few programs at the player's level near home, each one tap from Email Coach ----
-  let PROGRAMS = null, programsLoad = null, NEXT_CAMP = new Map(), campsLoad = null;
+  let PROGRAMS = null, PROGRAMS_STALE = false, programsLoad = null, NEXT_CAMP = new Map(), campsLoad = null;
   // Next upcoming camp per school, read from the public Camp Finder table. Optional: picks draw without it.
   function loadCamps() {
     const C = window.PSR_CONFIG || {}, key = C.supabasePublishableKey || C.supabaseAnonKey;
@@ -359,8 +359,8 @@
     return campsLoad;
   }
   function loadPrograms() {
-    if (!programsLoad) programsLoad = fetch("data/programs.json").then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
-      .then(d => { PROGRAMS = d.programs.map(p => Object.assign({ band: window.PSRLogic.bandOf(p) }, p)); })
+    if (!programsLoad) programsLoad = window.PSRPicks.loadPrograms()
+      .then(r => { PROGRAMS = r.programs; PROGRAMS_STALE = r.stale; })
       .catch(err => { programsLoad = null; throw err; });
     return programsLoad;
   }
@@ -393,6 +393,7 @@
       : `<p class="lvl-note-sm">No ${esc(label)} programs in or next to ${esc(st)}.</p>`;
     sec.querySelector(".lvl-picks-b").innerHTML = `<label class="lvl-picks-state"><span>Your home state</span><select data-picks-state><option value="">Choose a state</option>${opts}</select></label>
       ${list}
+      ${PROGRAMS_STALE ? `<p class="lvl-note-sm"><b>Using a saved copy of the college list.</b> Some schools may have changed; confirm in College Finder.</p>` : ""}
       <p class="lvl-note-sm">${st && r.list.length ? "Picked by level and distance from home, not by how you'd fit a program. " : ""}<a href="colleges.html?bands=${encodeURIComponent(bands.join(","))}&from=fml">See every ${esc(label)} program</a></p>`;
   }
   function fillPicks() {
@@ -661,7 +662,7 @@
     const desc = cats.map(c => `${c.label} ${c.score == null ? "not scored" : c.score}`).join(", ");
     return `<svg class="lvl-radar" viewBox="-45 0 390 270" role="img" aria-label="Category scores: ${esc(desc)}">${rings}${spokes}${shape}${dots}${labels}</svg>`;
   }
-  const VER_SHORT = (v) => v >= 100 ? "Verified" : v >= 85 ? "Event or device" : v >= 70 ? "Self-reported, electronic" : v >= 50 ? "Self-reported" : "Not given";
+  const VER_SHORT = (v) => v >= 100 ? "Evidence supplied, not verified" : v >= 85 ? "Event or device" : v >= 70 ? "Self-reported, electronic" : v >= 50 ? "Self-reported" : "Not given";
 
   function fitHead(read, idx, flag) {
     return `<p class="lvl-eval-k">Your college baseball recruiting evaluation</p>
@@ -675,6 +676,7 @@
       : `<li data-level="${l.key}" data-score="${l.display}"${l.key === anchor.key ? ' class="is-hl"' : ""}><b>${esc(l.short)}</b><span class="lvl-match-pct">${l.display}<small>/100</small></span><small class="lvl-cls-${CLS_CLASS[l.classification]}">${esc(l.classification)}</small><span class="lvl-tile-bar" aria-hidden="true"><i style="width:${l.display}%"></i></span></li>`).join("");
     const also = fit.also.map(k => lv(k).short);
     const tie = fit.ties.length ? `<p class="lvl-best-a lvl-tie">Your ${esc(anchor.short)} score ties with ${esc(fit.ties.map(k => lv(k).short).join(" and "))}. When scores tie, the higher category is listed as the target and the tie is shown here, so nothing is hidden.</p>` : "";
+    if (fit.peakOnly || fit.ipZero) return peakOnlySection(fit, M, tiles, juco);
     return `<section class="lvl-match" aria-label="Your college fit">
         <p class="lvl-pill-h">Your best college match</p>
         <div class="lvl-fit-row">${pRing(anchor.display, anchor.short, anchor.classification)}
@@ -685,15 +687,40 @@
             <p class="lvl-best-a"><b>Stretch target:</b> ${stretch ? `${esc(stretch.label)} (${stretch.display}/100, ${esc(stretch.classification.toLowerCase())})` : esc(fit.stretchReason || "Not established with current data.")}</p>
             ${also.length ? `<p class="lvl-best-a"><b>Additional opportunities:</b> ${esc(also.join(", "))}</p>` : ""}
             ${tie}
-            ${fit.provisional ? `<p class="lvl-best-a lvl-prov">Provisional: there isn't enough verified, recent data to stand behind this target yet. See Evaluation confidence below.</p>` : ""}
+            ${fit.provisional ? `<p class="lvl-best-a lvl-prov">Provisional: there isn't enough complete, recent, well-documented data to stand behind this target yet. See Evaluation confidence below.</p>` : ""}
           </div></div>
         <ol class="lvl-match-list lvl-pfit">${tiles}</ol>
         <p class="lvl-match-disc">${esc(M.DISCLAIMER)}</p>
       </section>
       <section class="lvl-msum lvl-juco" aria-label="JUCO recruiting pathway" data-level="juco">
         <p class="lvl-pill-h">JUCO recruiting pathway</p>
-        ${juco && juco.score != null ? `<div class="lvl-conf-row"><b>${juco.display}<small>/100</small></b><p>${esc(juco.classification)}. JUCO is its own pathway, not a level below NAIA or D3. Programs range from developmental to some of the most competitive baseball in the country, so these benchmarks and weights are provisional.</p></div>`
+        ${juco && juco.score != null && juco.velocityOnly ? `<div class="lvl-conf-row"><b>${juco.display}<small>/100</small></b><p><strong>JUCO velocity comparison only.</strong> Program standards and roles vary; command and game performance are not scored in this comparison. JUCO is its own pathway, not a level below NAIA or D3.</p></div>`
+          : juco && juco.score != null ? `<div class="lvl-conf-row"><b>${juco.display}<small>/100</small></b><p>${esc(juco.classification)}. JUCO is its own pathway, not a level below NAIA or D3. Programs range from developmental to some of the most competitive baseball in the country, so these benchmarks and weights are provisional.</p></div>`
           : `<p class="lvl-msum-k">Not scored with the data entered. JUCO is its own pathway, not a level below NAIA or D3.</p>`}
+      </section>`;
+  }
+  // Audit PSR-004: peak velocity alone -> a comparison, not a recruiting target or a school list.
+  function peakOnlySection(fit, M, tiles, juco) {
+    // No highlighted "match" and no fit labels on the tiles: these are peak-only comparisons.
+    tiles = tiles.replace(/ class="is-hl"/g, "").replace(/<small class="lvl-cls-[^"]*">[^<]*<\/small>/g, "");
+    return `<section class="lvl-match lvl-peakonly" aria-label="Peak velocity comparison">
+        <p class="lvl-pill-h">${fit.peakOnly ? "Peak velocity comparison" : "Velocity comparison"}</p>
+        <div class="lvl-best">
+          ${fit.peakOnly ? `<p class="lvl-best-l">${fit.peakReachLabel ? `Your peak velocity reaches the ${esc(fit.peakReachLabel)} screening range.` : "Your peak velocity is below the four-year screening ranges."}</p>
+          <p class="lvl-best-a">A recruiting target is not established from this measurement alone. Coaches recruit on what you sit, not your best pitch.</p>
+          <p class="lvl-best-a"><b>Missing to set a target:</b> sitting fastball velocity (required), then strike % or innings with strikeouts and walks, and season stats.</p>
+          <p><button class="btn btn-peach" type="button" data-go="2">Add sitting velocity</button></p>`
+          : `<p class="lvl-best-l">Innings pitched is 0, so your ERA, WHIP and strikeout and walk rates can't be scored.</p>
+          <p class="lvl-best-a">A recruiting target is not established without the innings behind your stats. The comparison below uses velocity only.</p>
+          <p><button class="btn btn-peach" type="button" data-go="2">Add your innings</button></p>`}
+        </div>
+        <p class="lvl-best-a">${fit.peakOnly ? "Peak-only" : "Velocity-only"} comparison by level:</p>
+        <ol class="lvl-match-list lvl-pfit">${tiles}</ol>
+        <p class="lvl-match-disc">${esc(M.DISCLAIMER)}</p>
+      </section>
+      <section class="lvl-msum lvl-juco" aria-label="JUCO recruiting pathway" data-level="juco">
+        <p class="lvl-pill-h">JUCO recruiting pathway</p>
+        <p class="lvl-msum-k">Not set from peak velocity alone. JUCO is its own pathway, not a level below NAIA or D3.</p>
       </section>`;
   }
   function categoriesSection(fit, anchor, intro) {
@@ -720,7 +747,7 @@
       .map(([l, k]) => `<li><span>${esc(l)} <small>${Math.round(W[k] * 100)}%</small></span><b>${Math.round(P[k])}</b><em>${esc(N[k])}</em></li>`).join("");
     return `<section class="lvl-msum lvl-conf" aria-label="Evaluation confidence">
         <p class="lvl-pill-h">Evaluation confidence</p>
-        <div class="lvl-conf-row"><b>${conf.score}<small>/100</small></b><p><strong>${esc(conf.label)}.</strong> How much of this evaluation is backed by complete, verified, recent measurements. It isn't a talent rating and never changes your fit scores.${conf.incomplete ? " Essential data is missing, so confidence is capped." : ""}</p></div>
+        <div class="lvl-conf-row"><b>${conf.score}<small>/100</small></b><p><strong>${esc(conf.label)}.</strong> How much of this evaluation is backed by complete, well-documented, recent measurements. It isn't a talent rating and never changes your fit scores.${conf.incomplete ? " Essential data is missing, so confidence is capped." : ""}</p></div>
         <ul class="lvl-conf-parts">${rows}</ul>
         ${conf.missing.length ? `<p class="lvl-msum-k">Raise your confidence:</p><ol class="lvl-conf-list">${conf.missing.slice(0, 4).map(x => `<li>${esc(x)}</li>`).join("")}</ol>` : `<p class="lvl-msum-k">Your evaluation is well supported.</p>`}
       </section>`;
@@ -872,7 +899,7 @@
   }
   function pitcherReadHtml(read, idx) {
     const fit = pitcherFit();
-    const ak = fit.enough ? fit.primary || fit.closest : null, ai = LADDER.indexOf(ak);
+    const ak = fit.enough && !fit.limited ? fit.primary || fit.closest : null, ai = LADDER.indexOf(ak);
     const at = ak ? [ak].concat(ai >= 0 && ai < 5 ? [LADDER[ai + 1]] : []) : [];
     const q = at.length ? "bands=" + encodeURIComponent(at.join(",")) + "&" : "";
     const grad = state.input.gradYear ? "grad=" + encodeURIComponent(state.input.gradYear) + "&" : "";
@@ -965,7 +992,7 @@
   }
   function positionReadHtml(read, idx) {
     const fit = QF.evaluate(read, state.input);
-    const ak = fit.enough ? fit.primary || fit.closest : null, ai = LADDER.indexOf(ak);
+    const ak = fit.enough && !fit.limited ? fit.primary || fit.closest : null, ai = LADDER.indexOf(ak);
     const at = ak ? [ak].concat(ai >= 0 && ai < 5 ? [LADDER[ai + 1]] : []) : [];
     const q = at.length ? "bands=" + encodeURIComponent(at.join(",")) + "&" : "";
     const grad = state.input.gradYear ? "grad=" + encodeURIComponent(state.input.gradYear) + "&" : "";
@@ -1092,7 +1119,7 @@
       const read = state.result && state.result.reads && state.result.reads[0];
       if (!read) return;
       const fit = read.kind === "pitching" ? pitcherFit() : QF.evaluate(read, state.input);
-      const ak = fit && fit.enough ? fit.primary || fit.closest : null, ai = LADDER.indexOf(ak);
+      const ak = fit && fit.enough && !fit.limited ? fit.primary || fit.closest : null, ai = LADDER.indexOf(ak);
       const lv = ak ? fit.levels.find(l => l.key === ak) : null;
       const summary = {
         v: 1, t: new Date().toISOString(), position: U.POS[read.position] || read.position, gradYear: state.input.gradYear || null,
@@ -1101,7 +1128,8 @@
         handoff: (() => { try { return R.handoff(state.input, read); } catch (_) { return null; } })(),
         input: JSON.parse(JSON.stringify(state.input)), raw: Object.assign({}, state.raw)
       };
-      localStorage.setItem(SUMMARY_KEY, JSON.stringify(summary));
+      // Owner-aware save (recruiting/levelsync.js): signed in -> this account only; signed out -> this device only.
+      if (!window.PSRLevelSync) localStorage.setItem(SUMMARY_KEY, JSON.stringify(Object.assign({}, summary, { owner: null })));
       state.saved = summary;
       acctStatus = "saving";
       if (window.PSRLevelSync) window.PSRLevelSync.save(summary).then(ok => { acctStatus = ok ? "saved" : "signedout"; paintAcct(); }).catch(() => { acctStatus = "signedout"; paintAcct(); });
@@ -1453,9 +1481,13 @@
   const getJson = (u) => fetch(u, { cache: "no-cache" }).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); });
   Promise.all([getJson(CFG.DATA_URL + "?v=1.0"), getJson(CFG.ADDITIONS_URL + "?v=1.1").catch(() => null), getJson(CFG.SIZE_URL + "?v=1").catch(() => null), getJson(CFG.FILLS_URL + "?v=1.2").catch(() => null)]).then(([d, a, z, f]) => {
     state.data = L.withFills(d, f); state.add = a; state.size = z;
-    try { const s = JSON.parse(localStorage.getItem(SUMMARY_KEY) || "null"); if (s && s.v === 1) state.saved = s; } catch (_) {}
+    // Before we know who is signed in, show only a signed-out result from this device.
+    try { const s = window.PSRLevelSync ? window.PSRLevelSync.anon() : JSON.parse(localStorage.getItem(SUMMARY_KEY) || "null"); if (s && s.v === 1 && !s.owner) state.saved = s; } catch (_) {}
     render();
-    if (window.PSRLevelSync) window.PSRLevelSync.sync().then(s => { if (s && s.input && (!state.saved || s.t !== state.saved.t)) { state.saved = s; if (state.step === 1 && !state.result) render(); } }).catch(() => {});
+    if (window.PSRLevelSync) window.PSRLevelSync.current().then(s => {
+      const next = s && s.input ? s : null;
+      if ((next && next.t) !== (state.saved && state.saved.t)) { state.saved = next; if (state.step === 1 && !state.result) render(); }
+    }).catch(() => {});
   }).catch(() => { app.innerHTML = `<p class="lvl-card">The benchmark data couldn't load. Please refresh the page.</p>`; });
 
   window.PSRLevelUI = { state }; // for tests only; holds nothing outside this page

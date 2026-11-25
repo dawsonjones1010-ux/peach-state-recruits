@@ -42,8 +42,8 @@
   // Fill empty profile fields from the latest Find My Level result. Never overwrites what the player typed.
   async function fillFromLevel() {
     const LS = window.PSRLevelSync; if (!LS || !S.profile) return;
-    let s = LS.local();
-    try { s = (await LS.sync()) || s; } catch (_) {}
+    let s = null;
+    try { s = await LS.current(); } catch (_) {}
     const src = s && s.handoff && s.handoff.profile; if (!src) return;
     const p = S.profile, patch = {}, empty = v => v == null || v === "";
     ["grad_year", "primary_position", "secondary_position", "bats", "throws", "height_in", "weight_lb"].forEach(k => { if (empty(p[k]) && !empty(src[k])) patch[k] = src[k]; });
@@ -101,7 +101,7 @@
       <div class="rc-userbar"><p>Signed in as <b>${esc(S.user.email || "")}</b></p><span class="rc-row"><button class="rc-btn sm" id="acctBtn">Account</button><button class="rc-btn sm" id="signOut">Sign out</button></span></div>
       <nav class="rc-tabs" role="tablist" aria-label="My Recruiting">${TABS.map(([k, l]) => `<a class="rc-tab" role="tab" href="#${k}" aria-selected="${k === tab}">${l}${counts[k] ? `<span class="rc-count">${counts[k]}</span>` : ""}</a>`).join("")}</nav>
       <div id="tab"></div>`;
-    $("#signOut").onclick = async () => { await api.signOut(); location.hash = "signin"; start(); };
+    $("#signOut").onclick = async () => { if (window.PSRLevelSync) window.PSRLevelSync.forgetAccount(); await api.signOut(); location.hash = "signin"; start(); };
     $("#acctBtn").onclick = () => accountDialog(false);
     let recovering = false; try { recovering = sessionStorage.getItem("psr_pw_recovery") === "1"; } catch (_) {}
     if (recovering) accountDialog(true);
@@ -150,8 +150,21 @@
         <p class="rc-small">${esc([s.position ? s.position.charAt(0).toUpperCase() + s.position.slice(1) : "", s.gradYear ? "Class of " + s.gradYear : "", when ? "checked " + when : ""].filter(Boolean).join(", "))}</p>
         <div class="rc-row" style="gap:8px;flex-wrap:wrap"><a class="rc-btn primary" href="colleges.html?bands=${encodeURIComponent(bands)}&from=fml">Colleges at my level</a><a class="rc-btn" href="find-my-level.html">See or update my results</a></div></div>`;
     };
-    if (window.PSRLevelSync) { draw(window.PSRLevelSync.local()); window.PSRLevelSync.sync().then(draw).catch(() => {}); }
-    else box.innerHTML = "";
+    const LS = window.PSRLevelSync;
+    if (!LS) { box.innerHTML = ""; return; }
+    LS.current().then(s => {
+      draw(s);
+      // A result saved on this device while signed out: only added to this account if they say it's theirs.
+      return LS.pendingImport().then(a => {
+        if (!a || !a.level || !$("#levelCard")) return;
+        const d = new Date(a.t), when = isNaN(d) ? "" : d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+        box.insertAdjacentHTML("beforeend", `<div class="rc-card rc-import" role="region" aria-label="Result saved on this device">
+          <p><b>A Find My Level result is saved on this device</b> (${esc(a.level.label)}, ${esc(a.position || "")}${when ? ", " + esc(when) : ""}). Add it to this account? Only add your own result.</p>
+          <div class="rc-row" style="gap:8px;flex-wrap:wrap"><button class="rc-btn primary" type="button" id="impYes">Add to my account</button><button class="rc-btn" type="button" id="impNo">It's not mine. Remove it from this device</button></div></div>`);
+        $("#impYes").onclick = async () => { try { await LS.importAnon(); U.toast("Added to your account"); renderPlan(); } catch (e) { U.toast(e.message); } };
+        $("#impNo").onclick = () => { LS.discardAnon(); U.toast("Removed from this device"); renderPlan(); };
+      });
+    }).catch(() => draw(null));
   }
 
   function renderPlan() {
@@ -378,7 +391,7 @@
         <div class="rc-est">${fld("miles_one_way", "Miles one way")}${fld("mpg", "Car MPG")}${fld("gas_price", "Gas $/gal", 0.01)}${fld("nights", "Hotel nights")}${fld("hotel_rate", "Hotel $/night")}${fld("rooms", "Rooms")}${fld("days", "Days")}${fld("people", "People eating")}${fld("meal_cost", "$ per meal")}${fld("meals_per_day", "Meals per day")}${fld("other", "Other $")}</div>
         <button class="rc-btn sm" data-savetravel style="margin-top:10px">Save estimate</button></details>
       <div class="rc-row" style="margin-top:12px">
-        ${U.safeUrl(c.registration_url) ? `<a class="rc-btn sm primary" href="${esc(c.registration_url)}" target="_blank" rel="noopener">Register (official page)</a>` : ""}
+        ${U.safeUrl(c.registration_url) ? `<a class="rc-btn sm primary" href="${esc(c.registration_url)}" target="_blank" rel="noopener">Register (event page)</a>` : ""}
         <button class="rc-btn sm" data-ics>Add to calendar</button>
         ${c.program_id ? `<a class="rc-btn sm" href="#emails?kind=event_invite&program=${esc(c.program_id)}&camp=${esc(c.id)}">Invite a coach</a>` : ""}
         <button class="rc-btn sm danger" data-unsave>Remove</button>
@@ -423,18 +436,18 @@
       </form>
       <section class="rc-panel rc-danger-zone" aria-labelledby="delHead">
         <h2 id="delHead">Delete my recruiting data</h2>
-        <p class="rc-muted">Permanently deletes your profile, saved schools, email drafts, message history, plan and saved camps from My Recruiting. It can't be undone. To also close your sign-in account or remove a featured profile, email <a class="rc-link" href="mailto:peachstaterecruitshq@gmail.com">peachstaterecruitshq@gmail.com</a>. See our <a class="rc-link" href="privacy.html">Privacy Policy</a>.</p>
+        <p class="rc-muted">Deletes your recruiting data from this account (profile, saved schools, email drafts, message history, plan, saved camps and Find My Level results) and removes its saved copy from this device. It can't be undone. To also close your sign-in account or remove a featured profile, email <a class="rc-link" href="mailto:peachstaterecruitshq@gmail.com">peachstaterecruitshq@gmail.com</a>. See our <a class="rc-link" href="privacy.html">Privacy Policy</a>.</p>
         <button class="rc-btn danger" type="button" id="delMine">Delete my recruiting data</button>
       </section>`;
     const f = $("#prof");
-    $("#fmlImport").onclick = () => {
-      let h = []; try { h = JSON.parse(localStorage.getItem("psr_fml_history_v1") || "[]"); } catch (e) {}
-      const last = h[h.length - 1];
-      if (!last) { U.toast("No saved Find My Level result on this device"); return; }
-      const map = { maxFb: "fb_velo", maxEv: "exit_velo", sixty: "sixty", ifVelo: "if_velo", ofVelo: "of_velo", cVelo: "c_velo", pop: "pop" };
-      Object.entries(map).forEach(([a, b]) => { if (last.metrics && last.metrics[a] != null) $(`[data-m="${b}"]`, f).value = last.metrics[a]; });
-      if (last.gradYear && !f.elements.namedItem("grad_year").value) f.elements.namedItem("grad_year").value = last.gradYear;
-      if (last.primary && !f.elements.namedItem("primary_position").value) f.elements.namedItem("primary_position").value = last.primary;
+    // Uses this account's own latest result only (never another person's result left on the device).
+    $("#fmlImport").onclick = async () => {
+      let s = null; try { s = window.PSRLevelSync ? await window.PSRLevelSync.current() : null; } catch (e) {}
+      const src = s && s.handoff && s.handoff.profile;
+      if (!src) { U.toast("No Find My Level result on this account yet"); return; }
+      Object.entries(src.metrics || {}).forEach(([k, v]) => { const el = $(`[data-m="${k}"]`, f); if (el && v != null) el.value = v; });
+      if (src.grad_year && !f.elements.namedItem("grad_year").value) f.elements.namedItem("grad_year").value = src.grad_year;
+      if (src.primary_position && !f.elements.namedItem("primary_position").value) f.elements.namedItem("primary_position").value = src.primary_position;
       U.toast("Metrics filled in. Review, then Save profile.");
     };
     // Opened from Find My Level's "Save to My Recruiting": fill the metrics once, then drop the flag from the URL.
@@ -443,9 +456,9 @@
       if (qs.get("from") === "fml") { qs.delete("from"); history.replaceState(null, "", location.pathname + (qs.toString() ? "?" + qs : "") + location.hash); $("#fmlImport").click(); }
     } catch (e) {}
     $("#delMine").onclick = async () => {
-      const ok = await U.confirmDialog("Delete your profile, saved schools, email drafts, message history, plan and saved camps? This can't be undone.", { confirmLabel: "Delete everything" });
+      const ok = await U.confirmDialog("Delete your recruiting data from this account and remove its saved copy from this device? This includes your profile, saved schools, emails, plan, saved camps and Find My Level results. It can't be undone.", { confirmLabel: "Delete everything" });
       if (!ok) return;
-      try { await api.deleteMyData(); U.toast("Your recruiting data was deleted"); await api.signOut(); start(); }
+      try { await api.deleteMyData(); if (window.PSRLevelSync) window.PSRLevelSync.clearDevice(false); U.toast("Your recruiting data was deleted from your account and this device"); await api.signOut(); start(); }
       catch (err) { U.toast("Couldn't delete: " + err.message); }
     };
     f.onsubmit = async e => {

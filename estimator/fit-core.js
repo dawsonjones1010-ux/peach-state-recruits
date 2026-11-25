@@ -144,7 +144,7 @@
   // result link; without one it's treated like a documented measurement.
   function verificationValue(input, opts) {
     const V = CONFIG.confidence.verification, meta = (input && input.meta) || {}, methods = (input && input.methods) || {};
-    if (meta.source === "event" || meta.source === "device") return { value: meta.link ? V.verified : V.documented, label: meta.link ? "Verified (event or device result, link provided)" : "Event or device result (no link to verify)" };
+    if (meta.source === "event" || meta.source === "device") return { value: meta.link ? V.verified : V.documented, label: meta.link ? "Event result supplied by player, with a link. Peach State Recruits has not verified it" : "Event or device result (no link provided)" };
     const hand = (opts && opts.handTimed) || meta.method === "hand";
     const elec = ELECTRONIC.has(meta.method) || ELECTRONIC.has(methods.veloDevice) || ELECTRONIC.has(methods.evDevice) || methods.sixty === "laser";
     // No source given but a method is: that's a player-reported number with a known method.

@@ -148,7 +148,11 @@
     else if (sitS != null) { velocity = sitS; veloNote = "Sitting velocity only (no peak entered)."; }
     else if (peakS != null) { velocity = peakS; veloNote = "Incomplete: peak velocity only. Sitting velocity wasn't entered, and it's never estimated from your peak."; }
 
-    const rows = (cat) => Object.keys(PERF).filter(k => PERF[k].cat === cat && isNum(d[k])).map(k => {
+    const ipN = baseballInnings(d.ip), SS = P.smallSample;
+    // Audit PSR-005: 0 innings means season rates (ERA, WHIP, K/9, BB/9, K/BB) have no sample behind them.
+    const noSample = isNum(ipN) && ipN <= 0;
+    const IP_RATES = ["era", "whip", "k9", "bb9", "kbb"];
+    const rows = (cat) => Object.keys(PERF).filter(k => PERF[k].cat === cat && isNum(d[k]) && !(noSample && IP_RATES.includes(k))).map(k => {
       const p = PERF[k], t = p.t[key];
       return { key: k, label: p.label, value: d[k], target: t, dir: p.dir, score: t == null ? null : targetScore(d[k], t, p.dir, k), meets: t == null ? null : meets(d[k], t, p.dir) };
     });
@@ -156,9 +160,9 @@
     const scoreMap = (rs) => Object.fromEntries(rs.filter(r => r.score != null).map(r => [r.key, r.score]));
     const cmdW = Object.fromEntries(Object.entries(P.command).filter(([k]) => !P.commandNoBenchmark.includes(k)));
     const command = C.weighted(scoreMap(cmdRows), cmdW), performance = C.weighted(scoreMap(perfRows), P.performance);
-    const ipN = baseballInnings(d.ip), SS = P.smallSample;
     const sampleW = isNum(ipN) && ipN < SS.fullSampleIp ? Math.max(0, ipN) / SS.fullSampleIp : 1;
-    const shrink = (v) => v == null ? null : sampleW * v + (1 - sampleW) * SS.neutralScore;
+    // A small sample pulls a strong score toward neutral; it never lifts a weak score with points that weren't earned.
+    const shrink = (v) => v == null ? null : v <= SS.neutralScore ? v : sampleW * v + (1 - sampleW) * SS.neutralScore;
     const cats = { velocity, command: shrink(command.score), performance: shrink(performance.score), secondary: null, characteristics: null };
     const scorable = Object.fromEntries(Object.entries(W).filter(([k]) => k !== "provisional" && !P.notScored.includes(k)));
     const base = velocity == null ? { score: null, used: [] } : C.weighted(cats, scorable);
@@ -287,7 +291,21 @@
     if (!enough) return { model: C.MODEL_VERSION, enough: false, hand, derived: d, levels, confidence: conf, info, standouts: [], source: SOURCE, also: [], ties: [],
       message: "Enter your fastball velocity (sitting, peak or both) to get a pitcher evaluation." };
     levels.forEach(l => { l.priorities = priorities(l, l.key, hand, d); l.hasGap = l.priorities.some(p => p.meaningful && p.gap != null); });
-    const sel = C.selectTargets(levels, { sufficient: true });
+    let sel = C.selectTargets(levels, { sufficient: true });
+    // Audit PSR-006: say plainly when a level's score is velocity only (JUCO has no command/performance targets).
+    levels.forEach(l => { l.velocityOnly = l.score != null && l.used.length > 0 && l.used.every(u => u.key === "velocity"); });
+    // Audit PSR-004: peak velocity alone never sets a recruiting target. Keep the comparison, withhold the target.
+    const peakOnly = !isNum(d.sit) && isNum(d.peak);
+    // Audit PSR-005: rate stats with 0 innings have no sample. Don't score them, and don't set a target without them.
+    const ipZero = isNum(baseballInnings(d.ip)) && baseballInnings(d.ip) <= 0 && ["era", "whip", "k9", "bb9", "kbb"].some(k => isNum(d[k]) || isNum(m.so) || isNum(m.bb));
+    let peakReach = null;
+    if (ipZero && !peakOnly) sel = Object.assign({}, sel, { primary: null, closest: sel.primary || sel.closest, stretch: null, stretchReason: "Not established: add the innings behind your stats.", also: [], ties: [] });
+    if (peakOnly) {
+      const vr = VELO[hand] || VELO.R;
+      const hit = LEVELS.filter(l => l.key !== "juco").find(l => d.peak >= vr.peak[l.key][0]);
+      peakReach = hit ? hit.key : null;
+      sel = Object.assign({}, sel, { primary: null, closest: sel.primary || sel.closest, stretch: null, stretchReason: "Not established: add your sitting velocity.", also: [], ties: [] });
+    }
     const anchorKey = sel.primary || sel.closest;
     const anchor = levels.find(l => l.key === anchorKey);
     const focusKey = sel.stretch || anchorKey;
@@ -305,6 +323,7 @@
     return {
       model: C.MODEL_VERSION, enough: true, hand, derived: d, levels, info,
       primary: sel.primary, closest: sel.closest, provisional: conf.label === "Insufficient", stretch: sel.stretch, stretchReason: sel.stretchReason, also: sel.also, ties: sel.ties,
+      peakOnly, peakReach, peakReachLabel: peakReach ? label(peakReach) : null, ipZero: ipZero && !peakOnly, limited: peakOnly || ipZero,
       primaryScore: anchor.display, categories, confidence: conf,
       priorities: (focus ? focus.priorities : []).slice(0, 3), focusLevel: focusKey,
       standouts: standouts(d, hand), classContext: classContext(input.gradYear), source: SOURCE,

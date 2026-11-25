@@ -30,7 +30,7 @@
         <label class="rc-field" style="margin-top:12px">Max price ($)<input class="rc-input" type="number" min="0" id="mp" value="${esc(f.maxPrice)}"></label>
         <div class="rc-grid2" style="margin-top:12px"><label class="rc-field">From<input class="rc-input" type="date" id="from" value="${esc(f.from)}"></label><label class="rc-field">To<input class="rc-input" type="date" id="to" value="${esc(f.to)}"></label></div>
       </form>
-      <div class="rc-panel"><h3>About these listings</h3><p class="rc-small" style="margin:0">This is a curated starter list, not a complete nationwide camp calendar. Budget filters exclude unknown prices. Each camp comes from the school's own camp page or its official registration page, with the date we last checked it. Past camps are hidden automatically. Prices, dates and coaches can change, so always confirm on the official page before you register or travel.</p></div>`;
+      <div class="rc-panel"><h3>About these listings</h3><p class="rc-small" style="margin:0">This is a starter list, not a complete nationwide camp calendar. Budget filters exclude unknown prices. Each camp links to its registration page. Some were checked on the school's or organizer's event page; others were found in a public camp directory and are labeled that way. Past camps are hidden automatically. Dates, prices, eligibility and coaches can change, so always confirm on the event page before you register or travel.</p></div>`;
     const upd = () => { render(); };
     $("#q").oninput = e => { f.q = e.target.value; upd(); };
     $("#st").onchange = e => { f.states = e.target.value ? [e.target.value] : []; upd(); };
@@ -59,11 +59,13 @@
         <dt>Price</dt><dd>${c.price_cents != null ? esc(L.money(c.price_cents / 100)) : "Not listed"}${c.price_note && !L.sameAsPrice(c.price_note, c.price_cents) ? `<br><span class="rc-small">${esc(c.price_note)}</span>` : ""}</dd>
         <dt>Who</dt><dd>${c.grad_years && c.grad_years.length ? `Grad years ${esc(c.grad_years.join(", "))}` : ""}${c.eligibility_note ? esc(c.eligibility_note) : (c.grad_years && c.grad_years.length ? "" : "Not listed")}</dd>
         ${c.positions ? `<dt>Positions</dt><dd>${esc(c.positions)}</dd>` : ""}
-        <dt>Coaches</dt><dd>${c.confirmed_coaches ? esc(c.confirmed_coaches) : "Not named on the official page"}</dd>
-        <dt>Checked</dt><dd>${esc(L.fmtDate(c.last_checked))} · <a class="rc-link" href="${esc(U.safeUrl(c.source_url))}" target="_blank" rel="noopener">${esc(U.host(c.source_url))}</a>${stale ? ' <span class="rc-badge warn">May be out of date</span>' : ""}</dd>
+        <dt>Coaches</dt><dd>${c.confirmed_coaches ? esc(c.confirmed_coaches) : "Not named on the event page"}</dd>
+        <dt>Source</dt><dd>${L.campSource(c) === "directory"
+          ? `Found in a public camp directory (<a class="rc-link" href="${esc(U.safeUrl(c.source_url))}" target="_blank" rel="noopener">${esc(U.host(c.source_url))}</a>), listed ${esc(L.fmtDate(c.last_checked))}. Confirm date, eligibility and price on the event page before registering.`
+          : `${L.campSource(c) === "organizer_confirmed" ? "Confirmed by the organizer" : "Checked on the event page"} ${esc(L.fmtDate(c.last_checked))} · <a class="rc-link" href="${esc(U.safeUrl(c.source_url))}" target="_blank" rel="noopener">${esc(U.host(c.source_url))}</a>`}${stale ? ' <span class="rc-badge warn">May be out of date</span>' : ""}</dd>
       </dl>
       <div class="rc-row" style="margin-top:12px">
-        ${U.safeUrl(c.registration_url) ? `<a class="rc-btn sm primary" href="${esc(c.registration_url)}" target="_blank" rel="noopener" data-track="camp_click" data-track-detail="${esc(c.band || "")}">Register on official page</a>` : ""}
+        ${U.safeUrl(c.registration_url) ? `<a class="rc-btn sm primary" href="${esc(c.registration_url)}" target="_blank" rel="noopener" data-track="camp_click" data-track-detail="${esc(c.band || "")}">Go to registration page</a>` : ""}
         <button class="rc-btn sm" data-ics="${esc(c.id)}">Add to calendar</button>
         <button class="rc-btn sm" data-est="${esc(c.id)}">Estimate travel cost</button>
         ${c.program_slug ? `<a class="rc-btn sm" href="colleges.html#school=${encodeURIComponent(c.program_slug)}">School details</a>` : ""}

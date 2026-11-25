@@ -190,12 +190,12 @@ test("velocity is 60% of a pitcher's score at D1 levels and 50% elsewhere", () =
   assert.equal(l.used.find(u => u.key === "velocity").share, 0.6);
 });
 
-test("small samples: under 20 IP, stats are blended toward neutral; 20+ IP counts in full", () => {
+test("small samples: under 20 IP, strong stats are blended toward neutral, weak ones are never lifted (audit PSR-005); 20+ IP counts in full", () => {
   const m = { typFb: 88, maxFb: 91, era: 6.5, whip: 1.9, strikePct: 55 };
   const tiny = P.evaluate({ throws: "R", metrics: Object.assign({ ip: 5 }, m) }), full = P.evaluate({ throws: "R", metrics: Object.assign({ ip: 40 }, m) });
   const t = tiny.levels.find(l => l.key === "mid"), f = full.levels.find(l => l.key === "mid");
   assert.equal(t.sampleWeight, 0.25); assert.equal(f.sampleWeight, 1);
-  assert.ok(t.cats.performance > f.cats.performance && t.score > f.score, "bad stats over 5 IP can't sink the level like 40 IP");
+  assert.ok(t.cats.performance <= f.cats.performance + 1e-9 && t.score <= f.score + 1e-9, "bad stats over 5 IP are not lifted with neutral points");
   const good = P.evaluate({ throws: "R", metrics: { typFb: 80, ip: 4, era: 0, whip: 0.5, strikePct: 75 } }).levels.find(l => l.key === "mid");
   assert.ok(good.cats.performance < 100, "a hot 4 innings doesn't count in full either");
 });

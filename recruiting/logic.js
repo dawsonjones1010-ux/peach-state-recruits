@@ -50,6 +50,25 @@
   }
   function addDays(d, n) { const x = parseISO(d) || new Date(d); x.setDate(x.getDate() + n); return x; }
   function daysBetween(a, b) { return Math.round((parseISO(b) - parseISO(a)) / 86400000); }
+  // Where a camp's details come from (audit PSR-008). Uses the stored status, or the source link when the
+  // status isn't there (older rows): a third-party directory can discover a camp but never confirms it.
+  const CAMP_DIRECTORIES = /(^|\.)collegeidsignal\.com$/i;
+  function campSource(c) {
+    if (c && ["directory", "source_checked", "organizer_confirmed"].includes(c.verification_status)) return c.verification_status;
+    let host = ""; try { host = new URL(c && c.source_url).hostname; } catch (_) {}
+    return CAMP_DIRECTORIES.test(host) ? "directory" : "source_checked";
+  }
+
+  // "GA", "ga", "Georgia" -> "Georgia". Camp and program rows mix codes and full names (audit PSR-007).
+  function stateName(s) {
+    const v = String(s == null ? "" : s).trim();
+    if (!v) return "";
+    const up = v.toUpperCase();
+    if (STATES[up]) return STATES[up];
+    const hit = Object.values(STATES).find(n => n.toLowerCase() === v.toLowerCase());
+    return hit || v;
+  }
+
   // True when a camp's price note only repeats the price ("$450" next to $450), so the page shows it once.
   function sameAsPrice(note, cents) {
     if (cents == null || !note) return false;
@@ -446,7 +465,7 @@
       if (!parseISO(c.start_date) || !parseISO(c.end_date || c.start_date) || (c.end_date && c.end_date < c.start_date)) return false;
       if ((c.end_date || c.start_date) < t) return false;          // hide past events
       if (c.record_status === "hidden") return false;
-      if (f.states && f.states.length && !f.states.includes(c.state)) return false;
+      if (f.states && f.states.length && !f.states.map(stateName).includes(stateName(c.state))) return false;
       if (f.gradYear && c.grad_years && c.grad_years.length && !c.grad_years.includes(+f.gradYear)) return false;
       if (f.from && (c.end_date || c.start_date) < f.from) return false;
       if (f.to && c.start_date > f.to) return false;
@@ -571,7 +590,7 @@
 
   return {
     LEVELS, BANDS, BAND_LABELS, BAND_LEVEL, bandOf, bandsFromLevels, STATES, STATE_NAMES, KINDS, PLAN_RULES, TRAVEL_DEFAULTS, PROGRAM_FIELDS,
-    toISO, parseISO, addDays, daysBetween, fmtDate, nextCampByProgram, sameAsPrice, classYear, keyDates,
+    toISO, parseISO, addDays, daysBetween, fmtDate, nextCampByProgram, sameAsPrice, stateName, campSource, classYear, keyDates,
     filterPrograms, levelsFromFindMyLevel, fullName, heightText, metricsLine, profileMissing,
     buildEmail, mailtoUrl, schoolStatus, dueFollowUps, planCandidates, planView,
     filterCamps, isStale, buildICS, travelEstimate, money, parseCSV, slugify, normalizeProgramRow
