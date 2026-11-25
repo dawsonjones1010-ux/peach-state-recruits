@@ -19,7 +19,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=47"><link rel="stylesheet" href="estimator/report.css?v=49">
+<link rel="stylesheet" href="styles.css?v=47"><link rel="stylesheet" href="estimator/report.css?v=50">
 <link rel="canonical" href="https://dawsonjones1010-ux.github.io/peach-state-recruits/find-my-level.html">
 <meta property="og:url" content="https://dawsonjones1010-ux.github.io/peach-state-recruits/find-my-level.html">
 <meta name="twitter:title" content="Peach State Recruits">
@@ -28,7 +28,7 @@
 /* Phones can keep this page cached for ~10 minutes after an update. If version.json says a newer
    build is live, reload once with a cache-busting query so players never see stale scores.
    Bump PSR_FML_V and version.json together on every Find My Level release. */
-window.PSR_FML_V = 50;
+window.PSR_FML_V = 52;
 (function () {
   try {
     fetch("version.json?t=" + Date.now(), { cache: "no-store" }).then(function (r) { return r.json(); }).then(function (j) {
@@ -85,7 +85,7 @@ window.PSR_FML_V = 50;
   <div class="wrap">
     <h1 id="lvlTitle">Find My Level</h1>
     <p class="lvl-eyebrow">YOUR TOOLS. YOUR OPTIONS. YOUR NEXT MOVE.</p><p class="lead">See where your baseball metrics line up. Understand the gaps. Build a plan coaches can evaluate.</p>
-    <p class="lvl-meta">Free · No sign-up · Your metrics stay on this device</p>
+    <p class="lvl-meta">Free · No sign-up needed · Sign in to save your results to your account</p>
   </div>
 </section>
 
@@ -133,7 +133,9 @@ window.PSR_FML_V = 50;
   </div>
 </footer>
 <script src="config.js?v=39"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="shared.js?v=41"></script>
+<script src="recruiting/levelsync.js?v=1"></script>
 <script src="estimator/config.js?v=45"></script>
 <script src="estimator/logic.js?v=45"></script>
 <script src="estimator/summary.js?v=45"></script>
@@ -147,7 +149,7 @@ window.PSR_FML_V = 50;
 <script src="estimator/report.js?v=39"></script>
 <script src="recruiting/logic.js?v=41"></script>
 <script src="estimator/picks.js?v=46"></script>
-<script src="estimator/ui.js?v=50"></script>
+<script src="estimator/ui.js?v=52"></script>
 <script>
 (function () {
   const PSR = window.PSR, C = window.PSR_CONFIG || {};

@@ -1,6 +1,6 @@
 /*
   College Baseball Level Estimator: interface. Uses PSRLevel (logic) and PSRLevelConfig (config).
-  Metrics never leave the browser unless the player taps Send (the opt-in free review). The site's cookie-free page counter (shared.js) records only that the page was visited.
+  Metrics stay in the browser, in the player's own account when signed in (recruiting/levelsync.js), or with us only if they tap Send (the opt-in free review). The site's cookie-free page counter (shared.js) records only that the page was visited.
   The only network calls are the two static benchmark files and, after Send, one insert into
   level_reviews. Completed results are saved in this browser's localStorage (progress), and the
   player can clear them.
@@ -146,7 +146,7 @@
         </div>
         <p class="lvl-hint">Used for the "Your frame" comparison only. Height and weight never change your level.</p>
       </div>
-      <div class="lvl-actions"><span class="lvl-privacy">Your metrics stay on this device unless you tap Send. <a href="privacy.html">Privacy</a></span><button class="btn btn-peach btn-lg" type="submit">Next: your metrics</button></div>
+      <div class="lvl-actions"><span class="lvl-privacy">Your metrics stay on this device, and in your private account if you're signed in. <a href="privacy.html">Privacy</a></span><button class="btn btn-peach btn-lg" type="submit">Next: your metrics</button></div>
     </form>`;
   }
 
@@ -1063,6 +1063,30 @@
   }
   // Short summary of the latest result for Start Here (and future pages). This device only.
   const SUMMARY_KEY = "psr_level_summary_v1";
+  let acctStatus = "";
+  // One line under the level board: saved to the account, or sign in to keep it on any device.
+  function paintAcct() {
+    app.querySelectorAll(".lvl-acct-line").forEach(p => {
+      p.innerHTML = acctStatus === "saved" ? `<b>Saved to your account.</b> It's in <a href="my-recruiting.html">My Recruiting</a> and on any device you sign in on.`
+        : acctStatus === "saving" ? "Saving…"
+        : `<a href="my-recruiting.html#signin"><b>Sign in or create a free account</b></a> to keep this result on any device. It's saved on this one either way.`;
+    });
+  }
+  // Welcome back: reopen the last result (this device, or the account when signed in).
+  function welcomeHtml() {
+    const s = state.saved;
+    if (!s || !s.input || state.result || state.welcomeClosed) return "";
+    const lv = s.level, d = new Date(s.t), when = isNaN(d) ? "" : d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    return `<section class="lvl-welcome" aria-label="Your last result"><p class="lvl-welcome-k">Welcome back</p>
+      <p class="lvl-welcome-r">${lv ? `<b>${esc(lv.label)}</b> ${esc(lv.score)}/100` : "<b>Your last result</b>"}<span>${esc([s.position ? s.position.charAt(0).toUpperCase() + s.position.slice(1) : "", when].filter(Boolean).join(", "))}</span></p>
+      <div class="lvl-welcome-b"><button class="btn btn-peach" type="button" data-reopen>See my results</button><button class="btn btn-line" type="button" data-fresh>Start fresh</button></div></section>`;
+  }
+  function reopenSaved() {
+    const s = state.saved; if (!s || !s.input || !state.data) return;
+    state.input = JSON.parse(JSON.stringify(s.input)); state.raw = Object.assign({}, s.raw || {});
+    state.result = L.evaluate(state.data, state.input); state.step = 4; state.tab = 0; acctStatus = s.synced ? "saved" : acctStatus;
+    render(); window.scrollTo(0, 0);
+  }
   function saveSummary() {
     try {
       const read = state.result && state.result.reads && state.result.reads[0];
@@ -1070,12 +1094,18 @@
       const fit = read.kind === "pitching" ? pitcherFit() : QF.evaluate(read, state.input);
       const ak = fit && fit.enough ? fit.primary || fit.closest : null, ai = LADDER.indexOf(ak);
       const lv = ak ? fit.levels.find(l => l.key === ak) : null;
-      localStorage.setItem(SUMMARY_KEY, JSON.stringify({
+      const summary = {
         v: 1, t: new Date().toISOString(), position: U.POS[read.position] || read.position, gradYear: state.input.gradYear || null,
         level: lv ? { key: lv.key, label: lv.label, short: lv.short, score: lv.display, primary: !!fit.primary } : null,
         bands: ak ? [ak].concat(ai >= 0 && ai < 5 ? [LADDER[ai + 1]] : []) : [],
-        handoff: (() => { try { return R.handoff(state.input, read); } catch (_) { return null; } })()
-      }));
+        handoff: (() => { try { return R.handoff(state.input, read); } catch (_) { return null; } })(),
+        input: JSON.parse(JSON.stringify(state.input)), raw: Object.assign({}, state.raw)
+      };
+      localStorage.setItem(SUMMARY_KEY, JSON.stringify(summary));
+      state.saved = summary;
+      acctStatus = "saving";
+      if (window.PSRLevelSync) window.PSRLevelSync.save(summary).then(ok => { acctStatus = ok ? "saved" : "signedout"; paintAcct(); }).catch(() => { acctStatus = "signedout"; paintAcct(); });
+      else acctStatus = "signedout";
     } catch (_) {}
   }
   function shareSite() {
@@ -1246,7 +1276,7 @@
         <p class="lvl-note-sm">We'll send your handle, class, position, metrics, how they were measured and your headline result. Nothing else. If you're under 18, check with a parent first. <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a></p>
         <p class="lvl-err" id="reviewErr" hidden></p>
       </div>`}
-      <p class="lvl-privacy">Your metrics stay on this device unless you tap Send.</p></section>`;
+      <p class="lvl-privacy">Sending shares these metrics with us so we can reply. Otherwise they stay on this device and in your private account.</p></section>`;
   }
   async function sendReview() {
     const h = document.getElementById("f_igHandle"), er = document.getElementById("reviewErr"), btn = app.querySelector("[data-review-send]");
@@ -1342,9 +1372,12 @@
     });
     const openSecs = state.step === 4 ? [...app.querySelectorAll("details[open][data-sec]")].map(d => d.closest("[data-read]") ? d.closest("[data-read]").dataset.read + ":" + d.dataset.sec : d.dataset.sec) : [];
     const openMore = state.step === 4 ? [...app.querySelectorAll(".lvl-more[open]")].map(d => d.dataset.more) : [];
-    app.innerHTML = state.step === 1 ? step1(v) : state.step === 2 ? step2(v) : state.step === 3 ? step3(v) : results();
+    app.innerHTML = state.step === 1 ? welcomeHtml() + step1(v) : state.step === 2 ? step2(v) : state.step === 3 ? step3(v) : results();
     if (state.step === 4) {
       app.querySelectorAll(".lvl-read[data-read]").forEach(arrangeRead);
+      app.querySelectorAll(".lvl-read[data-read] > .lvl-board").forEach(b => { if (!b.nextElementSibling || !b.nextElementSibling.classList.contains("lvl-acct-line")) b.insertAdjacentHTML("afterend", `<p class="lvl-acct-line no-print" role="status"></p>`); });
+      if (!acctStatus && window.PSRLevelSync) window.PSRLevelSync.signedIn().then(on => { if (!acctStatus) { acctStatus = on && state.saved && state.saved.synced ? "saved" : "signedout"; paintAcct(); } });
+      paintAcct();
       openMore.forEach(k => { const d = app.querySelector(`.lvl-more[data-more="${k}"]`); if (d) d.open = true; });
       fillLikeYou(); fillPicks();
     }
@@ -1380,6 +1413,8 @@
     const tb = e.target.closest("[data-tab]"); if (tb) { selectTab(+tb.dataset.tab, true); return; }
     const sh = e.target.closest("[data-share]"); if (sh) { share(+sh.dataset.share); return; }
     const nv = e.target.closest("[data-native]"); if (nv && state.share) { navigator.share({ files: [state.share.file], title: "Find My Level", text: "My college baseball benchmark comparison. @peachstaterecruits" }).catch(() => {}); return; }
+    if (e.target.closest("[data-reopen]")) { reopenSaved(); return; }
+    if (e.target.closest("[data-fresh]")) { state.welcomeClosed = true; render(); const f = document.getElementById("f_gradYear"); if (f) f.focus(); return; }
     const g = e.target.closest("[data-go]"); if (g) { e.preventDefault(); go(+g.dataset.go); return; }
     if (e.target.closest("[data-print]")) { window.print(); return; }
     if (e.target.closest("[data-clear-history]")) { if (store && PG) PG.clear(store); state.progress = null; const y = window.scrollY; render(NOV); window.scrollTo(0, y); if (window.PSR && window.PSR.toast) window.PSR.toast("Saved results cleared on this device"); return; }
@@ -1417,7 +1452,10 @@
   // ---------- Boot ----------
   const getJson = (u) => fetch(u, { cache: "no-cache" }).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); });
   Promise.all([getJson(CFG.DATA_URL + "?v=1.0"), getJson(CFG.ADDITIONS_URL + "?v=1.1").catch(() => null), getJson(CFG.SIZE_URL + "?v=1").catch(() => null), getJson(CFG.FILLS_URL + "?v=1.2").catch(() => null)]).then(([d, a, z, f]) => {
-    state.data = L.withFills(d, f); state.add = a; state.size = z; render();
+    state.data = L.withFills(d, f); state.add = a; state.size = z;
+    try { const s = JSON.parse(localStorage.getItem(SUMMARY_KEY) || "null"); if (s && s.v === 1) state.saved = s; } catch (_) {}
+    render();
+    if (window.PSRLevelSync) window.PSRLevelSync.sync().then(s => { if (s && s.input && (!state.saved || s.t !== state.saved.t)) { state.saved = s; if (state.step === 1 && !state.result) render(); } }).catch(() => {});
   }).catch(() => { app.innerHTML = `<p class="lvl-card">The benchmark data couldn't load. Please refresh the page.</p>`; });
 
   window.PSRLevelUI = { state }; // for tests only; holds nothing outside this page

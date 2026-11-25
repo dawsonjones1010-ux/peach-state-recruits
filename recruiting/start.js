@@ -47,14 +47,20 @@
       <p class="st-meta">${st && r.list.length ? "Picked by level and distance from home, not by how you'd fit a program. " : ""}<a href="colleges.html?bands=${encodeURIComponent(bands.join(","))}&from=fml">See every ${esc(label)} program</a></p>`;
     document.getElementById("stState").addEventListener("change", e => { try { localStorage.setItem((P && P.STATE_KEY) || "psr_home_state", e.target.value); } catch (_) {} drawPicks(); const s = document.getElementById("stState"); if (s) s.focus(); });
   }
-  root.innerHTML = `<ol class="st-steps">${step1()}${step2()}${step3()}</ol>`;
+  function render() {
+    root.innerHTML = `<ol class="st-steps">${step1()}${step2()}${step3()}</ol>`;
+    if (sum && sum.bands && sum.bands.length) {
+      if (programs) drawPicks();
+      else fetch("data/programs.json").then(r => r.json()).then(d => { programs = d.programs.map(p => Object.assign({ band: L.bandOf(p) }, p)); drawPicks(); })
+        .catch(() => { const b = document.getElementById("stPicks"); if (b) b.innerHTML = `<p class="st-meta">The school list couldn't load. <a href="colleges.html">Open College Finder</a>.</p>`; });
+    }
+  }
+  render();
+  // Signed in on a new device: bring the latest result over from the account.
+  if (window.PSRLevelSync) window.PSRLevelSync.sync().then(s => { if (s && (!sum || s.t !== sum.t)) { sum = s; render(); } }).catch(() => {});
   // Carry the player's numbers into Email Coach, the same way Find My Level does.
   root.addEventListener("click", e => {
     const a = e.target.closest && e.target.closest("[data-st-email]");
     if (a && sum && sum.handoff) { try { sessionStorage.setItem("psr_email_handoff_v2", JSON.stringify(Object.assign({}, sum.handoff, { created_at: new Date().toISOString() }))); } catch (_) {} }
   });
-  if (sum && sum.bands && sum.bands.length) {
-    fetch("data/programs.json").then(r => r.json()).then(d => { programs = d.programs.map(p => Object.assign({ band: L.bandOf(p) }, p)); drawPicks(); })
-      .catch(() => { const b = document.getElementById("stPicks"); if (b) b.innerHTML = `<p class="st-meta">The school list couldn't load. <a href="colleges.html">Open College Finder</a>.</p>`; });
-  }
 })();

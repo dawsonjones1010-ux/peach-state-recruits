@@ -111,12 +111,31 @@
       </div>`}
     </article>`;
   }
+  // Find My Level result from the account (or this device), with the next two steps.
+  function fillLevelCard() {
+    const box = $("#levelCard"); if (!box) return;
+    const draw = s => {
+      if (!$("#levelCard")) return;
+      const LB = L.BAND_LABELS || {};
+      if (!s || !s.level) { box.innerHTML = `<section class="rc-card rc-levelcard"><h2>Your level</h2><p class="rc-muted">Find out which college levels your numbers line up with. It takes about 3 minutes and saves here.</p><a class="rc-btn primary" href="find-my-level.html">Find my level</a></section>`; return; }
+      const d = new Date(s.t), when = isNaN(d) ? "" : d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+      const bands = (s.bands || []).join(",");
+      box.innerHTML = `<section class="rc-card rc-levelcard"><p class="rc-levelcard-k">Your level</p>
+        <p class="rc-levelcard-l"><b>${esc(s.level.label)}</b><span>${esc(s.level.score)}/100 ${s.level.primary ? "best college match" : "closest level"}</span></p>
+        <p class="rc-small">${esc([s.position ? s.position.charAt(0).toUpperCase() + s.position.slice(1) : "", s.gradYear ? "Class of " + s.gradYear : "", when ? "checked " + when : ""].filter(Boolean).join(", "))}</p>
+        <div class="rc-row" style="gap:8px;flex-wrap:wrap"><a class="rc-btn primary" href="colleges.html?bands=${encodeURIComponent(bands)}&from=fml">Colleges at my level</a><a class="rc-btn" href="find-my-level.html">See or update my results</a></div></section>`;
+    };
+    if (window.PSRLevelSync) { draw(window.PSRLevelSync.local()); window.PSRLevelSync.sync().then(draw).catch(() => {}); }
+    else box.innerHTML = "";
+  }
+
   function renderPlan() {
     const p = S.profile, v = plan();
     const cy = p.grad_year ? L.classYear(p.grad_year, today()) : null;
     const kd = p.grad_year ? L.keyDates(p.grad_year) : null;
     const later = v.all.filter(t => !v.next.includes(t));
-    $("#tab").innerHTML = `
+    queueMicrotask(fillLevelCard);
+    $("#tab").innerHTML = `<div id="levelCard"></div>
       <div class="rc-cols rc-cols-side" style="--rc-side:320px">
         <div>
           <h2 style="font-size:40px;margin:0 0 12px">Your next 3 steps</h2>

@@ -176,3 +176,7 @@ dialog.rc-dialog::backdrop{background:rgba(7,11,20,.55)}
 .rc-acct .rc-field{display:flex;flex-direction:column;gap:6px}
 .rc-acct .rc-btn{align-self:flex-start}
 .rc-hr{border:0;border-top:1px solid #e3e6eb;margin:8px 0}
+.rc-levelcard{margin-bottom:16px}
+.rc-levelcard h2{margin:0 0 6px}
+.rc-levelcard-k{margin:0;font-size:13px;font-weight:800;color:var(--peach-ink,#b4521c)}
+.rc-levelcard-l{margin:4px 0 2px}.rc-levelcard-l b{display:block;font-size:24px;line-height:1.15;color:#11151c}.rc-levelcard-l span{display:block;margin-top:2px;font-weight:700;color:#4a5361}

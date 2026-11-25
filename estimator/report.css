@@ -237,3 +237,14 @@
 .lvl-offer-pk b{color:#ffb48a}
 .lvl-offer-btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
 .lvl-offer .btn-line{color:#fff;border-color:rgba(255,255,255,.35);background:transparent}
+
+/* Welcome back + account line */
+.lvl-welcome{margin:0 0 18px;padding:18px;border-radius:14px;background:#11151c;color:#e8ecf2}
+.lvl-welcome-k{margin:0 0 4px;font-size:13px;font-weight:800;color:#ffb48a}
+.lvl-welcome-r{margin:0 0 14px;font-size:16px;color:#c9d2e3}
+.lvl-welcome-r b{font-size:22px;color:#fff;margin-right:8px}
+.lvl-welcome-r span{display:block;margin-top:4px;font-size:14px}
+.lvl-welcome-b{display:flex;flex-wrap:wrap;gap:10px}
+.lvl-welcome .btn-line{color:#fff;border-color:rgba(255,255,255,.35);background:transparent}
+.lvl-acct-line{margin:12px 0 0;padding:12px 14px;border-radius:12px;background:#f3f5f8;font-size:14.5px;line-height:1.45;color:#3b4350}
+.lvl-acct-line a{color:#11151c}

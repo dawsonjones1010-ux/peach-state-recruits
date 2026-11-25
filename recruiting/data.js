@@ -249,7 +249,7 @@
       // Deletes everything this player saved in the recruiting tools. Row-level security limits each delete to their own rows.
       async deleteMyData() {
         const u = await this.getUser(); if (!u) throw new Error("Sign in first.");
-        for (const t of ["communications", "email_drafts", "plan_tasks", "saved_camps", "saved_schools", "recruit_profiles"]) await must(sb.from(t).delete().eq("user_id", u.id));
+        for (const t of ["communications", "email_drafts", "plan_tasks", "saved_camps", "saved_schools", "level_results", "recruit_profiles"]) await must(sb.from(t).delete().eq("user_id", u.id));
       },
       async logEmailSent(draftId, occurredOn, followUpOn, coachName) {
         return must(sb.rpc("log_recruiting_email_sent", { p_draft_id: draftId, p_occurred_on: occurredOn, p_follow_up_on: followUpOn || null, p_coach_name: coachName || null }));
