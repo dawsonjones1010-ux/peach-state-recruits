@@ -102,10 +102,10 @@ window.PSR_CONFIG = {
       highlight: true,
       features: [
         "Everything in Pro",
-        "One-page recruiting profile (PDF)",
-        "Coach intro email template",
-        "Schedule graphic",
-        "Priority turnaround"
+        "One-page recruiting PDF: video link, measurables, stats, grades and contact info",
+        "Coach intro email written for your position and grad year, ready to send",
+        "Schedule graphic: your upcoming tournaments, showcases and camps on one image you can post or send to coaches, so they know where to see you play",
+        "Priority turnaround: your order is worked on first"
       ]
     }
   ],
@@ -132,7 +132,7 @@ window.PSR_CONFIG = {
     { label: "Player stat card graphic", basic: false, pro: true, elite: true },
     { label: "HD files to keep", basic: false, pro: true, elite: true },
     { label: "One-page recruiting PDF", basic: false, pro: false, elite: true },
-    { label: "Schedule graphic", basic: false, pro: false, elite: true },
+    { label: "Schedule graphic (where coaches can see you play)", basic: false, pro: false, elite: true },
     { label: "Coach intro email template", basic: false, pro: false, elite: true },
     { label: "Best for", basic: "Getting seen on social", pro: "Sending film to coaches", elite: "Actively reaching out to colleges" }
   ]
