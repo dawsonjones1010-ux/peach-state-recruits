@@ -1828,3 +1828,18 @@ footer .legal a:hover{text-decoration:underline}
 @media(max-width:420px){.tool-path ol{padding:0 12px;justify-content:space-between}.tool-path a{font-size:13px}.tool-path li+li::before{margin:0 8px 0 4px;width:6px;height:6px}}
 @media(max-width:360px){.tool-path ol{padding:0 8px}.tool-path a{font-size:12px}.tool-path li+li::before{margin:0 6px 0 2px;width:5px;height:5px}}
 .ec-page .rc-intro h1{font-size:clamp(34px,10.4vw,84px);overflow-wrap:anywhere}
+
+/* Account button in the header (every page) */
+.nav-acct{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 12px;border-radius:10px;border:1.5px solid var(--ink-line,rgba(255,255,255,.22));color:#fff;font-weight:700;font-size:14.5px;text-decoration:none;white-space:nowrap}
+.nav-acct:hover{border-color:rgba(255,255,255,.5)}
+.nav-acct:focus-visible{outline:3px solid var(--peach);outline-offset:2px}
+.nav-acct-i{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--peach);color:#11151c;font-size:13px;font-weight:800}
+@media (max-width:560px){.nav-acct{padding:0;width:44px;justify-content:center}.nav-acct-t{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}}
+.mobile-menu .mm-acct{display:block;margin:4px 0 6px;padding:14px 16px;border-radius:12px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);color:#fff;text-decoration:none}
+.mobile-menu .mm-acct b{display:block;font-size:17px}
+.mobile-menu .mm-acct span{display:block;margin-top:2px;font-size:14px;color:#aeb6c2;line-height:1.35}
+.mobile-menu .mm-acct,.mobile-menu .mm-acct b,.mobile-menu .mm-acct span{font-family:var(--body);text-transform:none;letter-spacing:normal}
+.mobile-menu .mm-acct b{font-weight:800}
+@media (min-width:1200px) and (max-width:1279px){.nav-links a{padding:8px 9px;letter-spacing:.06em}}
+@media (max-width:400px){header.nav .nav-right{gap:6px;flex:none}header.nav .nav-acct,header.nav .menu-btn{width:40px;height:40px;min-height:40px}header.nav .nav-right .btn-sm{padding:8px 10px;font-size:13.5px}header.nav .logo{flex:1 1 auto;min-width:0}}
+@media (max-width:440px){header.nav .logo-text{display:none}}

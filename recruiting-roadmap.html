@@ -16,8 +16,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=42">
-<link rel="stylesheet" href="recruiting/rec.css?v=42"><link rel="stylesheet" href="recruiting/roadmap.css?v=39">
+<link rel="stylesheet" href="styles.css?v=47">
+<link rel="stylesheet" href="recruiting/rec.css?v=42"><link rel="stylesheet" href="recruiting/roadmap.css?v=40">
 </head>
 <body class="rm-page">
 <a class="skip" href="#main">Skip to content</a>
@@ -30,7 +30,6 @@
       <a href="find-my-level.html" class="nav-level">Find My Level</a>
       <a href="colleges.html">Colleges</a>
       <a href="email-coach.html">Email Coach</a>
-      <a href="my-recruiting.html">My Recruiting</a>
       <a href="index.html#packages">Packages</a>
     </nav>
     <div class="nav-right">
@@ -59,7 +58,20 @@
   </nav>
 </header>
 <main id="main" class="rm-page">
-<section class="rm-hero"><div class="rc-wrap"><div><span class="rm-kicker">Free baseball recruiting guide</span><h1>A clearer path.<br><em>Your next move.</em></h1><p>Know what to prepare, which questions to ask and where to go next. Build a recruiting plan around your stage, your game and your family.</p></div><div class="rm-hero-note"><strong>You lead. We help you prepare.</strong><p>Use the tools for free. Keep personal outreach in your own voice, and confirm every school’s current requirements.</p></div></div></section>
+<section class="rm-hero"><div class="rc-wrap"><div><span class="rm-kicker">Start here</span><h1>Three steps.<br><em>Then the rest.</em></h1><p>Find your level, pick colleges at that level, then email their coaches. Everything else on this site builds on those three.</p></div><div class="rm-hero-note"><strong>You lead. We help you prepare.</strong><p>Use the tools for free. Keep personal outreach in your own voice, and confirm every school’s current requirements.</p></div></div></section>
+<section class="st-wrap" aria-labelledby="stTitle"><div class="rc-wrap">
+  <h2 id="stTitle">Your first three steps</h2>
+  <div id="startSteps"><ol class="st-steps"><li class="st-step st-now"><span class="st-n" aria-hidden="true">1</span><div class="st-body"><h3>Find your level</h3><p>See which college levels your numbers line up with.</p><a class="btn btn-peach" href="find-my-level.html">Find my level</a></div></li></ol></div>
+</div></section>
+<section class="st-more" aria-labelledby="stMoreTitle"><div class="rc-wrap">
+  <h2 id="stMoreTitle">Then keep going</h2>
+  <div class="st-cards">
+    <a class="st-card" href="camps.html"><b>Find camps</b><span>Camps at the schools on your list, with dates and prices from official pages.</span></a>
+    <a class="st-card" href="my-recruiting.html#signin"><b>Save everything</b><span>A free account keeps your schools, emails, camps and follow-ups in one place.</span></a>
+    <a class="st-card" href="index.html#packages"><b>Get featured</b><span>A highlight video and profile page coaches can open in one tap.</span></a>
+  </div>
+</div></section>
+<section class="st-check-head"><div class="rc-wrap"><h2>Your recruiting checklist</h2><p>Next steps for your grade, a film checklist, camp questions and a cost comparison. Saved on this device.</p></div></section>
 <div class="rc-wrap rm-workspace"><div id="roadmapApp"><p>Loading your recruiting worksheets…</p></div><noscript><p>Interactive worksheets need JavaScript. Read the <a href="https://www.ncaa.org/eligibility-center/recruiting/">NCAA recruiting guide</a>, then explore our <a href="colleges.html">college directory</a> and <a href="email-coach.html">Email Coach</a>.</p></noscript></div></main>
 <footer>
   <div class="wrap">
@@ -91,10 +103,13 @@
   </div>
 </footer>
 <script src="config.js?v=39"></script>
-<script src="shared.js?v=40"></script>
+<script src="shared.js?v=41"></script>
 <script src="recruiting/calendar.js?v=39"></script>
 <script src="recruiting/roadmap.js?v=39"></script>
 <script src="recruiting/roadmap-ui.js?v=39"></script>
+<script src="recruiting/logic.js?v=41"></script>
+<script src="estimator/picks.js?v=46"></script>
+<script src="recruiting/start.js?v=2"></script>
 <script>document.getElementById("copy").textContent = "\u00a9 " + new Date().getFullYear() + " Peach State Recruits"; try { window.PSR.logoMark(window.PSR_CONFIG || {}); } catch (e) {}</script>
 </body>
 </html>

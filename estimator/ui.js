@@ -1061,6 +1061,23 @@
       return l ? { key: l.key, label: l.label, score: l.display } : null;
     } catch (_) { return null; }
   }
+  // Short summary of the latest result for Start Here (and future pages). This device only.
+  const SUMMARY_KEY = "psr_level_summary_v1";
+  function saveSummary() {
+    try {
+      const read = state.result && state.result.reads && state.result.reads[0];
+      if (!read) return;
+      const fit = read.kind === "pitching" ? pitcherFit() : QF.evaluate(read, state.input);
+      const ak = fit && fit.enough ? fit.primary || fit.closest : null, ai = LADDER.indexOf(ak);
+      const lv = ak ? fit.levels.find(l => l.key === ak) : null;
+      localStorage.setItem(SUMMARY_KEY, JSON.stringify({
+        v: 1, t: new Date().toISOString(), position: U.POS[read.position] || read.position, gradYear: state.input.gradYear || null,
+        level: lv ? { key: lv.key, label: lv.label, short: lv.short, score: lv.display, primary: !!fit.primary } : null,
+        bands: ak ? [ak].concat(ai >= 0 && ai < 5 ? [LADDER[ai + 1]] : []) : [],
+        handoff: (() => { try { return R.handoff(state.input, read); } catch (_) { return null; } })()
+      }));
+    } catch (_) {}
+  }
   function shareSite() {
     try { return window.PSR.displayUrl(window.PSR.siteBase()).replace(/\/$/, ""); } catch (_) { return "peachstaterecruits"; }
   }
@@ -1347,6 +1364,7 @@
     if (state.step === 3) {
       state.result = L.evaluate(state.data, state.input); state.step = 4; state.tab = 0; saveProgress();
       try { const r0 = state.result.reads[0]; if (window.PSR && window.PSR.track) window.PSR.track("fml_result", r0 ? ((primaryOf(r0) || {}).key || "below") : "none"); } catch (_) {}
+      saveSummary();
     }
     else state.step += 1;
     render(NOV, true);

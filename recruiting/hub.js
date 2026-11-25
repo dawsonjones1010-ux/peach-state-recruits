@@ -80,7 +80,7 @@
       <div class="rc-spread" style="margin-bottom:8px"><p class="rc-muted" style="margin:0">Signed in as <b>${esc(S.user.email || "")}</b></p><span class="rc-row" style="gap:8px"><button class="rc-btn sm" id="acctBtn">Account</button><button class="rc-btn sm" id="signOut">Sign out</button></span></div>
       <nav class="rc-tabs" role="tablist" aria-label="My Recruiting">${TABS.map(([k, l]) => `<a class="rc-tab" role="tab" href="#${k}" aria-selected="${k === tab}">${l}${counts[k] ? `<span class="rc-count">${counts[k]}</span>` : ""}</a>`).join("")}</nav>
       <div id="tab"></div>`;
-    $("#signOut").onclick = async () => { await api.signOut(); location.hash = ""; start(); };
+    $("#signOut").onclick = async () => { await api.signOut(); location.hash = "signin"; start(); };
     $("#acctBtn").onclick = () => accountDialog(false);
     let recovering = false; try { recovering = sessionStorage.getItem("psr_pw_recovery") === "1"; } catch (_) {}
     if (recovering) accountDialog(true);
@@ -433,9 +433,10 @@
     try { user = await api.getUser(); } catch (e) { $("#app").innerHTML = `<div class="rc-empty">Sign-in could not be checked: ${esc(e.message)}</div>`; return; }
     if (generation !== loadGeneration) return;
     S.user = user;
+    if (window.PSR && window.PSR.renderAccountNav) window.PSR.renderAccountNav();
     if (!S.user) {
       $("#app").innerHTML = U.demoBanner(api) + `<div id="gate"></div>`;
-      U.renderGate($("#gate"), api, { title: "Sign in to My Recruiting", text: "Free. Save schools, write coach emails, track replies and get your next steps. Your information is private to your account.", onSignedIn: start });
+      U.renderGate($("#gate"), api, { mode: /^#signin/.test(location.hash) ? "signin" : "create", title: "Sign in or create a free account", text: "Free. Save schools, write coach emails, track replies and get your next steps. Your information is private to your account.", onSignedIn: start });
       return;
     }
     try { await loadAll(generation); } catch (e) { $("#app").innerHTML = `<div class="rc-empty">Couldn't load your workspace: ${esc(e.message)}</div>`; return; }

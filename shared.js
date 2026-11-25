@@ -416,8 +416,44 @@
   const reducedMotion = () => window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   // Mobile menu toggle (button#menuBtn + #mobileMenu), closes on link tap and Escape.
+  // Signed-in email from the Supabase session in this browser (no network call). Null when signed out.
+  function signedInEmail() {
+    try {
+      const ref = new URL(C().supabaseUrl).hostname.split(".")[0];
+      const raw = localStorage.getItem(`sb-${ref}-auth-token`);
+      const s = raw && JSON.parse(raw);
+      return (s && s.user && s.user.email) || null;
+    } catch (e) { return null; }
+  }
+  // Sign-in button in the header and a sign-in line at the top of the phone menu, on every page.
+  function renderAccountNav() {
+    if (/\/(admin|admin-recruiting|account)\.html$/.test(location.pathname)) return;
+    const email = signedInEmail(), base = siteBase();
+    const href = base + "/my-recruiting.html" + (email ? "" : "#signin");
+    const right = document.querySelector(".nav-right");
+    if (right) {
+      let a = right.querySelector(".nav-acct");
+      if (!a) { a = document.createElement("a"); a.className = "nav-acct"; right.insertBefore(a, right.firstChild); }
+      a.href = href;
+      a.setAttribute("aria-label", email ? `My account, signed in as ${email}` : "Sign in or create an account");
+      a.innerHTML = email
+        ? `<span class="nav-acct-i" aria-hidden="true">${esc(email.charAt(0).toUpperCase())}</span><span class="nav-acct-t">My account</span>`
+        : `<svg class="nav-acct-svg" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 21c1.2-4 4.4-6 8-6s6.8 2 8 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span class="nav-acct-t">Sign in</span>`;
+    }
+    const menu = document.getElementById("mobileMenu");
+    if (menu) {
+      let m = menu.querySelector(".mm-acct");
+      if (!m) { m = document.createElement("a"); m.className = "mm-acct"; menu.insertBefore(m, menu.firstChild); }
+      m.href = href;
+      m.innerHTML = email
+        ? `<b>My account</b><span>Signed in as ${esc(email)}</span>`
+        : `<b>Sign in</b><span>Or create a free account to save schools, emails and camps</span>`;
+    }
+  }
+
   function initNav() {
     document.documentElement.classList.add("js");
+    renderAccountNav();
     const navEl = document.querySelector(".nav");
     if (navEl) { const onS = () => navEl.classList.toggle("is-scrolled", window.scrollY > 8); onS(); window.addEventListener("scroll", onS, { passive: true }); }
     const btn = document.getElementById("menuBtn"), menu = document.getElementById("mobileMenu");
@@ -539,6 +575,6 @@
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", trackPage, { once: true }); else trackPage();
 
-  window.PSR = { track, loadPlayerOfWeek, renderPlayerOfWeek, weekLabel, esc, LOGO, logoMark, cover, coverOrImage, photoFrame, photoFallback, photoSrc, initials, PHOTO_SIZES, IMAGE_ACCEPT, prepareImageFile, isHeicFile, isImageFile, payLink, toast, loadPlayers, countView, recentFromPlayers, fromRow, hasDb, profileUrl, siteBase, shareProfileUrl, displayUrl,
+  window.PSR = { track, renderAccountNav, loadPlayerOfWeek, renderPlayerOfWeek, weekLabel, esc, LOGO, logoMark, cover, coverOrImage, photoFrame, photoFallback, photoSrc, initials, PHOTO_SIZES, IMAGE_ACCEPT, prepareImageFile, isHeicFile, isImageFile, payLink, toast, loadPlayers, countView, recentFromPlayers, fromRow, hasDb, profileUrl, siteBase, shareProfileUrl, displayUrl,
     ICON, initNav, reveal, fitVideo, playIg, igPermalink, copyText, shareLink, qrSvg, reducedMotion, parseVideo, videoHtml, VIDEO_LABEL };
 })();
