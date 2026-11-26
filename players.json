@@ -1,5 +1,194 @@
 [
   {
+    "slug": "cavanaugh-bell",
+    "active": true,
+    "name": "Cavanaugh Bell",
+    "sport": "Baseball",
+    "position": "C/1B/3B",
+    "gradYear": 2032,
+    "school": "PDG Academy",
+    "team": "",
+    "location": "Fredericksburg, Virginia",
+    "coverImage": "images/players/cavanaugh-bell.jpg",
+    "headline": "IS THIS 14 YR OLD THE NEXT PUDGE RODRÍGUEZ? 📈👀",
+    "playerInstagram": [],
+    "measurables": [
+      {
+        "label": "Height",
+        "value": "5'2\""
+      },
+      {
+        "label": "Weight",
+        "value": "Not listed"
+      },
+      {
+        "label": "Position",
+        "value": "C/1B/3B"
+      }
+    ],
+    "video": {
+      "youtube": "",
+      "file": ""
+    },
+    "highlights": [],
+    "report": "Cavanaugh Bell | C/1B/3B | 2032 | 5’2 | PDG Academy\n\n🔥 Cavanaugh Bell is a rising 2032 catcher out of Virginia already facing older competition. At 14, he is slated to play varsity this spring for PDG Academy in Fredericksburg, which produced 21 college signees this fall, 16 at the D1 level.\n\n💣 The power jumps out. With a compact 5’2 frame and a 420-pound deadlift, Bell recorded a TrackMan-measured 91.1 MPH exit velo at 13 with BBCOR and has hit balls over 330 feet. As a 13-year-old on JV, he ranked among his team’s top two hitters in average and RBIs.\n\n🛡️ Behind the plate, Bell is a natural field general with an advanced baseball IQ and a strong arm, with throwdowns up to 72 MPH and sub 2.35 pops. He also handles both corner infield spots.\n\nWith big-time power and a commanding presence behind the plate, Bell is a 2032 catcher you don’t want to sleep on. 📈",
+    "stats": null,
+    "academics": [],
+    "links": [],
+    "contactEmail": "",
+    "contactInstagram": "peachstaterecruits",
+    "contactName": "Peach State Recruits",
+    "postUrl": "",
+    "account": "peachstaterecruits",
+    "showOnHome": true,
+    "videos": [
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/cavanaugh-bell/clip1.mp4",
+        "title": "Highlight clip 1"
+      },
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/cavanaugh-bell/clip2.mp4",
+        "title": "Highlight clip 2"
+      },
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/cavanaugh-bell/clip3.mp4",
+        "title": "Highlight clip 3"
+      }
+    ],
+    "coachReport": "Profile: 2032 C/1B/3B from Fredericksburg, Virginia. PDG Academy. 5'2\".",
+    "featuredRank": null,
+    "featureDate": "2026-11-25"
+  },
+  {
+    "slug": "jaxon-cohen",
+    "active": true,
+    "name": "Jaxon Cohen",
+    "sport": "Baseball",
+    "position": "MIF/OF/RHP/UTIL",
+    "gradYear": 2030,
+    "school": "Chaminade High School",
+    "team": "Long Island Elite Prospects",
+    "location": "Long Island, New York",
+    "coverImage": "images/players/jaxon-cohen.jpg",
+    "headline": "JAXON COHEN IS A TWO WAY THREAT🎯📈",
+    "playerInstagram": [],
+    "measurables": [
+      {
+        "label": "Height",
+        "value": "5'6\""
+      },
+      {
+        "label": "Weight",
+        "value": "130 lb"
+      },
+      {
+        "label": "Position",
+        "value": "MIF/OF/RHP/UTIL"
+      }
+    ],
+    "video": {
+      "youtube": "",
+      "file": ""
+    },
+    "highlights": [],
+    "report": "Jaxon Cohen | MIF/OF/RHP/UTIL | 2030 | 5’6 | 130 | Chaminade High School\n\n⚾️ Jaxon Cohen is a versatile 2030 prospect out of Long Island who impacts the game in every way. The Long Island Elite Prospects standout plays with a polished feel and a real competitive edge.\n\n🔥 Cohen produced at the plate in 2026, going 42-for-121 for a .347 average. He finds the barrel consistently, sprays the ball to all fields and has some sneaky juice that should grow as he matures.\n\n🧤 Defensively, Cohen gives his team options in the middle infield and the outfield, moving well and handling the ball cleanly.\n\n🎯 On the mound, the right-hander dominated this fall, striking out 36 in 21 1/3 innings with a 2.95 ERA and a 0.89 WHIP.\n\nWith a productive bat, a swing-and-miss arm and the ability to play anywhere, Cohen is a 2030 New York prospect worth tracking.",
+    "stats": null,
+    "academics": [],
+    "links": [],
+    "contactEmail": "",
+    "contactInstagram": "peachstaterecruits",
+    "contactName": "Peach State Recruits",
+    "postUrl": "",
+    "account": "peachstaterecruits",
+    "showOnHome": true,
+    "videos": [
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/jaxon-cohen/clip1.mp4",
+        "title": "Highlight clip 1"
+      },
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/jaxon-cohen/clip2.mp4",
+        "title": "Highlight clip 2"
+      },
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/jaxon-cohen/clip3.mp4",
+        "title": "Highlight clip 3"
+      }
+    ],
+    "coachReport": "Profile: 2030 MIF/OF/RHP/UTIL from Long Island, New York. Chaminade High School; Long Island Elite Prospects. 5'6\", 130 lb.",
+    "featuredRank": null,
+    "featureDate": "2026-11-25"
+  },
+  {
+    "slug": "ethan-hughes",
+    "active": true,
+    "name": "Ethan Hughes",
+    "sport": "Baseball",
+    "position": "SS/UTIL",
+    "gradYear": 2029,
+    "school": "Pete Knight High School",
+    "team": "",
+    "location": "Palmdale, California",
+    "coverImage": "images/players/ethan-hughes.jpg",
+    "headline": "ETHAN HUGHES IS A PROJECTABLE SHORTSTOP🧤📈",
+    "playerInstagram": [],
+    "measurables": [
+      {
+        "label": "Height",
+        "value": "6'0\""
+      },
+      {
+        "label": "Weight",
+        "value": "140 lb"
+      },
+      {
+        "label": "Position",
+        "value": "SS/UTIL"
+      }
+    ],
+    "video": {
+      "youtube": "",
+      "file": ""
+    },
+    "highlights": [],
+    "report": "Ethan Hughes | SS/UTIL | 2029 | 6’0 | 140 | Pete Knight High School\n\n⚡️ Ethan Hughes is a long, athletic 2029 shortstop out of Palmdale, California, whose lean 6’0 frame and quick-twitch movements stand out right away. There is plenty of strength still to come as he fills out.\n\n💥 At the plate, Hughes shows a loose, easy bat and a knack for barreling the baseball. The ball comes off with authority when he connects, and his power figures to climb as his body matures.\n\n🧤 Defensively, Hughes is at home at shortstop, where his range and athleticism let him make plays in every direction. His utility value adds even more, giving his team the freedom to move him wherever he is needed.\n\nWith a projectable frame, a promising bat and the versatility to handle the left side of the infield, Hughes is a 2029 California prospect to watch.",
+    "stats": null,
+    "academics": [],
+    "links": [],
+    "contactEmail": "",
+    "contactInstagram": "peachstaterecruits",
+    "contactName": "Peach State Recruits",
+    "postUrl": "",
+    "account": "peachstaterecruits",
+    "showOnHome": true,
+    "videos": [
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/ethan-hughes/clip1.mp4",
+        "title": "Highlight clip 1"
+      },
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/ethan-hughes/clip2.mp4",
+        "title": "Highlight clip 2"
+      },
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/ethan-hughes/clip3.mp4",
+        "title": "Highlight clip 3"
+      }
+    ],
+    "coachReport": "Profile: 2029 SS/UTIL from Palmdale, California. Pete Knight High School. 6'0\", 140 lb.",
+    "featuredRank": null,
+    "featureDate": "2026-11-25"
+  },
+  {
     "slug": "gunnar-johnson",
     "active": true,
     "name": "Gunnar Johnson",
