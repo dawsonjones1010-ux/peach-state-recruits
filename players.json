@@ -1,5 +1,68 @@
 [
   {
+    "slug": "oliver-zehr",
+    "active": true,
+    "name": "Oliver Zehr",
+    "sport": "Baseball",
+    "position": "3B/1B/RHP",
+    "gradYear": 2031,
+    "school": "Magruder High School",
+    "team": "",
+    "location": "",
+    "coverImage": "images/players/oliver-zehr.jpg",
+    "headline": "OLIVER ZEHR IS A BAT TO WATCH💥📈",
+    "playerInstagram": [],
+    "measurables": [
+      {
+        "label": "Height",
+        "value": "5'7\""
+      },
+      {
+        "label": "Weight",
+        "value": "142 lb"
+      },
+      {
+        "label": "Position",
+        "value": "3B/1B/RHP"
+      }
+    ],
+    "video": {
+      "youtube": "",
+      "file": ""
+    },
+    "highlights": [],
+    "report": "Oliver Zehr | 3B/1B/RHP | 2031 | 5’7 | 142 | Magruder High School\n\n🚀 Oliver Zehr is a 2031 two-way prospect out of Magruder High School who brings a competitive edge and a promising all-around game to the field.\n\n💥 In the box, Zehr carries a confident presence and attacks pitches in the zone with intent. He drives the ball with real authority for his age, showing surprising strength and the ability to do damage when he squares one up.\n\n⚡️ Defensively, Oliver gives his team flexibility at both corner infield spots, handling third base and first base with reliable hands and a steady approach.\n\n🎯 On the mound, the right-hander adds another layer to his game and competes with a strike-throwing mindset, giving him real value as a two-way option.\n\nWith a dangerous bat and the versatility to help on the corners and on the mound, Zehr is a 2031 name to monitor. 📈",
+    "stats": null,
+    "academics": [],
+    "links": [],
+    "contactEmail": "",
+    "contactInstagram": "peachstaterecruits",
+    "contactName": "Peach State Recruits",
+    "postUrl": "",
+    "account": "peachstaterecruits",
+    "showOnHome": true,
+    "videos": [
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/oliver-zehr/clip1.mp4",
+        "title": "Highlight clip 1"
+      },
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/oliver-zehr/clip2.mp4",
+        "title": "Highlight clip 2"
+      },
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/oliver-zehr/clip3.mp4",
+        "title": "Highlight clip 3"
+      }
+    ],
+    "coachReport": "Profile: 2031 3B/1B/RHP. Magruder High School. 5'7\", 142 lb.",
+    "featuredRank": null,
+    "featureDate": "2026-11-26"
+  },
+  {
     "slug": "cavanaugh-bell",
     "active": true,
     "name": "Cavanaugh Bell",
