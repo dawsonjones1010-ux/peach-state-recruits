@@ -1,5 +1,257 @@
 [
   {
+    "slug": "teagan-leach",
+    "active": true,
+    "name": "Teagan Leach",
+    "sport": "Baseball",
+    "position": "1B/LHP",
+    "gradYear": 2027,
+    "school": "PDG Academy",
+    "team": "",
+    "location": "",
+    "coverImage": "images/players/teagan-leach.jpg",
+    "headline": "TEAGAN LEACH IS A LEFTY POWER THREAT💣📈",
+    "playerInstagram": [],
+    "measurables": [
+      {
+        "label": "Height",
+        "value": "6'3\""
+      },
+      {
+        "label": "Weight",
+        "value": "220 lb"
+      },
+      {
+        "label": "Position",
+        "value": "1B/LHP"
+      }
+    ],
+    "video": {
+      "youtube": "",
+      "file": ""
+    },
+    "highlights": [],
+    "report": "Teagan Leach | 1B/LHP | 2027 | 6’3 | 220 | PDG Academy\n\n🔥 Virginia Tech signee Teagan Leach is one of the premier 2027 prospects in Virginia, coming off a 2026 Class 6 state title and a 2026 High School Gold Glove honor at first base.\n\n💣 From the left side, Leach is a true middle-of-the-order threat with legitimate game-changing power to every part of the ballpark. He pairs a mature approach with the physicality to punish mistakes and drive balls deep into the gaps.\n\n🧤 Defensively, the 6’3 first baseman pairs soft hands with strong instincts around the bag, giving his infield a steady, award-winning target.\n\n🎯 On the mound, the left-hander brings an intriguing arm and competes with poise, adding real two-way value to his profile.\n\nAlready ranked among Virginia’s very best in the 2027 class, Leach looks built to make an immediate impact for the Hokies. 📈",
+    "stats": null,
+    "academics": [],
+    "links": [],
+    "contactEmail": "",
+    "contactInstagram": "peachstaterecruits",
+    "contactName": "Peach State Recruits",
+    "postUrl": "",
+    "account": "peachstaterecruits",
+    "showOnHome": true,
+    "videos": [
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/teagan-leach/clip1.mp4",
+        "title": "Highlight clip 1"
+      },
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/teagan-leach/clip2.mp4",
+        "title": "Highlight clip 2"
+      },
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/teagan-leach/clip3.mp4",
+        "title": "Highlight clip 3"
+      }
+    ],
+    "coachReport": "Profile: 2027 1B/LHP. PDG Academy. 6'3\", 220 lb.",
+    "featuredRank": null,
+    "featureDate": "2026-11-27"
+  },
+  {
+    "slug": "jake-marasco",
+    "active": true,
+    "name": "Jake Marasco",
+    "sport": "Baseball",
+    "position": "3B/RHP",
+    "gradYear": 2029,
+    "school": "Clarke High School",
+    "team": "NY Longhorns 15u",
+    "location": "Westbury, New York",
+    "coverImage": "images/players/jake-marasco.jpg",
+    "headline": "JAKE MARASCO IS A TWO WAY COMPETITOR🔥📈",
+    "playerInstagram": [],
+    "measurables": [
+      {
+        "label": "Height",
+        "value": "5'10\""
+      },
+      {
+        "label": "Weight",
+        "value": "160 lb"
+      },
+      {
+        "label": "Position",
+        "value": "3B/RHP"
+      }
+    ],
+    "video": {
+      "youtube": "",
+      "file": ""
+    },
+    "highlights": [],
+    "report": "Jake Marasco | 3B/RHP | 2029 | 5’10 | 160 | Clarke High School\n\n⚡ Jake Marasco is a 2029 two-way prospect out of Westbury, New York who plays with real grit and energy. Competing with the NY Longhorns 15u, the right-hander continues to sharpen his game on both sides of the ball.\n\n💥 At the plate, Marasco brings a fearless approach and drives the baseball with authority. He hunts pitches he can handle and delivers loud contact when he squares one up, giving his lineup a dangerous presence.\n\n🧤 At third base, Jake plays with quick instincts and a gamer mentality, giving his infield a dependable glove on the hot corner.\n\n🎯 On the mound, the right-hander adds another layer to his profile, attacking hitters and competing with poise.\n\nWith an impactful bat and two-way upside at third and on the mound, Marasco is a 2029 New York prospect to watch. 📈",
+    "stats": null,
+    "academics": [],
+    "links": [],
+    "contactEmail": "",
+    "contactInstagram": "peachstaterecruits",
+    "contactName": "Peach State Recruits",
+    "postUrl": "",
+    "account": "peachstaterecruits",
+    "showOnHome": true,
+    "videos": [
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/jake-marasco/clip1.mp4",
+        "title": "Highlight clip 1"
+      },
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/jake-marasco/clip2.mp4",
+        "title": "Highlight clip 2"
+      },
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/jake-marasco/clip3.mp4",
+        "title": "Highlight clip 3"
+      }
+    ],
+    "coachReport": "Profile: 2029 3B/RHP from Westbury, New York. Clarke High School; NY Longhorns 15u. 5'10\", 160 lb.",
+    "featuredRank": null,
+    "featureDate": "2026-11-27"
+  },
+  {
+    "slug": "mason-waxman",
+    "active": true,
+    "name": "Mason Waxman",
+    "sport": "Baseball",
+    "position": "1B/RHP/3B/RF",
+    "gradYear": 2030,
+    "school": "Legacy High School",
+    "team": "Coastal Rebels",
+    "location": "Port St. Lucie, Florida",
+    "coverImage": "images/players/mason-waxman.jpg",
+    "headline": "MASON WAXMAN BRINGS BIG TIME STRENGTH💪📈",
+    "playerInstagram": [],
+    "measurables": [
+      {
+        "label": "Height",
+        "value": "5'7\""
+      },
+      {
+        "label": "Weight",
+        "value": "200 lb"
+      },
+      {
+        "label": "Position",
+        "value": "1B/RHP/3B/RF"
+      }
+    ],
+    "video": {
+      "youtube": "",
+      "file": ""
+    },
+    "highlights": [],
+    "report": "Mason Waxman | 1B/RHP/3B/RF | 2030 | 5’7 | 200 | Legacy High School\n\n🔥 Mason Waxman is a 2030 two-way prospect out of Port St. Lucie, Florida with a physical build and versatile skill set. Suiting up for the Coastal Rebels, the right-hander keeps growing on both sides of the ball.\n\n💥 At the plate, Waxman uses his strong 200-pound frame to drive balls into the gaps with serious impact. He steps in with confidence and turns pitches into loud, heavy contact.\n\n🧤 Defensively, Mason brings flexibility across first base, third base and right field, giving his team multiple ways to keep his bat in the lineup.\n\n🎯 On the mound, the right-hander competes with toughness and pounds the zone, rounding out a solid two-way profile.\n\nWith real strength at the plate and versatility in the field and on the mound, Waxman is a 2030 Florida prospect to follow. 📈",
+    "stats": null,
+    "academics": [],
+    "links": [],
+    "contactEmail": "",
+    "contactInstagram": "peachstaterecruits",
+    "contactName": "Peach State Recruits",
+    "postUrl": "",
+    "account": "peachstaterecruits",
+    "showOnHome": true,
+    "videos": [
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/mason-waxman/clip1.mp4",
+        "title": "Highlight clip 1"
+      },
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/mason-waxman/clip2.mp4",
+        "title": "Highlight clip 2"
+      },
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/mason-waxman/clip3.mp4",
+        "title": "Highlight clip 3"
+      }
+    ],
+    "coachReport": "Profile: 2030 1B/RHP/3B/RF from Port St. Lucie, Florida. Legacy High School; Coastal Rebels. 5'7\", 200 lb.",
+    "featuredRank": null,
+    "featureDate": "2026-11-27"
+  },
+  {
+    "slug": "marc-lee-jr",
+    "active": true,
+    "name": "Marc Lee Jr.",
+    "sport": "Baseball",
+    "position": "OF/RHP/3B",
+    "gradYear": 2030,
+    "school": "Bishop McNamara High School",
+    "team": "",
+    "location": "Maryland",
+    "coverImage": "images/players/marc-lee-jr.jpg",
+    "headline": "MARC LEE JR. IS AN EXPLOSIVE ATHLETE🚀📈",
+    "playerInstagram": [],
+    "measurables": [
+      {
+        "label": "Height",
+        "value": "6'1\""
+      },
+      {
+        "label": "Weight",
+        "value": "165 lb"
+      },
+      {
+        "label": "Position",
+        "value": "OF/RHP/3B"
+      }
+    ],
+    "video": {
+      "youtube": "",
+      "file": ""
+    },
+    "highlights": [],
+    "report": "Marc Lee Jr. | OF/RHP/3B | 2030 | 6’1 | 165 | Bishop McNamara High School\n\n🔥 Standing 6’1, 165, Marc Lee Jr. is an explosive 2030 prospect out of Bishop McNamara High School in Maryland. Named to Prep Baseball Maryland’s 40 To Follow list, he pairs strength and athleticism in the high 90th percentile per Perfect Game with size, speed and arm strength.\n\n💥 At the plate, the right-handed hitter already flashes 90+ mph exit velocity, driving the ball with authority and producing loud, hard contact.\n\n🧤 Primarily in the outfield with versatility at third base and on the mound, Lee covers serious ground, tracks the ball well and makes tough plays look routine.\n\nWith power potential, speed, arm strength and high-level physical tools across multiple spots, Lee Jr. is a 2030 Maryland prospect to follow closely. 📈",
+    "stats": null,
+    "academics": [],
+    "links": [],
+    "contactEmail": "",
+    "contactInstagram": "peachstaterecruits",
+    "contactName": "Peach State Recruits",
+    "postUrl": "",
+    "account": "peachstaterecruits",
+    "showOnHome": true,
+    "videos": [
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/marc-lee-jr/clip1.mp4",
+        "title": "Highlight clip 1"
+      },
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/marc-lee-jr/clip2.mp4",
+        "title": "Highlight clip 2"
+      },
+      {
+        "kind": "file",
+        "url": "https://dawsonjones1010-ux.github.io/peach-state-recruits/videos/marc-lee-jr/clip3.mp4",
+        "title": "Highlight clip 3"
+      }
+    ],
+    "coachReport": "Profile: 2030 OF/RHP/3B from Maryland. Bishop McNamara High School. 6'1\", 165 lb.",
+    "featuredRank": null,
+    "featureDate": "2026-11-27"
+  },
+  {
     "slug": "oliver-zehr",
     "active": true,
     "name": "Oliver Zehr",
